@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>West150daily news board</title>
+
+  <!-- Free Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Nanum+Gothic:wght@400;700;800&family=Nanum+Square:wght@400;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <link rel="stylesheet" href="https://spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css">
+
+  <!-- html2canvas -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <style>
+    :root {
+      --red: #c23a3a;
+      --red-dark: #a32f2f;
+      --black: #1a1a1a;
+      --gray: #6b6b6b;
+      --border: #e5e5e5;
+      --bg: #f6f6f6;
+      --white: #ffffff;
+      --shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Pretendard', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--black);
+    }
+
+    /* ========== Clean Window-style Header ========== */
+    .window {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .titlebar {
+      height: 48px;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 12px 0 16px;
+      gap: 12px;
+      flex-shrink: 0;
+      user-select: none;
+    }
+
+    .titlebar-title {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+      color: var(--black);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .titlebar-title span {
+      color: var(--red);
+      font-weight: 700;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    .tool-btn {
+      height: 32px;
+      padding: 0 12px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      background: transparent;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--gray);
+      cursor: pointer;
+      font-family: inherit;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.12s;
+      white-space: nowrap;
+    }
+
+    .tool-btn:hover {
+      background: #f0f0f0;
+      color: var(--black);
+    }
+
+    .tool-btn:active {
+      background: #e8e8e8;
+    }
+
+    .tool-btn.primary {
+      background: var(--red);
+      color: white;
+      border-color: var(--red);
+    }
+
+    .tool-btn.primary:hover {
+      background: var(--red-dark);
+    }
+
+    .tool-divider {
+      width: 1px;
+      height: 18px;
+      background: var(--border);
+      margin: 0 6px;
+    }
+
+    .zoom-group {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      background: #f5f5f5;
+      border-radius: 6px;
+      padding: 2px;
+    }
+
+    .zoom-group .tool-btn {
+      height: 28px;
+      padding: 0 8px;
+      min-width: 28px;
+      justify-content: center;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .zoom-label {
+      font-size: 12px;
+      color: var(--gray);
+      min-width: 36px;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ========== Board ========== */
+    #board {
+      flex: 1;
+      overflow: auto;
+      background-color: #fafafa;
+      background-image:
+        linear-gradient(#ebebeb 1px, transparent 1px),
+        linear-gradient(90deg, #ebebeb 1px, transparent 1px);
+      background-size: 28px 28px;
+      -webkit-overflow-scrolling: touch;
+      position: relative;
+    }
+
+    #board-inner {
+      position: relative;
+      width: 2400px;
+      height: 1600px;
+      min-width: 100%;
+      min-height: 100%;
+      transform-origin: 0 0;
+    }
+
+    /* ========== News Card ========== */
+    .news-card {
+      position: absolute;
+      width: 280px;
+      background: var(--white);
+      border: 1px solid #e8e8e8;
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      padding: 18px 18px 14px;
+      cursor: grab;
+      user-select: none;
+      touch-action: none;
+      transition: box-shadow 0.15s, transform 0.1s;
+      z-index: 10;
+    }
+
+    .news-card:active,
+    .news-card.dragging {
+      cursor: grabbing;
+      box-shadow: 0 10px 28px rgba(0,0,0,0.14);
+      z-index: 50;
+      transform: scale(1.015);
+    }
+
+    .news-card .card-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #999;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .news-card .card-title {
+      font-size: 20px;
+      font-weight: 800;
+      line-height: 1.3;
+      letter-spacing: -0.5px;
+      color: var(--black);
+      margin-bottom: 8px;
+      word-break: keep-all;
+    }
+
+    .news-card .card-body {
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 1.55;
+      color: #555;
+      word-break: keep-all;
+      white-space: pre-wrap;
+    }
+
+    .news-card .card-meta {
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid #f0f0f0;
+      font-size: 11px;
+      color: #aaa;
+    }
+
+    .news-card .card-actions {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      display: none;
+      gap: 3px;
+    }
+
+    .news-card:hover .card-actions,
+    .news-card.dragging .card-actions {
+      display: flex;
+    }
+
+    .card-btn {
+      width: 24px;
+      height: 24px;
+      border-radius: 5px;
+      border: none;
+      background: #f3f3f3;
+      color: #666;
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card-btn:hover { background: #eaeaea; }
+    .card-btn.delete:hover { background: #ffebeb; color: var(--red); }
+
+    /* ========== Empty ========== */
+    .empty-hint {
+      position: absolute;
+      top: 42%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: #bbb;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .empty-hint .big { font-size: 36px; opacity: 0.35; margin-bottom: 6px; }
+    .empty-hint p { font-size: 14px; line-height: 1.5; }
+
+    /* ========== Modal ========== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.32);
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.show { display: flex; }
+
+    .modal {
+      background: white;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 380px;
+      padding: 24px 22px 20px;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.14);
+    }
+
+    .modal h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 18px;
+      letter-spacing: -0.3px;
+    }
+
+    .form-group { margin-bottom: 14px; }
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #888;
+      margin-bottom: 5px;
+    }
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #e0e0e0;
+      border-radius: 7px;
+      font-size: 14px;
+      font-family: inherit;
+      background: #fafafa;
+      resize: vertical;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--red);
+      background: white;
+    }
+    .form-group textarea { min-height: 80px; }
+
+    .modal-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 18px;
+    }
+    .modal-actions .tool-btn {
+      flex: 1;
+      height: 38px;
+      justify-content: center;
+      border: 1px solid var(--border);
+    }
+    .modal-actions .tool-btn.primary {
+      border-color: var(--red);
+    }
+
+    /* ========== Toast ========== */
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(60px);
+      background: #222;
+      color: white;
+      padding: 11px 20px;
+      border-radius: 24px;
+      font-size: 13px;
+      font-weight: 500;
+      opacity: 0;
+      transition: all 0.28s ease;
+      z-index: 300;
+      pointer-events: none;
+      max-width: 90%;
+      text-align: center;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ========== Image Preview Overlay (for iOS) ========== */
+    .img-preview-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 400;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .img-preview-overlay.show { display: flex; }
+
+    .img-preview-overlay img {
+      max-width: 100%;
+      max-height: 75vh;
+      border-radius: 8px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+
+    .img-preview-overlay .hint {
+      color: white;
+      font-size: 14px;
+      margin-top: 16px;
+      text-align: center;
+      line-height: 1.5;
+      opacity: 0.9;
+    }
+
+    .img-preview-overlay .close-btn {
+      margin-top: 16px;
+      background: white;
+      color: #222;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    /* Mobile */
+    @media (max-width: 640px) {
+      .titlebar { padding: 0 8px 0 12px; gap: 6px; }
+      .titlebar-title { font-size: 13px; }
+      .tool-btn { padding: 0 8px; font-size: 12px; height: 30px; }
+      .tool-btn .hide-mobile { display: none; }
+      .news-card { width: 260px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="window">
+    <!-- Clean Titlebar (파일창 스타일) -->
+    <div class="titlebar">
+      <div class="titlebar-title">
+        <span>West150daily</span> news board
+      </div>
+
+      <div class="toolbar">
+        <div class="zoom-group">
+          <button class="tool-btn" onclick="zoomOut()" title="축소">−</button>
+          <span class="zoom-label" id="zoomLabel">100%</span>
+          <button class="tool-btn" onclick="zoomIn()" title="확대">+</button>
+        </div>
+
+        <div class="tool-divider"></div>
+
+        <button class="tool-btn" onclick="openSettings()" title="글꼴·크기">설정</button>
+        <button class="tool-btn" onclick="saveAsImage()" title="이미지로 저장">저장</button>
+        <button class="tool-btn" onclick="clearAll()" title="전체 삭제">삭제</button>
+
+        <div class="tool-divider"></div>
+
+        <button class="tool-btn primary" onclick="openAddModal()">
+          + <span class="hide-mobile">추가</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Board -->
+    <div id="board">
+      <div id="board-inner">
+        <div class="empty-hint" id="emptyHint">
+          <div class="big">＋</div>
+          <p>오른쪽 위 [+ 추가]를 눌러<br>뉴스 카드를 만들고 배치하세요</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add / Edit Modal -->
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+      <h3 id="modalTitle">뉴스 카드 추가</h3>
+      <div class="form-group">
+        <label>제목 (짧게)</label>
+        <input type="text" id="inputTitle" placeholder="예: 팀의 일을 한곳에" maxlength="40">
+      </div>
+      <div class="form-group">
+        <label>본문 (짧게)</label>
+        <textarea id="inputBody" placeholder="1~3문장 정도" maxlength="200"></textarea>
+      </div>
+      <div class="form-group">
+        <label>날짜 / 출처 (선택)</label>
+        <input type="text" id="inputMeta" placeholder="예: 2026.08.14 · West150">
+      </div>
+      <div class="modal-actions">
+        <button class="tool-btn" onclick="closeModal()">취소</button>
+        <button class="tool-btn primary" id="modalSubmit" onclick="saveCard()">추가</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="modal-overlay" id="settingsModal">
+    <div class="modal">
+      <h3>글꼴 & 크기 설정</h3>
+      <div class="form-group">
+        <label>폰트 선택 (무료)</label>
+        <select id="fontSelect">
+          <option value="'Pretendard', 'Noto Sans KR', sans-serif">Pretendard (추천)</option>
+          <option value="'Noto Sans KR', sans-serif">Noto Sans KR</option>
+          <option value="'Nanum Gothic', 'Noto Sans KR', sans-serif">나눔고딕</option>
+          <option value="'Nanum Square', 'Noto Sans KR', sans-serif">나눔스퀘어</option>
+          <option value="'Spoqa Han Sans Neo', 'Noto Sans KR', sans-serif">스포카 한 산스</option>
+          <option value="'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif">시스템 기본</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>제목 크기: <span id="titleSizeLabel">20</span>px</label>
+        <input type="range" id="titleSize" min="14" max="36" value="20" style="width:100%; accent-color:#c23a3a;">
+      </div>
+      <div class="form-group">
+        <label>본문 크기: <span id="bodySizeLabel">14</span>px</label>
+        <input type="range" id="bodySize" min="11" max="22" value="14" style="width:100%; accent-color:#c23a3a;">
+      </div>
+      <div class="form-group">
+        <label>카드 너비: <span id="cardWidthLabel">280</span>px</label>
+        <input type="range" id="cardWidth" min="220" max="360" value="280" style="width:100%; accent-color:#c23a3a;">
+      </div>
+      <div class="modal-actions">
+        <button class="tool-btn" onclick="closeSettings()">닫기</button>
+        <button class="tool-btn primary" onclick="applySettings()">적용</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- iOS Image Preview -->
+  <div class="img-preview-overlay" id="imgPreview">
+    <img id="previewImg" alt="뉴스보드 이미지">
+    <div class="hint">
+      아이폰: 이미지를 <strong>길게 눌러</strong><br>「사진에 추가」를 선택하세요
+    </div>
+    <button class="close-btn" onclick="closeImgPreview()">닫기</button>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ========== State ==========
+    let cards = [];
+    let editingId = null;
+    let nextId = 1;
+    let currentZoom = 1;
+
+    let styleSettings = {
+      font: "'Pretendard', 'Noto Sans KR', sans-serif",
+      titleSize: 20,
+      bodySize: 14,
+      cardWidth: 280
+    };
+
+    let dragCard = null;
+    let startX = 0, startY = 0;
+    let originLeft = 0, originTop = 0;
+
+    const boardInner = document.getElementById('board-inner');
+    const emptyHint = document.getElementById('emptyHint');
+    const modal = document.getElementById('modal');
+    const inputTitle = document.getElementById('inputTitle');
+    const inputBody = document.getElementById('inputBody');
+    const inputMeta = document.getElementById('inputMeta');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalSubmit = document.getElementById('modalSubmit');
+
+    // ========== Storage ==========
+    function saveToStorage() {
+      localStorage.setItem('west150-cards', JSON.stringify(cards));
+    }
+    function loadFromStorage() {
+      try {
+        const data = localStorage.getItem('west150-cards');
+        if (data) {
+          cards = JSON.parse(data);
+          nextId = cards.length ? Math.max(...cards.map(c => c.id)) + 1 : 1;
+        }
+      } catch (e) {}
+    }
+    function saveSettings() {
+      localStorage.setItem('west150-settings', JSON.stringify(styleSettings));
+    }
+    function loadSettings() {
+      try {
+        const data = localStorage.getItem('west150-settings');
+        if (data) styleSettings = JSON.parse(data);
+      } catch (e) {}
+    }
+
+    // ========== Render ==========
+    function render() {
+      boardInner.querySelectorAll('.news-card').forEach(el => el.remove());
+      emptyHint.style.display = cards.length === 0 ? 'block' : 'none';
+      document.body.style.fontFamily = styleSettings.font;
+
+      cards.forEach(card => {
+        const el = document.createElement('div');
+        el.className = 'news-card';
+        el.dataset.id = card.id;
+        el.style.left = card.x + 'px';
+        el.style.top = card.y + 'px';
+        el.style.width = styleSettings.cardWidth + 'px';
+
+        el.innerHTML = `
+          <div class="card-actions">
+            <button class="card-btn" onclick="event.stopPropagation(); editCard(${card.id})" title="수정">✎</button>
+            <button class="card-btn delete" onclick="event.stopPropagation(); deleteCard(${card.id})" title="삭제">×</button>
+          </div>
+          <div class="card-label">// NEWS</div>
+          <div class="card-title" style="font-size:${styleSettings.titleSize}px">${escapeHtml(card.title)}</div>
+          <div class="card-body" style="font-size:${styleSettings.bodySize}px">${escapeHtml(card.body)}</div>
+          ${card.meta ? `<div class="card-meta">${escapeHtml(card.meta)}</div>` : ''}
+        `;
+
+        el.addEventListener('mousedown', onDragStart);
+        el.addEventListener('touchstart', onDragStart, { passive: false });
+        boardInner.appendChild(el);
+      });
+
+      saveToStorage();
+      saveSettings();
+    }
+
+    function escapeHtml(str) {
+      const d = document.createElement('div');
+      d.textContent = str;
+      return d.innerHTML;
+    }
+
+    // ========== Drag ==========
+    function onDragStart(e) {
+      if (e.target.closest('.card-btn')) return;
+      e.preventDefault();
+      dragCard = e.currentTarget;
+      dragCard.classList.add('dragging');
+
+      const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+      const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+
+      startX = clientX;
+      startY = clientY;
+      originLeft = parseFloat(dragCard.style.left) || 0;
+      originTop = parseFloat(dragCard.style.top) || 0;
+
+      document.addEventListener('mousemove', onDragMove);
+      document.addEventListener('mouseup', onDragEnd);
+      document.addEventListener('touchmove', onDragMove, { passive: false });
+      document.addEventListener('touchend', onDragEnd);
+    }
+
+    function onDragMove(e) {
+      if (!dragCard) return;
+      e.preventDefault();
+      const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+      const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+
+      // Account for zoom
+      const dx = (clientX - startX) / currentZoom;
+      const dy = (clientY - startY) / currentZoom;
+
+      let newLeft = originLeft + dx;
+      let newTop = originTop + dy;
+      newLeft = Math.max(10, Math.min(newLeft, 2400 - 320));
+      newTop = Math.max(10, Math.min(newTop, 1600 - 200));
+
+      dragCard.style.left = newLeft + 'px';
+      dragCard.style.top = newTop + 'px';
+    }
+
+    function onDragEnd() {
+      if (!dragCard) return;
+      const id = parseInt(dragCard.dataset.id);
+      const card = cards.find(c => c.id === id);
+      if (card) {
+        card.x = parseFloat(dragCard.style.left);
+        card.y = parseFloat(dragCard.style.top);
+        saveToStorage();
+      }
+      dragCard.classList.remove('dragging');
+      dragCard = null;
+      document.removeEventListener('mousemove', onDragMove);
+      document.removeEventListener('mouseup', onDragEnd);
+      document.removeEventListener('touchmove', onDragMove);
+      document.removeEventListener('touchend', onDragEnd);
+    }
+
+    // ========== Modal ==========
+    function openAddModal() {
+      editingId = null;
+      modalTitle.textContent = '뉴스 카드 추가';
+      modalSubmit.textContent = '추가';
+      inputTitle.value = '';
+      inputBody.value = '';
+      inputMeta.value = '';
+      modal.classList.add('show');
+      setTimeout(() => inputTitle.focus(), 80);
+    }
+
+    function editCard(id) {
+      const card = cards.find(c => c.id === id);
+      if (!card) return;
+      editingId = id;
+      modalTitle.textContent = '뉴스 카드 수정';
+      modalSubmit.textContent = '저장';
+      inputTitle.value = card.title;
+      inputBody.value = card.body;
+      inputMeta.value = card.meta || '';
+      modal.classList.add('show');
+      setTimeout(() => inputTitle.focus(), 80);
+    }
+
+    function closeModal() {
+      modal.classList.remove('show');
+      editingId = null;
+    }
+
+    function saveCard() {
+      const title = inputTitle.value.trim();
+      const body = inputBody.value.trim();
+      const meta = inputMeta.value.trim();
+      if (!title) {
+        showToast('제목을 입력해주세요');
+        inputTitle.focus();
+        return;
+      }
+
+      if (editingId) {
+        const card = cards.find(c => c.id === editingId);
+        if (card) {
+          card.title = title;
+          card.body = body;
+          card.meta = meta;
+        }
+        showToast('수정되었습니다');
+      } else {
+        const board = document.getElementById('board');
+        const x = board.scrollLeft / currentZoom + (board.clientWidth / currentZoom) / 2 - 140 + (Math.random() * 30 - 15);
+        const y = board.scrollTop / currentZoom + (board.clientHeight / currentZoom) / 2 - 80 + (Math.random() * 30 - 15);
+
+        cards.push({
+          id: nextId++,
+          title, body, meta,
+          x: Math.max(20, x),
+          y: Math.max(20, y)
+        });
+        showToast('카드가 추가되었습니다');
+      }
+      closeModal();
+      render();
+    }
+
+    function deleteCard(id) {
+      if (!confirm('이 카드를 삭제할까요?')) return;
+      cards = cards.filter(c => c.id !== id);
+      render();
+      showToast('삭제되었습니다');
+    }
+
+    function clearAll() {
+      if (cards.length === 0) return;
+      if (!confirm('모든 카드를 삭제할까요?')) return;
+      cards = [];
+      render();
+      showToast('모두 삭제되었습니다');
+    }
+
+    // ========== Zoom ==========
+    function setZoom(z) {
+      currentZoom = Math.max(0.4, Math.min(1.5, z));
+      boardInner.style.transform = `scale(${currentZoom})`;
+      document.getElementById('zoomLabel').textContent = Math.round(currentZoom * 100) + '%';
+    }
+    function zoomIn() { setZoom(currentZoom + 0.1); }
+    function zoomOut() { setZoom(currentZoom - 0.1); }
+
+    // ========== Settings ==========
+    function openSettings() {
+      document.getElementById('fontSelect').value = styleSettings.font;
+      document.getElementById('titleSize').value = styleSettings.titleSize;
+      document.getElementById('bodySize').value = styleSettings.bodySize;
+      document.getElementById('cardWidth').value = styleSettings.cardWidth;
+      document.getElementById('titleSizeLabel').textContent = styleSettings.titleSize;
+      document.getElementById('bodySizeLabel').textContent = styleSettings.bodySize;
+      document.getElementById('cardWidthLabel').textContent = styleSettings.cardWidth;
+      document.getElementById('settingsModal').classList.add('show');
+    }
+    function closeSettings() {
+      document.getElementById('settingsModal').classList.remove('show');
+    }
+    function applySettings() {
+      styleSettings.font = document.getElementById('fontSelect').value;
+      styleSettings.titleSize = parseInt(document.getElementById('titleSize').value);
+      styleSettings.bodySize = parseInt(document.getElementById('bodySize').value);
+      styleSettings.cardWidth = parseInt(document.getElementById('cardWidth').value);
+      closeSettings();
+      render();
+      showToast('설정이 적용되었습니다');
+    }
+
+    document.getElementById('titleSize').addEventListener('input', e => {
+      document.getElementById('titleSizeLabel').textContent = e.target.value;
+    });
+    document.getElementById('bodySize').addEventListener('input', e => {
+      document.getElementById('bodySizeLabel').textContent = e.target.value;
+    });
+    document.getElementById('cardWidth').addEventListener('input', e => {
+      document.getElementById('cardWidthLabel').textContent = e.target.value;
+    });
+
+    // ========== Image Save (iOS friendly) ==========
+    function isIOS() {
+      return /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+             (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    }
+
+    async function saveAsImage() {
+      if (cards.length === 0) {
+        showToast('저장할 카드가 없습니다');
+        return;
+      }
+
+      showToast('이미지 생성 중...');
+
+      const empty = document.getElementById('emptyHint');
+      const prevEmpty = empty.style.display;
+      empty.style.display = 'none';
+      document.querySelectorAll('.card-actions').forEach(el => el.style.display = 'none');
+
+      // Temporarily reset zoom for accurate capture
+      const prevZoom = currentZoom;
+      boardInner.style.transform = 'scale(1)';
+
+      try {
+        let minX = Infinity, minY = Infinity, maxX = 0, maxY = 0;
+        cards.forEach(c => {
+          minX = Math.min(minX, c.x);
+          minY = Math.min(minY, c.y);
+          maxX = Math.max(maxX, c.x + styleSettings.cardWidth + 20);
+          maxY = Math.max(maxY, c.y + 240);
+        });
+
+        const pad = 48;
+        minX = Math.max(0, minX - pad);
+        minY = Math.max(0, minY - pad);
+        maxX = maxX + pad;
+        maxY = maxY + pad;
+
+        const canvas = await html2canvas(boardInner, {
+          backgroundColor: '#fafafa',
+          scale: 2,
+          x: minX,
+          y: minY,
+          width: maxX - minX,
+          height: maxY - minY,
+          useCORS: true,
+          logging: false
+        });
+
+        const dataUrl = canvas.toDataURL('image/png');
+
+        if (isIOS()) {
+          // iOS: show preview so user can long-press to save
+          document.getElementById('previewImg').src = dataUrl;
+          document.getElementById('imgPreview').classList.add('show');
+          showToast('이미지를 길게 눌러 저장하세요');
+        } else {
+          // Desktop: direct download
+          const link = document.createElement('a');
+          link.download = `west150daily-news-board-${Date.now()}.png`;
+          link.href = dataUrl;
+          link.click();
+          showToast('이미지가 저장되었습니다');
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('저장 실패. 스크린샷을 이용해주세요.');
+      } finally {
+        empty.style.display = prevEmpty;
+        document.querySelectorAll('.card-actions').forEach(el => el.style.display = '');
+        boardInner.style.transform = `scale(${prevZoom})`;
+      }
+    }
+
+    function closeImgPreview() {
+      document.getElementById('imgPreview').classList.remove('show');
+    }
+
+    // ========== Toast ==========
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      clearTimeout(t._timer);
+      t._timer = setTimeout(() => t.classList.remove('show'), 2200);
+    }
+
+    // ========== Events ==========
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        closeModal();
+        closeSettings();
+        closeImgPreview();
+      }
+    });
+
+    modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+    document.getElementById('settingsModal').addEventListener('click', e => {
+      if (e.target === document.getElementById('settingsModal')) closeSettings();
+    });
+
+    // ========== Init ==========
+    loadSettings();
+    loadFromStorage();
+    render();
+
+    // Demo cards on first visit
+    if (cards.length === 0) {
+      cards = [
+        { id: nextId++, title: '팀의 일을 한곳에', body: '흩어진 업무와 대화, 파일을\n하나의 작업 공간에서 관리하세요.', meta: '2026.08.14', x: 80, y: 60 },
+        { id: nextId++, title: '실시간 협업', body: '팀원과 동시에 작업하고\n즉시 변경 사항을 확인합니다.', meta: '', x: 400, y: 140 },
+        { id: nextId++, title: '강력한 자동화', body: '반복 작업을 자동화해\n중요한 일에 집중하세요.', meta: 'West150', x: 220, y: 340 }
+      ];
+      render();
+    }
+  </script>
+</body>
+</html>

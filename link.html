@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>링크 모음 생성기 (이름 + 링크)</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+      background: #f5f5f5;
+      color: #222;
+      padding: 20px;
+      max-width: 920px;
+      margin: 0 auto;
+    }
+    h1 { font-size: 1.55rem; margin-bottom: 6px; }
+    .desc { color: #555; margin-bottom: 18px; font-size: 0.95rem; line-height: 1.5; }
+    label { display: block; font-weight: 600; margin-bottom: 6px; }
+    textarea {
+      width: 100%;
+      height: 380px;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 13.5px;
+      resize: vertical;
+      margin-bottom: 12px;
+      line-height: 1.45;
+    }
+    .options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 16px;
+      align-items: center;
+    }
+    .options label { font-weight: normal; display: flex; align-items: center; gap: 6px; }
+    button {
+      background: #1a73e8;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 15px;
+      cursor: pointer;
+      margin-right: 8px;
+    }
+    button:hover { background: #1557b0; }
+    button.secondary { background: #5f6368; }
+    button.secondary:hover { background: #3c4043; }
+    #result-area { margin-top: 24px; display: none; }
+    #result-area h2 { font-size: 1.15rem; margin-bottom: 10px; }
+    #preview {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-bottom: 14px;
+      max-height: 480px;
+      overflow-y: auto;
+    }
+    #html-code {
+      width: 100%;
+      height: 220px;
+      font-family: monospace;
+      font-size: 12.5px;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background: #fafafa;
+    }
+    .title-input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      font-size: 15px;
+    }
+    .domain {
+      color: #666;
+      font-size: 0.85em;
+      margin-left: 4px;
+    }
+  </style>
+</head>
+<body>
+  <h1>링크 모음 생성기 (이름 클릭 → 홈페이지 이동)</h1>
+  <p class="desc">
+    입력 형식 예시:<br>
+    <code>백악관 기자단 풀 리포트 | https://bnonews.com/whpool</code><br>
+    또는 <code>백악관 기자단 풀 리포트 - https://bnonews.com/whpool</code>
+  </p>
+
+  <label>페이지 제목</label>
+  <input type="text" id="pageTitle" class="title-input" value="각국 정부 공식 보도자료 + 속보 X 계정 모음">
+
+  <label>URL 목록</label>
+<textarea id="urls"># 미국 정부 · 백악관
+백악관 Releases | https://www.whitehouse.gov/releases/
+백악관 Briefings & Statements | https://www.whitehouse.gov/briefings-statements/
+백악관 기자단 풀 리포트 | https://bnonews.com/whpool
+WHCA (기자협회) | https://whca.press/
+국무부 보도자료 | https://www.state.gov/press-releases
+국방부 보도자료 | https://www.defense.gov/News/Releases/
+재무부 보도자료 | https://home.treasury.gov/news/press-releases
+법무부 보도자료 | https://www.justice.gov/news
+국토안보부 보도자료 | https://www.dhs.gov/news-releases
+상무부 보도자료 | https://www.commerce.gov/news
+
+# 속보 X 계정 - 백악관 · 미국 정치
+백악관 기자단 풀 | https://x.com/WHPressPool
+백악관 대변인 | https://x.com/PressSec
+백악관 공식 | https://x.com/WhiteHouse
+백악관 신속대응 | https://x.com/RapidResponse47
+대통령 공식 | https://x.com/POTUS
+Eric Daugherty | https://x.com/EricLDaugh
+
+# 속보 X 계정 - 주요 미국 매체
+폭스뉴스 | https://x.com/FoxNews
+폭스 정치 | https://x.com/foxnewspolitics
+CNN 속보 | https://x.com/cnnbrk
+CNN 정치 | https://x.com/CNNPolitics
+AP 통신 | https://x.com/AP
+로이터 | https://x.com/Reuters
+
+# 속보 X 계정 - 국제
+BBC 속보 | https://x.com/BBCBreaking
+Sky News 속보 | https://x.com/SkyNewsBreak
+알자지라 속보 | https://x.com/AJENews
+AFP 통신 | https://x.com/AFP
+
+# 일본
+일본 총리관저 | https://www.kantei.go.jp/
+일본 외무성 보도자료 | https://www.mofa.go.jp/press/release/index.html
+방위성 보도자료 | https://www.mod.go.jp/en/press-release
+재무성 | https://www.mof.go.jp/english/
+경제산업성 (METI) | https://www.meti.go.jp/english/press/
+
+# 유럽 주요국
+독일 연방정부 | https://www.bundesregierung.de/breg-en
+독일 외무부 | https://www.auswaertiges-amt.de/en/newsroom
+독일 국방부 | https://www.bmvg.de/en
+프랑스 엘리제궁 | https://www.elysee.fr/en/all-actualities
+프랑스 외교부 | https://www.diplomatie.gouv.fr/en/
+프랑스 국방부 | https://www.defense.gouv.fr/en
+영국 정부 뉴스 | https://www.gov.uk/search/news-and-communications
+영국 외교부 (FCDO) | https://www.gov.uk/government/organisations/foreign-commonwealth-development-office
+영국 국방부 | https://www.gov.uk/government/organisations/ministry-of-defence
+EU 집행위원회 | https://ec.europa.eu/commission/presscorner/home/en
+</textarea>
+
+  <div class="options">
+    <label><input type="checkbox" id="openNew" checked> 새 탭에서 열기</label>
+    <label><input type="checkbox" id="showNumber" checked> 번호 매기기</label>
+    <label><input type="checkbox" id="showDomain" checked> 도메인 표시</label>
+    <label><input type="checkbox" id="keepCategory" checked> 카테고리 제목 유지</label>
+  </div>
+
+  <button onclick="generate()">생성하기</button>
+  <button class="secondary" onclick="clearAll()">초기화</button>
+
+  <div id="result-area">
+    <h2>미리보기</h2>
+    <div id="preview"></div>
+
+    <h2>생성된 HTML 코드</h2>
+    <textarea id="html-code" readonly></textarea>
+    <br><br>
+    <button onclick="copyCode()">HTML 복사</button>
+  </div>
+
+  <script>
+    function generate() {
+      const raw = document.getElementById('urls').value.trim();
+      if (!raw) {
+        alert('내용을 입력해주세요.');
+        return;
+      }
+
+      const lines = raw.split('\n').map(l => l.trim()).filter(l => l);
+      const title = document.getElementById('pageTitle').value.trim() || '링크 모음';
+      const openNew = document.getElementById('openNew').checked;
+      const showNumber = document.getElementById('showNumber').checked;
+      const showDomain = document.getElementById('showDomain').checked;
+      const keepCategory = document.getElementById('keepCategory').checked;
+
+      let html = `<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${escapeHtml(title)}</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", sans-serif; max-width: 780px; margin: 40px auto; padding: 0 20px; line-height: 1.65; color: #222; }
+    h1 { font-size: 1.5rem; margin-bottom: 24px; border-bottom: 2px solid #1a73e8; padding-bottom: 8px; }
+    h2 { font-size: 1.15rem; margin: 28px 0 12px; color: #1a73e8; }
+    ul { padding-left: 22px; margin-bottom: 8px; }
+    li { margin-bottom: 10px; }
+    a { color: #1a73e8; text-decoration: none; font-weight: 500; }
+    a:hover { text-decoration: underline; }
+    .domain { color: #888; font-size: 0.84em; margin-left: 6px; font-weight: normal; }
+    .updated { font-size: 0.85rem; color: #666; margin-top: 30px; }
+  </style>
+</head>
+<body>
+  <h1>${escapeHtml(title)}</h1>
+`;
+
+      let preview = `<h3 style="margin-bottom:16px">${escapeHtml(title)}</h3>`;
+      let number = 1;
+      let inList = false;
+
+      lines.forEach((line) => {
+        if (line.startsWith('#')) {
+          if (inList) {
+            html += `  </ul>\n`;
+            preview += `</ul>`;
+            inList = false;
+          }
+          const cat = line.replace(/^#+\s*/, '');
+          if (keepCategory) {
+            html += `  <h2>${escapeHtml(cat)}</h2>\n  <ul>\n`;
+            preview += `<h4 style="margin:18px 0 8px;color:#1a73e8">${escapeHtml(cat)}</h4><ul style="padding-left:20px">`;
+            inList = true;
+          }
+        } else {
+          if (!inList) {
+            html += `  <ul>\n`;
+            preview += `<ul style="padding-left:20px">`;
+            inList = true;
+          }
+
+          let name = line;
+          let url = '';
+
+          // | 또는 - 로 분리
+          if (line.includes('|')) {
+            const parts = line.split('|');
+            name = parts[0].trim();
+            url = parts.slice(1).join('|').trim();
+          } else if (line.includes(' - http')) {
+            const idx = line.indexOf(' - http');
+            name = line.substring(0, idx).trim();
+            url = line.substring(idx + 3).trim();
+          } else if (line.startsWith('http')) {
+            url = line;
+            try {
+              name = new URL(line).hostname.replace('www.', '');
+            } catch(e) {
+              name = line;
+            }
+          }
+
+          const isUrl = url.startsWith('http://') || url.startsWith('https://');
+          const target = (openNew && isUrl) ? ' target="_blank" rel="noopener noreferrer"' : '';
+          const num = showNumber ? `${number}. ` : '';
+
+          let domainText = '';
+          if (showDomain && isUrl) {
+            try {
+              domainText = ` <span class="domain">(${new URL(url).hostname.replace('www.', '')})</span>`;
+            } catch(e) {}
+          }
+
+          if (isUrl) {
+            html += `    <li>${num}<a href="${escapeHtml(url)}"${target}>${escapeHtml(name)}</a>${domainText}</li>\n`;
+            preview += `<li style="margin-bottom:8px">${num}<a href="${escapeHtml(url)}" target="_blank" rel="noopener">${escapeHtml(name)}</a>${domainText}</li>`;
+          } else {
+            html += `    <li>${num}${escapeHtml(line)}</li>\n`;
+            preview += `<li style="margin-bottom:8px">${num}${escapeHtml(line)}</li>`;
+          }
+          number++;
+        }
+      });
+
+      if (inList) {
+        html += `  </ul>\n`;
+        preview += `</ul>`;
+      }
+
+      html += `  <p class="updated">최종 업데이트: ${new Date().toLocaleDateString('ko-KR')}</p>
+</body>
+</html>`;
+
+      document.getElementById('preview').innerHTML = preview;
+      document.getElementById('html-code').value = html;
+      document.getElementById('result-area').style.display = 'block';
+    }
+
+    function copyCode() {
+      const code = document.getElementById('html-code');
+      code.select();
+      document.execCommand('copy');
+      alert('HTML 코드가 복사되었습니다!');
+    }
+
+    function clearAll() {
+      if (confirm('입력된 내용을 모두 지울까요?')) {
+        document.getElementById('urls').value = '';
+        document.getElementById('pageTitle').value = '';
+        document.getElementById('result-area').style.display = 'none';
+      }
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>
