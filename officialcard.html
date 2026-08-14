@@ -659,6 +659,313 @@
       }
       .preview-area { padding: 24px 16px; }
     }
+    #card.layout-grid {
+  background-color: #fdfdfb;
+  background-image:
+    linear-gradient(rgba(26,54,93,0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(26,54,93,0.08) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+#card.layout-grid .card-brand-top { letter-spacing: 2px; }
+#card.layout-grid .card-divider { display: none; }
+#card.layout-grid .card-type {
+  background: none; color: var(--accent);
+  border: 1.5px solid var(--accent); border-radius: 4px;
+  padding: 3px 10px; display: inline-block;
+}
+#card.layout-grid .card-title {
+  background-image: linear-gradient(rgba(255, 224, 102, 0.55), rgba(255, 224, 102, 0.55));
+  background-repeat: no-repeat; background-size: 100% 46%; background-position: 0 70%;
+  display: inline; box-decoration-break: clone; -webkit-box-decoration-break: clone;
+}
+#card.layout-grid .key-item {
+  border: 1.5px dashed var(--accent); border-radius: 6px; padding: 12px 14px;
+}
+#card.layout-grid .card-points li { border-bottom: 1px dashed rgba(0,0,0,0.15); padding-left: 26px; position: relative; }
+#card.layout-grid .card-points li::before {
+  content: "☐"; position: absolute; left: 0; top: 7px; width: auto; height: auto;
+  background: none; font-size: 1.1em; color: var(--accent);
+}
+#card.layout-grid .card-quote { border-left-style: dashed; }
+#card.layout-terminal {
+  background: #0b0f0e; color: #d7ffe0;
+}
+#card.layout-terminal .card-inner { font-family: 'IBM Plex Sans KR', monospace; }
+#card.layout-terminal .card-brand-top { color: #6cf27a; }
+#card.layout-terminal .card-brand-main {
+  background: none; color: #6cf27a; border: 1px solid #6cf27a; box-shadow: none;
+}
+#card.layout-terminal .card-divider { background: #2a3a2e; opacity: 1; }
+#card.layout-terminal .card-type {
+  background: none; color: #6cf27a; border: 1px solid #2a3a2e;
+}
+#card.layout-terminal .card-title,
+#card.layout-terminal .card-summary { color: #eafff0; }
+#card.layout-terminal .key-value { color: #6cf27a; }
+#card.layout-terminal .key-label { color: #7fa88a; }
+#card.layout-terminal .card-points li {
+  border-bottom: 1px dashed #22302a; padding-left: 22px; position: relative; color: #d7ffe0;
+}
+#card.layout-terminal .card-points li::before {
+  content: "> "; position: absolute; left: 0; top: 8px; width: auto; height: auto;
+  background: none; color: #6cf27a; font-weight: 700;
+}
+#card.layout-terminal .card-quote { border-left-color: #6cf27a; }
+#card.layout-terminal .card-quote p, 
+#card.layout-terminal .card-quote cite { color: #d7ffe0; }
+#card.layout-terminal .card-footer { border-top-color: #22302a; color: #7fa88a; }
+#card.layout-terminal .card-number { color: #eafff0; }
+#card.layout-newspaper {
+  background: #f8f6f0;
+  font-family: 'Nanum Myeongjo', 'Noto Serif KR', serif;
+}
+#card.layout-newspaper .card-brand-top { display: none; }
+#card.layout-newspaper .card-brand-main {
+  font-size: 22px; font-weight: 900; letter-spacing: 3px; text-align: center;
+  width: 100%; border-bottom: 4px double #1a1a1a; padding-bottom: 10px; color: #1a1a1a;
+}
+#card.layout-newspaper .card-divider { display: none; }
+#card.layout-newspaper .card-type {
+  border-top: 1px solid #1a1a1a; border-bottom: 1px solid #1a1a1a;
+  padding: 4px 0; letter-spacing: 3px; color: #1a1a1a;
+}
+#card.layout-newspaper .card-title {
+  font-weight: 900; letter-spacing: -1px;
+}
+#card.layout-newspaper .card-summary {
+  border-top: 1px solid #1a1a1a; padding-top: 14px;
+  column-count: 1; font-style: normal;
+}
+#card.layout-newspaper .key-item { border-right: 1px solid #999; padding-right: 20px; }
+#card.layout-newspaper .key-value { color: #1a1a1a; font-family: 'Nanum Myeongjo', serif; }
+#card.layout-newspaper .card-points li { border-bottom: 1px solid #ccc; }
+#card.layout-newspaper .card-points li::before { border-radius: 0; background: #1a1a1a; }
+#card.layout-newspaper .card-quote { border-left-color: #1a1a1a; }
+#card.layout-newspaper .card-quote p { font-family: 'Nanum Myeongjo', serif; }
+#card.layout-newspaper .card-footer { border-top: 2px solid #1a1a1a; }
+#card.layout-postcard {
+  background-color: #fbf8f2;
+  background-image: repeating-linear-gradient(0deg, transparent, transparent 27px, rgba(26,54,93,0.08) 28px);
+  position: relative;
+}
+#card.layout-postcard::before {
+  content: "";
+  position: absolute; inset: 18px;
+  border: 3px dashed rgba(0,0,0,0.15);
+  border-radius: 4px;
+  pointer-events: none; z-index: 3;
+}
+#card.layout-postcard .card-inner { padding: 56px 60px; }
+#card.layout-postcard .card-brand-main {
+  border-radius: 50%; width: 74px; height: 74px;
+  border: 2px solid var(--accent); display: flex; align-items: center; justify-content: center;
+  text-align: center; font-size: 10px; line-height: 1.3; transform: rotate(-8deg);
+}
+#card.layout-postcard .card-title { font-family: 'Gaegu', cursive; font-weight: 700; }
+#card.layout-postcard .card-type {
+  border: 1.5px solid var(--accent); border-radius: 20px; padding: 4px 14px;
+}
+#card.layout-postcard .card-quote { border-left: none; border-top: 1px dashed var(--accent); padding: 14px 0 0; margin-top: 14px; }
+#card.layout-folder {
+  background: #efe9dd;
+  position: relative;
+}
+#card.layout-folder::before {
+  content: "WEST150DAILY";
+  position: absolute; top: 46%; left: 50%;
+  transform: translate(-50%,-50%) rotate(-28deg);
+  font-size: 40px; font-weight: 900; letter-spacing: 8px;
+  color: rgba(0,0,0,0.05); z-index: 0; white-space: nowrap;
+}
+#card.layout-folder .card-inner { position: relative; z-index: 1; }
+#card.layout-folder .card-brand {
+  background: var(--accent); color: #fff;
+  padding: 8px 16px; border-radius: 4px 4px 0 0;
+  flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 0;
+}
+#card.layout-folder .card-brand-top, #card.layout-folder .card-brand-main { color: #fff; }
+#card.layout-folder .card-divider { display: none; }
+#card.layout-folder .card-type {
+  background: #fff; border: 1px solid #ccc; padding: 6px 14px;
+  margin-top: 18px; box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+}
+#card.layout-folder .card-points li { border-bottom: 1px solid rgba(0,0,0,0.1); }
+#card.layout-blueprint {
+  background-color: #0b3d63;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.09) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.09) 1px, transparent 1px),
+    linear-gradient(rgba(255,255,255,0.16) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.16) 1px, transparent 1px);
+  background-size: 24px 24px, 24px 24px, 120px 120px, 120px 120px;
+  color: #dff1ff;
+}
+#card.layout-blueprint .card-brand-top, 
+#card.layout-blueprint .card-brand-main { color: #9fd6ff; }
+#card.layout-blueprint .card-divider { background: #9fd6ff; opacity: 0.4; }
+#card.layout-blueprint .card-type { color: #9fd6ff; border: 1px solid #9fd6ff; padding: 3px 10px; }
+#card.layout-blueprint .card-title, 
+#card.layout-blueprint .card-summary { color: #eaf6ff; }
+#card.layout-blueprint .key-item { border: 1px dashed #9fd6ff; padding: 10px 12px; }
+#card.layout-blueprint .key-value { color: #ffffff; }
+#card.layout-blueprint .key-label { color: #9fd6ff; }
+#card.layout-blueprint .card-points li { border-bottom: 1px dashed rgba(159,214,255,0.3); color: #dff1ff; }
+#card.layout-blueprint .card-points li::before { background: #9fd6ff; }
+#card.layout-blueprint .card-quote { border-left-color: #9fd6ff; }
+#card.layout-blueprint .card-quote p, 
+#card.layout-blueprint .card-quote cite { color: #dff1ff; }
+#card.layout-blueprint .card-footer { border-top-color: rgba(159,214,255,0.3); color: #9fd6ff; }
+#card.layout-blueprint .card-number { color: #eaf6ff; }
+#card.layout-pastel {
+  background: linear-gradient(135deg, #ffe1ec 0%, #e1f0ff 50%, #fff6d6 100%);
+}
+#card.layout-pastel .card-brand-main {
+  background: #fff; color: var(--accent); border-radius: 20px;
+  padding: 5px 14px; box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+}
+#card.layout-pastel .card-divider { display: none; }
+#card.layout-pastel .card-type {
+  background: #fff; border-radius: 20px; padding: 6px 14px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+}
+#card.layout-pastel .card-title { font-weight: 800; }
+#card.layout-pastel .key-item {
+  background: #fff; border-radius: 18px; padding: 16px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+}
+#card.layout-pastel .card-points { background: #fff; border-radius: 20px; padding: 8px 20px; box-shadow: 0 6px 16px rgba(0,0,0,0.06); }
+#card.layout-pastel .card-points li { border-bottom: 1px solid rgba(0,0,0,0.05); }
+#card.layout-pastel .card-points li::before { box-shadow: 0 0 0 4px rgba(255,255,255,0.6); }
+#card.layout-pastel .card-quote { background: #fff; border-left: none; border-radius: 18px; padding: 18px 22px; box-shadow: 0 6px 16px rgba(0,0,0,0.06); }
+#card.layout-certificate {
+  background: #fdfaf0;
+  border: 10px solid #c9a44c;
+  outline: 2px solid #c9a44c;
+  outline-offset: -18px;
+}
+#card.layout-certificate .card-inner { align-items: center; text-align: center; }
+#card.layout-certificate .card-brand { align-items: center; }
+#card.layout-certificate .card-brand-main {
+  color: #a5822f; letter-spacing: 3px; font-family: 'Nanum Myeongjo', serif;
+}
+#card.layout-certificate .card-divider { background: #c9a44c; opacity: 0.6; width: 120px; margin: 0 auto 24px; height: 2px; }
+#card.layout-certificate .card-type {
+  color: #a5822f; border: 1px solid #c9a44c; border-radius: 20px; padding: 5px 16px;
+}
+#card.layout-certificate .card-title {
+  font-family: 'Nanum Myeongjo', serif; font-weight: 700;
+}
+#card.layout-certificate .card-summary { text-align: center; }
+#card.layout-certificate .key-numbers { justify-content: center; }
+#card.layout-certificate .card-points ul { text-align: left; display: inline-block; }
+#card.layout-certificate .card-quote {
+  border-left: none; border-top: 1px solid #c9a44c; border-bottom: 1px solid #c9a44c;
+  padding: 16px 0; text-align: center;
+}
+#card.layout-certificate .card-footer { justify-content: center; text-align: center; flex-direction: column; gap: 4px; border-top-color: #c9a44c; }
+#card.layout-magazine .card-inner { padding: 60px 64px 48px; }
+#card.layout-magazine .card-brand-main { font-size: 13px; letter-spacing: 3px; }
+#card.layout-magazine .card-divider { display: none; }
+#card.layout-magazine .card-type {
+  font-size: 11px; letter-spacing: 3px; border-bottom: 2px solid var(--accent);
+  padding-bottom: 6px; display: inline-block;
+}
+#card.layout-magazine .card-title {
+  font-size: 56px; font-weight: 900; letter-spacing: -2px; line-height: 1.05;
+}
+#card.layout-magazine .card-summary {
+  font-family: 'Nanum Myeongjo', serif; font-style: italic; font-size: 19px;
+  border-left: 2px solid var(--accent); padding-left: 16px;
+}
+#card.layout-magazine .key-numbers { gap: 40px; }
+#card.layout-magazine .key-value { font-size: 44px; letter-spacing: -2px; }
+#card.layout-magazine .card-points li { border-bottom: none; padding: 10px 0; }
+#card.layout-magazine .card-points li::before { display: none; }
+#card.layout-alert {
+  background: repeating-linear-gradient(-45deg, #ffcc00, #ffcc00 22px, #1a1a1a 22px, #1a1a1a 44px);
+  position: relative;
+}
+#card.layout-alert .card-inner {
+  margin: 34px; background: #fff; border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  padding: 48px 52px;
+}
+#card.layout-alert .card-brand-main {
+  background: #d21f1f; color: #fff; padding: 4px 12px; border-radius: 4px;
+  display: inline-block; letter-spacing: 2px;
+}
+#card.layout-alert .card-type {
+  background: #d21f1f; color: #fff; padding: 6px 14px; border-radius: 4px;
+}
+#card.layout-alert .card-title { color: #d21f1f; font-weight: 900; }
+#card.layout-alert .key-value { color: #d21f1f; }
+#card.layout-alert .card-points li::before { background: #d21f1f; border-radius: 2px; }
+#card.layout-alert .card-quote { border-left-color: #d21f1f; }
+#card.layout-sticky {
+  background-color: #f2ede4;
+  background-image: radial-gradient(rgba(0,0,0,0.06) 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+#card.layout-sticky .key-numbers { gap: 20px; }
+#card.layout-sticky .key-item {
+  background: #fff6b8; border-radius: 2px;
+  box-shadow: 3px 4px 10px rgba(0,0,0,0.15);
+  padding: 16px 16px 14px; transform: rotate(-2deg);
+}
+#card.layout-sticky .key-item:nth-child(2) { background: #ffd6e7; transform: rotate(1.5deg); }
+#card.layout-sticky .key-item:nth-child(3) { background: #c9f2d8; transform: rotate(-1deg); }
+#card.layout-sticky .key-item:nth-child(4) { background: #cfe4ff; transform: rotate(2deg); }
+#card.layout-sticky .card-points { background: none; border: none; box-shadow: none; padding: 0; }
+#card.layout-sticky .card-points li {
+  background: #fffbe0; border: none; border-radius: 2px;
+  box-shadow: 2px 3px 8px rgba(0,0,0,0.12);
+  padding: 12px 14px; margin-bottom: 10px; list-style: none;
+}
+#card.layout-sticky .card-points li:nth-child(odd) { transform: rotate(-1deg); }
+#card.layout-sticky .card-points li:nth-child(even) { background: #ffe9f2; transform: rotate(1deg); }
+#card.layout-sticky .card-points li::before { display: none; }
+#card.layout-sticky .card-quote {
+  background: #fff; border-left: none;
+  box-shadow: 2px 3px 10px rgba(0,0,0,0.12); padding: 18px 20px; transform: rotate(-0.6deg);
+}
+#card.layout-receipt {
+  background: #fdfdf7;
+}
+#card.layout-receipt .card-inner {
+  font-family: 'IBM Plex Sans KR', monospace;
+  max-width: 620px; margin: 0 auto;
+  border-left: 1px dashed #ccc; border-right: 1px dashed #ccc;
+  padding-left: 40px; padding-right: 40px;
+}
+#card.layout-receipt .card-brand { align-items: center; text-align: center; }
+#card.layout-receipt .card-title { text-align: center; }
+#card.layout-receipt .card-summary { text-align: center; }
+#card.layout-receipt .card-divider {
+  background: none; border-top: 1px dashed #999; height: 0; opacity: 1;
+}
+#card.layout-receipt .key-numbers { justify-content: space-between; }
+#card.layout-receipt .key-item { text-align: center; flex: 1; }
+#card.layout-receipt .card-points li {
+  border-bottom: 1px dotted #ccc; display: flex; justify-content: space-between;
+}
+#card.layout-receipt .card-points li::before { display: none; }
+#card.layout-receipt .card-footer {
+  border-top: 1px dashed #999; justify-content: center; text-align: center; flex-direction: column; gap: 4px;
+}
+#card.layout-timeline .card-points { background: none; border: none; box-shadow: none; padding: 0 0 0 8px; }
+#card.layout-timeline .card-points ul { position: relative; padding-left: 24px; }
+#card.layout-timeline .card-points ul::before {
+  content: ""; position: absolute; left: 5px; top: 6px; bottom: 6px;
+  width: 2px; background: var(--accent); opacity: 0.35;
+}
+#card.layout-timeline .card-points li {
+  border-bottom: none; padding: 10px 0 10px 20px; position: relative;
+}
+#card.layout-timeline .card-points li::before {
+  content: ""; position: absolute; left: -19px; top: 15px;
+  width: 12px; height: 12px; border-radius: 50%;
+  background: #fff; border: 3px solid var(--accent); margin: 0;
+}
   </style>
 </head>
 <body>
@@ -688,11 +995,23 @@
       </div>
 
       <div class="section">
-        <div class="section-title">디자인 레이아웃</div>
         <div class="btn-group" id="layoutGroup">
-          <button class="btn active" data-layout="official">공식 카드</button>
-          <button class="btn" data-layout="insta">인스타 카드뉴스</button>
-        </div>
+         <button class="btn active" data-layout="official">공식 카드</button>
+         <button class="btn" data-layout="insta">인스타 카드뉴스</button>
+         <button class="btn" data-layout="grid">모눈노트</button>
+         <button class="btn" data-layout="terminal">터미널</button>
+         <button class="btn" data-layout="sticky">스티키노트</button>
+         <button class="btn" data-layout="receipt">영수증</button>
+         <button class="btn" data-layout="timeline">타임라인</button>
+         <button class="btn" data-layout="newspaper">신문1면</button>
+         <button class="btn" data-layout="postcard">엽서</button>
+         <button class="btn" data-layout="folder">서류철</button>
+         <button class="btn" data-layout="blueprint">블루프린트</button>
+         <button class="btn" data-layout="pastel">파스텔팝</button>
+         <button class="btn" data-layout="certificate">증명서</button>
+         <button class="btn" data-layout="magazine">매거진</button>
+         <button class="btn" data-layout="alert">경보배너</button>
+      </div>
         <p class="hint">인스타 카드뉴스: 클린 오피셜 스타일 · 세로(1080×1350) 권장 · 수치 카드형 · 모바일 가독성 강화</p>
       </div>
 
@@ -1209,21 +1528,23 @@
     });
 
     var currentLayout = 'official';
-    function setLayout(mode, autoSize) {
-      currentLayout = mode === 'insta' ? 'insta' : 'official';
-      card.classList.toggle('layout-insta', currentLayout === 'insta');
-      document.querySelectorAll('#layoutGroup .btn').forEach(function(b) {
-        b.classList.toggle('active', b.getAttribute('data-layout') === currentLayout);
-      });
-      if (autoSize && currentLayout === 'insta') {
-        // 세로 1080x1350 권장 — size 버튼만 클릭 시뮬레이션, 저장 함수는 미사용
-        var vertBtn = document.querySelector('#sizeGroup .btn[data-size="1080x1350"]');
-        if (vertBtn && !vertBtn.classList.contains('active')) {
-          vertBtn.click();
-        }
-      }
-      updateCard();
+var ALL_LAYOUTS = ['insta', 'grid', 'terminal', 'sticky', 'receipt', 'timeline', 'newspaper', 'postcard', 'folder', 'blueprint', 'pastel', 'certificate', 'magazine', 'alert'];
+function setLayout(mode, autoSize) {
+  currentLayout = ALL_LAYOUTS.indexOf(mode) !== -1 ? mode : 'official';
+  ALL_LAYOUTS.forEach(function(l) {
+    card.classList.toggle('layout-' + l, currentLayout === l);
+  });
+  document.querySelectorAll('#layoutGroup .btn').forEach(function(b) {
+    b.classList.toggle('active', b.getAttribute('data-layout') === currentLayout);
+  });
+  if (autoSize && currentLayout === 'insta') {
+    var vertBtn = document.querySelector('#sizeGroup .btn[data-size="1080x1350"]');
+    if (vertBtn && !vertBtn.classList.contains('active')) {
+      vertBtn.click();
     }
+  }
+  updateCard();
+}
     document.querySelectorAll('#layoutGroup .btn').forEach(function(btn) {
       btn.addEventListener('click', function() {
         setLayout(this.getAttribute('data-layout'), this.getAttribute('data-layout') === 'insta');
