@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>West150 Card Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Nanum+Gothic:wght@400;700;800&family=Nanum+Square:wght@400;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    :root {
+      --red: #c23a3a;
+      --navy: #1a2a4a;
+      --black: #111;
+      --border: #e5e5e5;
+      --bg: #f0f0f0;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+    html, body { height:100%; font-family:'Pretendard','Noto Sans KR',-apple-system,system-ui,sans-serif; background:var(--bg); color:var(--black); }
+    .app { display:flex; flex-direction:column; height:100%; }
+
+    /* Titlebar */
+    .titlebar {
+      height:48px; background:#fff; border-bottom:1px solid var(--border);
+      display:flex; align-items:center; padding:0 12px; gap:8px; flex-shrink:0;
+    }
+    .titlebar-title { font-size:14px; font-weight:700; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .titlebar-title span { color:var(--red); }
+    .tool-btn {
+      height:32px; padding:0 11px; border:1px solid transparent; border-radius:6px;
+      background:transparent; font-size:12.5px; font-weight:500; color:#555;
+      cursor:pointer; font-family:inherit; display:inline-flex; align-items:center; gap:4px;
+    }
+    .tool-btn:hover { background:#f0f0f0; }
+    .tool-btn.primary { background:var(--red); color:#fff; }
+    .tool-btn.primary:hover { background:#a83232; }
+    .tool-btn.ghost { border-color:var(--border); }
+
+    /* Main */
+    .main { flex:1; display:grid; grid-template-columns:300px 1fr; overflow:hidden; }
+    @media (max-width:900px) {
+      .main { grid-template-columns:1fr; }
+      .sidebar { max-height:42vh; overflow-y:auto; border-right:none; border-bottom:1px solid var(--border); }
+    }
+
+    .sidebar { background:#fff; border-right:1px solid var(--border); overflow-y:auto; padding:14px; }
+    .section { margin-bottom:18px; }
+    .section-title { font-size:10px; font-weight:700; color:#999; letter-spacing:0.6px; margin-bottom:8px; text-transform:uppercase; }
+
+    /* Category chips */
+    .chip-grid { display:flex; flex-wrap:wrap; gap:6px; }
+    .chip {
+      padding:6px 11px; border-radius:20px; border:1.5px solid #e0e0e0;
+      font-size:12px; font-weight:600; cursor:pointer; background:#fafafa; transition:all .12s;
+    }
+    .chip:hover { border-color:#ccc; }
+    .chip.active { border-color:var(--red); background:#fff5f5; color:var(--red); }
+
+    /* Size chips */
+    .size-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+    .size-chip {
+      padding:8px 6px; border:1.5px solid #e0e0e0; border-radius:8px;
+      text-align:center; cursor:pointer; background:#fafafa; transition:all .12s;
+    }
+    .size-chip:hover { border-color:#ccc; }
+    .size-chip.active { border-color:var(--red); background:#fff5f5; }
+    .size-chip .sname { font-size:11px; font-weight:700; }
+    .size-chip .sdim { font-size:10px; color:#999; margin-top:1px; }
+
+    .form-group { margin-bottom:11px; }
+    .form-group label { display:block; font-size:11px; font-weight:600; color:#666; margin-bottom:4px; }
+    .form-group input, .form-group textarea, .form-group select {
+      width:100%; padding:8px 10px; border:1px solid #e0e0e0; border-radius:6px;
+      font-size:12.5px; font-family:inherit; background:#fafafa; resize:vertical;
+    }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+      outline:none; border-color:var(--red); background:#fff;
+    }
+    .form-group textarea { min-height:60px; }
+    .stats-row { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+
+    .size-row { display:flex; align-items:center; gap:6px; margin-bottom:6px; }
+    .size-row label { font-size:11px; min-width:50px; color:#666; }
+    .size-row input[type=range] { flex:1; accent-color:var(--red); }
+    .size-row span { font-size:11px; color:#888; min-width:26px; text-align:right; }
+
+    /* Pages bar */
+    .pages-bar {
+      display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-bottom:10px;
+    }
+    .page-tab {
+      padding:5px 12px; border-radius:6px; border:1.5px solid #e0e0e0;
+      font-size:12px; font-weight:600; cursor:pointer; background:#fafafa;
+    }
+    .page-tab.active { border-color:var(--red); background:#fff5f5; color:var(--red); }
+    .page-add {
+      padding:5px 10px; border-radius:6px; border:1.5px dashed #ccc;
+      font-size:12px; font-weight:600; cursor:pointer; color:#888; background:transparent;
+    }
+    .page-add:hover { border-color:var(--red); color:var(--red); }
+
+    /* Preview */
+    .preview-area {
+      overflow:auto; padding:16px; display:flex; justify-content:center;
+      align-items:flex-start; background:#e4e4e4;
+    }
+    .preview-wrap {
+      position:sticky; top:12px;
+    }
+    .preview-label { font-size:11px; color:#999; margin-bottom:8px; text-align:center; }
+    .preview-frame {
+      background:#fff; border-radius:10px; overflow:hidden;
+      box-shadow:0 6px 28px rgba(0,0,0,0.12);
+    }
+
+    /* Card common */
+    #card {
+      width:100%; height:100%;
+      font-family:'Pretendard','Noto Sans KR',sans-serif;
+      overflow:hidden; position:relative;
+      display:flex; flex-direction:column;
+      background:#ffffff;
+    }
+    .card-top {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:10px 16px; font-size:9px; font-weight:600; letter-spacing:0.3px;
+      flex-shrink:0;
+    }
+    .card-badge {
+      display:inline-block; padding:3px 10px; border-radius:16px;
+      font-size:10px; font-weight:700; color:#ffffff;
+    }
+    .card-body {
+      padding:18px 16px 20px;
+      flex:1;
+      display:flex;
+      flex-direction:column;
+    }
+    .card-title { font-weight:900; line-height:1.3; letter-spacing:-0.6px; margin-bottom:10px; color:#111111; }
+    .card-summary { line-height:1.6; color:#444444; margin-bottom:14px; }
+    /* NOTE: was `display:grid` — html2canvas 1.4.1 does not reliably support CSS
+       Grid, so the exported PNG collapsed/overlapped this block even though the
+       live browser preview (real CSS engine) rendered it correctly as 2 columns.
+       Rebuilt with flexbox (and explicit margins instead of `gap`, which is also
+       spotty in html2canvas) so the export matches the on-screen preview. */
+    .stats { display:flex; flex-wrap:wrap; margin:0 -4px 14px; }
+    .stat { width:calc(50% - 8px); margin:4px; border-radius:8px; padding:12px 10px; text-align:center; box-sizing:border-box; }
+    .stat-num { font-weight:900; line-height:1.1; }
+    .stat-label { font-size:10px; color:#777777; margin-top:3px; line-height:1.3; }
+    .bullets { list-style:none; }
+    .bullets li {
+      line-height:1.5; padding:6px 0; border-bottom:1px solid #f0f0f0;
+      padding-left:12px; position:relative; font-size:12px; color:#333333;
+    }
+    .bullets li::before { content:'•'; position:absolute; left:0; font-weight:700; }
+
+    /* Style variants */
+    .s-magazine .card-top { background:#f7f7f7; color:#888888; }
+    .s-magazine .card-badge { background:#1a2a4a; }
+    .s-magazine .stat { background:#f5f5f5; }
+    .s-magazine .stat-num { color:#1a2a4a; }
+    .s-magazine .bullets li::before { color:#1a2a4a; }
+
+    .s-dark {
+      background:#121218 !important;
+      color:#ffffff !important;
+    }
+    .s-dark .card-top {
+      background:#1c1c24 !important;
+      color:#999999 !important;
+      border-bottom:1px solid #2a2a35;
+    }
+    .s-dark .card-badge { background:#c23a3a !important; }
+    .s-dark .card-title { color:#ffffff !important; }
+    .s-dark .card-summary { color:#b0b0be !important; }
+    .s-dark .stat {
+      background:#1e1e28 !important;
+      border:1px solid #333340 !important;
+    }
+    .s-dark .stat-num { color:#ffffff !important; }
+    .s-dark .stat-label { color:#999999 !important; }
+    .s-dark .bullets li {
+      color:#c8c8d4 !important;
+      border-bottom-color:#2a2a35 !important;
+    }
+    .s-dark .bullets li::before { color:#c23a3a !important; }
+    .s-dark .card-source {
+      border-top-color:#2a2a35 !important;
+      color:#888888 !important;
+    }
+    .s-dark .page-indicator { color:#666666 !important; }
+
+    .s-minimal .card-top { background:#fff; border-bottom:1px solid #eee; color:#aaa; }
+    .s-minimal .card-badge { background:#333; }
+    .s-minimal .card-title { text-align:center; }
+    .s-minimal .card-summary { display:none; }
+    .s-minimal .stat { border:1.5px solid #e8e8e8; }
+    .s-minimal .stat-num { color:var(--black); }
+    .s-minimal .bullets { background:#f9f9f9; border-radius:8px; padding:10px 12px; }
+    .s-minimal .bullets li { border:none; padding:4px 0 4px 12px; }
+    .s-minimal .bullets li::before { content:'–'; color:#999; }
+
+    .s-roadmap .card-top { background:#f0f4f8; color:#668; }
+    .s-roadmap .card-badge { background:#2a5a8a; }
+    .s-roadmap .stats { display:none; }
+    .roadmap { display:flex; flex-direction:column; gap:0; }
+    .step { display:flex; gap:12px; padding-bottom:12px; position:relative; }
+    .step:last-child { padding-bottom:0; }
+    .step-num {
+      width:24px; height:24px; border-radius:50%; background:#2a5a8a; color:#fff;
+      font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center;
+      flex-shrink:0; z-index:1;
+    }
+    .step:not(:last-child)::after {
+      content:''; position:absolute; left:11px; top:24px; bottom:0; width:2px; background:#d0dce8;
+    }
+    .step-text { font-size:12.5px; line-height:1.45; color:#333; padding-top:2px; }
+
+    .s-quote .card-top { background:#fafafa; color:#999; }
+    .s-quote .card-badge { background:#444; }
+    .s-quote .card-body { display:flex; flex-direction:column; justify-content:center; min-height:60%; }
+    .s-quote .quote-mark { font-size:48px; color:#ddd; line-height:1; margin-bottom:4px; }
+    .s-quote .card-title { font-size:20px; font-weight:700; line-height:1.45; text-align:center; }
+    .s-quote .card-summary { text-align:center; color:#888; font-size:12px; }
+    .s-quote .stats, .s-quote .bullets { display:none; }
+
+    .s-brief .card-top { background:var(--navy); color:rgba(255,255,255,0.7); }
+    .s-brief .card-badge { background:rgba(255,255,255,0.2); }
+    .s-brief .card-title { color:var(--navy); }
+    .s-brief .stat { background:#f0f4f8; }
+    .s-brief .stat-num { color:var(--navy); }
+    .s-brief .bullets li::before { color:var(--navy); }
+
+    .page-indicator {
+      position:absolute; bottom:10px; right:14px;
+      font-size:10px; color:#aaa; font-weight:600;
+    }
+    .card-source {
+      margin-top:14px;
+      padding-top:10px;
+      border-top:1px solid #eee;
+      font-size:11px;
+      color:#999;
+      font-weight:500;
+    }
+    .s-dark .card-source {
+      border-top-color: rgba(255,255,255,0.08);
+      color:#777;
+    }
+
+    /* Overlay */
+    .img-overlay {
+      position:fixed; inset:0; background:rgba(0,0,0,0.92); z-index:500;
+      display:none; flex-direction:column; align-items:center; justify-content:center; padding:20px;
+    }
+    .img-overlay.show { display:flex; }
+    .img-overlay img { max-width:100%; max-height:62vh; border-radius:10px; box-shadow:0 8px 40px rgba(0,0,0,0.5); }
+    .img-overlay .hint { color:#fff; font-size:14px; margin-top:16px; text-align:center; line-height:1.55; }
+    .img-overlay .btn-row { display:flex; gap:10px; margin-top:16px; flex-wrap:wrap; justify-content:center; }
+    .img-overlay .close-btn,
+    .img-overlay .share-btn {
+      background:#fff; color:#111; border:none; padding:12px 22px;
+      border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; font-family:inherit;
+    }
+    .img-overlay .share-btn { background:var(--red); color:#fff; }
+    .toast {
+      position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(60px);
+      background:#222; color:#fff; padding:10px 18px; border-radius:22px; font-size:13px;
+      font-weight:500; opacity:0; transition:all .28s; z-index:600; pointer-events:none;
+    }
+    .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+<div class="app">
+  <div class="titlebar">
+    <div class="titlebar-title"><span>West150</span> Card Studio</div>
+    <button class="tool-btn ghost" onclick="fillSample()">자동채우기</button>
+    <button class="tool-btn ghost" onclick="autoSplitPages()">자동 페이지 나누기</button>
+    <button class="tool-btn primary" onclick="saveImage()">저장</button>
+  </div>
+
+  <div class="main">
+    <div class="sidebar">
+      <!-- Pages -->
+      <div class="section">
+        <div class="section-title">페이지</div>
+        <div class="pages-bar" id="pagesBar"></div>
+      </div>
+
+      <!-- Category -->
+      <div class="section">
+        <div class="section-title">카테고리</div>
+        <div class="chip-grid" id="catGrid"></div>
+      </div>
+
+      <!-- Size -->
+      <div class="section">
+        <div class="section-title">SNS 크기</div>
+        <div class="size-grid" id="sizeGrid"></div>
+      </div>
+
+      <!-- Style -->
+      <div class="section">
+        <div class="section-title">디자인 스타일</div>
+        <div class="chip-grid" id="styleGrid"></div>
+      </div>
+
+      <!-- Content -->
+      <div class="section">
+        <div class="section-title">내용</div>
+        <div class="form-group">
+          <label>제목</label>
+          <input type="text" id="inputTitle" placeholder="제목">
+        </div>
+        <div class="form-group" id="summaryGroup">
+          <label>요약</label>
+          <textarea id="inputSummary" placeholder="핵심 요약"></textarea>
+        </div>
+        <div class="form-group" id="statsGroup">
+          <label>숫자 (최대 4)</label>
+          <div class="stats-row"><input id="stat1n" placeholder="숫자1"><input id="stat1l" placeholder="설명1"></div>
+          <div class="stats-row" style="margin-top:5px"><input id="stat2n" placeholder="숫자2"><input id="stat2l" placeholder="설명2"></div>
+          <div class="stats-row" style="margin-top:5px"><input id="stat3n" placeholder="숫자3"><input id="stat3l" placeholder="설명3"></div>
+          <div class="stats-row" style="margin-top:5px"><input id="stat4n" placeholder="숫자4"><input id="stat4l" placeholder="설명4"></div>
+        </div>
+        <div class="form-group" id="bulletsGroup">
+          <label>포인트 (한 줄씩)</label>
+          <textarea id="inputBullets" placeholder="포인트1&#10;포인트2" style="min-height:80px"></textarea>
+        </div>
+        <div class="form-group" id="stepsGroup" style="display:none">
+          <label>단계 (한 줄씩)</label>
+          <textarea id="inputSteps" placeholder="1단계&#10;2단계" style="min-height:80px"></textarea>
+        </div>
+        <div class="form-group">
+          <label>출처 (선택)</label>
+          <input type="text" id="inputSource" placeholder="예: White House · 2026.08.14">
+        </div>
+      </div>
+
+      <!-- Font sizes -->
+      <div class="section">
+        <div class="section-title">글꼴 크기</div>
+        <div class="size-row"><label>제목</label><input type="range" id="sizeTitle" min="16" max="34" value="22"><span id="sizeTitleVal">22</span></div>
+        <div class="size-row"><label>본문</label><input type="range" id="sizeBody" min="11" max="17" value="13"><span id="sizeBodyVal">13</span></div>
+        <div class="size-row"><label>숫자</label><input type="range" id="sizeStat" min="20" max="38" value="26"><span id="sizeStatVal">26</span></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">폰트</div>
+        <div class="form-group">
+          <select id="fontSelect">
+            <option value="'Pretendard','Noto Sans KR',sans-serif">Pretendard</option>
+            <option value="'Noto Sans KR',sans-serif">Noto Sans KR</option>
+            <option value="'Nanum Gothic',sans-serif">나눔고딕</option>
+            <option value="'Nanum Square',sans-serif">나눔스퀘어</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="preview-area">
+      <div class="preview-wrap">
+        <div class="preview-label" id="previewLabel">미리보기</div>
+        <div class="preview-frame" id="previewFrame">
+          <div id="card"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="img-overlay" id="imgOverlay">
+  <img id="previewImg" alt="card">
+  <div class="hint" id="overlayHint">
+    이미지를 <strong>길게 눌러</strong><br>「사진에 추가」를 선택하세요
+  </div>
+  <div class="btn-row">
+    <button class="share-btn" id="shareBtn" style="display:none;" onclick="shareFromOverlay()">공유하기 / 사진 저장</button>
+    <button class="close-btn" onclick="closeOverlay()">닫기</button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ========== Config ==========
+const CATEGORIES = [
+  { id:'fact', name:'팩트시트' },
+  { id:'brief', name:'브리핑' },
+  { id:'quote', name:'인용' },
+  { id:'numbers', name:'숫자강조' },
+  { id:'roadmap', name:'로드맵' },
+  { id:'news', name:'뉴스요약' },
+  { id:'policy', name:'정책요약' },
+];
+
+const SIZES = [
+  { id:'ig_square', name:'인스타 정사각', w:1080, h:1080, ratio:'1:1' },
+  { id:'ig_portrait', name:'인스타 세로', w:1080, h:1350, ratio:'4:5' },
+  { id:'ig_story', name:'인스타 스토리', w:1080, h:1920, ratio:'9:16' },
+  { id:'twitter', name:'X / 트위터', w:1200, h:675, ratio:'16:9' },
+  { id:'card', name:'카드 (기본)', w:800, h:1000, ratio:'4:5' },
+  { id:'wide', name:'와이드', w:1200, h:630, ratio:'1.91:1' },
+];
+
+const STYLES = [
+  { id:'magazine', name:'매거진' },
+  { id:'dark', name:'다크 임팩트' },
+  { id:'minimal', name:'미니멀' },
+  { id:'roadmap', name:'로드맵' },
+  { id:'quote', name:'인용' },
+  { id:'brief', name:'브리핑' },
+];
+
+// ========== State ==========
+let pages = [{ id:1, title:'', summary:'', bullets:'', steps:'', source:'', stats:[{},{},{},{}] }];
+let currentPage = 0;
+let currentCat = 'fact';
+let currentSize = 'ig_portrait';
+let currentStyle = 'magazine';
+let nextPageId = 2;
+let lastShareFile = null; // iOS 공유용 미리 만든 File
+
+// ========== Init UI ==========
+function initUI() {
+  const catGrid = document.getElementById('catGrid');
+  catGrid.innerHTML = CATEGORIES.map(c =>
+    `<div class="chip ${c.id===currentCat?'active':''}" data-id="${c.id}" onclick="setCat('${c.id}')">${c.name}</div>`
+  ).join('');
+
+  const sizeGrid = document.getElementById('sizeGrid');
+  sizeGrid.innerHTML = SIZES.map(s =>
+    `<div class="size-chip ${s.id===currentSize?'active':''}" data-id="${s.id}" onclick="setSize('${s.id}')">
+      <div class="sname">${s.name}</div>
+      <div class="sdim">${s.ratio}</div>
+    </div>`
+  ).join('');
+
+  const styleGrid = document.getElementById('styleGrid');
+  styleGrid.innerHTML = STYLES.map(s =>
+    `<div class="chip ${s.id===currentStyle?'active':''}" data-id="${s.id}" onclick="setStyle('${s.id}')">${s.name}</div>`
+  ).join('');
+
+  renderPagesBar();
+  applySize();
+  updateFieldVisibility();
+  loadPageToForm();
+  render();
+}
+
+function renderPagesBar() {
+  const bar = document.getElementById('pagesBar');
+  bar.innerHTML = pages.map((p,i) =>
+    `<div class="page-tab ${i===currentPage?'active':''}" onclick="switchPage(${i})">${i+1}</div>`
+  ).join('') + `<div class="page-add" onclick="addPage()">+ 추가</div>`;
+}
+
+function setCat(id) {
+  currentCat = id;
+  document.querySelectorAll('#catGrid .chip').forEach(c => c.classList.toggle('active', c.dataset.id===id));
+  if (id==='quote') setStyle('quote');
+  else if (id==='roadmap') setStyle('roadmap');
+  else if (id==='numbers') setStyle('minimal');
+  else if (id==='brief' || id==='policy') setStyle('brief');
+  updateFieldVisibility();
+  render();
+}
+
+function setSize(id) {
+  currentSize = id;
+  document.querySelectorAll('#sizeGrid .size-chip').forEach(c => c.classList.toggle('active', c.dataset.id===id));
+  applySize();
+  render();
+}
+
+function setStyle(id) {
+  currentStyle = id;
+  document.querySelectorAll('#styleGrid .chip').forEach(c => c.classList.toggle('active', c.dataset.id===id));
+  updateFieldVisibility();
+  render();
+}
+
+function applySize() {
+  const s = SIZES.find(x => x.id===currentSize);
+  const frame = document.getElementById('previewFrame');
+  const maxW = Math.min(380, window.innerWidth - 40);
+  const scale = maxW / s.w;
+  frame.style.width = (s.w * scale) + 'px';
+  frame.style.height = (s.h * scale) + 'px';
+  document.getElementById('previewLabel').textContent = `${s.name} · ${s.w}×${s.h}`;
+}
+
+function updateFieldVisibility() {
+  const isRoad = currentStyle==='roadmap' || currentCat==='roadmap';
+  const isQuote = currentStyle==='quote' || currentCat==='quote';
+  const isMinimal = currentStyle==='minimal' || currentCat==='numbers';
+  document.getElementById('summaryGroup').style.display = (isMinimal || isQuote) ? 'none' : 'block';
+  document.getElementById('statsGroup').style.display = isRoad ? 'none' : 'block';
+  document.getElementById('bulletsGroup').style.display = (isRoad || isQuote) ? 'none' : 'block';
+  document.getElementById('stepsGroup').style.display = isRoad ? 'block' : 'none';
+}
+
+// ========== Pages ==========
+function switchPage(i) {
+  saveFormToPage();
+  currentPage = i;
+  renderPagesBar();
+  loadPageToForm();
+  render();
+}
+
+function addPage() {
+  saveFormToPage();
+  pages.push({ id:nextPageId++, title:'', summary:'', bullets:'', steps:'', stats:[{},{},{},{}] });
+  currentPage = pages.length - 1;
+  renderPagesBar();
+  loadPageToForm();
+  render();
+  showToast('페이지가 추가되었습니다');
+}
+
+function saveFormToPage() {
+  const p = pages[currentPage];
+  p.title = document.getElementById('inputTitle').value;
+  p.summary = document.getElementById('inputSummary').value;
+  p.bullets = document.getElementById('inputBullets').value;
+  p.steps = document.getElementById('inputSteps').value;
+  p.source = document.getElementById('inputSource').value;
+  p.stats = [1,2,3,4].map(i => ({
+    n: document.getElementById(`stat${i}n`).value,
+    l: document.getElementById(`stat${i}l`).value
+  }));
+}
+
+function loadPageToForm() {
+  const p = pages[currentPage];
+  document.getElementById('inputTitle').value = p.title || '';
+  document.getElementById('inputSummary').value = p.summary || '';
+  document.getElementById('inputBullets').value = p.bullets || '';
+  document.getElementById('inputSteps').value = p.steps || '';
+  document.getElementById('inputSource').value = p.source || '';
+  [1,2,3,4].forEach(i => {
+    document.getElementById(`stat${i}n`).value = (p.stats[i-1] && p.stats[i-1].n) || '';
+    document.getElementById(`stat${i}l`).value = (p.stats[i-1] && p.stats[i-1].l) || '';
+  });
+}
+
+// ========== Render ==========
+function render() {
+  const title = document.getElementById('inputTitle').value || '제목을 입력하세요';
+  const summary = document.getElementById('inputSummary').value || '';
+  const source = document.getElementById('inputSource').value.trim();
+  const bullets = document.getElementById('inputBullets').value.split('\n').map(s=>s.trim()).filter(Boolean);
+  const steps = document.getElementById('inputSteps').value.split('\n').map(s=>s.trim()).filter(Boolean);
+  const stats = [1,2,3,4].map(i => ({
+    n: document.getElementById(`stat${i}n`).value.trim(),
+    l: document.getElementById(`stat${i}l`).value.trim()
+  })).filter(s => s.n);
+  const tSize = document.getElementById('sizeTitle').value;
+  const bSize = document.getElementById('sizeBody').value;
+  const sSize = document.getElementById('sizeStat').value;
+  const font = document.getElementById('fontSelect').value;
+  const catName = (CATEGORIES.find(c=>c.id===currentCat)||{}).name || 'FACT SHEET';
+
+  const card = document.getElementById('card');
+  card.className = 's-' + currentStyle;
+  card.style.fontFamily = font;
+
+  let html = `
+    <div class="card-top">
+      <span>• WEST150 DAILY · OFFICIAL CARD</span>
+      <span class="card-badge">${catName}</span>
+    </div>
+    <div class="card-body">
+  `;
+
+  const isDark = currentStyle === 'dark';
+  const titleColor = isDark ? '#ffffff' : '#111111';
+  const summaryColor = isDark ? '#b0b0be' : '#444444';
+  const bulletColor = isDark ? '#c8c8d4' : '#333333';
+
+  if (currentStyle === 'quote') {
+    html += `<div class="quote-mark">“</div>`;
+    html += `<div class="card-title" style="font-size:${tSize}px;color:${titleColor}">${esc(title)}</div>`;
+    if (summary) html += `<div class="card-summary" style="font-size:${bSize}px;color:${summaryColor}">${esc(summary)}</div>`;
+  } else {
+    html += `<div class="card-title" style="font-size:${tSize}px;color:${titleColor}">${esc(title)}</div>`;
+    if (currentStyle !== 'minimal' && summary) {
+      html += `<div class="card-summary" style="font-size:${bSize}px;color:${summaryColor}">${esc(summary).replace(/\n/g,'<br>')}</div>`;
+    }
+  }
+
+  if (currentStyle !== 'roadmap' && currentStyle !== 'quote' && stats.length) {
+    html += `<div class="stats">`;
+    stats.forEach(st => {
+      html += `<div class="stat"><div class="stat-num" style="font-size:${sSize}px">${esc(st.n)}</div><div class="stat-label">${esc(st.l)}</div></div>`;
+    });
+    html += `</div>`;
+  }
+
+  if (currentStyle === 'roadmap') {
+    html += `<div class="roadmap">`;
+    steps.forEach((st,i) => {
+      html += `<div class="step"><div class="step-num">${i+1}</div><div class="step-text" style="font-size:${bSize}px">${esc(st)}</div></div>`;
+    });
+    html += `</div>`;
+  } else if (currentStyle !== 'quote' && bullets.length) {
+    html += `<ul class="bullets">`;
+    bullets.forEach(b => { html += `<li style="font-size:${bSize-1}px;color:${bulletColor}">${esc(b)}</li>`; });
+    html += `</ul>`;
+  }
+
+  if (source) {
+    html += `<div class="card-source">출처 · ${esc(source)}</div>`;
+  }
+
+  html += `</div>`;
+  if (pages.length > 1) {
+    html += `<div class="page-indicator">${currentPage+1} / ${pages.length}</div>`;
+  }
+  card.innerHTML = html;
+}
+
+function esc(t) {
+  const d = document.createElement('div');
+  d.textContent = t;
+  return d.innerHTML;
+}
+
+// ========== Sample / Auto Fill ==========
+function fillSample() {
+  const samples = {
+    fact: {
+      title: '트럼프 대통령 초국가적 사이버범죄 대응 강화',
+      summary: '트럼프 대통령은 미국인을 대상으로 사이버범죄를 저지르는 해외 초국가적 범죄조직(TCO)을 교란하기 위해 연방 법집행기관이 사이버 도구를 사용할 수 있도록 하는 국가안보 대통령 각서(NSPM)에 서명했습니다.',
+      stats: [
+        {n:'$20.8B+', l:'2025년 사이버범죄 피해액'},
+        {n:'73%', l:'온라인 사기 경험 성인'},
+        {n:'98%', l:'사기를 위협으로 인식'},
+        {n:'1/7', l:'성착취 협박 후 자해 보고'}
+      ],
+      bullets: `국가조정센터(NCC)가 TCO 교란을 위한 사이버 작전 프로그램을 신설합니다.
+법무부와 국토안보부에 각각 집행이사를 두고 프로그램을 감독합니다.
+민간 기업의 기술 역량을 사이버 작전에 활용합니다.
+미국인을 대상으로 한 범죄는 발생 지역과 관계없이 대응합니다.
+랜섬웨어·피싱·금융사기·성착취 협박 등은 해외 기반 TCO가 조직적으로 수행하는 경우가 많습니다.
+노인·어린이·저소득 가정 등 취약계층이 주요 표적이 되고 있습니다.`
+    },
+    brief: {
+      title: '초국가적 사이버범죄 대응 브리핑',
+      summary: 'NSPM 서명으로 연방 기관의 사이버 작전 권한이 확대되었습니다. 민간 협력 체계를 통해 TCO 위협에 대응합니다.',
+      stats: [
+        {n:'$20.8B+', l:'연간 피해 규모'},
+        {n:'73%', l:'성인 경험 비율'}
+      ],
+      bullets: `NCC 프로그램 신설
+법무부·국토안보부 공동 감독
+민간기업 자발적 참여 유도
+취약계층 보호 강화`
+    },
+    quote: {
+      title: '미국인을 대상으로 하는 범죄는 어디서 발생했든 대응하겠다',
+      summary: '— 트럼프 대통령',
+      stats: [],
+      bullets: ''
+    },
+    numbers: {
+      title: '사이버범죄 핵심 수치',
+      summary: '',
+      stats: [
+        {n:'$20.8B+', l:'2025년 소비자 피해액'},
+        {n:'73%', l:'온라인 사기·공격 경험'},
+        {n:'98%', l:'개인 위협으로 인식'},
+        {n:'1/7', l:'청소년 자해 보고'}
+      ],
+      bullets: `피해 규모가 빠르게 증가하고 있습니다.
+성인 대다수가 이미 경험을 보고했습니다.`
+    },
+    roadmap: {
+      title: '초국경 사이버 대응 로드맵',
+      summary: 'NSPM 서명부터 민간 협력까지 단계별 실행 계획입니다.',
+      stats: [],
+      steps: `대통령 NSPM 서명
+NCC 프로그램 신설
+법무부·국토안보부 집행이사 배치
+민간기업 협력 체계 구축
+초국경 사이버범죄 대응 역량 강화`
+    },
+    news: {
+      title: '트럼프, 초국가적 사이버범죄 대응 강화 선언',
+      summary: '해외 범죄조직의 미국인 대상 사이버 공격에 대응하기 위해 새로운 권한과 프로그램을 마련했습니다.',
+      stats: [
+        {n:'$20.8B+', l:'피해액'},
+        {n:'73%', l:'경험 비율'}
+      ],
+      bullets: `NSPM에 서명해 법집행 기관 권한 확대
+NCC에 전담 프로그램 신설
+민간 기술 역량 활용 방안 포함`
+    },
+    policy: {
+      title: '초국가적 사이버범죄 대응 정책',
+      summary: '미국 정부는 검증된 기업과의 협력을 통해 TCO 위협에 대응하고 관련 역량을 강화할 방침입니다.',
+      stats: [
+        {n:'NSPM', l:'국가안보 대통령 각서'},
+        {n:'NCC', l:'국가조정센터 프로그램'}
+      ],
+      bullets: `헌법·법률·국제협정을 엄격히 준수하는 절차 마련
+민간기업의 자발적 참여와 정보 공유 장려
+취약계층 보호를 정책 우선순위로 설정`
+    }
+  };
+
+  const s = samples[currentCat] || samples.fact;
+  document.getElementById('inputTitle').value = s.title || '';
+  document.getElementById('inputSummary').value = s.summary || '';
+  document.getElementById('inputBullets').value = s.bullets || '';
+  document.getElementById('inputSteps').value = s.steps || '';
+  document.getElementById('inputSource').value = s.source || 'White House · 2026.08.14';
+  [1,2,3,4].forEach(i => {
+    const st = (s.stats && s.stats[i-1]) || {};
+    document.getElementById(`stat${i}n`).value = st.n || '';
+    document.getElementById(`stat${i}l`).value = st.l || '';
+  });
+  saveFormToPage();
+  render();
+  showToast('자동채우기 완료 (' + (CATEGORIES.find(c=>c.id===currentCat)||{}).name + ')');
+}
+
+// ========== Auto Split Pages ==========
+function autoSplitPages() {
+  saveFormToPage();
+  const bullets = document.getElementById('inputBullets').value.split('\n').map(s=>s.trim()).filter(Boolean);
+  const steps = document.getElementById('inputSteps').value.split('\n').map(s=>s.trim()).filter(Boolean);
+  const isRoad = currentStyle==='roadmap' || currentCat==='roadmap';
+  const items = isRoad ? steps : bullets;
+
+  if (items.length <= 3) {
+    showToast('내용이 짧아 나눌 필요가 없습니다');
+    return;
+  }
+
+  const perPageMap = {
+    ig_story: 3,
+    ig_portrait: 4,
+    ig_square: 5,
+    twitter: 3,
+    card: 4,
+    wide: 3
+  };
+  const perPage = perPageMap[currentSize] || 4;
+
+  const title = document.getElementById('inputTitle').value;
+  const summary = document.getElementById('inputSummary').value;
+  const source = document.getElementById('inputSource').value;
+  const stats = [1,2,3,4].map(i => ({
+    n: document.getElementById(`stat${i}n`).value,
+    l: document.getElementById(`stat${i}l`).value
+  }));
+
+  const chunks = [];
+  for (let i = 0; i < items.length; i += perPage) {
+    chunks.push(items.slice(i, i + perPage));
+  }
+
+  pages = chunks.map((chunk, idx) => ({
+    id: nextPageId++,
+    title: idx === 0 ? title : title + ` (${idx+1})`,
+    summary: idx === 0 ? summary : '',
+    source: source,
+    bullets: isRoad ? '' : chunk.join('\n'),
+    steps: isRoad ? chunk.join('\n') : '',
+    stats: idx === 0 ? stats : [{},{},{},{}]
+  }));
+
+  currentPage = 0;
+  renderPagesBar();
+  loadPageToForm();
+  render();
+  showToast(`${pages.length}개 페이지로 자동 분할되었습니다`);
+}
+
+// ========== Events ==========
+['inputTitle','inputSummary','inputBullets','inputSteps','inputSource','fontSelect'].forEach(id => {
+  document.getElementById(id).addEventListener('input', () => { saveFormToPage(); render(); });
+});
+[1,2,3,4].forEach(i => {
+  document.getElementById(`stat${i}n`).addEventListener('input', () => { saveFormToPage(); render(); });
+  document.getElementById(`stat${i}l`).addEventListener('input', () => { saveFormToPage(); render(); });
+});
+['sizeTitle','sizeBody','sizeStat'].forEach(id => {
+  document.getElementById(id).addEventListener('input', e => {
+    document.getElementById(id+'Val').textContent = e.target.value;
+    render();
+  });
+});
+
+window.addEventListener('resize', applySize);
+
+// ========== Save (iOS 안정화) ==========
+function isIOS() {
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+         (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+}
+
+// toBlob polyfill (구형 iOS 대비)
+if (!HTMLCanvasElement.prototype.toBlob) {
+  Object.defineProperty(HTMLCanvasElement.prototype, 'toBlob', {
+    value: function(callback, type, quality) {
+      const dataURL = this.toDataURL(type || 'image/png', quality);
+      const binStr = atob(dataURL.split(',')[1]);
+      const arr = new Uint8Array(binStr.length);
+      for (let i = 0; i < binStr.length; i++) arr[i] = binStr.charCodeAt(i);
+      setTimeout(() => callback(new Blob([arr], { type: type || 'image/png' })), 0);
+    }
+  });
+}
+
+async function saveImage() {
+  showToast('이미지 생성 중...');
+
+  try {
+    const s = SIZES.find(x => x.id === currentSize);
+    const card = document.getElementById('card');
+    const frame = document.getElementById('previewFrame');
+    const prevW = frame.style.width;
+    const prevH = frame.style.height;
+
+    // 실제 크기로 잠시 렌더
+    frame.style.width = s.w + 'px';
+    frame.style.height = s.h + 'px';
+
+    // 리플로우 + 웹폰트 로딩 + 약간의 대기 (레이아웃/폰트 안정화)
+    if (document.fonts && document.fonts.ready) {
+      try { await document.fonts.ready; } catch (e) { /* ignore */ }
+    }
+    await new Promise(r => requestAnimationFrame(() => setTimeout(r, 120)));
+
+    const bgColor = currentStyle === 'dark' ? '#121218' : '#ffffff';
+    const canvas = await html2canvas(card, {
+      backgroundColor: bgColor,
+      scale: Math.min(2, window.devicePixelRatio || 2),
+      width: s.w,
+      height: s.h,
+      useCORS: true,
+      logging: false,
+      allowTaint: true,
+      removeContainer: true
+    });
+
+    // 미리보기 크기 복원
+    frame.style.width = prevW;
+    frame.style.height = prevH;
+
+    const dataUrl = canvas.toDataURL('image/png');
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+
+    if (!blob) {
+      showToast('이미지 생성 실패');
+      return;
+    }
+
+    const fileName = `west150-${currentCat}-p${currentPage+1}-${Date.now()}.png`;
+    lastShareFile = new File([blob], fileName, { type: 'image/png' });
+
+    if (isIOS()) {
+      // 아이폰: 오버레이로 보여주고, 사용자가 다시 버튼을 누르면 share
+      document.getElementById('previewImg').src = dataUrl;
+      document.getElementById('overlayHint').innerHTML =
+        '이미지를 <strong>길게 눌러</strong><br>「사진에 추가」를 선택하세요<br><small style="opacity:.8">(또는 아래 공유 버튼)</small>';
+
+      const shareBtn = document.getElementById('shareBtn');
+      if (navigator.canShare && navigator.canShare({ files: [lastShareFile] })) {
+        shareBtn.style.display = 'inline-block';
+      } else {
+        shareBtn.style.display = 'none';
+      }
+
+      document.getElementById('imgOverlay').classList.add('show');
+      showToast('이미지를 길게 누르거나 공유 버튼을 사용하세요');
+    } else {
+      // 안드로이드 / PC
+      const a = document.createElement('a');
+      a.download = fileName;
+      a.href = dataUrl;
+      a.click();
+      showToast('저장되었습니다');
+    }
+  } catch (e) {
+    console.error(e);
+    showToast('저장 실패. 다시 시도해주세요.');
+  }
+}
+
+// 오버레이에서 사용자가 다시 탭했을 때 공유 (transient activation 유지)
+async function shareFromOverlay() {
+  if (!lastShareFile) {
+    showToast('이미지가 없습니다');
+    return;
+  }
+  try {
+    if (navigator.canShare && navigator.canShare({ files: [lastShareFile] })) {
+      await navigator.share({
+        files: [lastShareFile],
+        title: `WEST150 ${(CATEGORIES.find(c => c.id === currentCat) || {}).name || '카드뉴스'}`
+      });
+      showToast('공유 메뉴에서 「사진에 저장」을 선택하세요');
+    } else {
+      showToast('이 기기에서는 공유를 지원하지 않습니다. 길게 눌러 저장하세요');
+    }
+  } catch (e) {
+    if (e.name === 'AbortError') {
+      showToast('공유를 취소했습니다');
+    } else {
+      console.error(e);
+      showToast('공유 실패. 이미지를 길게 눌러 저장하세요');
+    }
+  }
+}
+
+function closeOverlay() {
+  document.getElementById('imgOverlay').classList.remove('show');
+  lastShareFile = null;
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+// Init
+initUI();
+fillSample();
+</script>
+</body>
+</html>
