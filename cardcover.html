@@ -559,8 +559,21 @@ liveInputs.forEach(function(id){
 async function waitForFonts(){
   try{ if(document.fonts&&document.fonts.ready) await document.fonts.ready; }catch(e){}
 }
+function waitForImageDataUrl(dataUrl){
+  return new Promise(function(resolve,reject){
+    if(!dataUrl){ resolve(null); return; }
+    var img=new Image();
+    img.onload=function(){ resolve(img); };
+    img.onerror=function(){ reject(new Error('이미지를 불러오지 못했습니다.')); };
+    img.src=dataUrl;
+  });
+}
 async function generateCanvas(){
   await waitForFonts();
+  if(imgDataUrl){
+    try{ await waitForImageDataUrl(imgDataUrl); }
+    catch(e){ throw e; }
+  }
   var prev=cardWrapper.style.transform;
   cardWrapper.style.transform='scale(1)';
   var canvas;
