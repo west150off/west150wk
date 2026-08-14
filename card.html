@@ -806,6 +806,93 @@
     padding: 32px; text-align: center; color: var(--gray); font-weight: 600;
   }
 
+  .device-preview-backdrop {
+    position: fixed; inset: 0; background: rgba(10, 12, 16, 0.8); z-index: 1220;
+    display: none; align-items: center; justify-content: center; padding: 24px;
+  }
+  .device-preview-backdrop.show { display: flex; }
+  .device-preview-modal {
+    width: min(1040px, 96vw); max-height: 92vh; background: var(--panel-bg);
+    border-radius: 22px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08);
+    display: grid; grid-template-rows: auto 1fr;
+  }
+  .device-preview-header {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 18px 20px; border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .device-preview-header h3 { margin: 0; font-size: 20px; font-weight: 800; }
+  .device-preview-header p { margin: 4px 0 0; color: var(--gray); font-size: 13px; }
+  .device-preview-body {
+    padding: 22px 20px 26px; overflow: auto; display: grid; gap: 18px;
+  }
+  .device-toolbar {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  }
+  .device-toolbar select {
+    min-width: 180px; padding: 12px 14px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.08);
+    background: var(--input-bg); color: var(--text); font: inherit;
+  }
+  .theme-preset-select {
+    min-width: 150px; padding: 10px 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.08);
+    background: var(--input-bg); color: var(--text); font: inherit;
+  }
+  .device-showcase {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px; align-items: center; justify-items: center;
+  }
+  .device-shell {
+    position: relative; display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(145deg, #111316, #05070a);
+    border-radius: 38px; box-shadow: 0 28px 50px rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 16px;
+  }
+  .device-shell.iphone {
+    width: min(340px, 80vw); height: min(700px, 82vh); padding-top: 18px;
+  }
+  .device-shell.pixel {
+    width: min(360px, 82vw); height: min(720px, 84vh);
+  }
+  .device-shell.ipad {
+    width: min(560px, 90vw); height: min(510px, 70vh);
+  }
+  .device-frame {
+    position: relative; width: 100%; height: 100%; border-radius: 28px; overflow: hidden;
+    background: #090b0d; display: flex; align-items: center; justify-content: center;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .device-shell.iphone .device-frame { border-radius: 32px; }
+  .device-shell.pixel .device-frame { border-radius: 30px; }
+  .device-shell.ipad .device-frame { border-radius: 26px; }
+  .device-notch {
+    position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+    width: 166px; height: 28px; background: rgba(5,7,10,0.9); border-radius: 16px;
+    z-index: 2; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
+  }
+  .device-camera {
+    position: absolute; top: 18px; left: 50%; transform: translateX(-50%); width: 10px; height: 10px;
+    border-radius: 50%; background: rgba(255,255,255,0.2); z-index: 3;
+  }
+  .device-screen {
+    position: absolute; inset: 0; background: #000; overflow: hidden;
+  }
+  .device-screen img {
+    width: 100%; height: 100%; object-fit: contain; display: block; background: #000;
+    object-position: center center;
+  }
+  .device-shell.iphone .device-screen { inset: 10px 10px 10px; border-radius: 24px; }
+  .device-shell.pixel .device-screen { inset: 12px; border-radius: 22px; }
+  .device-shell.ipad .device-screen { inset: 14px; border-radius: 20px; }
+  .device-home {
+    position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%);
+    width: 110px; height: 4px; border-radius: 999px; background: rgba(255,255,255,0.2);
+  }
+  .device-shell.pixel .device-home { width: 136px; height: 5px; }
+  .device-shell.ipad .device-home { display: none; }
+  .device-meta {
+    font-size: 13px; color: var(--gray); text-align: center; margin-top: 4px;
+  }
+
   @media (max-width: 900px) {
     .editor-grid { grid-template-columns: 1fr !important; }
     .card-editor .editor-grid,
@@ -860,6 +947,32 @@
   </div>
 </div>
 
+<div id="devicePreviewModal" class="device-preview-backdrop" onclick="if(event.target===this) closeDeviceMockup()">
+  <div class="device-preview-modal" role="dialog" aria-modal="true">
+    <div class="device-preview-header">
+      <div>
+        <h3>목업 디바이스 미리보기</h3>
+        <p>현재 커버를 실제 기기 프레임 안에서 확인합니다.</p>
+      </div>
+      <button type="button" class="icon-btn" onclick="closeDeviceMockup()">닫기</button>
+    </div>
+    <div class="device-preview-body">
+      <div class="device-toolbar">
+        <label class="field" style="margin:0; min-width:180px;">
+          디바이스 선택
+          <select id="deviceTypeSelect" onchange="renderDeviceMockup()">
+            <option value="iphone">모바일 · iPhone</option>
+            <option value="pixel">모바일 · Pixel</option>
+            <option value="ipad">태블릿 · iPad</option>
+            <option value="story">스토리 · 9:16</option>
+          </select>
+        </label>
+      </div>
+      <div class="device-showcase" id="deviceMockupContent"></div>
+    </div>
+  </div>
+</div>
+
 <div id="main-content" class="app">
 
   <header class="topbar">
@@ -869,10 +982,22 @@
     </div>
     <div class="topbar-actions">
       <input type="color" id="themeColor" class="color-chip" value="#FF8228" title="강조 색상" oninput="updateAll()">
+      <select id="themePresetSelect" class="theme-preset-select" onchange="applyThemePreset(this.value)">
+        <option value="classic">Classic</option>
+        <option value="green">Green</option>
+        <option value="pink">Pink</option>
+        <option value="blue">Blue</option>
+        <option value="orange">Orange</option>
+        <option value="neon">Neon</option>
+        <option value="retro">Retro</option>
+        <option value="minimal">Minimal</option>
+        <option value="premium">Premium</option>
+      </select>
       <button type="button" class="icon-btn" id="themeBtn" onclick="toggleUiTheme()">라이트 UI</button>
       <button type="button" class="icon-btn" onclick="openDrawer()">설정</button>
       <button type="button" class="icon-btn" onclick="addCard()">+ 카드</button>
       <button type="button" class="icon-btn" onclick="openFullPreview()">전체 미리보기</button>
+      <button type="button" class="icon-btn" onclick="openDeviceMockup()">목업 디바이스</button>
       <button type="button" class="icon-btn primary" onclick="requestDownload('zip')">ZIP 저장</button>
     </div>
   </header>
@@ -972,6 +1097,19 @@
                   <option value="default">기본형 (Dark)</option>
                   <option value="full">전체 이미지 배경</option>
                   <option value="top">상단 이미지형</option>
+                </select>
+              </label>
+              <label class="field full">배경 디자인
+                <select id="coverBgPreset" onchange="updateAll(); applyBgPresetToCards();">
+                  <option value="dark">다크</option>
+                  <option value="green">그린</option>
+                  <option value="pink">핑크</option>
+                  <option value="blue">블루</option>
+                  <option value="orange">오렌지</option>
+                  <option value="warm">웜 네온</option>
+                  <option value="slate">슬레이트</option>
+                  <option value="aurora">오로라</option>
+                  <option value="paper">페이퍼</option>
                 </select>
               </label>
               <label class="field full">배경 이미지
@@ -1076,6 +1214,19 @@
           <button class="btn-primary btn-sm" onclick="applyBatchImages()">순서대로 카드에 적용</button>
         </div>
         <p class="batch-hint">선택한 이미지를 위에서부터 순서대로 기존 카드에 넣고, 이미지가 더 많으면 새 카드를 자동 생성합니다.</p>
+
+        <div class="sec" style="margin-top:16px; background:var(--input-bg);">
+          <div class="sec-head" style="padding:12px 14px;">
+            <span>자동 템플릿</span><span class="chev">▼</span>
+          </div>
+          <div class="sec-body">
+            <div class="batch-row">
+              <button class="btn-secondary btn-sm" onclick="createTemplateCard('news')">뉴스형</button>
+              <button class="btn-secondary btn-sm" onclick="createTemplateCard('interview')">인터뷰형</button>
+              <button class="btn-secondary btn-sm" onclick="createTemplateCard('analysis')">분석형</button>
+            </div>
+          </div>
+        </div>
 
         <!-- 공통 구간 강조 (우선 적용) -->
         <div class="hl-help" style="margin-top:16px;">
@@ -1547,6 +1698,7 @@ async function initApp() {
       document.getElementById('coverTitle2').value = parsed.coverTitle2 || '뉴스 브리핑';
       document.getElementById('activeFont').value = parsed.activeFont || 'default';
       document.getElementById('coverStyle').value = parsed.coverStyle || 'default';
+      document.getElementById('coverBgPreset').value = parsed.coverBgPreset || 'dark';
       document.getElementById('coverYOff').value = parsed.coverYOff || 50;
       document.getElementById('coverScale').value = parsed.coverScale || 100;
       document.getElementById('coverBright').value = parsed.coverBright || 40;
@@ -1861,6 +2013,7 @@ function saveData() {
     coverTitle1: document.getElementById('coverTitle1').value,
     coverTitle2: document.getElementById('coverTitle2').value,
     coverStyle: document.getElementById('coverStyle').value,
+    coverBgPreset: document.getElementById('coverBgPreset').value,
     coverYOff: document.getElementById('coverYOff').value,
     coverScale: document.getElementById('coverScale').value,
     coverBright: document.getElementById('coverBright').value,
@@ -2241,7 +2394,12 @@ async function handleImg(e, id) {
   reader.readAsDataURL(file);
 }
 
-function updateAll() { renderCover(); cards.forEach(c => updateCard(c.id)); saveData(); }
+function updateAll() {
+  renderCover();
+  applyBgPresetToCards();
+  cards.forEach(c => updateCard(c.id));
+  saveData();
+}
 
 function findReplaceAll() {
   const find = document.getElementById('findText').value;
@@ -2489,7 +2647,7 @@ async function renderCover(opts = {}) {
   const {coverDateText} = getDates();
   const margin = 100; const maxW = W - margin * 2;
 
-  ctx.fillStyle = '#0C0C0E'; ctx.fillRect(0,0,W,W);
+  paintCoverBackground(ctx, W, W);
 
   if (coverImgData && style !== 'default') {
     const img = await loadImage(coverImgData);
@@ -2590,6 +2748,7 @@ async function updateCard(id, opts = {}) {
   const d = collectCardData(id);
   d.theme = document.getElementById('themeColor').value;
   d.pill = document.getElementById('pillTag').value;
+  d.bgPreset = document.getElementById('coverBgPreset')?.value || 'dark';
 
   let img = cardData?.imgData ? await loadImage(cardData.imgData) : null;
   updateCardMetaUI(id, d, !!img);
@@ -2661,8 +2820,7 @@ async function renderStandard(ctx, canvas, img, d, skipGuide) {
   while (k > 0.55 && measureContentHeight(k) > availH) k -= 0.02;
   k = Math.round(k * 100) / 100;
 
-  ctx.fillStyle = '#0A0A0C';
-  ctx.fillRect(0, 0, W, STANDARD_H);
+  paintCardBackground(ctx, W, STANDARD_H, d.bgPreset || getCoverBgPresetValue(), d.theme || '#FF8228');
 
   if (img) {
     const zoom = d.scale / 100;
@@ -2812,8 +2970,7 @@ async function renderFull(ctx, canvas, img, d, skipGuide) {
   }
 
   canvas.height = FULL_H;
-  ctx.fillStyle = "#0C0C0E";
-  ctx.fillRect(0, 0, W, FULL_H);
+  paintCardBackground(ctx, W, FULL_H, d.bgPreset || getCoverBgPresetValue(), d.theme || '#FF8228');
 
   if (img) {
     const zoom = d.scale / 100;
@@ -2934,7 +3091,9 @@ async function renderVideoList(ctx, canvas, img, d, guide) {
   const baseBody = d.fontSizeBody || 34;
   const baseMeta = d.fontSizeMeta || 28;
 
-  ctx.fillStyle='#000'; ctx.fillRect(0, vH, W, 1080 - vH);
+  paintCardBackground(ctx, W, 1080, d.bgPreset || getCoverBgPresetValue(), d.theme || '#FF8228');
+  ctx.fillStyle = 'rgba(0,0,0,0.18)';
+  ctx.fillRect(0, vH, W, 1080 - vH);
   const grad = ctx.createLinearGradient(0, vH - 100, 0, vH);
   grad.addColorStop(0, "rgba(0,0,0,0)");
   grad.addColorStop(1, "rgba(0,0,0,1)");
@@ -3112,6 +3271,171 @@ function drawPill(ctx, x, y, t, c){
   ctx.fillText(t, x + 38, y + ph / 2 + 1);
   ctx.textBaseline = 'alphabetic';
 }
+const THEME_PRESETS = {
+  classic: { color: '#FF8228' },
+  green: { color: '#2EB87A' },
+  pink: { color: '#FF5FA2' },
+  blue: { color: '#3A82F7' },
+  orange: { color: '#FF8C42' },
+  neon: { color: '#7CFFB2' },
+  retro: { color: '#F4B942' },
+  minimal: { color: '#D9D9D9' },
+  premium: { color: '#D4AF6A' }
+};
+const COVER_BG_PRESETS = {
+  dark: { gradient: ['#0C0C0E', '#12151A', '#0C0C0E'], glow: 'rgba(255,130,40,0.12)' },
+  green: { gradient: ['#091A16', '#102C26', '#0B1413'], glow: 'rgba(46,184,122,0.18)' },
+  pink: { gradient: ['#1B0F1A', '#2A1625', '#110D14'], glow: 'rgba(255,95,162,0.17)' },
+  blue: { gradient: ['#091827', '#122238', '#0B1422'], glow: 'rgba(58,130,247,0.18)' },
+  orange: { gradient: ['#1B120D', '#2A1D16', '#14100D'], glow: 'rgba(255,140,66,0.18)' },
+  warm: { gradient: ['#1B0E0D', '#22181B', '#111417'], glow: 'rgba(255,168,84,0.18)' },
+  slate: { gradient: ['#101821', '#171A20', '#0B0D12'], glow: 'rgba(94, 134, 255, 0.14)' },
+  aurora: { gradient: ['#0A1222', '#101A2D', '#0D1420'], glow: 'rgba(86, 235, 190, 0.18)' },
+  paper: { gradient: ['#F4F1EA', '#DDD5C7', '#EAE8E3'], glow: 'rgba(121, 83, 42, 0.12)' }
+};
+const CARD_BG_FRAME_MAP = {
+  dark: 'thin',
+  green: 'double',
+  pink: 'thin',
+  blue: 'double',
+  orange: 'thick',
+  warm: 'thick',
+  slate: 'thin',
+  aurora: 'double',
+  paper: 'none'
+};
+const CARD_TEMPLATES = {
+  news: {
+    themePreset: 'classic',
+    cat: 'NEWS',
+    src: '@west150daily',
+    sublabel: 'LIVE',
+    subtitle: '트렌드 브리핑',
+    subhead: '“핵심만 남겨 더 빠르게 전달합니다.”',
+    head: '**1핵심 이슈** 오늘의 관전 포인트',
+    body: '하루를 움직인 이슈를 한 번에 정리합니다.\n**1상황 요약** 주요 변수와 전개 흐름을 짧게 정리하고\n**1b반응 포인트** 시장·정치·미디어 반응을 함께 보세요.',
+    frameStyle: 'thin'
+  },
+  interview: {
+    themePreset: 'pink',
+    cat: 'INTERVIEW',
+    src: '@west150daily',
+    sublabel: 'Q&A',
+    subtitle: '현장 인터뷰',
+    subhead: '“선택의 기준은 경계를 허무는 순간이었다.”',
+    head: '**1현장 속** 사람들의 진짜 답',
+    body: '현장을 직접 듣고 정리한 이야기입니다.\n**1a담론의 핵심** 주된 관심사와 판단 기준을 확인하고\n**2이슈를 재해석** 해보는 방식으로 전달합니다.',
+    frameStyle: 'double'
+  },
+  analysis: {
+    themePreset: 'blue',
+    cat: 'ANALYSIS',
+    src: '@west150daily',
+    sublabel: 'INSIGHT',
+    subtitle: '데이터로 읽는 흐름',
+    subhead: '“시장의 신호는 보이는 패턴 속에 있다.”',
+    head: '**1분석 포인트** 변화의 의미를 읽다',
+    body: '숫자와 맥락을 묶어 의미를 정리합니다.\n**1b이슈별 변수** 경쟁력과 리스크를 동시에 비교하고\n**2장기 흐름**까지 함께 살펴봅니다.',
+    frameStyle: 'thick'
+  }
+};
+function applyThemePreset(name) {
+  const preset = THEME_PRESETS[name] || THEME_PRESETS.classic;
+  const colorInput = document.getElementById('themeColor');
+  if (colorInput) {
+    colorInput.value = preset.color;
+  }
+  const select = document.getElementById('themePresetSelect');
+  if (select) select.value = name;
+  updateAll();
+}
+function getCoverBgPreset() {
+  const v = document.getElementById('coverBgPreset')?.value || 'dark';
+  return COVER_BG_PRESETS[v] || COVER_BG_PRESETS.dark;
+}
+function getFrameStyleForBgPreset(bgPresetName) {
+  return CARD_BG_FRAME_MAP[bgPresetName] || 'thin';
+}
+function applyBgPresetToCards() {
+  const presetValue = document.getElementById('coverBgPreset')?.value || 'dark';
+  const cardsList = Array.isArray(cards) ? cards : [];
+  cardsList.forEach(c => {
+    const id = c.id;
+    const frameEl = document.getElementById(`frame-${id}`);
+    if (frameEl) {
+      frameEl.value = getFrameStyleForBgPreset(presetValue);
+    }
+    const el = document.getElementById(`cardBgPreset-${id}`);
+    if (el) el.value = presetValue;
+    updateCard(id);
+  });
+}
+function createTemplateCard(type) {
+  const template = CARD_TEMPLATES[type];
+  if (!template) return;
+  const themePreset = template.themePreset || 'classic';
+  applyThemePreset(themePreset);
+  const data = {
+    cat: template.cat,
+    src: template.src,
+    head: template.head,
+    subtitle: template.subtitle,
+    sublabel: template.sublabel,
+    subhead: template.subhead,
+    body: template.body,
+    align: 'left',
+    frameStyle: template.frameStyle || getFrameStyleForBgPreset(document.getElementById('coverBgPreset')?.value || 'dark'),
+    highlightStyleHead: 'both',
+    highlightStyleSub: 'both',
+    highlightStyleBody: 'both',
+    highlightColorA: document.getElementById('themeColor')?.value || '#FF8228',
+    highlightColorB: '#FFD166',
+    highlightColorC: '#5B8DEF',
+    fontSizeHead: 50,
+    fontSizeSub: 42,
+    fontSizeBody: 34,
+    fontSizeMeta: 28,
+    yOffset: 50,
+    scale: 100,
+    vignette: true,
+    grain: false,
+    grainAmt: 20,
+    showGuide: true,
+    showSafeGuide: false
+  };
+  addCard(data);
+  saveData();
+}
+function paintCoverBackground(ctx, w, h) {
+  const preset = getCoverBgPreset();
+  const grad = ctx.createLinearGradient(0, 0, w, h);
+  const colors = preset.gradient || ['#0C0C0E', '#12151A', '#0C0C0E'];
+  colors.forEach((color, idx) => grad.addColorStop(idx / (colors.length - 1), color));
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, w, h);
+
+  if (preset.glow) {
+    const glow = ctx.createRadialGradient(w * 0.78, h * 0.18, 20, w * 0.78, h * 0.18, w * 0.7);
+    glow.addColorStop(0, preset.glow);
+    glow.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, w, h);
+  }
+}
+function paintCardBackground(ctx, w, h, presetName, accent) {
+  const preset = COVER_BG_PRESETS[presetName] || COVER_BG_PRESETS.dark;
+  const grad = ctx.createLinearGradient(0, 0, w, h);
+  const colors = preset.gradient || ['#0C0C0E', '#12151A', '#0C0C0E'];
+  colors.forEach((color, idx) => grad.addColorStop(idx / (colors.length - 1), color));
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, w, h);
+
+  const glow = ctx.createRadialGradient(w * 0.82, h * 0.18, 20, w * 0.82, h * 0.18, w * 0.7);
+  glow.addColorStop(0, preset.glow || 'rgba(255,130,40,0.12)');
+  glow.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = glow;
+  ctx.fillRect(0, 0, w, h);
+}
 function getDates(){
   const n = new Date();
   const krDate = `${n.getFullYear()}년 ${n.getMonth()+1}월 ${n.getDate()}일`;
@@ -3188,6 +3512,59 @@ function requestDownload(type, id) {
 function closeChecklist() {
   document.getElementById('checklistModal').classList.remove('show');
   pendingDownload = null;
+}
+function renderDeviceMockup() {
+  const content = document.getElementById('deviceMockupContent');
+  const deviceType = document.getElementById('deviceTypeSelect')?.value || 'iphone';
+  if (!content) return;
+
+  const coverCanvas = document.getElementById('coverCanvas');
+  const src = coverCanvas ? coverCanvas.toDataURL('image/png') : '';
+  const label = deviceType === 'iphone' ? '모바일 · iPhone' : deviceType === 'pixel' ? '모바일 · Pixel' : deviceType === 'ipad' ? '태블릿 · iPad' : '스토리 · 9:16';
+
+  if (!src) {
+    content.innerHTML = '<div class="empty-preview">커버 이미지가 아직 없습니다.</div>';
+    return;
+  }
+
+  if (deviceType === 'story') {
+    content.innerHTML = `
+      <div class="device-shell pixel" style="width:min(320px,80vw);height:min(680px,84vh);">
+        <div class="device-frame" style="border-radius: 26px;">
+          <div class="device-screen" style="inset: 8px; border-radius: 20px;">
+            <img src="${src}" alt="${label}" style="object-fit:cover;">
+          </div>
+        </div>
+      </div>
+      <div class="device-meta">${label}</div>
+    `;
+    return;
+  }
+
+  content.innerHTML = `
+    <div class="device-shell ${deviceType}">
+      <div class="device-frame">
+        ${deviceType === 'iphone' ? '<div class="device-notch"></div><div class="device-camera"></div>' : ''}
+        ${deviceType === 'pixel' ? '<div class="device-camera" style="top:18px; left:50%;"></div>' : ''}
+        <div class="device-screen">
+          <img src="${src}" alt="${label}">
+        </div>
+        ${deviceType !== 'ipad' ? '<div class="device-home"></div>' : ''}
+      </div>
+    </div>
+    <div class="device-meta">${label}</div>
+  `;
+}
+async function openDeviceMockup() {
+  const modal = document.getElementById('devicePreviewModal');
+  if (!modal) return;
+  await renderCover({ skipGuide: true });
+  renderDeviceMockup();
+  modal.classList.add('show');
+}
+function closeDeviceMockup() {
+  const modal = document.getElementById('devicePreviewModal');
+  if (modal) modal.classList.remove('show');
 }
 async function openFullPreview() {
   const modal = document.getElementById('fullPreviewModal');
