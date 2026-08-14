@@ -6,6 +6,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=IBM+Plex+Sans+KR:wght@400;600;700&family=Black+Han+Sans&family=Do+Hyeon&family=Jua&family=Gaegu:wght@400;700&family=Nanum+Myeongjo:wght@400;700;800&family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
   :root{
@@ -19,13 +20,13 @@
     --danger:#ff5c7a;
   }
   *{box-sizing:border-box;}
-  html,body{margin:0;height:100%;font-family:'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:var(--chrome-bg);color:var(--chrome-text);}
+  html,body{margin:0;height:100%;font-family:'Pretendard Variable','Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:var(--chrome-bg);color:var(--chrome-text);}
   #app{display:flex;flex-direction:column;height:100vh;}
 
-  #topbar{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:56px;background:var(--chrome-panel);border-bottom:1px solid var(--chrome-line);flex:none;}
+  #topbar{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:56px;background:var(--chrome-panel);border-bottom:1px solid var(--chrome-line);flex:none;position:relative;z-index:10;}
   #topbar .brand{font-weight:700;font-size:15px;letter-spacing:.02em;display:flex;align-items:center;gap:8px;}
   #topbar .brand .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent);}
-  #topbar .actions{display:flex;gap:8px;}
+  #topbar .actions{display:flex;gap:8px;align-items:center;}
   button{font-family:inherit;cursor:pointer;border:none;}
   select{font-family:inherit;}
   .btn{padding:9px 16px;border-radius:8px;font-size:13px;font-weight:600;background:#2a2440;color:var(--chrome-text);transition:.15s;}
@@ -36,6 +37,13 @@
   .btn.ghost:hover{color:var(--chrome-text);border-color:var(--accent);}
   .btn.small{padding:6px 10px;font-size:12px;}
   .btn.full{width:100%;}
+
+  .menuWrap{position:relative;}
+  .dropdown{position:absolute;top:calc(100% + 6px);left:0;background:#241d3a;border:1px solid var(--chrome-line);border-radius:10px;padding:6px;display:none;flex-direction:column;min-width:160px;box-shadow:0 14px 34px #000a;z-index:50;}
+  .dropdown.open{display:flex;}
+  .ddItem{padding:9px 11px;border-radius:7px;font-size:13px;cursor:pointer;color:var(--chrome-text);display:flex;align-items:center;gap:8px;}
+  .ddItem:hover{background:#352c54;}
+  .ddItem .ic{opacity:.7;font-size:14px;width:16px;text-align:center;}
 
   #body{flex:1;display:flex;min-height:0;}
 
@@ -62,7 +70,7 @@
   #card .rowTop{display:flex;justify-content:space-between;align-items:center;}
   #card .badgeTop{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;}
   #card .pageNum{font-size:12px;font-weight:600;opacity:.6;}
-  #card .frame{flex:1;margin-top:16px;border:1.5px solid #1a1a1a22;border-radius:2px;display:flex;flex-direction:column;justify-content:center;padding:26px 24px;position:relative;}
+  #card .frame{flex:1;margin-top:16px;border:1.5px solid #1a1a1a22;border-radius:2px;display:flex;flex-direction:column;justify-content:center;padding:26px 24px;position:relative;overflow:hidden;}
   #card .pill{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.04em;padding:5px 12px;border-radius:20px;margin-bottom:16px;width:fit-content;}
   #card .titleText{font-size:27px;line-height:1.35;font-weight:800;letter-spacing:-.01em;white-space:pre-wrap;word-break:keep-all;}
   #card .titleText mark{background:var(--mk,#f6b8c4);color:inherit;padding:0 3px;box-decoration-break:clone;-webkit-box-decoration-break:clone;}
@@ -79,6 +87,28 @@
   #card .imgBox .duo{position:absolute;inset:0;mix-blend-mode:color;}
   #card .scrim{position:absolute;inset:0;z-index:1;pointer-events:none;}
   #card .z2{position:relative;z-index:2;}
+
+  #card .blk{margin-top:14px;}
+  #card .timeline .tl-item{display:flex;gap:10px;margin-bottom:10px;}
+  #card .tl-dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex:none;}
+  #card .tl-date{font-size:12px;font-weight:800;opacity:.85;}
+  #card .tl-desc{font-size:12.5px;line-height:1.5;opacity:.72;margin-top:2px;}
+  #card .list .ls-item{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px;}
+  #card .ls-num{width:18px;height:18px;border-radius:50%;color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex:none;}
+  #card .ls-text{font-size:13px;line-height:1.5;opacity:.85;padding-top:1px;}
+  #card .stats{display:flex;flex-wrap:wrap;gap:16px;}
+  #card .st-item{flex:1;min-width:80px;}
+  #card .st-val{font-size:24px;font-weight:900;}
+  #card .st-label{font-size:11px;opacity:.65;margin-top:2px;}
+  #card .chart .ch-row{display:flex;align-items:center;gap:8px;margin-bottom:9px;}
+  #card .ch-label{font-size:11px;width:56px;flex:none;opacity:.75;}
+  #card .ch-track{flex:1;height:8px;background:#00000014;border-radius:4px;overflow:hidden;}
+  #card .ch-fill{height:100%;border-radius:4px;}
+  #card .ch-val{font-size:11px;width:30px;text-align:right;opacity:.7;}
+  #card .quote{padding-top:2px;}
+  #card .q-mark{font-size:34px;font-weight:900;line-height:1;}
+  #card .q-text{font-size:16px;font-weight:700;line-height:1.5;margin-top:4px;}
+  #card .q-author{font-size:12px;opacity:.6;margin-top:8px;}
 
   #right{width:300px;flex:none;background:var(--chrome-panel);border-left:1px solid var(--chrome-line);overflow-y:auto;}
   .sec{padding:16px 18px;border-bottom:1px solid var(--chrome-line);}
@@ -103,6 +133,12 @@
   .imgThumb{width:52px;height:52px;border-radius:8px;background-size:cover;background-position:center;background-color:#100c1c;border:1px solid var(--chrome-line);flex:none;}
   .hint{font-size:11px;color:var(--chrome-sub);margin-top:6px;line-height:1.5;}
 
+  .modalOverlay{position:fixed;inset:0;background:#0a0716ee;padding:32px 40px;overflow-y:auto;display:none;z-index:200;}
+  .modalOverlay.open{display:block;}
+  .modalHead{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;color:var(--chrome-text);font-weight:700;font-size:15px;}
+  .previewGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:16px;}
+  .previewGrid .thumb{aspect-ratio:4/5;}
+
   ::-webkit-scrollbar{width:8px;height:8px;}
   ::-webkit-scrollbar-thumb{background:#3a3358;border-radius:4px;}
 </style>
@@ -112,6 +148,18 @@
   <div id="topbar">
     <div class="brand"><span class="dot"></span>Card Studio</div>
     <div class="actions">
+      <div class="menuWrap" id="blockMenuWrap">
+        <button class="btn ghost" id="blockMenuBtn">콘텐츠 삽입 ▾</button>
+        <div class="dropdown" id="blockMenu">
+          <div class="ddItem" data-block="none"><span class="ic">Aa</span>텍스트 설명</div>
+          <div class="ddItem" data-block="timeline"><span class="ic">⏱</span>타임라인</div>
+          <div class="ddItem" data-block="list"><span class="ic">☰</span>번호 리스트</div>
+          <div class="ddItem" data-block="stats"><span class="ic">#</span>통계 숫자</div>
+          <div class="ddItem" data-block="chart"><span class="ic">▤</span>막대 그래프</div>
+          <div class="ddItem" data-block="quote"><span class="ic">"</span>인용구</div>
+        </div>
+      </div>
+      <button class="btn ghost" id="previewAllBtn">전체 미리보기</button>
       <button class="btn ghost" id="exportOne">현재 카드 저장</button>
       <button class="btn primary" id="exportAll">전체 저장</button>
     </div>
@@ -192,6 +240,7 @@
         <h3>글꼴</h3>
         <div class="field">
           <select id="fontSelect">
+            <option value="pretendard">Pretendard (인기 국문 고딕)</option>
             <option value="noto">Noto Sans KR (기본 고딕)</option>
             <option value="plex">IBM Plex Sans KR (모던 고딕)</option>
             <option value="black">Black Han Sans (임팩트 헤드라인)</option>
@@ -223,13 +272,28 @@
           <input type="text" id="highlightWord" placeholder="직접">
         </div>
         <div class="field">
-          <label>부제/설명</label>
-          <textarea id="subText" placeholder="AI가 아닌 나만의 문체로 만들어 보자."></textarea>
-        </div>
-        <div class="field">
           <label>계정 핸들</label>
           <input type="text" id="handleText" placeholder="@kkongdon_story">
         </div>
+      </div>
+
+      <div class="sec">
+        <h3>콘텐츠 블록 <span style="font-weight:400;text-transform:none;color:var(--chrome-sub);">(상단 메뉴에서도 선택 가능)</span></h3>
+        <div class="field">
+          <select id="contentBlockSelect">
+            <option value="none">텍스트 설명</option>
+            <option value="timeline">타임라인</option>
+            <option value="list">번호 리스트</option>
+            <option value="stats">통계 숫자</option>
+            <option value="chart">막대 그래프</option>
+            <option value="quote">인용구</option>
+          </select>
+        </div>
+        <div class="field">
+          <label id="blockDataLabel">내용</label>
+          <textarea id="blockDataText" style="min-height:100px;" placeholder="AI가 아닌 나만의 문체로 만들어 보자."></textarea>
+        </div>
+        <div class="hint" id="blockDataHint">한 줄씩 입력하세요.</div>
       </div>
 
       <div class="sec">
@@ -260,7 +324,7 @@
           <div class="swatches" id="mkSwatches"></div>
         </div>
         <div class="field">
-          <label>포인트색 (화살표·듀오톤)</label>
+          <label>포인트색 (화살표·듀오톤·그래프)</label>
           <div class="colorField"><input type="color" id="accentColor" value="#7c5cff"><span id="accentColorHex">#7c5cff</span></div>
         </div>
       </div>
@@ -280,8 +344,30 @@
   </div>
 </div>
 
+<div class="modalOverlay" id="previewModal">
+  <div class="modalHead"><span>전체 미리보기</span><button class="btn ghost small" id="closePreview">닫기 ✕</button></div>
+  <div class="previewGrid" id="previewGrid"></div>
+</div>
+
 <script>
 const templateLabels = {text:'TEXT', full:'FULL', split:'SPLIT', inset:'INSET'};
+
+const sampleData = {
+  timeline: '2024.01 | 프로젝트 시작\n2024.06 | 베타 출시\n2025.01 | 정식 출시',
+  list: '첫 번째 항목을 입력하세요\n두 번째 항목을 입력하세요\n세 번째 항목을 입력하세요',
+  stats: '128% | 성장률\n42만 | 사용자 수\n4.8 | 평점',
+  chart: '1월 | 30\n2월 | 55\n3월 | 80',
+  quote: '이 자리에 인용할 문장을 입력하세요.\n작성자 이름'
+};
+
+const blockLabels = {
+  none: {label:'설명', hint:'한 줄이든 여러 줄이든 자유롭게 입력하세요.', ph:'AI가 아닌 나만의 문체로 만들어 보자.'},
+  timeline: {label:'타임라인 항목', hint:'"날짜 | 설명" 형식으로 한 줄에 하나씩 입력하세요.', ph:'2024.01 | 프로젝트 시작'},
+  list: {label:'리스트 항목', hint:'한 줄에 항목 하나씩 입력하면 자동으로 번호가 매겨집니다.', ph:'첫 번째 항목'},
+  stats: {label:'통계 항목', hint:'"값 | 라벨" 형식으로 한 줄에 하나씩 입력하세요.', ph:'128% | 성장률'},
+  chart: {label:'그래프 항목', hint:'"라벨 | 숫자값" 형식으로 한 줄에 하나씩 입력하세요.', ph:'1월 | 30'},
+  quote: {label:'인용구', hint:'첫 줄은 인용 문장, 둘째 줄은 작성자(선택)입니다.', ph:'인용할 문장\n작성자 이름'}
+};
 
 const defaults = () => ({
   template:'text',
@@ -290,7 +376,8 @@ const defaults = () => ({
   bg:'#f4efe4', text:'#1a1a1a', pillBg:'#181818', pillColor:'#ffffff',
   mk:'#f6b8c4', accent:'#7c5cff', titleSize:27, subSize:14,
   image:null, imageFit:'cover', imagePos:'center', imageFilter:'none', imageOverlay:55,
-  font:'noto'
+  font:'pretendard',
+  contentBlock:'none', blockData:''
 });
 
 let slides = [defaults()];
@@ -312,6 +399,7 @@ function highlightedHtml(title, word, mk){
 
 function fontStack(id){
   const map = {
+    pretendard: "'Pretendard Variable','Pretendard',sans-serif",
     noto: "'Noto Sans KR', sans-serif",
     plex: "'IBM Plex Sans KR', sans-serif",
     black: "'Black Han Sans', sans-serif",
@@ -321,7 +409,7 @@ function fontStack(id){
     myeongjo: "'Nanum Myeongjo', serif",
     batang: "'Gowun Batang', serif"
   };
-  return map[id] || map.noto;
+  return map[id] || map.pretendard;
 }
 
 function filterCss(f){
@@ -348,14 +436,72 @@ function pillHtml(s){
 function titleHtml(s){
   return '<div class="titleText" style="font-size:' + s.titleSize + 'px;">' + highlightedHtml(s.title, s.highlight, s.mk) + '</div>';
 }
-function subHtml(s){
-  return s.sub.trim() ? '<div class="subText" style="font-size:' + s.subSize + 'px;">' + escapeHtml(s.sub).replace(/\n/g,'<br>') + '</div>' : '';
-}
 function rowTopHtml(s, pageIdx, total, z){
   return '<div class="rowTop ' + (z?'z2':'') + '"><div class="badgeTop">' + escapeHtml(s.badgeTop) + '</div><div class="pageNum">' + (pageIdx+1) + ' / ' + total + '</div></div>';
 }
 function rowBottomHtml(s, z){
   return '<div class="rowBottom ' + (z?'z2':'') + '"><div class="handle">' + escapeHtml(s.handle) + '</div><div class="arrow" style="color:' + s.accent + ';">&gt;&gt;&gt;&gt;</div></div>';
+}
+
+function parseLines(data){
+  return (data||'').split('\n').map(l=>l.trim()).filter(Boolean);
+}
+
+function renderTimeline(s){
+  const lines = parseLines(s.blockData);
+  if(!lines.length) return '';
+  const items = lines.map(l => {
+    const parts = l.split('|');
+    const a = (parts[0]||'').trim(), b = (parts[1]||'').trim();
+    return '<div class="tl-item"><div class="tl-dot" style="background:' + s.accent + ';"></div><div class="tl-body"><div class="tl-date">' + escapeHtml(a) + '</div><div class="tl-desc">' + escapeHtml(b) + '</div></div></div>';
+  }).join('');
+  return '<div class="blk timeline">' + items + '</div>';
+}
+function renderList(s){
+  const lines = parseLines(s.blockData);
+  if(!lines.length) return '';
+  const items = lines.map((l,i) => '<div class="ls-item"><div class="ls-num" style="background:' + s.accent + ';">' + (i+1) + '</div><div class="ls-text">' + escapeHtml(l) + '</div></div>').join('');
+  return '<div class="blk list">' + items + '</div>';
+}
+function renderStats(s){
+  const lines = parseLines(s.blockData);
+  if(!lines.length) return '';
+  const items = lines.map(l => {
+    const parts = l.split('|');
+    const v = (parts[0]||'').trim(), label = (parts[1]||'').trim();
+    return '<div class="st-item"><div class="st-val" style="color:' + s.accent + ';">' + escapeHtml(v) + '</div><div class="st-label">' + escapeHtml(label) + '</div></div>';
+  }).join('');
+  return '<div class="blk stats">' + items + '</div>';
+}
+function renderChart(s){
+  const lines = parseLines(s.blockData);
+  if(!lines.length) return '';
+  const parsed = lines.map(l => { const parts = l.split('|'); return {label:(parts[0]||'').trim(), v: parseFloat(parts[1])||0}; });
+  const max = Math.max.apply(null, parsed.map(p=>p.v).concat([1]));
+  const items = parsed.map(p => '<div class="ch-row"><div class="ch-label">' + escapeHtml(p.label) + '</div><div class="ch-track"><div class="ch-fill" style="width:' + (p.v/max*100) + '%;background:' + s.accent + ';"></div></div><div class="ch-val">' + p.v + '</div></div>').join('');
+  return '<div class="blk chart">' + items + '</div>';
+}
+function renderQuote(s){
+  const lines = parseLines(s.blockData);
+  if(!lines.length) return '';
+  const quote = lines[0] || '';
+  const author = lines[1] || '';
+  return '<div class="blk quote"><div class="q-mark" style="color:' + s.accent + ';">&ldquo;</div><div class="q-text">' + escapeHtml(quote) + '</div>' + (author ? '<div class="q-author">- ' + escapeHtml(author) + '</div>' : '') + '</div>';
+}
+function subFallbackHtml(s){
+  return s.sub && s.sub.trim() ? '<div class="subText" style="font-size:' + s.subSize + 'px;">' + escapeHtml(s.sub).replace(/\n/g,'<br>') + '</div>' : '';
+}
+function blockHtml(s){
+  switch(s.contentBlock){
+    case 'timeline': return renderTimeline(s);
+    case 'list': return renderList(s);
+    case 'stats': return renderStats(s);
+    case 'chart': return renderChart(s);
+    case 'quote': return renderQuote(s);
+    default: return s.blockData && s.blockData.trim()
+      ? '<div class="subText" style="font-size:' + s.subSize + 'px;">' + escapeHtml(s.blockData).replace(/\n/g,'<br>') + '</div>'
+      : subFallbackHtml(s);
+  }
 }
 
 function cardMarkup(s, pageIdx, total){
@@ -368,48 +514,42 @@ function cardMarkup(s, pageIdx, total){
       imageBox(s,'full') +
       '<div class="scrim" style="background:linear-gradient(to top, rgba(0,0,0,' + overlay + ') 0%, rgba(0,0,0,' + (overlay*0.35) + ') 45%, rgba(0,0,0,0) 75%);"></div>' +
       rowTopHtml(s, pageIdx, total, true) +
-      '<div class="z2" style="margin-top:auto;padding-top:20px;">' + pillHtml(s) + titleHtml(s) + subHtml(s) + '</div>' +
+      '<div class="z2" style="margin-top:auto;padding-top:20px;">' + pillHtml(s) + titleHtml(s) + blockHtml(s) + '</div>' +
       rowBottomHtml(s, true) +
     '</div>';
   }
-
   if(s.template === 'split'){
     return '<div id="card" style="' + base + '">' +
       rowTopHtml(s, pageIdx, total, false) +
       imageBox(s,'split') +
-      '<div class="frame" style="border:none;padding:20px 2px 0;">' + pillHtml(s) + titleHtml(s) + subHtml(s) + '</div>' +
+      '<div class="frame" style="border:none;padding:20px 2px 0;">' + pillHtml(s) + titleHtml(s) + blockHtml(s) + '</div>' +
       rowBottomHtml(s, false) +
     '</div>';
   }
-
   if(s.template === 'inset'){
     return '<div id="card" style="' + base + '">' +
       rowTopHtml(s, pageIdx, total, false) +
-      '<div class="frame">' + imageBox(s,'inset') + pillHtml(s) + titleHtml(s) + subHtml(s) + '</div>' +
+      '<div class="frame">' + imageBox(s,'inset') + pillHtml(s) + titleHtml(s) + blockHtml(s) + '</div>' +
       rowBottomHtml(s, false) +
     '</div>';
   }
-
-  // text
   return '<div id="card" style="' + base + '">' +
     rowTopHtml(s, pageIdx, total, false) +
-    '<div class="frame">' + pillHtml(s) + titleHtml(s) + subHtml(s) + '</div>' +
+    '<div class="frame">' + pillHtml(s) + titleHtml(s) + blockHtml(s) + '</div>' +
     rowBottomHtml(s, false) +
   '</div>';
 }
 
 const fullCss = document.querySelector('style').textContent;
-const fontLinkHtml = document.querySelector('link[href*="fonts.googleapis"]').outerHTML;
+const fontLinksHtml = Array.from(document.querySelectorAll('link[rel="stylesheet"]')).map(l=>l.outerHTML).join('');
 
 function renderMainCard(){
   const s = slides[active];
   $('canvasWrap').innerHTML = cardMarkup(s, active, slides.length);
 }
-
 function thumbSrcDoc(s, idx){
-  return '<!DOCTYPE html><html><head>' + fontLinkHtml + '<style>' + fullCss + '</style></head><body style="margin:0;">' + cardMarkup(s, idx, slides.length) + '</body></html>';
+  return '<!DOCTYPE html><html><head>' + fontLinksHtml + '<style>' + fullCss + '</style></head><body style="margin:0;">' + cardMarkup(s, idx, slides.length) + '</body></html>';
 }
-
 function renderList(){
   const list = $('slideList');
   list.innerHTML = '';
@@ -434,12 +574,19 @@ function renderList(){
   });
   $('slideCount').textContent = slides.length;
 }
-
 function deleteSlide(i){
   if(slides.length === 1) return;
   slides.splice(i,1);
   if(active >= slides.length) active = slides.length - 1;
   syncForm(); renderMainCard(); renderList();
+}
+
+function updateBlockHint(){
+  const s = slides[active];
+  const info = blockLabels[s.contentBlock] || blockLabels.none;
+  $('blockDataLabel').textContent = info.label;
+  $('blockDataHint').textContent = info.hint;
+  $('blockDataText').placeholder = info.ph;
 }
 
 function syncForm(){
@@ -449,8 +596,10 @@ function syncForm(){
   $('pillText').value = s.pillText;
   $('titleText').value = s.title;
   $('highlightWord').value = s.highlight;
-  $('subText').value = s.sub;
   $('handleText').value = s.handle;
+  $('contentBlockSelect').value = s.contentBlock;
+  $('blockDataText').value = s.contentBlock === 'none' ? (s.blockData || s.sub || '') : s.blockData;
+  updateBlockHint();
   $('bgColor').value = s.bg; $('bgColorHex').textContent = s.bg;
   $('textColor').value = s.text; $('textColorHex').textContent = s.text;
   $('pillBg').value = s.pillBg; $('pillBgHex').textContent = s.pillBg;
@@ -478,7 +627,6 @@ bindField('badgeTop','badgeTop');
 bindField('pillText','pillText');
 bindField('titleText','title');
 bindField('highlightWord','highlight');
-bindField('subText','sub');
 bindField('handleText','handle');
 bindField('bgColor','bg',true);
 bindField('textColor','text',true);
@@ -486,6 +634,13 @@ bindField('pillBg','pillBg',true);
 bindField('pillColor','pillColor',true);
 bindField('mkColor','mk',true);
 bindField('accentColor','accent',true);
+
+$('blockDataText').addEventListener('input', e => {
+  const s = slides[active];
+  s.blockData = e.target.value;
+  if(s.contentBlock === 'none') s.sub = e.target.value;
+  renderMainCard(); renderList();
+});
 
 $('titleSize').addEventListener('input', e => {
   slides[active].titleSize = +e.target.value;
@@ -523,6 +678,39 @@ $('imageOverlay').addEventListener('input', e => {
   $('imageOverlayVal').textContent = e.target.value;
   renderMainCard(); renderList();
 });
+
+function setContentBlock(type){
+  const s = slides[active];
+  s.contentBlock = type;
+  if(type !== 'none' && !s.blockData.trim()){
+    s.blockData = sampleData[type] || '';
+  }
+  syncForm(); renderMainCard(); renderList();
+}
+$('contentBlockSelect').addEventListener('change', e => setContentBlock(e.target.value));
+
+$('blockMenuBtn').addEventListener('click', e => { e.stopPropagation(); $('blockMenu').classList.toggle('open'); });
+document.addEventListener('click', () => $('blockMenu').classList.remove('open'));
+Array.from(document.querySelectorAll('#blockMenu .ddItem')).forEach(item => {
+  item.addEventListener('click', () => { setContentBlock(item.dataset.block); $('blockMenu').classList.remove('open'); });
+});
+
+function openPreview(){
+  const grid = $('previewGrid'); grid.innerHTML = '';
+  slides.forEach((s,i) => {
+    const div = document.createElement('div');
+    div.className = 'thumb' + (i===active?' active':'');
+    const iframe = document.createElement('iframe'); iframe.srcdoc = thumbSrcDoc(s,i);
+    div.appendChild(iframe);
+    const idx = document.createElement('div'); idx.className='idx'; idx.textContent = i+1; div.appendChild(idx);
+    div.onclick = () => { active=i; syncForm(); renderMainCard(); renderList(); closePreview(); };
+    grid.appendChild(div);
+  });
+  $('previewModal').classList.add('open');
+}
+function closePreview(){ $('previewModal').classList.remove('open'); }
+$('previewAllBtn').addEventListener('click', openPreview);
+$('closePreview').addEventListener('click', closePreview);
 
 $('uploadBtn').addEventListener('click', () => $('imageUpload').click());
 $('imageUpload').addEventListener('change', e => {
@@ -576,11 +764,9 @@ async function exportNode(node, filename){
   link.href = canvas.toDataURL('image/png');
   link.click();
 }
-
 $('exportOne').addEventListener('click', () => {
   exportNode($('canvasWrap'), 'card_' + (active+1) + '.png');
 });
-
 $('exportAll').addEventListener('click', async () => {
   const origActive = active;
   for(let i=0;i<slides.length;i++){
