@@ -763,6 +763,49 @@
   .modal-actions button { padding: 14px; border-radius: var(--radius-pill); font-weight: 700; }
   .modal-ok:disabled { opacity: 0.4; cursor: not-allowed; }
 
+  .full-preview-backdrop {
+    position: fixed; inset: 0; background: rgba(8, 10, 12, 0.72); z-index: 1200;
+    display: none; align-items: center; justify-content: center; padding: 24px;
+  }
+  .full-preview-backdrop.show { display: flex; }
+  .full-preview-modal {
+    width: min(1200px, 96vw); max-height: 90vh; background: var(--panel-bg);
+    border: 1px solid rgba(255,255,255,0.08); border-radius: 22px; box-shadow: var(--shadow-strong);
+    overflow: hidden; display: flex; flex-direction: column;
+  }
+  .full-preview-header {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 18px 20px; border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .full-preview-header h3 { margin: 0; font-size: 20px; font-weight: 800; }
+  .full-preview-header p { margin: 4px 0 0; color: var(--gray); font-size: 13px; }
+  .full-preview-scroll {
+    overflow: auto; padding: 18px 20px 22px; display: grid; gap: 18px;
+  }
+  .full-preview-section {
+    display: grid; gap: 14px;
+  }
+  .full-preview-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px;
+  }
+  .full-preview-item {
+    background: var(--input-bg); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px; padding: 12px; display: grid; gap: 8px;
+    box-shadow: 0 8px 22px rgba(0,0,0,0.08);
+  }
+  .full-preview-label {
+    font-size: 12px; font-weight: 700; color: var(--gray); letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .full-preview-item img {
+    width: 100%; display: block; border-radius: 12px; background: #000;
+    object-fit: contain; box-shadow: 0 8px 18px rgba(0,0,0,0.12);
+  }
+  .empty-preview {
+    padding: 32px; text-align: center; color: var(--gray); font-weight: 600;
+  }
+
   @media (max-width: 900px) {
     .editor-grid { grid-template-columns: 1fr !important; }
     .card-editor .editor-grid,
@@ -804,6 +847,19 @@
   </div>
 </div>
 
+<div id="fullPreviewModal" class="full-preview-backdrop" onclick="if(event.target===this) closeFullPreview()">
+  <div class="full-preview-modal" role="dialog" aria-modal="true">
+    <div class="full-preview-header">
+      <div>
+        <h3>전체 미리보기</h3>
+        <p>커버와 카드 레이아웃을 한 번에 확인합니다.</p>
+      </div>
+      <button type="button" class="icon-btn" onclick="closeFullPreview()">닫기</button>
+    </div>
+    <div class="full-preview-scroll" id="fullPreviewContent"></div>
+  </div>
+</div>
+
 <div id="main-content" class="app">
 
   <header class="topbar">
@@ -816,6 +872,7 @@
       <button type="button" class="icon-btn" id="themeBtn" onclick="toggleUiTheme()">라이트 UI</button>
       <button type="button" class="icon-btn" onclick="openDrawer()">설정</button>
       <button type="button" class="icon-btn" onclick="addCard()">+ 카드</button>
+      <button type="button" class="icon-btn" onclick="openFullPreview()">전체 미리보기</button>
       <button type="button" class="icon-btn primary" onclick="requestDownload('zip')">ZIP 저장</button>
     </div>
   </header>
@@ -3131,6 +3188,48 @@ function requestDownload(type, id) {
 function closeChecklist() {
   document.getElementById('checklistModal').classList.remove('show');
   pendingDownload = null;
+}
+async function openFullPreview() {
+  const modal = document.getElementById('fullPreviewModal');
+  const content = document.getElementById('fullPreviewContent');
+  if (!modal || !content) return;
+
+  await renderCover({ skipGuide: true });
+  await Promise.all(cards.map(c => updateCard(c.id, { skipGuide: true })));
+
+  const items = [];
+  const coverCanvas = document.getElementById('coverCanvas');
+  if (coverCanvas) {
+    items.push({ label: '커버', src: coverCanvas.toDataURL('image/png') });
+  }
+
+  cards.forEach((c, idx) => {
+    const cardCanvas = document.getElementById(`canvas-${c.id}`);
+    if (cardCanvas) items.push({ label: `카드 #${idx + 1}`, src: cardCanvas.toDataURL('image/png') });
+  });
+
+  if (!items.length) {
+    content.innerHTML = '<div class="empty-preview">미리볼 수 있는 이미지가 없습니다.</div>';
+  } else {
+    content.innerHTML = `
+      <div class="full-preview-section">
+        <div class="full-preview-grid">
+          ${items.map(item => `
+            <div class="full-preview-item">
+              <div class="full-preview-label">${item.label}</div>
+              <img src="${item.src}" alt="${item.label}">
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  modal.classList.add('show');
+}
+function closeFullPreview() {
+  const modal = document.getElementById('fullPreviewModal');
+  if (modal) modal.classList.remove('show');
 }
 function updateChecklistBtn() {
   const all = ['ck1','ck2','ck3','ck4'].every(id => document.getElementById(id).checked);
