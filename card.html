@@ -3500,14 +3500,19 @@ function saveCanvasImage(canvas, filename) {
 }
 
 function requestDownload(type, id) {
-  pendingDownload = { type, id };
-  ['ck1','ck2','ck3','ck4'].forEach(cid => { document.getElementById(cid).checked = false; });
-  updateChecklistBtn();
-  const desc = document.getElementById('checklistDesc');
-  if (type === 'cover') desc.textContent = '커버 이미지를 저장하기 전에 확인하세요.';
-  else if (type === 'zip') desc.textContent = 'ZIP(또는 일괄 저장) 전에 확인하세요.';
-  else desc.textContent = '카드 이미지를 저장하기 전에 확인하세요.';
-  document.getElementById('checklistModal').classList.add('show');
+  // ZIP 저장만 체크리스트 모달 표시
+  if (type === 'zip') {
+    pendingDownload = { type, id };
+    ['ck1','ck2','ck3','ck4'].forEach(cid => { document.getElementById(cid).checked = false; });
+    updateChecklistBtn();
+    const desc = document.getElementById('checklistDesc');
+    desc.textContent = 'ZIP(또는 일괄 저장) 전에 확인하세요.';
+    document.getElementById('checklistModal').classList.add('show');
+  } else {
+    // 개별 이미지 저장은 바로 처리
+    if (type === 'cover') downloadCover();
+    else if (type === 'card') downloadCardImage(id);
+  }
 }
 function closeChecklist() {
   document.getElementById('checklistModal').classList.remove('show');
@@ -3616,9 +3621,8 @@ async function confirmChecklistDownload() {
   const job = pendingDownload;
   closeChecklist();
   if (!job) return;
-  if (job.type === 'cover') await downloadCover();
-  else if (job.type === 'card') await downloadCardImage(job.id);
-  else if (job.type === 'zip') await downloadAllAsZip();
+  // 이제는 ZIP만 처리
+  if (job.type === 'zip') await downloadAllAsZip();
 }
 async function downloadCover() {
   await renderCover({ skipGuide: true });
