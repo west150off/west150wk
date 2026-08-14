@@ -1,2205 +1,1148 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>WEST150 DAILY · NEWS CARD</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Noto+Serif+KR:wght@400;600;700&family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=Nanum+Myeongjo:wght@400;700&family=Nanum+Gothic:wght@400;700;800&family=Black+Han+Sans&family=Do+Hyeon&family=Jua&family=Gaegu:wght@400;700&family=Gowun+Batang:wght@400;700&family=Song+Myung&family=Hahmlet:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
-    @import url('https://cdn.jsdelivr.net/gh/spoqa/spoqa-han-sans@latest/css/SpoqaHanSansNeo.css');
+<meta charset="UTF-8">
+<title>Card Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=IBM+Plex+Sans+KR:wght@400;600;700&family=Black+Han+Sans&family=Do+Hyeon&family=Jua&family=Gaegu:wght@400;700&family=Nanum+Myeongjo:wght@400;700;800&family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  :root{
+    --chrome-bg:#161221;
+    --chrome-panel:#1d1830;
+    --chrome-line:#2c2540;
+    --chrome-text:#eae6f5;
+    --chrome-sub:#8d84ab;
+    --accent:#7c5cff;
+    --accent-soft:#7c5cff22;
+    --danger:#ff5c7a;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;height:100%;font-family:'Pretendard Variable','Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:var(--chrome-bg);color:var(--chrome-text);}
+  #app{display:flex;flex-direction:column;height:100vh;}
 
-    :root {
-      --bg: #f5f5f7;
-      --panel-bg: #ffffff;
-      --text: #1d1d1f;
-      --text-secondary: #6e6e73;
-      --border: #d2d2d7;
-      --accent: #1a365d;
-      --highlight-color: #ffd54f;
-      --card-bg: #ffffff;
-      --card-text: #1a1a1a;
-      --card-muted: #4b5563;
-      --shadow: 0 4px 24px rgba(0,0,0,0.06);
-      --radius: 16px;
-    }
+  #topbar{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:56px;background:var(--chrome-panel);border-bottom:1px solid var(--chrome-line);flex:none;position:relative;z-index:10;}
+  #topbar .brand{font-weight:700;font-size:15px;letter-spacing:.02em;display:flex;align-items:center;gap:8px;}
+  #topbar .brand .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent);}
+  #topbar .actions{display:flex;gap:8px;align-items:center;}
+  button{font-family:inherit;cursor:pointer;border:none;}
+  select{font-family:inherit;}
+  .btn{padding:9px 16px;border-radius:8px;font-size:13px;font-weight:600;background:#2a2440;color:var(--chrome-text);transition:.15s;}
+  .btn:hover{background:#352c54;}
+  .btn.primary{background:var(--accent);color:#fff;}
+  .btn.primary:hover{background:#6c4aff;}
+  .btn.ghost{background:transparent;color:var(--chrome-sub);border:1px solid var(--chrome-line);}
+  .btn.ghost:hover{color:var(--chrome-text);border-color:var(--accent);}
+  .btn.small{padding:6px 10px;font-size:12px;}
+  .btn.full{width:100%;}
 
-    [data-theme="dark"] {
-      --bg: #000000;
-      --panel-bg: #1c1c1e;
-      --text: #f5f5f7;
-      --text-secondary: #98989d;
-      --border: #38383a;
-      --card-bg: #1c1c1e;
-      --card-text: #f5f5f7;
-      --card-muted: #98989d;
-      --shadow: 0 4px 24px rgba(0,0,0,0.4);
-    }
+  .menuWrap{position:relative;}
+  .dropdown{position:absolute;top:calc(100% + 6px);left:0;background:#241d3a;border:1px solid var(--chrome-line);border-radius:10px;padding:6px;display:none;flex-direction:column;min-width:160px;box-shadow:0 14px 34px #000a;z-index:50;}
+  .dropdown.open{display:flex;}
+  .dropdown.panelDropdown{padding:16px;width:280px;gap:12px;max-height:78vh;overflow-y:auto;}
+  .dropdown.wide{width:220px;max-height:70vh;overflow-y:auto;}
+  .ddItem{padding:9px 11px;border-radius:7px;font-size:13px;cursor:pointer;color:var(--chrome-text);display:flex;align-items:center;gap:8px;}
+  .ddItem:hover{background:#352c54;}
+  .ddItem.active{background:var(--accent-soft);color:var(--accent);}
+  .ddItem .ic{opacity:.7;font-size:14px;width:16px;text-align:center;}
+  .alignRow{display:flex;gap:6px;}
+  .alignBtn{flex:1;padding:9px 0;border-radius:7px;background:#100c1c;border:1px solid var(--chrome-line);color:var(--chrome-sub);font-size:12px;font-weight:600;transition:.15s;}
+  .alignBtn:hover{color:var(--chrome-text);border-color:var(--accent);}
+  .alignBtn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+  #body{flex:1;display:flex;min-height:0;}
 
-    body {
-      font-family: 'Pretendard', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      line-height: 1.5;
-    }
+  #left{width:172px;flex:none;background:var(--chrome-panel);border-right:1px solid var(--chrome-line);display:flex;flex-direction:column;}
+  #left .hd{padding:14px 14px 8px;font-size:12px;color:var(--chrome-sub);font-weight:600;letter-spacing:.03em;}
+  #slideList{flex:1;overflow-y:auto;padding:0 12px 12px;display:flex;flex-direction:column;gap:10px;}
+  .thumb{position:relative;border-radius:10px;overflow:hidden;cursor:pointer;border:2px solid transparent;background:#000;aspect-ratio:4/5;}
+  .thumb.active{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
+  .thumb iframe{width:400%;height:400%;transform:scale(.25);transform-origin:top left;border:0;pointer-events:none;}
+  .thumb .idx{position:absolute;top:4px;left:6px;font-size:10px;font-weight:700;color:#fff;background:#000a;padding:1px 5px;border-radius:5px;}
+  .thumb .tag{position:absolute;bottom:4px;left:6px;font-size:9px;font-weight:700;color:#fff;background:#7c5cffcc;padding:1px 5px;border-radius:5px;}
+  .thumb .del{position:absolute;top:4px;right:4px;width:18px;height:18px;border-radius:5px;background:#000a;color:#fff;font-size:11px;line-height:18px;text-align:center;opacity:0;transition:.15s;}
+  .thumb:hover .del{opacity:1;}
+  .thumb .del:hover{background:var(--danger);}
+  #addSlide{margin:0 12px 14px;padding:10px;border-radius:10px;background:#2a2440;color:var(--chrome-sub);font-size:12px;font-weight:600;border:1px dashed var(--chrome-line);}
+  #addSlide:hover{color:var(--chrome-text);border-color:var(--accent);}
 
-    .app { display: flex; min-height: 100vh; }
+  #stage{flex:1;display:flex;align-items:center;justify-content:center;overflow:auto;background:
+      radial-gradient(circle at 30% 20%, #241c3a 0%, var(--chrome-bg) 60%);
+    padding:40px;}
+  #canvasWrap{box-shadow:0 30px 60px -20px #000a;border-radius:4px;}
 
-    .panel {
-      width: 400px;
-      min-width: 360px;
-      background: var(--panel-bg);
-      border-right: 1px solid var(--border);
-      padding: 24px 20px 40px;
-      overflow-y: auto;
-      position: sticky;
-      top: 0;
-      height: 100vh;
-    }
+  #card{width:400px;height:500px;position:relative;overflow:hidden;display:flex;flex-direction:column;padding:26px 26px 22px;}
+  #card .rowTop{display:flex;justify-content:space-between;align-items:center;}
+  #card .badgeTop{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;}
+  #card .pageNum{font-size:12px;font-weight:600;opacity:.6;}
+  #card .frame{flex:1;margin-top:16px;border:1.5px solid #1a1a1a22;border-radius:2px;display:flex;flex-direction:column;justify-content:center;padding:26px 24px;position:relative;overflow:hidden;background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));}
+  #card .photoChip{padding:6px 8px;border-radius:999px;background:rgba(0,0,0,.12);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,.15);}
+  #card .glassLayer{position:absolute;inset:0;pointer-events:none;z-index:3;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.10);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
+  #card .scrim{position:absolute;inset:0;pointer-events:none;z-index:1;}
+  #card .pill{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.04em;padding:5px 12px;border-radius:20px;margin-bottom:16px;width:fit-content;}
+  #card .titleText{font-size:27px;line-height:1.35;font-weight:800;letter-spacing:-.01em;white-space:pre-wrap;word-break:keep-all;}
+  #card .titleText mark{background:var(--mk,#f6b8c4);color:inherit;padding:0 3px;box-decoration-break:clone;-webkit-box-decoration-break:clone;}
+  #card .subText{margin-top:14px;font-size:14px;line-height:1.6;font-weight:500;opacity:.72;white-space:pre-wrap;word-break:keep-all;}
+  #card .rowBottom{display:flex;justify-content:space-between;align-items:center;margin-top:18px;}
+  #card .handle{font-size:12px;font-weight:700;opacity:.75;}
+  #card .arrow{font-size:13px;font-weight:800;letter-spacing:.05em;}
 
-    .panel-header { margin-bottom: 28px; }
-    .panel-header h1 { font-size: 18px; font-weight: 600; letter-spacing: -0.3px; }
-    .panel-header p { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+  #card .imgBox{position:relative;overflow:hidden;border-radius:6px;background:#0002;}
+  #card .imgBox.split{width:100%;height:44%;flex:none;margin-top:14px;}
+  #card .imgBox.inset{width:100%;height:140px;flex:none;margin-bottom:16px;}
+  #card .imgBox.full{position:absolute;inset:0;border-radius:0;z-index:0;}
+  #card .imgBox.bottom{width:100%;height:38%;flex:none;margin-top:14px;}
+  #card .imgBox.side{width:42%;height:100%;flex:none;}
+  #card .imgBox .layer{position:absolute;inset:0;background-repeat:no-repeat;}
+  #card .imgBox .duo{position:absolute;inset:0;mix-blend-mode:color;}
+  #card .scrim{position:absolute;inset:0;z-index:1;pointer-events:none;}
+  #card .z2{position:relative;z-index:2;}
+  #card .frame.sideFrame{flex-direction:row;align-items:stretch;gap:14px;justify-content:flex-start;}
+  #card .frame.sideFrame .sideText{flex:1;display:flex;flex-direction:column;justify-content:center;min-width:0;}
+  #card .frame.boldFrame{border:3px solid currentColor;border-radius:0;padding:30px 26px;}
 
-    .section { margin-bottom: 22px; }
-    .section-title {
-      font-size: 11px; font-weight: 600; text-transform: uppercase;
-      letter-spacing: 0.8px; color: var(--text-secondary); margin-bottom: 10px;
-    }
+  #card .blk{margin-top:14px;}
+  #card .timeline .tl-item{display:flex;gap:10px;margin-bottom:10px;}
+  #card .tl-dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex:none;}
+  #card .tl-date{font-size:12px;font-weight:800;opacity:.85;}
+  #card .tl-desc{font-size:12.5px;line-height:1.5;opacity:.72;margin-top:2px;}
+  #card .list .ls-item{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px;}
+  #card .ls-num{width:18px;height:18px;border-radius:50%;color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex:none;}
+  #card .ls-text{font-size:13px;line-height:1.5;opacity:.85;padding-top:1px;}
+  #card .stats{display:flex;flex-wrap:wrap;gap:16px;}
+  #card .st-item{flex:1;min-width:80px;}
+  #card .st-val{font-size:24px;font-weight:900;}
+  #card .st-label{font-size:11px;opacity:.65;margin-top:2px;}
+  #card .chart .ch-row{display:flex;align-items:center;gap:8px;margin-bottom:9px;}
+  #card .ch-label{font-size:11px;width:56px;flex:none;opacity:.75;}
+  #card .ch-track{flex:1;height:8px;background:#00000014;border-radius:4px;overflow:hidden;}
+  #card .ch-fill{height:100%;border-radius:4px;}
+  #card .ch-val{font-size:11px;width:30px;text-align:right;opacity:.7;}
+  #card .quote{padding-top:2px;}
+  #card .q-mark{font-size:34px;font-weight:900;line-height:1;}
+  #card .q-text{font-size:16px;font-weight:700;line-height:1.5;margin-top:4px;}
+  #card .q-author{font-size:12px;opacity:.6;margin-top:8px;}
 
-    label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; color: var(--text); }
+  #right{width:300px;flex:none;background:var(--chrome-panel);border-left:1px solid var(--chrome-line);overflow-y:auto;}
+  .sec{padding:16px 18px;border-bottom:1px solid var(--chrome-line);}
+  .sec h3{margin:0 0 12px;font-size:12px;font-weight:700;color:var(--chrome-sub);letter-spacing:.04em;text-transform:uppercase;}
+  .field{margin-bottom:12px;}
+  .field:last-child{margin-bottom:0;}
+  .field label{display:block;font-size:12px;color:var(--chrome-sub);margin-bottom:6px;}
+  .field input[type=text], .field textarea, .field select{width:100%;background:#100c1c;border:1px solid var(--chrome-line);color:var(--chrome-text);border-radius:7px;padding:8px 10px;font-size:13px;font-family:inherit;resize:vertical;}
+  .field textarea{min-height:56px;line-height:1.4;}
+  .field input[type=text]:focus, .field textarea:focus, .field select:focus{outline:none;border-color:var(--accent);}
+  .row2{display:flex;gap:10px;}
+  .row2 .field{flex:1;}
+  .colorField{display:flex;align-items:center;gap:8px;background:#100c1c;border:1px solid var(--chrome-line);border-radius:7px;padding:6px 10px;}
+  .colorField input[type=color]{width:26px;height:26px;border:none;background:none;padding:0;cursor:pointer;}
+  .colorField span{font-size:12px;color:var(--chrome-sub);flex:1;}
+  .slider{display:flex;align-items:center;gap:10px;}
+  .slider input[type=range]{flex:1;accent-color:var(--accent);}
+  .slider .val{font-size:11px;color:var(--chrome-sub);width:32px;text-align:right;}
+  .swatches{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
+  .sw{width:20px;height:20px;border-radius:5px;cursor:pointer;border:1px solid #ffffff22;}
+  .imgPreviewRow{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+  .imgThumb{width:52px;height:52px;border-radius:8px;background-size:cover;background-position:center;background-color:#100c1c;border:1px solid var(--chrome-line);flex:none;}
+  .hint{font-size:11px;color:var(--chrome-sub);margin-top:6px;line-height:1.5;}
 
-    input[type="text"], input[type="date"], select, textarea {
-      width: 100%; padding: 10px 12px; border: 1px solid var(--border);
-      border-radius: 10px; background: var(--bg); color: var(--text);
-      font-size: 14px; font-family: inherit; transition: border-color 0.15s;
-    }
-    input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); }
-    textarea { min-height: 80px; resize: vertical; line-height: 1.6; }
-    select { cursor: pointer; appearance: auto; -webkit-appearance: menulist; }
+  .modalOverlay{position:fixed;inset:0;background:#0a0716ee;padding:32px 40px;overflow-y:auto;display:none;z-index:200;}
+  .modalOverlay.open{display:block;}
+  .modalHead{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;color:var(--chrome-text);font-weight:700;font-size:15px;}
+  .previewGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:16px;}
+  .previewGrid .thumb{aspect-ratio:4/5;}
 
-    .row { display: flex; gap: 10px; }
-    .row > * { flex: 1; }
+  ::-webkit-scrollbar{width:8px;height:8px;}
+  ::-webkit-scrollbar-thumb{background:#3a3358;border-radius:4px;}
 
-    .btn-group { display: flex; flex-wrap: wrap; gap: 6px; }
+  /* ================= STYLE SKINS (WEST150 OFFICIAL CARD 15종) ================= */
+  #card.style-insta{background:radial-gradient(circle at 90% -6%, #7c5cff20 0%, rgba(0,0,0,0) 42%),radial-gradient(circle at -8% 106%, #7c5cff18 0%, rgba(0,0,0,0) 38%),#f7f7f8;}
+  #card.style-insta .pill{background:var(--accent)!important;color:#fff!important;border-radius:20px;box-shadow:0 3px 12px #7c5cff33;}
+  #card.style-insta .frame{background:#fff;border:1px solid #0000000d;border-radius:16px;box-shadow:0 4px 16px #00000008;}
+  #card.style-insta .ls-num{box-shadow:0 0 0 4px #7c5cff1a;}
 
-    .btn {
-      padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px;
-      background: var(--bg); color: var(--text); font-size: 12px; font-weight: 500;
-      cursor: pointer; transition: all 0.15s; font-family: inherit;
-    }
-    .btn:hover { border-color: var(--accent); }
-    .btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+  #card.style-grid{background-color:#fdfdfb;background-image:linear-gradient(#1a365d14 1px, transparent 1px),linear-gradient(90deg, #1a365d14 1px, transparent 1px);background-size:24px 24px;}
+  #card.style-grid .pill{background:none!important;color:var(--accent)!important;border:1.5px solid var(--accent);border-radius:4px;}
+  #card.style-grid .titleText{background-image:linear-gradient(rgba(255,224,102,.55),rgba(255,224,102,.55));background-repeat:no-repeat;background-size:100% 40%;background-position:0 65%;display:inline;}
+  #card.style-grid .ls-item{position:relative;}
+  #card.style-grid .frame{border-style:dashed;}
 
-    .btn-primary {
-      background: var(--accent); color: #fff; border-color: var(--accent);
-      width: 100%; padding: 12px; font-size: 14px; font-weight: 600; margin-top: 8px;
-    }
-    .btn-primary:hover { opacity: 0.9; }
-    .btn-secondary { background: transparent; width: 100%; margin-top: 8px; }
+  #card.style-terminal{background:#0b0f0e!important;color:#d7ffe0!important;}
+  #card.style-terminal .badgeTop, #card.style-terminal .handle{color:#6cf27a!important;}
+  #card.style-terminal .pill{background:none!important;color:#6cf27a!important;border:1px solid #2a3a2e;}
+  #card.style-terminal .frame{border-color:#2a3a2e!important;background:none;}
+  #card.style-terminal .ls-num{background:none!important;color:#6cf27a!important;}
+  #card.style-terminal .titleText, #card.style-terminal .subText{font-family:'IBM Plex Sans KR',monospace;}
 
-    input[type="color"] {
-      width: 100%; height: 40px; border: 1px solid var(--border);
-      border-radius: 10px; cursor: pointer; padding: 4px; background: var(--bg);
-    }
+  #card.style-sticky{background-color:#f2ede4;background-image:radial-gradient(#00000010 1px, transparent 1px);background-size:16px 16px;}
+  #card.style-sticky .pill{background:#fff6b8!important;color:#1a1a1a!important;box-shadow:3px 4px 10px #00000026;transform:rotate(-2deg);}
+  #card.style-sticky .ls-item{background:#fffbe0;box-shadow:2px 3px 8px #0000001f;padding:8px 10px;border-radius:2px;transform:rotate(-1deg);}
+  #card.style-sticky .ls-item:nth-child(even){background:#ffe9f2;transform:rotate(1deg);}
 
-    .slider-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-    .slider-row label { margin: 0; min-width: 70px; font-size: 12px; font-weight: 500; }
-    .slider-row input[type="range"] { flex: 1; }
-    .slider-value { font-size: 12px; color: var(--text-secondary); min-width: 36px; text-align: right; }
+  #card.style-receipt .frame{font-family:'IBM Plex Sans KR',monospace;border-left:1px dashed #999;border-right:1px dashed #999;border-top:none;border-bottom:none;text-align:center!important;}
+  #card.style-receipt .titleText, #card.style-receipt .subText{text-align:center;}
+  #card.style-receipt .pill{margin-left:auto;margin-right:auto;}
+  #card.style-receipt .ls-item{border-bottom:1px dotted #ccc;padding-bottom:6px;}
 
-    .toggle-row {
-      display: flex; align-items: center; justify-content: space-between; padding: 7px 0;
-    }
+  #card.style-timeline .ls-num{display:none;}
+  #card.style-timeline .ls-item{padding-left:20px;position:relative;}
+  #card.style-timeline .ls-item::before{content:"";position:absolute;left:0;top:4px;width:10px;height:10px;border-radius:50%;background:#fff;border:3px solid var(--accent);}
+  #card.style-timeline .list{position:relative;padding-left:5px;}
+  #card.style-timeline .list::before{content:"";position:absolute;left:5px;top:6px;bottom:6px;width:2px;background:var(--accent);opacity:.3;}
 
-    .switch { position: relative; width: 44px; height: 26px; flex-shrink: 0; }
-    .switch input { opacity: 0; width: 0; height: 0; }
-    .slider {
-      position: absolute; cursor: pointer; inset: 0; background: var(--border);
-      border-radius: 26px; transition: 0.2s;
-    }
-    .slider:before {
-      position: absolute; content: ""; height: 20px; width: 20px;
-      left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.2s;
-    }
-    input:checked + .slider { background: var(--accent); }
-    input:checked + .slider:before { transform: translateX(18px); }
+  #card.style-newspaper{background:#f8f6f0!important;font-family:'Nanum Myeongjo',serif;}
+  #card.style-newspaper .badgeTop{display:none;}
+  #card.style-newspaper .pill{background:none!important;color:#1a1a1a!important;border-top:1px solid #1a1a1a;border-bottom:1px solid #1a1a1a;border-radius:0;padding:4px 0;letter-spacing:3px;}
+  #card.style-newspaper .titleText{font-family:'Nanum Myeongjo',serif;font-weight:900;}
+  #card.style-newspaper .frame{border:none;border-top:1px solid #1a1a1a;border-radius:0;}
+  #card.style-newspaper .rowBottom{border-top:2px solid #1a1a1a;padding-top:10px;}
 
-    .hint { font-size: 11px; color: var(--text-secondary); margin-top: 6px; line-height: 1.4; }
+  #card.style-postcard{background-color:#fbf8f2;background-image:repeating-linear-gradient(0deg, transparent, transparent 27px, #1a365d14 28px);position:relative;}
+  #card.style-postcard::before{content:"";position:absolute;inset:14px;border:3px dashed #00000026;pointer-events:none;z-index:5;}
+  #card.style-postcard .titleText{font-family:'Gaegu',cursive;font-weight:700;}
+  #card.style-postcard .pill{border:1.5px solid var(--accent);background:none!important;color:var(--accent)!important;border-radius:20px;}
 
-    .page-nav {
-      display: flex; align-items: center; justify-content: space-between;
-      background: var(--bg); border-radius: 10px; padding: 8px 12px; margin-bottom: 12px;
-    }
-    .page-nav .page-info { font-size: 13px; font-weight: 600; }
-    .page-nav .nav-btns { display: flex; gap: 6px; }
-    .page-nav .nav-btns .btn { padding: 6px 12px; }
+  #card.style-folder{background:#efe9dd!important;position:relative;}
+  #card.style-folder .rowTop{background:var(--accent);color:#fff;padding:6px 12px;border-radius:4px 4px 0 0;margin:-26px -26px 0;width:calc(100% + 52px);}
+  #card.style-folder .badgeTop, #card.style-folder .pageNum{color:#fff!important;}
+  #card.style-folder .pill{background:#fff!important;color:#1a1a1a!important;border:1px solid #ccc;box-shadow:0 2px 4px #00000014;}
 
-    /* Custom category dropdown */
-    .cat-wrap { position: relative; }
-    .cat-btn {
-      width: 100%; padding: 11px 14px; border: 1px solid var(--border);
-      border-radius: 10px; background: var(--bg); color: var(--text);
-      font-size: 14px; font-family: inherit; text-align: left; cursor: pointer;
-      display: flex; justify-content: space-between; align-items: center;
-    }
-    .cat-btn:hover { border-color: var(--accent); }
-    .cat-btn .arrow { font-size: 10px; opacity: 0.6; }
-    .cat-list {
-      display: none; position: absolute; left: 0; right: 0; top: calc(100% + 4px);
-      max-height: 280px; overflow-y: auto; background: var(--panel-bg);
-      border: 1px solid var(--border); border-radius: 12px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.12); z-index: 50; padding: 6px;
-    }
-    .cat-list.open { display: block; }
-    .cat-item {
-      padding: 10px 12px; border-radius: 8px; font-size: 13px; cursor: pointer;
-      color: var(--text);
-    }
-    .cat-item:hover { background: var(--bg); }
-    .cat-item.active { background: var(--accent); color: #fff; }
-    .cat-group {
-      font-size: 10px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase;
-      color: var(--text-secondary); padding: 10px 12px 4px;
-    }
+  #card.style-blueprint{background-color:#0b3d63!important;color:#dff1ff!important;background-image:linear-gradient(#ffffff17 1px, transparent 1px),linear-gradient(90deg, #ffffff17 1px, transparent 1px),linear-gradient(#ffffff29 1px, transparent 1px),linear-gradient(90deg, #ffffff29 1px, transparent 1px);background-size:20px 20px,20px 20px,100px 100px,100px 100px;}
+  #card.style-blueprint .badgeTop, #card.style-blueprint .handle{color:#9fd6ff!important;}
+  #card.style-blueprint .pill{color:#9fd6ff!important;background:none!important;border:1px solid #9fd6ff;}
+  #card.style-blueprint .frame{border-color:#9fd6ff55!important;border-style:dashed;}
 
-    .img-upload-zone {
-      border: 1.5px dashed var(--border);
-      border-radius: 12px; padding: 20px; text-align: center;
-      cursor: pointer; transition: border-color 0.15s; background: var(--bg);
-    }
-    .img-upload-zone:hover { border-color: var(--accent); }
-    .img-upload-zone.has-img { padding: 10px; }
-    .img-upload-zone img {
-      max-width: 100%; max-height: 120px; border-radius: 8px; display: block; margin: 0 auto 8px;
-    }
-    .img-upload-zone p { font-size: 13px; color: var(--text-secondary); }
-    .img-upload-zone input { display: none; }
+  #card.style-pastel{background:linear-gradient(135deg, #ffe1ec 0%, #e1f0ff 50%, #fff6d6 100%)!important;}
+  #card.style-pastel .pill{background:#fff!important;color:var(--accent)!important;border-radius:20px;box-shadow:0 3px 10px #00000014;}
+  #card.style-pastel .frame{background:#fff;border:none;border-radius:18px;box-shadow:0 6px 16px #00000014;}
+  #card.style-pastel .titleText{font-weight:800;}
 
-    .preview-area {
-      flex: 1; display: flex; flex-direction: column; align-items: center;
-      justify-content: flex-start; padding: 40px 24px; overflow: auto; background: var(--bg);
-    }
-    .preview-header {
-      width: 100%; max-width: 600px; display: flex;
-      justify-content: space-between; align-items: center; margin-bottom: 20px;
-    }
-    .preview-header span { font-size: 13px; color: var(--text-secondary); }
+  #card.style-certificate{background:#fdfaf0!important;border:8px solid #c9a44c;}
+  #card.style-certificate .frame{align-items:center;text-align:center!important;border:none;}
+  #card.style-certificate .titleText, #card.style-certificate .subText{text-align:center;font-family:'Nanum Myeongjo',serif;}
+  #card.style-certificate .pill{color:#a5822f!important;background:none!important;border:1px solid #c9a44c;border-radius:20px;}
+  #card.style-certificate .rowBottom{justify-content:center;border-top:1px solid #c9a44c;padding-top:10px;}
 
-    .card-wrapper {
-      box-shadow: var(--shadow); border-radius: var(--radius);
-      overflow: hidden; background: var(--card-bg);
-      transform-origin: top center;
-      margin-top: 10px;
-    }
-    .card-wrapper.in-mockup {
-      box-shadow: none; border-radius: 0; margin: 0 !important;
-    }
+  #card.style-magazine .titleText{font-size:1.2em;font-weight:900;letter-spacing:-.03em;line-height:1.08;}
+  #card.style-magazine .subText{font-family:'Nanum Myeongjo',serif;font-style:italic;border-left:2px solid var(--accent);padding-left:14px;}
+  #card.style-magazine .pill{border-bottom:2px solid var(--accent);border-radius:0;background:none!important;padding-bottom:6px;}
 
-    /* ===== 디바이스 목업 미리보기 ===== */
-    .plain-slot, .phone-mockup-outer {
-      display: flex; flex-direction: column; align-items: center; width: 100%;
-    }
-    .phone-frame {
-      width: 380px; max-width: 90vw;
-      background: linear-gradient(160deg, #3a3a3d, #0a0a0a);
-      border-radius: 56px; padding: 16px;
-      box-shadow: 0 40px 80px rgba(0,0,0,0.35), inset 0 0 0 2px rgba(255,255,255,0.06);
-    }
-    .phone-screen {
-      position: relative; width: 100%; aspect-ratio: 375 / 812;
-      background: #000; border-radius: 42px; overflow: hidden;
-    }
-    .phone-notch {
-      position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-      width: 154px; height: 28px; background: #000;
-      border-radius: 0 0 18px 18px; z-index: 60;
-    }
-    .phone-statusbar {
-      position: absolute; top: 0; left: 0; right: 0; height: 44px; z-index: 55;
-      display: flex; align-items: flex-end; justify-content: space-between;
-      padding: 0 24px 6px; font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-      font-size: 13px; font-weight: 600; color: #111; pointer-events: none;
-    }
-    .phone-screen.story-mode .phone-statusbar { color: #fff; }
-    .phone-home-indicator {
-      position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
-      width: 120px; height: 4px; border-radius: 3px; background: rgba(0,0,0,0.45); z-index: 60;
-    }
-    .phone-screen.story-mode .phone-home-indicator { background: rgba(255,255,255,0.6); }
+  #card.style-alert{background:repeating-linear-gradient(-45deg,#ffcc00,#ffcc00 18px,#1a1a1a 18px,#1a1a1a 36px)!important;}
+  #card.style-alert .frame{background:#fff;margin:14px;border-radius:6px;box-shadow:0 10px 30px #00000040;border:none;}
+  #card.style-alert .pill{background:#d21f1f!important;color:#fff!important;border-radius:4px;}
+  #card.style-alert .titleText{color:#d21f1f;font-weight:900;}
 
-    .ig-feed {
-      position: absolute; inset: 0; background: #fff;
-      display: flex; flex-direction: column; padding-top: 44px;
-      min-width: 0; min-height: 0;
-    }
-    .ig-feed-header { display: flex; align-items: center; gap: 8px; padding: 10px 12px; }
-    .ig-feed-avatar {
-      width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
-      background: linear-gradient(135deg, #f58529, #dd2a7b, #8134af, #515bd4);
-    }
-    .ig-feed-user { font-size: 13px; font-weight: 700; color: #111; }
-    .ig-feed-more { margin-left: auto; font-size: 16px; color: #111; letter-spacing: 1px; }
-    .ig-feed-media-slot { width: 100%; min-width: 0; background: #eee; overflow: hidden; position: relative; }
-    .ig-feed-icons { display: flex; align-items: center; gap: 16px; padding: 10px 12px 4px; font-size: 19px; color: #111; }
-    .ig-feed-caption { padding: 2px 12px 14px; font-size: 12px; line-height: 1.5; color: #111; }
-
-    .ig-story { position: absolute; inset: 0; background: #000; overflow: hidden; }
-    .ig-story-media-slot {
-      position: absolute; inset: 0; overflow: hidden;
-      display: flex; align-items: center; justify-content: center; background: #000;
-    }
-    .ig-story-progress {
-      position: absolute; top: 50px; left: 8px; right: 8px; height: 2.5px;
-      border-radius: 2px; background: rgba(255,255,255,0.35); z-index: 65; overflow: hidden;
-    }
-    .ig-story-progress::after {
-      content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 55%; background: #fff;
-    }
-    .ig-story-header {
-      position: absolute; top: 58px; left: 12px; right: 12px; z-index: 65; color: #fff;
-      display: flex; align-items: center; gap: 8px; text-shadow: 0 1px 4px rgba(0,0,0,0.4);
-    }
-    .ig-story-avatar {
-      width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
-      background: linear-gradient(135deg, #f58529, #dd2a7b);
-    }
-    .ig-story-close { margin-left: auto; font-size: 18px; opacity: 0.9; }
-
-    #card {
-      width: 1080px; height: 1080px; background: var(--card-bg); color: var(--card-text);
-      position: relative; overflow: hidden;
-      font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
-      display: flex; flex-direction: column;
-    }
-
-    /* Paper / Material styles */
-    #card.paper-clean {
-      background: #ffffff;
-    }
-    #card.paper-offwhite {
-      background: #f7f5f0;
-    }
-    #card.paper-ivory {
-      background: #faf6ee;
-    }
-    #card.paper-warm {
-      background: #f5f0e8;
-    }
-    #card.paper-coolgray {
-      background: #f2f3f5;
-    }
-    #card.paper-report {
-      background: #fafaf8;
-      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.04);
-    }
-    #card.paper-linen {
-      background-color: #f4f1ea;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-    }
-    #card.paper-grain {
-      background-color: #f8f7f4;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.055'/%3E%3C/svg%3E");
-    }
-    #card.paper-cardstock {
-      background: #f9f8f6;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.8), inset 0 -1px 0 rgba(0,0,0,0.03);
-    }
-    #card.paper-matte {
-      background: #f0f0ee;
-    }
-    #card.paper-softshadow {
-      background: #ffffff;
-      box-shadow: inset 0 0 80px rgba(0,0,0,0.03);
-    }
-
-    [data-theme="dark"] #card.paper-clean,
-    [data-theme="dark"] #card.paper-offwhite,
-    [data-theme="dark"] #card.paper-ivory,
-    [data-theme="dark"] #card.paper-warm,
-    [data-theme="dark"] #card.paper-coolgray,
-    [data-theme="dark"] #card.paper-report,
-    [data-theme="dark"] #card.paper-linen,
-    [data-theme="dark"] #card.paper-grain,
-    [data-theme="dark"] #card.paper-cardstock,
-    [data-theme="dark"] #card.paper-matte,
-    [data-theme="dark"] #card.paper-softshadow {
-      background: #1c1c1e;
-      background-image: none;
-      box-shadow: none;
-    }
-
-    .card-bg-img {
-      position: absolute; inset: 0; z-index: 0;
-      background-size: cover; background-position: center; display: none;
-    }
-    .card-bg-overlay { position: absolute; inset: 0; z-index: 1; display: none; }
-    .card-glow { display: none; }
-
-    .card-img-top, .card-img-bottom {
-      width: 100%; object-fit: cover; display: none; position: relative; z-index: 1;
-    }
-    .card-img-side {
-      position: absolute; top: 0; bottom: 0; width: 38%; object-fit: cover;
-      display: none; z-index: 1;
-    }
-    .card-img-side.left { left: 0; }
-    .card-img-side.right { right: 0; }
-
-    .card-inner {
-      flex: 1; display: flex; flex-direction: column;
-      padding: 64px 72px 56px; position: relative; z-index: 2;
-    }
-    .card-inner.text-panel {
-      margin: 40px 48px;
-      padding: 40px 48px 36px;
-      background: rgba(255,255,255,0.88);
-      border-radius: 20px;
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-    }
-    [data-theme="dark"] .card-inner.text-panel {
-      background: rgba(28,28,30,0.88);
-    }
-
-    .card-brand { display: flex; flex-direction: column; gap: 2px; margin-bottom: 24px; }
-    .card-brand-top {
-      font-size: 13px; font-weight: 500; letter-spacing: 2.5px;
-      color: var(--card-muted); text-transform: uppercase;
-    }
-    .card-brand-main {
-      font-size: 15px; font-weight: 600; letter-spacing: 1.5px;
-      color: var(--accent); text-transform: uppercase;
-    }
-
-    .card-divider {
-      width: 100%; height: 1px; background: var(--card-text);
-      opacity: 0.12; margin-bottom: 24px;
-    }
-
-    .card-type {
-      display: inline-block; font-size: 12px; font-weight: 600;
-      letter-spacing: 1.2px; color: var(--accent); margin-bottom: 16px; text-transform: uppercase;
-    }
-
-    .card-title {
-      font-size: 42px; font-weight: 700; line-height: 1.25;
-      letter-spacing: -0.8px; margin-bottom: 24px; color: var(--card-text);
-    }
-
-    .card-summary {
-      font-size: 18px; font-weight: 400; line-height: 1.65;
-      color: var(--card-text); opacity: 0.9; margin-bottom: 28px;
-    }
-
-    .key-numbers { display: flex; gap: 28px; margin-bottom: 28px; flex-wrap: wrap; }
-    .key-item { min-width: 110px; }
-    .key-value {
-      font-size: 36px; font-weight: 700; letter-spacing: -1px;
-      color: var(--accent); line-height: 1.1;
-    }
-    .key-label { font-size: 15px; color: var(--card-muted); margin-top: 6px; font-weight: 600; letter-spacing: -0.2px; }
-
-    .card-points { margin-bottom: 24px; }
-    .card-points ul { list-style: none; }
-    .card-points li {
-      font-size: 16px; line-height: 1.6; padding: 8px 0;
-      border-bottom: 1px solid rgba(0,0,0,0.06); display: flex; gap: 12px;
-    }
-    [data-theme="dark"] .card-points li { border-bottom-color: rgba(255,255,255,0.08); }
-    .card-points li::before {
-      content: ""; width: 6px; height: 6px; border-radius: 50%;
-      background: var(--accent); margin-top: 9px; flex-shrink: 0;
-    }
-
-    .card-quote {
-      border-left: 3px solid var(--accent); padding-left: 20px; margin: 20px 0 28px;
-    }
-    .card-quote p {
-      font-size: 17px; font-style: italic; line-height: 1.6;
-      color: var(--card-text); opacity: 0.85;
-    }
-    .card-quote cite {
-      display: block; font-size: 13px; font-style: normal;
-      color: var(--card-muted); margin-top: 8px;
-    }
-
-    .card-footer {
-      margin-top: auto; padding-top: 20px;
-      border-top: 1px solid rgba(0,0,0,0.08);
-      display: flex; justify-content: space-between; align-items: flex-end;
-      font-size: 12px; color: var(--card-muted); letter-spacing: 0.3px;
-    }
-    [data-theme="dark"] .card-footer { border-top-color: rgba(255,255,255,0.1); }
-    .card-footer-left { display: flex; flex-direction: column; gap: 2px; }
-    .card-number { font-weight: 500; color: var(--card-text); opacity: 0.5; }
-
-    .page-indicator {
-      position: absolute; bottom: 28px; right: 72px;
-      font-size: 14px; font-weight: 600; color: var(--card-muted); z-index: 3;
-      letter-spacing: 0.5px;
-      background: rgba(255,255,255,0.7);
-      padding: 4px 10px;
-      border-radius: 6px;
-    }
-    [data-theme="dark"] .page-indicator {
-      background: rgba(0,0,0,0.4);
-    }
-
-    .card-watermark {
-      position: absolute; z-index: 3;
-      font-size: 13px; font-weight: 600; letter-spacing: 0.6px;
-      color: var(--card-muted); opacity: 0.55;
-      pointer-events: none;
-    }
-    .card-watermark.wm-tl { top: 24px; left: 28px; }
-    .card-watermark.wm-tr { top: 24px; right: 28px; }
-    .card-watermark.wm-bl { bottom: 24px; left: 28px; }
-    .card-watermark.wm-br { bottom: 24px; right: 28px; }
-
-    .fmt-bold { font-weight: 700; }
-    .fmt-italic { font-style: italic; }
-    .fmt-underline { text-decoration: underline; text-underline-offset: 3px; }
-    .fmt-highlight {
-      background: var(--highlight-bg, rgba(255,213,79,0.55));
-      padding: 0 4px; border-radius: 3px;
-    }
-    .fmt-shadow { text-shadow: 0 2px 8px rgba(0,0,0,0.15); }
-
-    .fmt-toolbar { display: flex; gap: 4px; margin-bottom: 6px; flex-wrap: wrap; }
-    .fmt-toolbar .fmt-btn {
-      padding: 4px 9px; border: 1px solid var(--border); border-radius: 6px;
-      background: var(--bg); color: var(--text); font-size: 11px; font-weight: 600;
-      cursor: pointer; font-family: inherit;
-    }
-    .fmt-toolbar .fmt-btn:hover { border-color: var(--accent); }
-    .fmt-toolbar .fmt-btn[data-tag="underline"] { text-decoration: underline; }
-    .fmt-toolbar .fmt-btn[data-tag="highlight"] {
-      background: var(--highlight-bg, rgba(255,213,79,0.55));
-    }
-
-    /* ===== 에디토리얼(고급) 카드 스타일 ===== */
-    #card.style-editorial .card-brand {
-      align-items: center; text-align: center; margin-bottom: 0;
-      padding-bottom: 14px; border-bottom: 3px double var(--card-text);
-      opacity: 1;
-    }
-    #card.style-editorial .card-brand-top {
-      font-family: 'Nanum Myeongjo', 'Noto Serif KR', serif;
-      font-size: 12px; letter-spacing: 4px; opacity: 0.55;
-    }
-    #card.style-editorial .card-brand-main {
-      font-family: 'Nanum Myeongjo', 'Noto Serif KR', serif;
-      font-size: 26px; font-weight: 700; letter-spacing: 6px; color: var(--card-text);
-      margin-top: 4px;
-    }
-    #card.style-editorial .card-divider { display: none; }
-    #card.style-editorial .card-type {
-      display: inline-block; margin: 22px 0 18px; padding: 5px 14px 4px;
-      font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
-      font-size: 11px; font-weight: 700; letter-spacing: 2px;
-      color: #fff; background: var(--accent); border-radius: 2px;
-    }
-    #card.style-editorial .card-title {
-      font-family: 'Nanum Myeongjo', 'Noto Serif KR', serif;
-      font-weight: 700; letter-spacing: -0.3px; line-height: 1.32;
-      position: relative; padding-bottom: 20px;
-    }
-    #card.style-editorial .card-title::after {
-      content: ""; position: absolute; left: 0; bottom: 0;
-      width: 56px; height: 3px; background: var(--accent);
-    }
-    #card.style-editorial .card-summary {
-      font-family: 'Nanum Myeongjo', 'Noto Serif KR', serif;
-      font-size: 19px; line-height: 1.75; opacity: 1; color: var(--card-text);
-    }
-    #card.style-editorial .card-summary::first-letter {
-      font-family: 'Nanum Myeongjo', 'Noto Serif KR', serif;
-      font-size: 2.9em; font-weight: 700; float: left; line-height: 0.78;
-      padding: 0.06em 0.09em 0 0; color: var(--accent);
-    }
-    #card.style-editorial .key-numbers {
-      gap: 0; margin: 28px 0; padding: 22px 0;
-      border-top: 1px solid rgba(0,0,0,0.1); border-bottom: 1px solid rgba(0,0,0,0.1);
-    }
-    [data-theme="dark"] #card.style-editorial .key-numbers {
-      border-top-color: rgba(255,255,255,0.14); border-bottom-color: rgba(255,255,255,0.14);
-    }
-    #card.style-editorial .key-item {
-      flex: 1; padding: 0 24px; border-left: 1px solid rgba(0,0,0,0.1); text-align: center;
-    }
-    [data-theme="dark"] #card.style-editorial .key-item { border-left-color: rgba(255,255,255,0.14); }
-    #card.style-editorial .key-item:first-child { border-left: none; padding-left: 0; }
-    #card.style-editorial .key-value {
-      font-family: 'Nanum Myeongjo', 'Noto Serif KR', serif; font-weight: 700;
-    }
-    #card.style-editorial .key-label {
-      text-transform: uppercase; letter-spacing: 1px; font-size: 12px;
-    }
-    #card.style-editorial .card-points li {
-      border-bottom: 1px dotted rgba(0,0,0,0.15); font-family: 'Nanum Myeongjo', 'Noto Serif KR', serif;
-    }
-    [data-theme="dark"] #card.style-editorial .card-points li { border-bottom-color: rgba(255,255,255,0.18); }
-    #card.style-editorial .card-points li::before {
-      border-radius: 0; width: 5px; height: 5px; transform: rotate(45deg);
-    }
-    #card.style-editorial .card-quote {
-      border-left: none; padding: 6px 8px 6px 46px; position: relative; text-align: left;
-    }
-    #card.style-editorial .card-quote::before {
-      content: "“"; position: absolute; left: -4px; top: -22px;
-      font-family: Georgia, 'Nanum Myeongjo', serif; font-size: 72px; font-weight: 700;
-      color: var(--accent); opacity: 0.35; line-height: 1;
-    }
-    #card.style-editorial .card-quote p {
-      font-family: 'Nanum Myeongjo', 'Noto Serif KR', serif; font-style: normal; opacity: 1;
-    }
-    #card.style-editorial .card-footer {
-      border-top: 1px solid var(--card-text); padding-top: 14px;
-      font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
-      text-transform: uppercase; letter-spacing: 1.5px; font-size: 11px;
-    }
-
-    /* ===== 인스타 카드뉴스 스타일 (프리미엄) ===== */
-    #card.style-insta {
-      font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
-    }
-    /* decorative top accent bar */
-    #card.style-insta::before {
-      content: ""; position: absolute; top: 0; left: 0; right: 0; height: 10px;
-      background: linear-gradient(90deg, var(--accent-dark, var(--accent)) 0%, var(--accent) 50%, var(--accent-light, var(--accent)) 100%);
-      z-index: 3;
-    }
-    /* corner glow element is intentionally unused/hidden — see .card-glow default below */
-    #card.style-insta .card-inner { z-index: 2; }
-
-    #card.style-insta .card-brand {
-      flex-direction: row; align-items: center; margin-bottom: 22px; gap: 10px;
-    }
-    #card.style-insta .card-brand-top { display: none; }
-    #card.style-insta .card-brand::before {
-      content: ""; width: 10px; height: 10px; border-radius: 50%;
-      background: linear-gradient(135deg, var(--accent-light, var(--accent)), var(--accent-dark, var(--accent)));
-      flex-shrink: 0;
-    }
-    #card.style-insta .card-brand-main {
-      background: linear-gradient(135deg, var(--accent-dark, var(--accent)) 0%, var(--accent) 100%);
-      color: #fff; display: inline-block;
-      padding: 8px 18px; border-radius: 999px;
-      font-size: 13px; font-weight: 800; letter-spacing: 0.3px; text-transform: none;
-      box-shadow: 0 6px 16px var(--accent-25, rgba(0,0,0,0.18));
-    }
-    #card.style-insta .card-divider { display: none; }
-    #card.style-insta .card-type {
-      display: inline-flex; align-items: center; gap: 7px;
-      margin-bottom: 20px; padding: 8px 18px 8px 14px;
-      background: var(--accent-14, rgba(0,0,0,0.08));
-      color: var(--accent-dark, var(--accent)); border-radius: 999px;
-      border: 1px solid var(--accent-22, rgba(0,0,0,0.14));
-      font-weight: 800; font-size: 13px; letter-spacing: 0.2px; text-transform: none;
-    }
-    #card.style-insta .card-type::before {
-      content: ""; width: 7px; height: 7px; border-radius: 2px; transform: rotate(45deg);
-      background: var(--accent); flex-shrink: 0;
-    }
-    #card.style-insta .card-title {
-      font-weight: 900; letter-spacing: -1.4px; line-height: 1.22;
-      padding-left: 18px; border-left: 6px solid var(--accent); position: relative;
-    }
-    #card.style-insta .card-title::after { content: none; }
-    #card.style-insta .card-summary {
-      font-weight: 600; opacity: 1; font-size: 18px; line-height: 1.7;
-      background: var(--accent-7, rgba(0,0,0,0.045));
-      border: 1px solid var(--accent-14, rgba(0,0,0,0.08));
-      padding: 20px 24px; border-radius: 20px;
-    }
-    #card.style-insta .key-numbers { gap: 16px; }
-    #card.style-insta .key-item {
-      background: #ffffff;
-      border: 1px solid var(--accent-14, rgba(0,0,0,0.08));
-      border-radius: 22px; padding: 22px 24px 20px; text-align: center;
-      position: relative; overflow: hidden;
-      box-shadow: 0 10px 24px rgba(0,0,0,0.05);
-      flex: 1; min-width: 130px;
-    }
-    [data-theme="dark"] #card.style-insta .key-item { background: rgba(255,255,255,0.04); }
-    #card.style-insta .key-item::before {
-      content: ""; position: absolute; top: 0; left: 0; right: 0; height: 5px;
-      background: linear-gradient(90deg, var(--accent-dark, var(--accent)), var(--accent-light, var(--accent)));
-    }
-    #card.style-insta .key-value { font-weight: 900; }
-    #card.style-insta .key-label { font-weight: 700; opacity: 0.65; }
-    #card.style-insta .card-points ul { display: flex; flex-direction: column; gap: 10px; }
-    #card.style-insta .card-points li {
-      counter-increment: insta-step;
-      border-bottom: none; align-items: center; font-weight: 700;
-      background: #ffffff;
-      border: 1px solid var(--accent-10, rgba(0,0,0,0.06));
-      border-radius: 16px; padding: 15px 18px 15px 14px;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.04);
-    }
-    [data-theme="dark"] #card.style-insta .card-points li { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); }
-    #card.style-insta .card-points ul { counter-reset: insta-step; }
-    #card.style-insta .card-points li::before {
-      content: counter(insta-step);
-      width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
-      background: linear-gradient(135deg, var(--accent-dark, var(--accent)), var(--accent-light, var(--accent)));
-      color: #fff; font-size: 13px; font-weight: 800;
-      display: flex; align-items: center; justify-content: center;
-      margin-top: 0;
-    }
-    #card.style-insta .card-quote {
-      border-left: none;
-      background: linear-gradient(135deg, var(--accent-dark, var(--accent)) 0%, var(--accent) 100%);
-      border-radius: 24px;
-      padding: 30px 32px 26px; margin: 22px 0 28px;
-      position: relative; overflow: hidden;
-    }
-    #card.style-insta .card-quote::before {
-      content: "“"; position: absolute; top: -22px; right: 18px;
-      font-family: Georgia, serif; font-size: 120px; font-weight: 700;
-      color: rgba(255,255,255,0.14); line-height: 1;
-    }
-    #card.style-insta .card-quote p { color: #fff; font-weight: 800; font-style: normal; opacity: 1; position: relative; z-index: 1; }
-    #card.style-insta .card-quote cite { color: rgba(255,255,255,0.82); position: relative; z-index: 1; margin-top: 10px; }
-    #card.style-insta .card-footer { border-top: 1px solid var(--accent-14, rgba(0,0,0,0.08)); font-weight: 700; }
-    #card.style-insta .card-number {
-      background: linear-gradient(135deg, var(--accent-dark, var(--accent)), var(--accent-light, var(--accent)));
-      color: #fff; opacity: 1; font-weight: 800;
-      padding: 6px 14px; border-radius: 999px;
-    }
-
-    .modal-overlay {
-      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75);
-      z-index: 1000; align-items: center; justify-content: center;
-      padding: 20px; flex-direction: column;
-    }
-    .modal-overlay.show { display: flex; }
-    .modal-content {
-      background: #fff; border-radius: 16px; padding: 20px;
-      max-width: 95vw; max-height: 80vh; overflow: auto; text-align: center;
-    }
-    .modal-content img { max-width: 100%; height: auto; border-radius: 8px; display: block; }
-    .modal-hint { color: #fff; font-size: 15px; margin-top: 16px; text-align: center; line-height: 1.5; }
-    .modal-close {
-      margin-top: 16px; padding: 10px 28px; background: #fff; border: none;
-      border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer;
-    }
-
-    .toast {
-      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
-      background: #1d1d1f; color: #fff; padding: 12px 20px; border-radius: 10px;
-      font-size: 13px; line-height: 1.5; max-width: 480px; text-align: left;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.25); z-index: 2000; opacity: 0;
-      pointer-events: none; transition: opacity 0.2s, transform 0.2s;
-      white-space: pre-line;
-    }
-    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-    @media (max-width: 900px) {
-      .app { flex-direction: column; }
-      .panel {
-        width: 100%; height: auto; position: relative;
-        border-right: none; border-bottom: 1px solid var(--border);
-      }
-      .preview-area { padding: 24px 16px; }
-    }
-  </style>
+  #card.style-cover .titleText{font-size:1.7em!important;font-weight:900;letter-spacing:-.03em;line-height:1.12;text-shadow:0 3px 16px rgba(0,0,0,.55);}
+  #card.style-cover .pill{background:none!important;color:inherit!important;padding:0;border-radius:0;margin-bottom:14px;position:relative;}
+  #card.style-cover .pill::before{content:"";display:block;width:56px;height:4px;border-radius:2px;background:var(--accent);margin-bottom:12px;}
+  #card.style-cover .subText{font-size:1.05em;opacity:.85;text-shadow:0 2px 10px rgba(0,0,0,.5);}
+  #card.style-cover .badgeTop, #card.style-cover .handle{letter-spacing:.12em;text-transform:uppercase;font-weight:800;}
+  #card.style-cover .arrow{font-size:1.15em;}
+</style>
 </head>
 <body>
-  <div class="app">
-    <aside class="panel">
-      <div class="panel-header">
-        <h1>WEST150 DAILY</h1>
-        <p>NEWS CARD Generator</p>
-      </div>
-
-      <div class="section">
-        <div class="section-title">자동 채우기 (AI 정리본 붙여넣기)</div>
-        <textarea id="autoFillInput" rows="6" placeholder="AI가 정리한 형식을 여기에 붙여넣고 아래 버튼을 누르세요.&#10;&#10;예:&#10;1. 기사 유형·섹션: ...&#10;2. 기사 번호: ...&#10;3. 기사 제목: ...&#10;..."></textarea>
-        <button class="btn btn-primary" id="autoFillBtn" style="margin-top:8px">자동 채우기</button>
-        <button class="btn btn-secondary" id="resetBtn" style="margin-top:8px">전체 초기화</button>
-        <p class="hint">AI 프롬프트로 정리한 텍스트를 넣으면 각 칸에 자동 입력됩니다. 채워지지 않은 항목은 완료 후 알려드립니다.</p>
-      </div>
-
-      <div class="section">
-        <div class="section-title">사이즈</div>
-        <div class="btn-group" id="sizeGroup">
-          <button class="btn active" data-size="1080x1080">정사각</button>
-          <button class="btn" data-size="1080x1350">세로</button>
-          <button class="btn" data-size="1080x1920">스토리</button>
-          <button class="btn" data-size="1600x900">와이드</button>
+<div id="app">
+  <div id="topbar">
+    <div class="brand"><span class="dot"></span>Card Studio</div>
+    <div class="actions">
+      <div class="menuWrap" id="templateMenuWrap">
+        <button class="btn ghost" id="templateMenuBtn">카드 템플릿 ▾</button>
+        <div class="dropdown" id="templateMenu">
+          <div class="ddItem" data-template="text"><span class="ic">Aa</span>텍스트 카드 (사진 없음)</div>
+          <div class="ddItem" data-template="full"><span class="ic">▣</span>풀 이미지 (배경 전체)</div>
+          <div class="ddItem" data-template="split"><span class="ic">⬒</span>상단 이미지</div>
+          <div class="ddItem" data-template="bottom"><span class="ic">⬓</span>하단 이미지</div>
+          <div class="ddItem" data-template="inset"><span class="ic">⬚</span>이미지 인셋 (프레임 안)</div>
+          <div class="ddItem" data-template="side"><span class="ic">◧</span>사이드 이미지 (좌/우 분할)</div>
+          <div class="ddItem" data-template="frame"><span class="ic">❐</span>볼드 프레임 (테두리 강조)</div>
         </div>
       </div>
 
-      <div class="section">
-        <div class="section-title">테마 · 컬러</div>
-        <div class="toggle-row">
-          <span style="font-size:13px;font-weight:500">다크 모드</span>
-          <label class="switch">
-            <input type="checkbox" id="themeToggle">
-            <span class="slider"></span>
-          </label>
+      <div class="menuWrap" id="styleMenuWrap">
+        <button class="btn ghost" id="styleMenuBtn">카드 스타일 ▾</button>
+        <div class="dropdown wide" id="styleMenu">
+          <div class="ddItem" data-style="none">기본 (스타일 없음)</div>
+          <div class="ddItem" data-style="insta">인스타 카드뉴스</div>
+          <div class="ddItem" data-style="grid">모눈노트</div>
+          <div class="ddItem" data-style="terminal">터미널</div>
+          <div class="ddItem" data-style="sticky">스티키노트</div>
+          <div class="ddItem" data-style="receipt">영수증</div>
+          <div class="ddItem" data-style="timeline">타임라인</div>
+          <div class="ddItem" data-style="newspaper">신문 1면</div>
+          <div class="ddItem" data-style="postcard">엽서</div>
+          <div class="ddItem" data-style="folder">서류철</div>
+          <div class="ddItem" data-style="blueprint">블루프린트</div>
+          <div class="ddItem" data-style="pastel">파스텔팝</div>
+          <div class="ddItem" data-style="certificate">증명서</div>
+          <div class="ddItem" data-style="magazine">매거진</div>
+          <div class="ddItem" data-style="alert">경보배너</div>
+          <div class="ddItem" data-style="cover">커버 (인물 발언)</div>
         </div>
-        <label style="margin-top:12px">포인트 컬러</label>
-        <input type="color" id="accentColor" value="#1a365d">
-        <div class="btn-group" style="margin-top:8px">
-          <button class="btn" data-preset="#1a365d">정치</button>
-          <button class="btn" data-preset="#0f4c81">경제</button>
-          <button class="btn" data-preset="#1b4d3e">사회</button>
-          <button class="btn" data-preset="#4a1c40">국제</button>
-          <button class="btn" data-preset="#b3261e">스포츠</button>
-        </div>
-        <label style="margin-top:12px">강조색 (하이라이트 배경)</label>
-        <input type="color" id="highlightColor" value="#ffd54f">
-        <div class="btn-group" style="margin-top:8px">
-          <button class="btn" data-hpreset="#ffd54f">옐로우</button>
-          <button class="btn" data-hpreset="#ff8a65">오렌지</button>
-          <button class="btn" data-hpreset="#81d4fa">스카이블루</button>
-          <button class="btn" data-hpreset="#a5d6a7">민트</button>
-          <button class="btn" data-hpreset="#f48fb1">핑크</button>
-        </div>
-        <p class="hint">본문·제목·리드문·인용에서 <code>==텍스트==</code>로 감싸면 이 색으로 하이라이트됩니다. 아래 서식 툴바로도 바로 적용할 수 있어요.</p>
       </div>
 
-      <div class="section">
-        <div class="section-title">카드 스타일</div>
-        <div class="btn-group" id="cardStyleGroup">
-          <button class="btn active" data-style="style-standard">기본 (리포트)</button>
-          <button class="btn" data-style="style-editorial">에디토리얼 (고급)</button>
-          <button class="btn" data-style="style-insta">인스타 카드뉴스</button>
+      <div class="menuWrap" id="fontMenuWrap">
+        <button class="btn ghost" id="fontMenuBtn">글꼴 ▾</button>
+        <div class="dropdown panelDropdown" id="fontMenu">
+          <div class="field">
+            <label>글꼴 선택</label>
+            <select id="fontSelect">
+              <option value="pretendard">Pretendard (인기 국문 고딕)</option>
+              <option value="noto">Noto Sans KR (기본 고딕)</option>
+              <option value="plex">IBM Plex Sans KR (모던 고딕)</option>
+              <option value="black">Black Han Sans (임팩트 헤드라인)</option>
+              <option value="dohyeon">Do Hyeon (두꺼운 고딕)</option>
+              <option value="jua">Jua (동글동글)</option>
+              <option value="gaegu">Gaegu (손글씨풍)</option>
+              <option value="myeongjo">Nanum Myeongjo (명조체)</option>
+              <option value="batang">Gowun Batang (부드러운 바탕체)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>정렬</label>
+            <div class="alignRow" id="alignRow">
+              <button type="button" class="alignBtn" data-align="left">왼쪽</button>
+              <button type="button" class="alignBtn" data-align="center">가운데</button>
+              <button type="button" class="alignBtn" data-align="right">오른쪽</button>
+            </div>
+          </div>
+          <div class="hint">현재 선택된 카드에만 적용됩니다.</div>
         </div>
-        <p class="hint">에디토리얼 스타일은 신문 마스트헤드 느낌의 세리프 헤드라인·드롭캡·구분선을 적용해 더 고급스러운 톤을 만들어줍니다. 인스타 카드뉴스는 그라디언트 배지·넘버링 카드·볼드 타이포로 구성된 프리미엄 SNS 스타일입니다.</p>
       </div>
 
-      <div class="section">
-        <div class="section-title">용지 · 재질</div>
-        <div class="btn-group" id="paperGroup">
-          <button class="btn active" data-paper="paper-clean">순백</button>
-          <button class="btn" data-paper="paper-offwhite">오프화이트</button>
-          <button class="btn" data-paper="paper-ivory">아이보리</button>
-          <button class="btn" data-paper="paper-warm">웜페이퍼</button>
-          <button class="btn" data-paper="paper-coolgray">쿨그레이</button>
-          <button class="btn" data-paper="paper-report">보고서</button>
-          <button class="btn" data-paper="paper-linen">린넨</button>
-          <button class="btn" data-paper="paper-grain">그레인</button>
-          <button class="btn" data-paper="paper-cardstock">카드지</button>
-          <button class="btn" data-paper="paper-matte">매트</button>
-          <button class="btn" data-paper="paper-softshadow">소프트쉐도우</button>
+      <div class="menuWrap" id="imageMenuWrap">
+        <button class="btn ghost" id="imageMenuBtn">사진 ▾</button>
+        <div class="dropdown panelDropdown" id="imageMenu">
+          <div class="imgPreviewRow">
+            <div class="imgThumb" id="imgThumb"></div>
+            <div style="display:flex;flex-direction:column;gap:6px;flex:1;">
+              <label class="btn small full" id="uploadBtn" style="text-align:center;">사진 업로드</label>
+              <input type="file" id="imageUpload" accept="image/*" style="display:none;">
+              <button class="btn ghost small full" id="imageRemove">사진 삭제</button>
+            </div>
+          </div>
+          <div class="row2">
+            <div class="field">
+              <label>배치 방식</label>
+              <select id="imageFit">
+                <option value="cover">꽉 채우기</option>
+                <option value="contain">전체 보이기</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>위치</label>
+              <select id="imagePos">
+                <option value="top">상단</option>
+                <option value="center" selected>중앙</option>
+                <option value="bottom">하단</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label>사진 효과</label>
+            <select id="imageFilter">
+              <option value="none">없음</option>
+              <option value="gray">흑백</option>
+              <option value="sepia">세피아</option>
+              <option value="vivid">선명하게</option>
+              <option value="dark">어둡게</option>
+              <option value="duotone">듀오톤 (포인트색)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>오버레이 어둡기 (풀 이미지/상단·하단 사진용)</label>
+            <div class="slider"><input type="range" id="imageOverlay" min="0" max="85" value="55"><span class="val" id="imageOverlayVal">55</span></div>
+          </div>
+          <div class="field">
+            <label>비네팅</label>
+            <select id="vignetteMode">
+              <option value="none">없음</option>
+              <option value="soft">부드럽게</option>
+              <option value="medium">중간</option>
+              <option value="strong">강하게</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>비네팅 강도</label>
+            <div class="slider"><input type="range" id="vignetteStrength" min="0" max="100" value="18"><span class="val" id="vignetteStrengthVal">18</span></div>
+          </div>
+          <div class="field">
+            <label>글라스 효과</label>
+            <div class="slider"><input type="range" id="glassStrength" min="0" max="100" value="18"><span class="val" id="glassStrengthVal">18</span></div>
+          </div>
+          <div class="field">
+            <label>글라스 흐림</label>
+            <div class="slider"><input type="range" id="glassBlur" min="0" max="24" value="8"><span class="val" id="glassBlurVal">8</span></div>
+          </div>
+          <div class="hint">사진은 자동으로 리사이즈되어 저장되며, 현재 선택된 카드에만 적용됩니다.</div>
         </div>
-        <p class="hint">신문·인쇄물 느낌의 용지 재질입니다. 다크모드에서는 단색으로 표시됩니다.</p>
       </div>
 
-      <div class="section">
-        <div class="section-title">기사 이미지</div>
-        <div class="img-upload-zone" id="imgZone">
-          <p>클릭하여 이미지 업로드</p>
-          <input type="file" id="imgInput" accept="image/*">
+      <div class="menuWrap" id="blockMenuWrap">
+        <button class="btn ghost" id="blockMenuBtn">콘텐츠 삽입 ▾</button>
+        <div class="dropdown" id="blockMenu">
+          <div class="ddItem" data-block="none"><span class="ic">Aa</span>텍스트 설명</div>
+          <div class="ddItem" data-block="timeline"><span class="ic">⏱</span>타임라인</div>
+          <div class="ddItem" data-block="list"><span class="ic">☰</span>번호 리스트</div>
+          <div class="ddItem" data-block="stats"><span class="ic">#</span>통계 숫자</div>
+          <div class="ddItem" data-block="chart"><span class="ic">▤</span>막대 그래프</div>
+          <div class="ddItem" data-block="quote"><span class="ic">"</span>인용구</div>
         </div>
-        <div style="margin-top:10px">
-          <label>이미지 위치</label>
-          <select id="imgPosition">
-            <option value="none">없음</option>
-            <option value="top">상단</option>
-            <option value="bottom">하단</option>
-            <option value="bg">전체 배경</option>
-            <option value="left">좌측</option>
-            <option value="right">우측</option>
+      </div>
+      <button class="btn ghost" id="previewAllBtn">전체 미리보기</button>
+      <button class="btn ghost" id="exportOne">현재 카드 저장</button>
+      <button class="btn primary" id="exportAll">전체 저장</button>
+    </div>
+  </div>
+
+  <div id="body">
+    <div id="left">
+      <div class="hd">슬라이드 (<span id="slideCount">0</span>)</div>
+      <div id="slideList"></div>
+      <button id="addSlide">+ 카드 추가</button>
+    </div>
+
+    <div id="stage">
+      <div id="canvasWrap">
+        <div id="card"></div>
+      </div>
+    </div>
+
+    <div id="right">
+      <div class="sec">
+        <h3>텍스트</h3>
+        <div class="field">
+          <label>상단 배지</label>
+          <input type="text" id="badgeTop" placeholder="MONEY NOTE">
+        </div>
+        <div class="field">
+          <label>카드 배지 (선택)</label>
+          <input type="text" id="pillText" placeholder="MONEY NOTE">
+        </div>
+        <div class="field">
+          <label>제목</label>
+          <textarea id="titleText" placeholder="카드뉴스를 직접 만드는 이유"></textarea>
+        </div>
+        <div class="field">
+          <label>강조할 단어/구절</label>
+          <input type="text" id="highlightWord" placeholder="직접">
+        </div>
+        <div class="field">
+          <label>계정 핸들</label>
+          <input type="text" id="handleText" placeholder="@kkongdon_story">
+        </div>
+      </div>
+
+      <div class="sec">
+        <h3>콘텐츠 블록 <span style="font-weight:400;text-transform:none;color:var(--chrome-sub);">(상단 메뉴에서도 선택 가능)</span></h3>
+        <div class="field">
+          <select id="contentBlockSelect">
+            <option value="none">텍스트 설명</option>
+            <option value="timeline">타임라인</option>
+            <option value="list">번호 리스트</option>
+            <option value="stats">통계 숫자</option>
+            <option value="chart">막대 그래프</option>
+            <option value="quote">인용구</option>
           </select>
         </div>
-        <div style="margin-top:10px">
-          <label>사진 효과</label>
-          <div class="btn-group" id="fxGroup">
-            <button class="btn active" data-fx="none">원본</button>
-            <button class="btn" data-fx="vignette">비네팅</button>
-            <button class="btn" data-fx="film">필름</button>
-            <button class="btn" data-fx="bw">흑백</button>
-            <button class="btn" data-fx="warm">웜톤</button>
-            <button class="btn" data-fx="cool">쿨톤</button>
+        <div class="field">
+          <label id="blockDataLabel">내용</label>
+          <textarea id="blockDataText" style="min-height:100px;" placeholder="AI가 아닌 나만의 문체로 만들어 보자."></textarea>
+        </div>
+        <div class="hint" id="blockDataHint">한 줄씩 입력하세요.</div>
+      </div>
+
+      <div class="sec">
+        <h3>색상</h3>
+        <div class="row2">
+          <div class="field">
+            <label>배경색</label>
+            <div class="colorField"><input type="color" id="bgColor" value="#f4efe4"><span id="bgColorHex">#f4efe4</span></div>
+          </div>
+          <div class="field">
+            <label>글자색</label>
+            <div class="colorField"><input type="color" id="textColor" value="#1a1a1a"><span id="textColorHex">#1a1a1a</span></div>
           </div>
         </div>
-        <div style="margin-top:10px">
-          <div class="slider-row">
-            <label>밝기</label>
-            <input type="range" id="imgBrightness" min="0.5" max="1.5" step="0.05" value="1">
-            <span class="slider-value" id="brValue">1.00</span>
+        <div class="row2">
+          <div class="field">
+            <label>배지 배경</label>
+            <div class="colorField"><input type="color" id="pillBg" value="#181818"><span id="pillBgHex">#181818</span></div>
           </div>
-          <div class="slider-row">
-            <label>투명도</label>
-            <input type="range" id="imgOpacity" min="0.2" max="1" step="0.05" value="1">
-            <span class="slider-value" id="opValue">1.00</span>
-          </div>
-          <div class="slider-row">
-            <label>높이(상/하)</label>
-            <input type="range" id="imgHeight" min="12" max="40" step="1" value="22">
-            <span class="slider-value" id="ihValue">22%</span>
-          </div>
-          <div class="toggle-row" style="margin-top:8px">
-            <span style="font-size:13px">배경 시 텍스트 박스</span>
-            <label class="switch">
-              <input type="checkbox" id="textPanel" checked>
-              <span class="slider"></span>
-            </label>
+          <div class="field">
+            <label>배지 글자</label>
+            <div class="colorField"><input type="color" id="pillColor" value="#ffffff"><span id="pillColorHex">#ffffff</span></div>
           </div>
         </div>
-        <button class="btn" id="removeImg" style="margin-top:8px;width:100%;display:none">이미지 제거</button>
+        <div class="field">
+          <label>하이라이트 색</label>
+          <div class="colorField"><input type="color" id="mkColor" value="#f6b8c4"><span id="mkColorHex">#f6b8c4</span></div>
+          <div class="swatches" id="mkSwatches"></div>
+        </div>
+        <div class="field">
+          <label>포인트색 (화살표·듀오톤·그래프)</label>
+          <div class="colorField"><input type="color" id="accentColor" value="#7c5cff"><span id="accentColorHex">#7c5cff</span></div>
+        </div>
       </div>
 
-      <!-- 기사 유형·섹션: 커스텀 드롭다운 -->
-      <div class="section">
-        <div class="section-title">기사 유형 · 섹션</div>
-        <div class="cat-wrap">
-          <button type="button" class="cat-btn" id="catBtn">
-            <span id="catLabel">종합 (COMPREHENSIVE)</span>
-            <span class="arrow">▼</span>
-          </button>
-          <div class="cat-list" id="catList">
-            <div class="cat-group">기사 유형</div>
-            <div class="cat-item" data-value="속보 (BREAKING)">속보 (BREAKING)</div>
-            <div class="cat-item" data-value="단독 (EXCLUSIVE)">단독 (EXCLUSIVE)</div>
-            <div class="cat-item active" data-value="종합 (COMPREHENSIVE)">종합 (COMPREHENSIVE)</div>
-            <div class="cat-item" data-value="분석 (ANALYSIS)">분석 (ANALYSIS)</div>
-            <div class="cat-item" data-value="인터뷰 (INTERVIEW)">인터뷰 (INTERVIEW)</div>
-            <div class="cat-item" data-value="심층취재 (INVESTIGATIVE)">심층취재 (INVESTIGATIVE)</div>
-            <div class="cat-item" data-value="르포 (ON-SITE REPORT)">르포 (ON-SITE REPORT)</div>
-            <div class="cat-item" data-value="팩트체크 (FACT CHECK)">팩트체크 (FACT CHECK)</div>
-            <div class="cat-item" data-value="특집 (FEATURE)">특집 (FEATURE)</div>
-            <div class="cat-item" data-value="인포그래픽 (INFOGRAPHIC)">인포그래픽 (INFOGRAPHIC)</div>
-            <div class="cat-item" data-value="사설 (EDITORIAL)">사설 (EDITORIAL)</div>
-            <div class="cat-item" data-value="칼럼 (COLUMN)">칼럼 (COLUMN)</div>
-
-            <div class="cat-group">뉴스 섹션</div>
-            <div class="cat-item" data-value="정치 (POLITICS)">정치 (POLITICS)</div>
-            <div class="cat-item" data-value="경제 (ECONOMY)">경제 (ECONOMY)</div>
-            <div class="cat-item" data-value="사회 (SOCIETY)">사회 (SOCIETY)</div>
-            <div class="cat-item" data-value="국제 (WORLD)">국제 (WORLD)</div>
-            <div class="cat-item" data-value="문화 (CULTURE)">문화 (CULTURE)</div>
-            <div class="cat-item" data-value="스포츠 (SPORTS)">스포츠 (SPORTS)</div>
-            <div class="cat-item" data-value="IT·과학 (TECH & SCIENCE)">IT·과학 (TECH &amp; SCIENCE)</div>
-            <div class="cat-item" data-value="생활·환경 (LIFE & ENVIRONMENT)">생활·환경 (LIFE &amp; ENVIRONMENT)</div>
+      <div class="sec">
+        <h3>크기</h3>
+        <div class="field">
+          <label>카드 사이즈 종류</label>
+          <select id="sizePreset">
+            <option value="4:5">4:5 (기본)</option>
+            <option value="1:1">1:1 (정사각형)</option>
+            <option value="16:9">16:9 (와이드)</option>
+            <option value="9:16">9:16 (세로)</option>
+            <option value="custom">사용자 지정</option>
+          </select>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label>너비</label>
+            <input type="number" id="cardWidth" min="220" max="900" value="400">
+          </div>
+          <div class="field">
+            <label>높이</label>
+            <input type="number" id="cardHeight" min="220" max="1200" value="500">
           </div>
         </div>
-        <input type="hidden" id="docType" value="종합 (COMPREHENSIVE)">
-      </div>
-
-      <div class="section">
-        <div class="section-title">기사 번호</div>
-        <input type="text" id="cardNumber" value="#001" placeholder="#001">
-      </div>
-
-      <div class="section">
-        <div class="section-title">기사 제목 (헤드라인)</div>
-        <div class="fmt-toolbar">
-          <button type="button" class="fmt-btn" data-target="titleInput" data-tag="bold">굵게</button>
-          <button type="button" class="fmt-btn" data-target="titleInput" data-tag="italic">기울임</button>
-          <button type="button" class="fmt-btn" data-target="titleInput" data-tag="underline">밑줄</button>
-          <button type="button" class="fmt-btn" data-target="titleInput" data-tag="highlight">강조</button>
+        <div class="field">
+          <label>제목 크기</label>
+          <div class="slider"><input type="range" id="titleSize" min="16" max="40" value="27"><span class="val" id="titleSizeVal">27</span></div>
         </div>
-        <textarea id="titleInput" rows="2">OO시, 노후 주거지 중심 전기차 충전 인프라 3년 내 2배로 확충</textarea>
-      </div>
-
-      <div class="section">
-        <div class="section-title">리드문 (첫 페이지만)</div>
-        <div class="fmt-toolbar">
-          <button type="button" class="fmt-btn" data-target="summaryInput" data-tag="bold">굵게</button>
-          <button type="button" class="fmt-btn" data-target="summaryInput" data-tag="italic">기울임</button>
-          <button type="button" class="fmt-btn" data-target="summaryInput" data-tag="underline">밑줄</button>
-          <button type="button" class="fmt-btn" data-target="summaryInput" data-tag="highlight">강조</button>
-        </div>
-        <textarea id="summaryInput" rows="3">OO시가 2029년까지 공용 전기차 충전소를 현재의 2배 수준으로 늘리는 계획을 발표했다. 충전기 부족이 심한 다세대주택 밀집 지역이 우선 설치 대상이다.</textarea>
-      </div>
-
-      <div class="section">
-        <div class="section-title">주요 수치 (첫 페이지만)</div>
-        <div class="row">
-          <div><label>수치 1</label><input type="text" id="num1" value="1,200기"></div>
-          <div><label>라벨 1</label><input type="text" id="num1Label" value="신규 설치 목표"></div>
-        </div>
-        <div class="row" style="margin-top:8px">
-          <div><label>수치 2</label><input type="text" id="num2" value="2배"></div>
-          <div><label>라벨 2</label><input type="text" id="num2Label" value="충전소 증가율"></div>
-        </div>
-        <div class="row" style="margin-top:8px">
-          <div><label>수치 3</label><input type="text" id="num3" value="3년"></div>
-          <div><label>라벨 3</label><input type="text" id="num3Label" value="사업 추진 기간"></div>
-        </div>
-        <div class="row" style="margin-top:8px">
-          <div><label>수치 4</label><input type="text" id="num4" value=""></div>
-          <div><label>라벨 4</label><input type="text" id="num4Label" value=""></div>
+        <div class="field">
+          <label>부제 크기</label>
+          <div class="slider"><input type="range" id="subSize" min="10" max="22" value="14"><span class="val" id="subSizeVal">14</span></div>
         </div>
       </div>
-
-      <div class="section">
-        <div class="section-title">본문 (멀티페이지)</div>
-        <div class="page-nav">
-          <span class="page-info" id="pageInfo">1 / 1</span>
-          <div class="nav-btns">
-            <button class="btn" id="prevPage" disabled>← 이전</button>
-            <button class="btn" id="nextPage" disabled>다음 →</button>
-          </div>
-        </div>
-        <div class="fmt-toolbar">
-          <button type="button" class="fmt-btn" data-target="pointsInput" data-tag="bold">굵게</button>
-          <button type="button" class="fmt-btn" data-target="pointsInput" data-tag="italic">기울임</button>
-          <button type="button" class="fmt-btn" data-target="pointsInput" data-tag="underline">밑줄</button>
-          <button type="button" class="fmt-btn" data-target="pointsInput" data-tag="highlight">강조</button>
-        </div>
-        <textarea id="pointsInput" rows="7">다세대·노후 주거지 우선 설치 지역 선정
-급속충전기 비중 확대
-아파트 관리사무소 대상 설치 인센티브 신설
-공영주차장 연계 거점 충전소 구축
----
-민간 사업자 참여 유도를 위한 보조금 확대
-설치 후 유지보수 전담 콜센터 운영
-내년 상반기 1차 설치 지역 발표 예정</textarea>
-        <p class="hint">한 줄에 <code>---</code> 만 입력하면 페이지가 나뉩니다 (앞뒤 공백은 자동 무시). 빈 페이지가 생기지 않도록 --- 앞뒤에 내용이 있어야 합니다.</p>
-      </div>
-
-      <div class="section">
-        <div class="section-title">인터뷰 · 발언 인용</div>
-        <div class="fmt-toolbar">
-          <button type="button" class="fmt-btn" data-target="quoteInput" data-tag="bold">굵게</button>
-          <button type="button" class="fmt-btn" data-target="quoteInput" data-tag="italic">기울임</button>
-          <button type="button" class="fmt-btn" data-target="quoteInput" data-tag="underline">밑줄</button>
-          <button type="button" class="fmt-btn" data-target="quoteInput" data-tag="highlight">강조</button>
-        </div>
-        <textarea id="quoteInput" rows="2">충전 인프라 부족은 전기차 전환의 가장 큰 걸림돌이었다. 생활권 안에서 충전할 수 있는 환경을 최대한 빨리 만들겠다.</textarea>
-        <input type="text" id="quoteCite" value="OO시 교통정책과장" style="margin-top:8px">
-      </div>
-
-      <div class="section">
-        <div class="section-title">출처(매체) · 날짜</div>
-        <input type="text" id="sourceInput" value="OO일보 산업부">
-        <input type="date" id="dateInput" style="margin-top:8px">
-      </div>
-
-      <div class="section">
-        <div class="section-title">계정 워터마크</div>
-        <input type="text" id="watermarkInput" placeholder="예: @west150daily" value="">
-        <select id="watermarkPosition" style="margin-top:8px">
-          <option value="wm-br" selected>우측 하단</option>
-          <option value="wm-bl">좌측 하단</option>
-          <option value="wm-tr">우측 상단</option>
-          <option value="wm-tl">좌측 상단</option>
-        </select>
-        <p class="hint">비워두면 표시되지 않습니다. 멀티페이지 카드에서는 우측 하단 페이지 번호와 겹치지 않게 위치를 바꿔주세요.</p>
-      </div>
-
-      <div class="section">
-        <div class="section-title">글꼴</div>
-        <select id="fontSelect">
-          <option value="'Pretendard', 'Noto Sans KR', sans-serif">Pretendard</option>
-          <option value="'Noto Sans KR', sans-serif">Noto Sans KR</option>
-          <option value="'IBM Plex Sans KR', sans-serif">IBM Plex Sans KR</option>
-          <option value="'Spoqa Han Sans Neo', 'Noto Sans KR', sans-serif">스포카 한 산스</option>
-          <option value="'Nanum Gothic', sans-serif">나눔고딕</option>
-          <option value="'Noto Serif KR', serif">Noto Serif KR</option>
-          <option value="'Nanum Myeongjo', serif">나눔명조</option>
-          <option value="'Gowun Batang', serif">고운바탕</option>
-          <option value="'Song Myung', serif">송명</option>
-          <option value="'Hahmlet', serif">함렛</option>
-          <option value="'Black Han Sans', sans-serif">검은고딕</option>
-          <option value="'Do Hyeon', sans-serif">도현</option>
-          <option value="'Jua', sans-serif">주아</option>
-          <option value="'Gaegu', cursive">개구</option>
-        </select>
-      </div>
-
-      <div class="section">
-        <div class="section-title">글꼴 크기 (볼륨)</div>
-        <div class="slider-row">
-          <label>제목</label>
-          <input type="range" id="sizeTitle" min="24" max="64" step="1" value="42">
-          <span class="slider-value" id="svTitle">42</span>
-        </div>
-        <div class="slider-row">
-          <label>요약</label>
-          <input type="range" id="sizeSummary" min="12" max="28" step="1" value="18">
-          <span class="slider-value" id="svSummary">18</span>
-        </div>
-        <div class="slider-row">
-          <label>수치</label>
-          <input type="range" id="sizeNum" min="20" max="140" step="1" value="36">
-          <span class="slider-value" id="svNum">36</span>
-        </div>
-        <div class="slider-row">
-          <label>본문</label>
-          <input type="range" id="sizePoints" min="13" max="60" step="1" value="17">
-          <span class="slider-value" id="svPoints">17</span>
-        </div>
-        <div class="slider-row">
-          <label>수치라벨</label>
-          <input type="range" id="sizeNumLabel" min="12" max="22" step="1" value="15">
-          <span class="slider-value" id="svNumLabel">15</span>
-        </div>
-        <div class="slider-row">
-          <label>인용</label>
-          <input type="range" id="sizeQuote" min="12" max="26" step="1" value="17">
-          <span class="slider-value" id="svQuote">17</span>
-        </div>
-        <div class="slider-row">
-          <label>타입라벨</label>
-          <input type="range" id="sizeType" min="10" max="18" step="1" value="12">
-          <span class="slider-value" id="svType">12</span>
-        </div>
-      </div>
-
-      <div class="section">
-        <div class="section-title">행간</div>
-        <div class="slider-row">
-          <label>행간</label>
-          <input type="range" id="lineHeight" min="1.2" max="1.9" step="0.05" value="1.5">
-          <span class="slider-value" id="lhValue">1.50</span>
-        </div>
-      </div>
-
-      <div class="section">
-        <div class="section-title">표시 옵션</div>
-        <div class="toggle-row">
-          <span style="font-size:13px">주요 수치 (첫 페이지)</span>
-          <label class="switch"><input type="checkbox" id="showNumbers" checked><span class="slider"></span></label>
-        </div>
-        <div class="toggle-row">
-          <span style="font-size:13px">본문 목록</span>
-          <label class="switch"><input type="checkbox" id="showPoints" checked><span class="slider"></span></label>
-        </div>
-        <div class="toggle-row">
-          <span style="font-size:13px">인용문</span>
-          <label class="switch"><input type="checkbox" id="showQuote" checked><span class="slider"></span></label>
-        </div>
-        <div class="toggle-row">
-          <span style="font-size:13px">출처·날짜 마지막만</span>
-          <label class="switch"><input type="checkbox" id="sourceLastOnly" checked><span class="slider"></span></label>
-        </div>
-        <div class="toggle-row">
-          <span style="font-size:13px">제목·리드 모든 페이지</span>
-          <label class="switch"><input type="checkbox" id="titleAllPages" checked><span class="slider"></span></label>
-        </div>
-      </div>
-
-      <div class="section">
-        <button class="btn btn-primary" id="savePng">현재 페이지 PNG 저장</button>
-        <button class="btn btn-primary" id="saveAllPng" style="margin-top:8px">전체 페이지 일괄 저장</button>
-        <button class="btn btn-secondary" id="saveIphone">아이폰용 저장 (현재 페이지)</button>
-        <p class="hint">아이폰: 이미지 길게 눌러 저장 · 일괄 저장 시 여러 파일 다운로드</p>
-      </div>
-    </aside>
-
-    <main class="preview-area">
-      <div class="preview-header">
-        <span>실시간 미리보기 <span id="previewPageLabel"></span></span>
-        <div style="display:flex;align-items:center;gap:10px">
-          <label class="switch">
-            <input type="checkbox" id="mockupToggle">
-            <span class="slider"></span>
-          </label>
-          <span style="font-size:12px;font-weight:600;white-space:nowrap">디바이스 목업</span>
-          <span id="sizeLabel">1080 × 1080</span>
-        </div>
-      </div>
-
-      <div id="plainSlot" class="plain-slot">
-        <div class="card-wrapper" id="cardWrapper">
-          <div id="card">
-            <div class="card-bg-img" id="cardBgImg"></div>
-            <div class="card-bg-overlay" id="cardBgOverlay"></div>
-            <div class="card-glow" id="cardGlow"></div>
-            <img class="card-img-side left" id="cardImgLeft" alt="">
-            <img class="card-img-side right" id="cardImgRight" alt="">
-            <img class="card-img-top" id="cardImgTop" alt="">
-            <div class="card-inner" id="cardInner">
-              <div class="card-brand">
-                <div class="card-brand-top">WEST150 DAILY</div>
-                <div class="card-brand-main">NEWS CARD</div>
-              </div>
-              <div class="card-divider"></div>
-              <div class="card-type" id="cType">종합 (COMPREHENSIVE)</div>
-              <div class="card-title" id="cTitle">OO시, 노후 주거지 중심 전기차 충전 인프라 3년 내 2배로 확충</div>
-              <div class="card-summary" id="cSummary">OO시가 2029년까지 공용 전기차 충전소를 현재의 2배 수준으로 늘리는 계획을 발표했다. 충전기 부족이 심한 다세대주택 밀집 지역이 우선 설치 대상이다.</div>
-              <div class="key-numbers" id="cNumbers">
-                <div class="key-item">
-                  <div class="key-value" id="cNum1">1,200기</div>
-                  <div class="key-label" id="cNum1L">신규 설치 목표</div>
-                </div>
-                <div class="key-item">
-                  <div class="key-value" id="cNum2">2배</div>
-                  <div class="key-label" id="cNum2L">충전소 증가율</div>
-                </div>
-                <div class="key-item">
-                  <div class="key-value" id="cNum3">3년</div>
-                  <div class="key-label" id="cNum3L">사업 추진 기간</div>
-                </div>
-                <div class="key-item" id="num4Wrap" style="display:none">
-                  <div class="key-value" id="cNum4"></div>
-                  <div class="key-label" id="cNum4L"></div>
-                </div>
-              </div>
-              <div class="card-points" id="cPoints">
-                <ul id="cPointsList"></ul>
-              </div>
-              <div class="card-quote" id="cQuote">
-                <p id="cQuoteText">충전 인프라 부족은 전기차 전환의 가장 큰 걸림돌이었다. 생활권 안에서 충전할 수 있는 환경을 최대한 빨리 만들겠다.</p>
-                <cite id="cQuoteCite">— OO시 교통정책과장</cite>
-              </div>
-              <div class="card-footer" id="cFooter">
-                <div class="card-footer-left">
-                  <span id="cSource">OO일보 산업부</span>
-                  <span id="cDate"></span>
-                </div>
-                <div class="card-number" id="cNumber">#001</div>
-              </div>
-            </div>
-            <img class="card-img-bottom" id="cardImgBottom" alt="">
-            <div class="page-indicator" id="cPageIndicator">1 / 1</div>
-            <div class="card-watermark wm-br" id="cWatermark"></div>
-          </div>
-        </div>
-      </div>
-
-      <div id="phoneMockupOuter" class="phone-mockup-outer" style="display:none">
-        <div class="phone-frame">
-          <div class="phone-screen" id="phoneScreen">
-            <div class="phone-notch"></div>
-            <div class="phone-statusbar">
-              <span>9:41</span>
-              <span>●●●●</span>
-            </div>
-
-            <div class="ig-feed" id="igFeedChrome">
-              <div class="ig-feed-header">
-                <div class="ig-feed-avatar"></div>
-                <div class="ig-feed-user">west150daily</div>
-                <div class="ig-feed-more">•••</div>
-              </div>
-              <div class="ig-feed-media-slot" id="feedMediaSlot"></div>
-              <div class="ig-feed-icons">
-                <span>♡</span><span>💬</span><span>➤</span>
-                <span style="margin-left:auto">▭</span>
-              </div>
-              <div class="ig-feed-caption"><b>west150daily</b> 오늘의 카드뉴스를 확인하세요 →</div>
-            </div>
-
-            <div class="ig-story" id="igStoryChrome" style="display:none">
-              <div class="ig-story-media-slot" id="storyMediaSlot"></div>
-              <div class="ig-story-progress"></div>
-              <div class="ig-story-header">
-                <div class="ig-story-avatar"></div>
-                <span style="font-size:13px;font-weight:700">west150daily</span>
-                <span style="font-size:12px;opacity:0.85">· 1시간</span>
-                <span class="ig-story-close">✕</span>
-              </div>
-            </div>
-
-            <div class="phone-home-indicator"></div>
-          </div>
-        </div>
-        <p class="hint" style="text-align:center;margin-top:14px;max-width:320px">실제 인스타그램 피드/스토리에서 보이는 크기·여백을 확인하는 근사 목업입니다. 최종 검수는 꼭 이 화면에서 해보세요.</p>
-      </div>
-    </main>
-  </div>
-
-  <div class="modal-overlay" id="iphoneModal">
-    <div class="modal-content">
-      <img id="iphoneImg" alt="카드 이미지">
     </div>
-    <p class="modal-hint">이미지를 길게 눌러<br>‘사진에 추가’ 또는 ‘이미지 저장’을 선택하세요</p>
-    <button class="modal-close" id="closeModal">닫기</button>
   </div>
+</div>
 
-  <div class="toast" id="toast"></div>
+<div class="modalOverlay" id="previewModal">
+  <div class="modalHead"><span>전체 미리보기</span><button class="btn ghost small" id="closePreview">닫기 ✕</button></div>
+  <div class="previewGrid" id="previewGrid"></div>
+</div>
 
-  <script>
-    let currentSize = { w: 1080, h: 1080 };
-    let currentPage = 0;
-    let pages = [[]];
-    let imgDataUrl = null;
-    let currentFx = 'none';
+<script>
+const templateLabels = {text:'TEXT', full:'FULL', split:'SPLIT', bottom:'BOTTOM', inset:'INSET', side:'SIDE', frame:'FRAME'};
+const styleLabels = {none:'', insta:'INSTA', grid:'GRID', terminal:'TERM', sticky:'STICKY', receipt:'RECEIPT', timeline:'TIMELINE', newspaper:'NEWS', postcard:'CARD', folder:'FOLDER', blueprint:'BLUE', pastel:'PASTEL', certificate:'CERT', magazine:'MAG', alert:'ALERT', cover:'COVER'};
 
-    const card = document.getElementById('card');
-    const cardWrapper = document.getElementById('cardWrapper');
+const sampleData = {
+  timeline: '2024.01 | 프로젝트 시작\n2024.06 | 베타 출시\n2025.01 | 정식 출시',
+  list: '첫 번째 항목을 입력하세요\n두 번째 항목을 입력하세요\n세 번째 항목을 입력하세요',
+  stats: '128% | 성장률\n42만 | 사용자 수\n4.8 | 평점',
+  chart: '1월 | 30\n2월 | 55\n3월 | 80',
+  quote: '이 자리에 인용할 문장을 입력하세요.\n작성자 이름'
+};
 
-    // ===== Color helpers (avoid CSS color-mix()/oklch — html2canvas 1.4.1 cannot
-    // parse those functions and throws "Attempting to parse an unsupported color
-    // function", which is what was causing PNG export to fail on iPhone/PC).
-    // We precompute plain rgba()/hex strings in JS and push them in as CSS
-    // custom properties instead. =====
-    function hexToRgb(hex) {
-      hex = (hex || '').replace('#', '');
-      if (hex.length === 3) hex = hex.split('').map(function(c) { return c + c; }).join('');
-      var num = parseInt(hex, 16);
-      if (isNaN(num)) return { r: 26, g: 54, b: 93 };
-      return { r: (num >> 16) & 255, g: (num >> 8) & 255, b: num & 255 };
-    }
-    function rgbaStr(hex, alpha) {
-      var c = hexToRgb(hex);
-      return 'rgba(' + c.r + ',' + c.g + ',' + c.b + ',' + alpha + ')';
-    }
-    function shadeColor(hex, percent) {
-      var c = hexToRgb(hex);
-      var t = percent < 0 ? 0 : 255;
-      var p = Math.abs(percent);
-      var r = Math.round((t - c.r) * p) + c.r;
-      var g = Math.round((t - c.g) * p) + c.g;
-      var b = Math.round((t - c.b) * p) + c.b;
-      return 'rgb(' + r + ',' + g + ',' + b + ')';
-    }
+const blockLabels = {
+  none: {label:'설명', hint:'한 줄이든 여러 줄이든 자유롭게 입력하세요.', ph:'AI가 아닌 나만의 문체로 만들어 보자.'},
+  timeline: {label:'타임라인 항목', hint:'"날짜 | 설명" 형식으로 한 줄에 하나씩 입력하세요.', ph:'2024.01 | 프로젝트 시작'},
+  list: {label:'리스트 항목', hint:'한 줄에 항목 하나씩 입력하면 자동으로 번호가 매겨집니다.', ph:'첫 번째 항목'},
+  stats: {label:'통계 항목', hint:'"값 | 라벨" 형식으로 한 줄에 하나씩 입력하세요.', ph:'128% | 성장률'},
+  chart: {label:'그래프 항목', hint:'"라벨 | 숫자값" 형식으로 한 줄에 하나씩 입력하세요.', ph:'1월 | 30'},
+  quote: {label:'인용구', hint:'첫 줄은 인용 문장, 둘째 줄은 작성자(선택)입니다.', ph:'인용할 문장\n작성자 이름'}
+};
 
-    function showToast(msg, ms) {
-      var t = document.getElementById('toast');
-      t.textContent = msg;
-      t.classList.add('show');
-      clearTimeout(showToast._timer);
-      showToast._timer = setTimeout(function() { t.classList.remove('show'); }, ms || 3200);
-    }
+const defaults = () => ({
+  template:'text', style:'none',
+  badgeTop:'MONEY NOTE', pillText:'MONEY NOTE', title:'카드뉴스를 직접\n만드는 이유',
+  highlight:'직접', sub:'AI가 아닌 나만의 문체로 만들어 보자.', handle:'@kkongdon_story',
+  bg:'#f4efe4', text:'#1a1a1a', pillBg:'#181818', pillColor:'#ffffff',
+  mk:'#f6b8c4', accent:'#7c5cff', titleSize:27, subSize:14,
+  image:null, imageFit:'cover', imagePos:'center', imageFilter:'none', imageOverlay:55,
+  vignetteMode:'soft', vignetteStrength:18, glassStrength:18, glassBlur:8,
+  sizePreset:'4:5', cardWidth:400, cardHeight:500,
+  font:'pretendard', align:'left',
+  contentBlock:'none', blockData:''
+});
 
-    // Custom category dropdown
-    const catBtn = document.getElementById('catBtn');
-    const catList = document.getElementById('catList');
-    const catLabel = document.getElementById('catLabel');
-    const docTypeInput = document.getElementById('docType');
+let slides = [defaults()];
+let active = 0;
 
-    catBtn.addEventListener('click', function(e) {
-      e.stopPropagation();
-      catList.classList.toggle('open');
-    });
+const $ = id => document.getElementById(id);
 
-    document.querySelectorAll('.cat-item').forEach(function(item) {
-      item.addEventListener('click', function() {
-        document.querySelectorAll('.cat-item').forEach(function(i) { i.classList.remove('active'); });
-        this.classList.add('active');
-        const val = this.getAttribute('data-value');
-        catLabel.textContent = val;
-        docTypeInput.value = val;
-        catList.classList.remove('open');
-        updateCard();
-      });
-    });
+function escapeHtml(s){
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
 
-    document.addEventListener('click', function() {
-      catList.classList.remove('open');
-    });
+function highlightedHtml(title, word, mk){
+  const safe = escapeHtml(title);
+  if(!word || !word.trim()) return safe.replace(/\n/g,'<br>');
+  const w = escapeHtml(word.trim());
+  const re = new RegExp(w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'g');
+  return safe.replace(/\n/g,'<br>').replace(re, '<mark style="--mk:' + mk + '">' + w + '</mark>');
+}
 
-    function parseFormat(text) {
-      if (!text) return '';
-      return text
-        .replace(/\*\*(.*?)\*\*/g, '<span class="fmt-bold">$1</span>')
-        .replace(/\*(.*?)\*/g, '<span class="fmt-italic">$1</span>')
-        .replace(/\[\[(.*?)\]\]/g, '<span class="fmt-underline">$1</span>')
-        .replace(/==(.*?)==/g, '<span class="fmt-highlight">$1</span>')
-        .replace(/\{\{#([A-Fa-f0-9]{3,8})\|(.*?)\}\}/g, '<span style="color:#$1">$2</span>')
-        .replace(/##(.*?)##/g, '<span class="fmt-shadow">$1</span>')
-        .replace(/\n/g, '<br>');
-    }
+function fontStack(id){
+  const map = {
+    pretendard: "'Pretendard Variable','Pretendard',sans-serif",
+    noto: "'Noto Sans KR', sans-serif",
+    plex: "'IBM Plex Sans KR', sans-serif",
+    black: "'Black Han Sans', sans-serif",
+    dohyeon: "'Do Hyeon', sans-serif",
+    jua: "'Jua', sans-serif",
+    gaegu: "'Gaegu', sans-serif",
+    myeongjo: "'Nanum Myeongjo', serif",
+    batang: "'Gowun Batang', serif"
+  };
+  return map[id] || map.pretendard;
+}
 
-    function parsePages() {
-      const raw = document.getElementById('pointsInput').value || '';
-      // Normalize each line first so "---" with surrounding spaces is still recognized as a break.
-      const normalized = raw.split('\n').map(function(l) { return l.trim(); }).join('\n');
-      const segments = normalized.split(/^---$/m).map(function(s) { return s.trim(); }).filter(function(s) { return s.length > 0; });
-      pages = segments.map(function(seg) {
-        return seg.split('\n').map(function(l) { return l.trim(); }).filter(function(l) { return l.length > 0; });
-      }).filter(function(p) { return p.length > 0; });
-      if (pages.length === 0) pages = [[]];
-      if (currentPage >= pages.length) currentPage = pages.length - 1;
-      if (currentPage < 0) currentPage = 0;
-    }
+function filterCss(f){
+  switch(f){
+    case 'gray': return 'grayscale(1)';
+    case 'sepia': return 'sepia(.55) contrast(1.05)';
+    case 'vivid': return 'saturate(1.5) contrast(1.15)';
+    case 'dark': return 'brightness(.65) contrast(1.1)';
+    case 'duotone': return 'grayscale(1) contrast(1.1)';
+    default: return 'none';
+  }
+}
 
-    function updatePageNav() {
-      const total = pages.length;
-      const info = (currentPage + 1) + ' / ' + total;
-      document.getElementById('pageInfo').textContent = info;
-      document.getElementById('previewPageLabel').textContent = total > 1 ? '(' + info + ')' : '';
-      document.getElementById('cPageIndicator').textContent = info;
-      document.getElementById('cPageIndicator').style.display = total > 1 ? 'block' : 'none';
-      document.getElementById('prevPage').disabled = currentPage <= 0;
-      document.getElementById('nextPage').disabled = currentPage >= total - 1;
-    }
+function getCardSize(s){
+  const preset = s.sizePreset || '4:5';
+  const map = {
+    '4:5': {w: 400, h: 500},
+    '1:1': {w: 420, h: 420},
+    '16:9': {w: 560, h: 315},
+    '9:16': {w: 360, h: 640},
+    custom: {w: Number(s.cardWidth) || 400, h: Number(s.cardHeight) || 500}
+  };
+  return map[preset] || map['4:5'];
+}
 
-    function applyImage() {
-      var pos = document.getElementById('imgPosition').value;
-      var br = document.getElementById('imgBrightness').value;
-      var op = document.getElementById('imgOpacity') ? document.getElementById('imgOpacity').value : 1;
-      var ih = document.getElementById('imgHeight').value;
-      var usePanel = document.getElementById('textPanel') && document.getElementById('textPanel').checked;
-      var inner = document.getElementById('cardInner');
+function vignetteCss(mode, strength){
+  if(!mode || mode === 'none' || strength <= 0) return 'none';
+  const alpha = (strength / 100) * 0.7;
+  if(mode === 'soft') return 'radial-gradient(circle at center, rgba(0,0,0,0) 52%, rgba(0,0,0,' + (0.18 + alpha) + ') 100%)';
+  if(mode === 'medium') return 'radial-gradient(circle at center, rgba(0,0,0,0) 45%, rgba(0,0,0,' + (0.28 + alpha) + ') 100%)';
+  return 'radial-gradient(circle at center, rgba(0,0,0,0) 38%, rgba(0,0,0,' + (0.48 + alpha) + ') 100%)';
+}
 
-      ['cardBgImg','cardBgOverlay','cardImgTop','cardImgBottom','cardImgLeft','cardImgRight'].forEach(function(id) {
-        document.getElementById(id).style.display = 'none';
-      });
+function imageBox(s, variantClass){
+  if(!s.image) return '';
+  const style = "background-image:url('" + s.image + "');background-size:" + s.imageFit + ";background-position:center " + s.imagePos + ";filter:" + filterCss(s.imageFilter) + ";";
+  const duo = s.imageFilter === 'duotone' ? '<div class="duo" style="background:' + s.accent + ';opacity:.8;"></div>' : '';
+  return '<div class="imgBox ' + variantClass + '"><div class="layer" style="' + style + '"></div>' + duo + '</div>';
+}
 
-      var imgEls = [
-        document.getElementById('cardBgImg'),
-        document.getElementById('cardImgTop'),
-        document.getElementById('cardImgBottom'),
-        document.getElementById('cardImgLeft'),
-        document.getElementById('cardImgRight')
-      ];
-      imgEls.forEach(function(el) {
-        el.style.filter = '';
-        el.style.boxShadow = '';
-        el.style.opacity = '1';
-      });
+function pillHtml(s){
+  return s.pillText.trim() ? '<div class="pill" style="background:' + s.pillBg + ';color:' + s.pillColor + ';">' + escapeHtml(s.pillText) + '</div>' : '';
+}
+function titleHtml(s){
+  const imageMode = !!s.image;
+  const textShadow = imageMode ? 'text-shadow:0 2px 12px rgba(0,0,0,.42);' : '';
+  return '<div class="titleText" style="font-size:' + s.titleSize + 'px;' + textShadow + '">' + highlightedHtml(s.title, s.highlight, s.mk) + '</div>';
+}
+function subTextHtml(s){
+  return s.sub && s.sub.trim() ? '<div class="subText" style="font-size:' + s.subSize + 'px;' + (s.image ? 'text-shadow:0 2px 8px rgba(0,0,0,.4);' : '') + '">' + escapeHtml(s.sub).replace(/\n/g,'<br>') + '</div>' : '';
+}
+function rowTopHtml(s, pageIdx, total, z){
+  const photoChip = s.image ? ' photoChip' : '';
+  return '<div class="rowTop ' + (z?'z2':'') + '"><div class="badgeTop' + photoChip + '">' + escapeHtml(s.badgeTop) + '</div><div class="pageNum' + photoChip + '">' + (pageIdx+1) + ' / ' + total + '</div></div>';
+}
+function rowBottomHtml(s, z){
+  const photoChip = s.image ? ' photoChip' : '';
+  return '<div class="rowBottom ' + (z?'z2':'') + '"><div class="handle' + photoChip + '">' + escapeHtml(s.handle) + '</div><div class="arrow" style="color:' + s.accent + ';">&gt;&gt;&gt;&gt;</div></div>';
+}
 
-      // reset panel
-      inner.classList.remove('text-panel');
-      inner.style.marginLeft = '';
-      inner.style.marginRight = '';
-      inner.style.width = '';
-      inner.style.margin = '';
-      inner.style.padding = '';
+function parseLines(data){
+  return (data||'').split('\n').map(l=>l.trim()).filter(Boolean);
+}
 
-      if (!imgDataUrl || pos === 'none') {
-        return;
-      }
+function renderTimeline(s){
+  const lines = parseLines(s.blockData);
+  if(!lines.length) return '';
+  const items = lines.map(l => {
+    const parts = l.split('|');
+    const a = (parts[0]||'').trim(), b = (parts[1]||'').trim();
+    return '<div class="tl-item"><div class="tl-dot" style="background:' + s.accent + ';"></div><div class="tl-body"><div class="tl-date">' + escapeHtml(a) + '</div><div class="tl-desc">' + escapeHtml(b) + '</div></div></div>';
+  }).join('');
+  return '<div class="blk timeline">' + items + '</div>';
+}
+function renderListBlock(s){
+  const lines = parseLines(s.blockData);
+  if(!lines.length) return '';
+  const items = lines.map((l,i) => '<div class="ls-item"><div class="ls-num" style="background:' + s.accent + ';">' + (i+1) + '</div><div class="ls-text">' + escapeHtml(l) + '</div></div>').join('');
+  return '<div class="blk list">' + items + '</div>';
+}
+function renderStats(s){
+  const lines = parseLines(s.blockData);
+  if(!lines.length) return '';
+  const items = lines.map(l => {
+    const parts = l.split('|');
+    const v = (parts[0]||'').trim(), label = (parts[1]||'').trim();
+    return '<div class="st-item"><div class="st-val" style="color:' + s.accent + ';">' + escapeHtml(v) + '</div><div class="st-label">' + escapeHtml(label) + '</div></div>';
+  }).join('');
+  return '<div class="blk stats">' + items + '</div>';
+}
+function renderChart(s){
+  const lines = parseLines(s.blockData);
+  if(!lines.length) return '';
+  const parsed = lines.map(l => { const parts = l.split('|'); return {label:(parts[0]||'').trim(), v: parseFloat(parts[1])||0}; });
+  const max = Math.max.apply(null, parsed.map(p=>p.v).concat([1]));
+  const items = parsed.map(p => '<div class="ch-row"><div class="ch-label">' + escapeHtml(p.label) + '</div><div class="ch-track"><div class="ch-fill" style="width:' + (p.v/max*100) + '%;background:' + s.accent + ';"></div></div><div class="ch-val">' + p.v + '</div></div>').join('');
+  return '<div class="blk chart">' + items + '</div>';
+}
+function renderQuote(s){
+  const lines = parseLines(s.blockData);
+  if(!lines.length) return '';
+  const quote = lines[0] || '';
+  const author = lines[1] || '';
+  return '<div class="blk quote"><div class="q-mark" style="color:' + s.accent + ';">&ldquo;</div><div class="q-text">' + escapeHtml(quote) + '</div>' + (author ? '<div class="q-author">- ' + escapeHtml(author) + '</div>' : '') + '</div>';
+}
+function subFallbackHtml(s){
+  return subTextHtml(s);
+}
+function blockHtml(s){
+  switch(s.contentBlock){
+    case 'timeline': return renderTimeline(s);
+    case 'list': return renderListBlock(s);
+    case 'stats': return renderStats(s);
+    case 'chart': return renderChart(s);
+    case 'quote': return renderQuote(s);
+    default: return s.blockData && s.blockData.trim()
+      ? '<div class="subText" style="font-size:' + s.subSize + 'px;">' + escapeHtml(s.blockData).replace(/\n/g,'<br>') + '</div>'
+      : subFallbackHtml(s);
+  }
+}
 
-      function applyFx(el) {
-        var f = 'brightness(' + br + ')';
-        if (currentFx === 'film') f += ' contrast(1.1) sepia(0.25) saturate(0.9)';
-        else if (currentFx === 'bw') f += ' grayscale(1) contrast(1.05)';
-        else if (currentFx === 'warm') f += ' sepia(0.3) saturate(1.2)';
-        else if (currentFx === 'cool') f += ' saturate(0.85) hue-rotate(15deg)';
-        el.style.filter = f;
-        el.style.opacity = op;
-        if (currentFx === 'vignette') {
-          el.style.boxShadow = 'inset 0 0 80px rgba(0,0,0,0.45)';
-        }
-      }
+function styleClass(s){
+  return (s.style && s.style !== 'none') ? ' style-' + s.style : '';
+}
 
-      if (pos === 'bg') {
-        var bg = document.getElementById('cardBgImg');
-        bg.style.display = 'block';
-        bg.style.backgroundImage = 'url(' + imgDataUrl + ')';
-        applyFx(bg);
-        var ov = document.getElementById('cardBgOverlay');
-        ov.style.display = 'block';
-        // Scale overlay darkness with opacity slider so the "투명도" control stays visible
-        // even when a dark overlay/text panel sits on top of the image.
-        var ovStrength = Math.max(0.15, 1 - parseFloat(op) + 0.1);
-        if (usePanel) {
-          ov.style.background = 'rgba(0,0,0,' + (0.1 + (1 - parseFloat(op)) * 0.3) + ')';
-          inner.classList.add('text-panel');
-        } else if (currentFx === 'vignette') {
-          ov.style.background = 'radial-gradient(ellipse at center, rgba(0,0,0,' + (0.1 * ovStrength) + ') 25%, rgba(0,0,0,' + (0.6 * ovStrength) + ') 100%)';
-        } else {
-          ov.style.background = 'linear-gradient(to bottom, rgba(0,0,0,' + (0.3 * ovStrength) + '), rgba(0,0,0,' + (0.5 * ovStrength) + '))';
-        }
-      } else if (pos === 'top') {
-        var img = document.getElementById('cardImgTop');
-        img.style.display = 'block';
-        img.src = imgDataUrl;
-        img.style.height = ih + '%';
-        applyFx(img);
-        // give content more top breathing room
-        inner.style.paddingTop = '36px';
-      } else if (pos === 'bottom') {
-        var img2 = document.getElementById('cardImgBottom');
-        img2.style.display = 'block';
-        img2.src = imgDataUrl;
-        img2.style.height = ih + '%';
-        applyFx(img2);
-        inner.style.paddingBottom = '28px';
-      } else if (pos === 'left') {
-        var imgL = document.getElementById('cardImgLeft');
-        imgL.style.display = 'block';
-        imgL.src = imgDataUrl;
-        applyFx(imgL);
-        inner.style.marginLeft = '36%';
-        inner.style.width = '64%';
-        inner.style.paddingLeft = '36px';
-        inner.style.paddingRight = '40px';
-      } else if (pos === 'right') {
-        var imgR = document.getElementById('cardImgRight');
-        imgR.style.display = 'block';
-        imgR.src = imgDataUrl;
-        applyFx(imgR);
-        inner.style.marginRight = '36%';
-        inner.style.width = '64%';
-        inner.style.paddingLeft = '40px';
-        inner.style.paddingRight = '36px';
-      }
-    }
+function cardMarkup(s, pageIdx, total){
+  const font = fontStack(s.font);
+  const align = s.align || 'left';
+  const size = getCardSize(s);
+  const base = 'background:' + s.bg + ';color:' + s.text + ';font-family:' + font + ';width:' + size.w + 'px;height:' + size.h + 'px;';
+  const cls = 'id="card"' + (styleClass(s) ? ' class="' + styleClass(s).trim() + '"' : '');
+  const photoVignette = s.image ? '<div class="scrim" style="background:' + vignetteCss(s.vignetteMode, Number(s.vignetteStrength) || 0) + ';"></div>' : '';
+  const glassStrength = Number(s.glassStrength) || 0;
+  const glassBlur = Number(s.glassBlur) || 0;
+  const glassMarkup = s.image && glassStrength > 0 ? '<div class="glassLayer" style="background:rgba(255,255,255,' + (Math.min(0.9, glassStrength / 100 * 0.7 + 0.08)) + ');backdrop-filter:blur(' + glassBlur + 'px);-webkit-backdrop-filter:blur(' + glassBlur + 'px);"></div>' : '';
 
-    function updateCard() {
-      parsePages();
-      updatePageNav();
+  if(s.template === 'full'){
+    const overlay = s.imageOverlay/100;
+    return '<div ' + cls + ' style="' + base + '">' +
+      imageBox(s,'full') +
+      photoVignette +
+      '<div class="scrim" style="background:linear-gradient(to top, rgba(0,0,0,' + overlay + ') 0%, rgba(0,0,0,' + (overlay*0.35) + ') 45%, rgba(0,0,0,0) 75%);"></div>' +
+      (glassMarkup || '') +
+      rowTopHtml(s, pageIdx, total, true) +
+      '<div class="z2" style="margin-top:auto;padding-top:20px;text-align:' + align + ';">' + pillHtml(s) + titleHtml(s) + blockHtml(s) + '</div>' +
+      rowBottomHtml(s, true) +
+    '</div>';
+  }
+  if(s.template === 'split'){
+    return '<div ' + cls + ' style="' + base + '">' +
+      rowTopHtml(s, pageIdx, total, false) +
+      imageBox(s,'split') +
+      (glassMarkup || '') +
+      photoVignette +
+      '<div class="frame" style="border:none;padding:20px 2px 0;text-align:' + align + ';">' + pillHtml(s) + titleHtml(s) + blockHtml(s) + '</div>' +
+      rowBottomHtml(s, false) +
+    '</div>';
+  }
+  if(s.template === 'bottom'){
+    return '<div ' + cls + ' style="' + base + '">' +
+      rowTopHtml(s, pageIdx, total, false) +
+      '<div class="frame" style="border:none;padding:20px 2px 0;text-align:' + align + ';">' + pillHtml(s) + titleHtml(s) + blockHtml(s) + '</div>' +
+      imageBox(s,'bottom') +
+      (glassMarkup || '') +
+      photoVignette +
+      rowBottomHtml(s, false) +
+    '</div>';
+  }
+  if(s.template === 'inset'){
+    return '<div ' + cls + ' style="' + base + '">' +
+      rowTopHtml(s, pageIdx, total, false) +
+      '<div class="frame" style="text-align:' + align + ';">' + imageBox(s,'inset') + (glassMarkup || '') + photoVignette + pillHtml(s) + titleHtml(s) + blockHtml(s) + '</div>' +
+      rowBottomHtml(s, false) +
+    '</div>';
+  }
+  if(s.template === 'side'){
+    return '<div ' + cls + ' style="' + base + '">' +
+      rowTopHtml(s, pageIdx, total, false) +
+      '<div class="frame sideFrame">' + imageBox(s,'side') + (glassMarkup || '') + photoVignette + '<div class="sideText" style="text-align:' + align + ';">' + pillHtml(s) + titleHtml(s) + blockHtml(s) + '</div></div>' +
+      rowBottomHtml(s, false) +
+    '</div>';
+  }
+  if(s.template === 'frame'){
+    return '<div ' + cls + ' style="' + base + '">' +
+      rowTopHtml(s, pageIdx, total, false) +
+      '<div class="frame boldFrame" style="text-align:' + align + ';">' + (glassMarkup || '') + photoVignette + pillHtml(s) + titleHtml(s) + blockHtml(s) + '</div>' +
+      rowBottomHtml(s, false) +
+    '</div>';
+  }
+  return '<div ' + cls + ' style="' + base + '">' +
+    rowTopHtml(s, pageIdx, total, false) +
+    '<div class="frame" style="text-align:' + align + ';">' + (glassMarkup || '') + photoVignette + pillHtml(s) + titleHtml(s) + blockHtml(s) + '</div>' +
+    rowBottomHtml(s, false) +
+  '</div>';
+}
 
-      var isFirst = currentPage === 0;
-      var isLast = currentPage === pages.length - 1;
-      var titleAll = document.getElementById('titleAllPages').checked;
-      var sourceLastOnly = document.getElementById('sourceLastOnly').checked;
+const fullCss = document.querySelector('style').textContent;
+const fontLinksHtml = Array.from(document.querySelectorAll('link[rel="stylesheet"]')).map(l=>l.outerHTML).join('');
 
-      document.getElementById('cType').textContent = document.getElementById('docType').value;
+function renderMainCard(){
+  const s = slides[active];
+  $('canvasWrap').innerHTML = cardMarkup(s, active, slides.length);
+}
+function thumbSrcDoc(s, idx){
+  return '<!DOCTYPE html><html><head>' + fontLinksHtml + '<style>' + fullCss + '</style></head><body style="margin:0;">' + cardMarkup(s, idx, slides.length) + '</body></html>';
+}
+function renderList(){
+  const list = $('slideList');
+  list.innerHTML = '';
+  slides.forEach((s, i) => {
+    const div = document.createElement('div');
+    div.className = 'thumb' + (i === active ? ' active' : '');
+    const iframe = document.createElement('iframe');
+    iframe.srcdoc = thumbSrcDoc(s, i);
+    div.appendChild(iframe);
+    const idx = document.createElement('div');
+    idx.className = 'idx'; idx.textContent = i+1;
+    div.appendChild(idx);
+    const tag = document.createElement('div');
+    tag.className = 'tag';
+    tag.textContent = templateLabels[s.template] || 'TEXT';
+    if(s.style && s.style !== 'none') tag.textContent += ' · ' + (styleLabels[s.style] || s.style.toUpperCase());
+    div.appendChild(tag);
+    const del = document.createElement('div');
+    del.className = 'del'; del.textContent = '✕';
+    del.onclick = (e) => { e.stopPropagation(); deleteSlide(i); };
+    div.appendChild(del);
+    div.onclick = () => { active = i; syncForm(); renderMainCard(); renderList(); };
+    list.appendChild(div);
+  });
+  $('slideCount').textContent = slides.length;
+}
+function deleteSlide(i){
+  if(slides.length === 1) return;
+  slides.splice(i,1);
+  if(active >= slides.length) active = slides.length - 1;
+  syncForm(); renderMainCard(); renderList();
+}
 
-      var showHeader = isFirst || titleAll;
-      document.getElementById('cTitle').style.display = showHeader ? 'block' : 'none';
-      document.getElementById('cSummary').style.display = showHeader ? 'block' : 'none';
-      document.getElementById('cTitle').innerHTML = parseFormat(document.getElementById('titleInput').value);
-      document.getElementById('cSummary').innerHTML = parseFormat(document.getElementById('summaryInput').value);
+function updateBlockHint(){
+  const s = slides[active];
+  const info = blockLabels[s.contentBlock] || blockLabels.none;
+  $('blockDataLabel').textContent = info.label;
+  $('blockDataHint').textContent = info.hint;
+  $('blockDataText').placeholder = info.ph;
+}
 
-      document.getElementById('cTitle').style.fontSize = document.getElementById('sizeTitle').value + 'px';
-      document.getElementById('cSummary').style.fontSize = document.getElementById('sizeSummary').value + 'px';
-      document.getElementById('cType').style.fontSize = document.getElementById('sizeType').value + 'px';
+function syncStyleMenu(){
+  const s = slides[active];
+  Array.from(document.querySelectorAll('#styleMenu .ddItem')).forEach(item => {
+    item.classList.toggle('active', item.dataset.style === (s.style || 'none'));
+  });
+}
 
-      var numSize = document.getElementById('sizeNum').value + 'px';
-      document.getElementById('cNum1').style.fontSize = numSize;
-      document.getElementById('cNum2').style.fontSize = numSize;
-      document.getElementById('cNum3').style.fontSize = numSize;
-      document.getElementById('cNum4').style.fontSize = numSize;
+function syncForm(){
+  const s = slides[active];
+  $('badgeTop').value = s.badgeTop;
+  $('pillText').value = s.pillText;
+  $('titleText').value = s.title;
+  $('highlightWord').value = s.highlight;
+  $('handleText').value = s.handle;
+  $('contentBlockSelect').value = s.contentBlock;
+  $('blockDataText').value = s.contentBlock === 'none' ? (s.blockData || s.sub || '') : s.blockData;
+  updateBlockHint();
+  syncStyleMenu();
+  $('bgColor').value = s.bg; $('bgColorHex').textContent = s.bg;
+  $('textColor').value = s.text; $('textColorHex').textContent = s.text;
+  $('pillBg').value = s.pillBg; $('pillBgHex').textContent = s.pillBg;
+  $('pillColor').value = s.pillColor; $('pillColorHex').textContent = s.pillColor;
+  $('mkColor').value = s.mk; $('mkColorHex').textContent = s.mk;
+  $('accentColor').value = s.accent; $('accentColorHex').textContent = s.accent;
+  $('titleSize').value = s.titleSize; $('titleSizeVal').textContent = s.titleSize;
+  $('subSize').value = s.subSize; $('subSizeVal').textContent = s.subSize;
+  $('sizePreset').value = s.sizePreset || '4:5';
+  $('cardWidth').value = s.cardWidth || 400;
+  $('cardHeight').value = s.cardHeight || 500;
+  $('imageFit').value = s.imageFit;
+  $('imagePos').value = s.imagePos;
+  $('imageFilter').value = s.imageFilter;
+  $('imageOverlay').value = s.imageOverlay; $('imageOverlayVal').textContent = s.imageOverlay;
+  $('vignetteMode').value = s.vignetteMode || 'soft';
+  $('vignetteStrength').value = s.vignetteStrength || 18; $('vignetteStrengthVal').textContent = s.vignetteStrength || 18;
+  $('glassStrength').value = s.glassStrength || 18; $('glassStrengthVal').textContent = s.glassStrength || 18;
+  $('glassBlur').value = s.glassBlur || 8; $('glassBlurVal').textContent = s.glassBlur || 8;
+  $('fontSelect').value = s.font;
+  $('imgThumb').style.backgroundImage = s.image ? "url('" + s.image + "')" : 'none';
+  syncAlignButtons();
+}
 
-      var numLabelSize = (document.getElementById('sizeNumLabel') ? document.getElementById('sizeNumLabel').value : 15) + 'px';
-      document.getElementById('cNum1L').style.fontSize = numLabelSize;
-      document.getElementById('cNum2L').style.fontSize = numLabelSize;
-      document.getElementById('cNum3L').style.fontSize = numLabelSize;
-      document.getElementById('cNum4L').style.fontSize = numLabelSize;
+function syncAlignButtons(){
+  const a = slides[active].align || 'left';
+  Array.from(document.querySelectorAll('.alignBtn')).forEach(b => b.classList.toggle('active', b.dataset.align === a));
+}
 
-      var ptSize = document.getElementById('sizePoints').value + 'px';
-      document.getElementById('cQuoteText').style.fontSize = document.getElementById('sizeQuote').value + 'px';
+function bindField(id, prop, isColor){
+  $(id).addEventListener('input', e => {
+    slides[active][prop] = e.target.value;
+    if(isColor) $(id+'Hex').textContent = e.target.value;
+    renderMainCard(); renderList();
+  });
+}
+bindField('badgeTop','badgeTop');
+bindField('pillText','pillText');
+bindField('titleText','title');
+bindField('highlightWord','highlight');
+bindField('handleText','handle');
+bindField('bgColor','bg',true);
+bindField('textColor','text',true);
+bindField('pillBg','pillBg',true);
+bindField('pillColor','pillColor',true);
+bindField('mkColor','mk',true);
+bindField('accentColor','accent',true);
 
-      var showNum = document.getElementById('showNumbers').checked && isFirst;
-      document.getElementById('cNumbers').style.display = showNum ? 'flex' : 'none';
-      document.getElementById('cNum1').textContent = document.getElementById('num1').value;
-      document.getElementById('cNum1L').textContent = document.getElementById('num1Label').value;
-      document.getElementById('cNum2').textContent = document.getElementById('num2').value;
-      document.getElementById('cNum2L').textContent = document.getElementById('num2Label').value;
-      document.getElementById('cNum3').textContent = document.getElementById('num3').value;
-      document.getElementById('cNum3L').textContent = document.getElementById('num3Label').value;
-      var n4 = document.getElementById('num4').value;
-      var n4Wrap = document.getElementById('num4Wrap');
-      if (n4) {
-        n4Wrap.style.display = 'block';
-        document.getElementById('cNum4').textContent = n4;
-        document.getElementById('cNum4L').textContent = document.getElementById('num4Label').value;
-      } else n4Wrap.style.display = 'none';
+$('blockDataText').addEventListener('input', e => {
+  const s = slides[active];
+  s.blockData = e.target.value;
+  if(s.contentBlock === 'none') s.sub = e.target.value;
+  renderMainCard(); renderList();
+});
 
-      var showPts = document.getElementById('showPoints').checked;
-      document.getElementById('cPoints').style.display = showPts ? 'block' : 'none';
-      var list = document.getElementById('cPointsList');
-      list.innerHTML = '';
-      // Continue the numbered-badge counter (인스타 스타일) across pages instead of
-      // restarting at 1 each page: count how many items appeared on prior pages
-      // and seed the CSS counter with that offset.
-      var priorItemCount = 0;
-      for (var pIdx = 0; pIdx < currentPage; pIdx++) {
-        priorItemCount += (pages[pIdx] || []).length;
-      }
-      list.style.counterReset = 'insta-step ' + priorItemCount;
-      var pageLines = pages[currentPage] || [];
-      if (pageLines.length === 0 && showPts) {
-        var emptyLi = document.createElement('li');
-        emptyLi.textContent = '(이 페이지에 표시할 조치가 없습니다. 본문에 --- 로 페이지를 나눠 주세요)';
-        emptyLi.style.fontSize = ptSize;
-        emptyLi.style.opacity = '0.6';
-        emptyLi.style.fontStyle = 'italic';
-        list.appendChild(emptyLi);
-      } else {
-        pageLines.forEach(function(line) {
-          var li = document.createElement('li');
-          li.innerHTML = parseFormat(line);
-          li.style.fontSize = ptSize;
-          list.appendChild(li);
-        });
-      }
+$('titleSize').addEventListener('input', e => {
+  slides[active].titleSize = +e.target.value;
+  $('titleSizeVal').textContent = e.target.value;
+  renderMainCard(); renderList();
+});
+$('subSize').addEventListener('input', e => {
+  slides[active].subSize = +e.target.value;
+  $('subSizeVal').textContent = e.target.value;
+  renderMainCard(); renderList();
+});
 
-      var showQ = document.getElementById('showQuote').checked && (isLast || pages.length === 1);
-      document.getElementById('cQuote').style.display = showQ ? 'block' : 'none';
-      document.getElementById('cQuoteText').innerHTML = parseFormat(document.getElementById('quoteInput').value);
-      var cite = document.getElementById('quoteCite').value;
-      document.getElementById('cQuoteCite').textContent = cite ? '— ' + cite : '';
+$('sizePreset').addEventListener('change', e => {
+  const v = e.target.value;
+  slides[active].sizePreset = v;
+  if(v !== 'custom') {
+    const preset = getCardSize(slides[active]);
+    slides[active].cardWidth = preset.w;
+    slides[active].cardHeight = preset.h;
+  }
+  syncForm(); renderMainCard(); renderList();
+});
+$('cardWidth').addEventListener('input', e => {
+  slides[active].sizePreset = 'custom';
+  slides[active].cardWidth = Number(e.target.value) || 400;
+  $('sizePreset').value = 'custom';
+  renderMainCard(); renderList();
+});
+$('cardHeight').addEventListener('input', e => {
+  slides[active].sizePreset = 'custom';
+  slides[active].cardHeight = Number(e.target.value) || 500;
+  $('sizePreset').value = 'custom';
+  renderMainCard(); renderList();
+});
 
-      var showFooter = !sourceLastOnly || isLast || pages.length === 1;
-      document.getElementById('cFooter').style.display = showFooter ? 'flex' : 'none';
-      document.getElementById('cSource').textContent = document.getElementById('sourceInput').value;
-      var dateVal = document.getElementById('dateInput').value;
-      document.getElementById('cDate').textContent = dateVal ? formatDate(dateVal) : '';
-      document.getElementById('cNumber').textContent = document.getElementById('cardNumber').value;
+$('fontSelect').addEventListener('change', e => {
+  slides[active].font = e.target.value;
+  renderMainCard(); renderList();
+});
+$('imageFit').addEventListener('change', e => {
+  slides[active].imageFit = e.target.value;
+  renderMainCard(); renderList();
+});
+$('imagePos').addEventListener('change', e => {
+  slides[active].imagePos = e.target.value;
+  renderMainCard(); renderList();
+});
+$('imageFilter').addEventListener('change', e => {
+  slides[active].imageFilter = e.target.value;
+  renderMainCard(); renderList();
+});
+$('imageOverlay').addEventListener('input', e => {
+  slides[active].imageOverlay = +e.target.value;
+  $('imageOverlayVal').textContent = e.target.value;
+  renderMainCard(); renderList();
+});
+$('vignetteMode').addEventListener('change', e => {
+  slides[active].vignetteMode = e.target.value;
+  renderMainCard(); renderList();
+});
+$('vignetteStrength').addEventListener('input', e => {
+  slides[active].vignetteStrength = +e.target.value;
+  $('vignetteStrengthVal').textContent = e.target.value;
+  renderMainCard(); renderList();
+});
+$('glassStrength').addEventListener('input', e => {
+  slides[active].glassStrength = +e.target.value;
+  $('glassStrengthVal').textContent = e.target.value;
+  renderMainCard(); renderList();
+});
+$('glassBlur').addEventListener('input', e => {
+  slides[active].glassBlur = +e.target.value;
+  $('glassBlurVal').textContent = e.target.value;
+  renderMainCard(); renderList();
+});
 
-      var wmText = document.getElementById('watermarkInput').value.trim();
-      var wmEl = document.getElementById('cWatermark');
-      wmEl.textContent = wmText;
-      wmEl.style.display = wmText ? 'block' : 'none';
-      wmEl.classList.remove('wm-tl', 'wm-tr', 'wm-bl', 'wm-br');
-      wmEl.classList.add(document.getElementById('watermarkPosition').value);
+function setContentBlock(type){
+  const s = slides[active];
+  s.contentBlock = type;
+  if(type !== 'none' && !s.blockData.trim()){
+    s.blockData = sampleData[type] || '';
+  }
+  syncForm(); renderMainCard(); renderList();
+}
+$('contentBlockSelect').addEventListener('change', e => setContentBlock(e.target.value));
 
-      card.style.fontFamily = document.getElementById('fontSelect').value;
-      var lh = document.getElementById('lineHeight').value;
-      document.getElementById('cSummary').style.lineHeight = lh;
-      document.getElementById('cTitle').style.lineHeight = Math.max(1.2, lh - 0.15);
+function setStyle(styleVal){
+  slides[active].style = styleVal;
+  syncStyleMenu();
+  renderMainCard(); renderList();
+}
+Array.from(document.querySelectorAll('#styleMenu .ddItem')).forEach(item => {
+  item.addEventListener('click', () => { setStyle(item.dataset.style); closeAllDropdowns(); });
+});
 
-      applyImage();
-      scalePreview();
-    }
+function closeAllDropdowns(){
+  Array.from(document.querySelectorAll('.dropdown')).forEach(d => d.classList.remove('open'));
+}
+function bindMenuToggle(btnId, ddId){
+  $(btnId).addEventListener('click', e => {
+    e.stopPropagation();
+    const dd = $(ddId);
+    const wasOpen = dd.classList.contains('open');
+    closeAllDropdowns();
+    if(!wasOpen) dd.classList.add('open');
+  });
+}
+bindMenuToggle('templateMenuBtn','templateMenu');
+bindMenuToggle('styleMenuBtn','styleMenu');
+bindMenuToggle('fontMenuBtn','fontMenu');
+bindMenuToggle('imageMenuBtn','imageMenu');
+bindMenuToggle('blockMenuBtn','blockMenu');
+document.addEventListener('click', e => {
+  Array.from(document.querySelectorAll('.menuWrap')).forEach(mw => {
+    if(!mw.contains(e.target)) mw.querySelector('.dropdown').classList.remove('open');
+  });
+});
 
-    function formatDate(iso) {
-      if (!iso) return '';
-      var p = iso.split('-');
-      return p[0] + '.' + p[1] + '.' + p[2];
-    }
+Array.from(document.querySelectorAll('#blockMenu .ddItem')).forEach(item => {
+  item.addEventListener('click', () => { setContentBlock(item.dataset.block); closeAllDropdowns(); });
+});
+Array.from(document.querySelectorAll('#templateMenu .ddItem')).forEach(item => {
+  item.addEventListener('click', () => {
+    slides[active].template = item.dataset.template;
+    renderMainCard(); renderList();
+    closeAllDropdowns();
+  });
+});
+Array.from(document.querySelectorAll('.alignBtn')).forEach(btn => {
+  btn.addEventListener('click', () => {
+    slides[active].align = btn.dataset.align;
+    syncAlignButtons();
+    renderMainCard(); renderList();
+  });
+});
 
-    function setAccent(color) {
-      document.documentElement.style.setProperty('--accent', color);
-      document.getElementById('accentColor').value = color;
-      // Precomputed plain rgba()/rgb() variants so #card.style-insta never relies on
-      // CSS color-mix() (html2canvas can't parse it and export fails silently/errors).
-      document.documentElement.style.setProperty('--accent-7', rgbaStr(color, 0.07));
-      document.documentElement.style.setProperty('--accent-10', rgbaStr(color, 0.10));
-      document.documentElement.style.setProperty('--accent-14', rgbaStr(color, 0.14));
-      document.documentElement.style.setProperty('--accent-22', rgbaStr(color, 0.22));
-      document.documentElement.style.setProperty('--accent-25', rgbaStr(color, 0.25));
-      document.documentElement.style.setProperty('--accent-dark', shadeColor(color, -0.22));
-      document.documentElement.style.setProperty('--accent-light', shadeColor(color, 0.28));
-      updateCard();
-    }
+function openPreview(){
+  const grid = $('previewGrid'); grid.innerHTML = '';
+  slides.forEach((s,i) => {
+    const div = document.createElement('div');
+    div.className = 'thumb' + (i===active?' active':'');
+    const iframe = document.createElement('iframe'); iframe.srcdoc = thumbSrcDoc(s,i);
+    div.appendChild(iframe);
+    const idx = document.createElement('div'); idx.className='idx'; idx.textContent = i+1; div.appendChild(idx);
+    div.onclick = () => { active=i; syncForm(); renderMainCard(); renderList(); closePreview(); };
+    grid.appendChild(div);
+  });
+  $('previewModal').classList.add('open');
+}
+function closePreview(){ $('previewModal').classList.remove('open'); }
+$('previewAllBtn').addEventListener('click', openPreview);
+$('closePreview').addEventListener('click', closePreview);
 
-    function setHighlight(color) {
-      document.documentElement.style.setProperty('--highlight-color', color);
-      document.getElementById('highlightColor').value = color;
-      document.documentElement.style.setProperty('--highlight-bg', rgbaStr(color, 0.55));
-      updateCard();
-    }
-
-    // 서식 툴바: 굵게/기울임/밑줄/강조 버튼 → 텍스트 선택 영역을 해당 마크업으로 감싸기
-    var FMT_TAGS = {
-      bold: ['**', '**', '굵게'],
-      italic: ['*', '*', '기울임'],
-      underline: ['[[', ']]', '밑줄'],
-      highlight: ['==', '==', '강조']
+$('uploadBtn').addEventListener('click', () => $('imageUpload').click());
+$('imageUpload').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = new Image();
+    img.onload = () => {
+      const maxW = 1000;
+      const scale = Math.min(1, maxW / img.width);
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width * scale;
+      canvas.height = img.height * scale;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      slides[active].image = canvas.toDataURL('image/jpeg', 0.85);
+      if(slides[active].template === 'text') slides[active].template = 'full';
+      syncForm(); renderMainCard(); renderList();
     };
-    document.querySelectorAll('.fmt-btn').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        var ta = document.getElementById(btn.getAttribute('data-target'));
-        if (!ta) return;
-        var tagInfo = FMT_TAGS[btn.getAttribute('data-tag')];
-        var start = ta.selectionStart, end = ta.selectionEnd;
-        var val = ta.value;
-        var selected = val.slice(start, end) || tagInfo[2];
-        ta.value = val.slice(0, start) + tagInfo[0] + selected + tagInfo[1] + val.slice(end);
-        var newStart = start + tagInfo[0].length;
-        ta.focus();
-        ta.setSelectionRange(newStart, newStart + selected.length);
-        ta.dispatchEvent(new Event('input', { bubbles: true }));
-      });
-    });
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+  e.target.value = '';
+});
+$('imageRemove').addEventListener('click', () => {
+  slides[active].image = null;
+  renderMainCard(); renderList();
+  $('imgThumb').style.backgroundImage = 'none';
+});
 
-    function setSize(w, h) {
-      currentSize = { w: w, h: h };
-      card.style.width = w + 'px';
-      card.style.height = h + 'px';
-      document.getElementById('sizeLabel').textContent = w + ' × ' + h;
-      var inner = document.getElementById('cardInner');
-      if (h >= 1800) inner.style.padding = '80px 64px 72px';
-      else if (h > 1200) inner.style.padding = '72px 68px 60px';
-      else if (w > 1400) inner.style.padding = '56px 80px 48px';
-      else inner.style.padding = '64px 72px 56px';
-      updateMockupMode();
-    }
+const mkPresets = ['#f6b8c4','#ffe08a','#b8e6c1','#a9d4ff','#d7bfff','#ffc7a3'];
+mkPresets.forEach(c => {
+  const sw = document.createElement('div');
+  sw.className = 'sw'; sw.style.background = c;
+  sw.onclick = () => { slides[active].mk = c; $('mkColor').value=c; $('mkColorHex').textContent=c; renderMainCard(); renderList(); };
+  $('mkSwatches').appendChild(sw);
+});
 
-    function scalePreview() {
-      var mockupOn = document.getElementById('mockupToggle') && document.getElementById('mockupToggle').checked;
-      if (mockupOn) {
-        var isStory = (currentSize.h / currentSize.w) >= 1.5;
-        if (isStory) {
-          // Measure the plain .phone-screen block box (aspect-ratio based, no flex/
-          // absolute quirks) rather than the absolutely-positioned story slot itself —
-          // on iOS Safari, measuring a position:absolute flex descendant here could
-          // report an incorrect (near full-card) width, making the card render at
-          // ~full size and get clipped by overflow:hidden instead of fitting the frame.
-          var screenEl = document.getElementById('phoneScreen');
-          var w = screenEl.clientWidth || 1, h = screenEl.clientHeight || 1;
-          var scale = Math.max(w / currentSize.w, h / currentSize.h);
-          cardWrapper.style.position = 'absolute';
-          cardWrapper.style.top = '50%';
-          cardWrapper.style.left = '50%';
-          cardWrapper.style.marginBottom = '0px';
-          cardWrapper.style.transformOrigin = 'center center';
-          cardWrapper.style.transform = 'translate(-50%, -50%) scale(' + scale + ')';
-        } else {
-          // Same reasoning: measure the simple .phone-frame block box and subtract
-          // its known padding, instead of measuring the flex-item media slot.
-          var frameEl = document.querySelector('.phone-frame');
-          var frameW = frameEl.clientWidth || 380;
-          var framePadding = 32; // 16px padding on each side, see .phone-frame CSS
-          var w2 = Math.max(frameW - framePadding, 1);
-          var scale2 = w2 / currentSize.w;
-          var slot2 = document.getElementById('feedMediaSlot');
-          cardWrapper.style.position = 'relative';
-          cardWrapper.style.top = '';
-          cardWrapper.style.left = '';
-          cardWrapper.style.marginBottom = '0px';
-          cardWrapper.style.transformOrigin = 'top left';
-          cardWrapper.style.transform = 'scale(' + scale2 + ')';
-          slot2.style.width = Math.round(w2) + 'px';
-          slot2.style.height = Math.round(currentSize.h * scale2) + 'px';
-        }
-        return;
-      }
-      var maxW = window.innerWidth > 900 ? window.innerWidth - 440 : window.innerWidth - 48;
-      var maxH = Math.max(window.innerHeight - 140, 320);
-      var scale3 = Math.min(maxW / currentSize.w, maxH / currentSize.h, 0.58);
-      if (scale3 < 0.15) scale3 = 0.15;
-      cardWrapper.style.position = '';
-      cardWrapper.style.top = '';
-      cardWrapper.style.left = '';
-      cardWrapper.style.transformOrigin = 'top center';
-      cardWrapper.style.transform = 'scale(' + scale3 + ')';
-      cardWrapper.style.marginBottom = ((currentSize.h * (scale3 - 1)) + 48) + 'px';
-    }
+$('addSlide').addEventListener('click', () => {
+  const clone = JSON.parse(JSON.stringify(slides[active]));
+  slides.splice(active+1, 0, clone);
+  active = active+1;
+  syncForm(); renderMainCard(); renderList();
+});
 
-    function updateMockupMode() {
-      var toggle = document.getElementById('mockupToggle');
-      var enabled = toggle && toggle.checked;
-      var plainSlot = document.getElementById('plainSlot');
-      var mockupOuter = document.getElementById('phoneMockupOuter');
-      var phoneScreen = document.getElementById('phoneScreen');
-      if (!enabled) {
-        plainSlot.style.display = '';
-        mockupOuter.style.display = 'none';
-        cardWrapper.classList.remove('in-mockup');
-        plainSlot.appendChild(cardWrapper);
-      } else {
-        plainSlot.style.display = 'none';
-        mockupOuter.style.display = 'flex';
-        cardWrapper.classList.add('in-mockup');
-        var isStory = (currentSize.h / currentSize.w) >= 1.5;
-        document.getElementById('igFeedChrome').style.display = isStory ? 'none' : 'flex';
-        document.getElementById('igStoryChrome').style.display = isStory ? 'block' : 'none';
-        phoneScreen.classList.toggle('story-mode', isStory);
-        var targetSlot = isStory ? document.getElementById('storyMediaSlot') : document.getElementById('feedMediaSlot');
-        targetSlot.appendChild(cardWrapper);
-      }
-      scalePreview();
-    }
+async function exportNode(node, filename){
+  const canvas = await html2canvas(node, {
+    backgroundColor: null,
+    scale: 2,
+    useCORS: true,
+    logging: false,
+    allowTaint: true,
+    width: node.scrollWidth || node.clientWidth,
+    height: node.scrollHeight || node.clientHeight,
+    windowWidth: node.scrollWidth || node.clientWidth,
+    windowHeight: node.scrollHeight || node.clientHeight
+  });
+  const link = document.createElement('a');
+  link.download = filename;
+  link.href = canvas.toDataURL('image/png', 0.92);
+  link.click();
+}
+$('exportOne').addEventListener('click', () => {
+  exportNode($('canvasWrap'), 'card_' + (active+1) + '.png');
+});
+$('exportAll').addEventListener('click', async () => {
+  const origActive = active;
+  for(let i=0;i<slides.length;i++){
+    active = i;
+    renderMainCard();
+    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+    await exportNode($('canvasWrap'), 'card_' + (i+1) + '.png');
+    await new Promise(r => setTimeout(r, 300));
+  }
+  active = origActive;
+  renderMainCard(); renderList();
+});
 
-    document.querySelectorAll('#sizeGroup .btn').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        document.querySelectorAll('#sizeGroup .btn').forEach(function(b) { b.classList.remove('active'); });
-        this.classList.add('active');
-        var parts = this.dataset.size.split('x');
-        setSize(+parts[0], +parts[1]);
-      });
-    });
-
-    // Paper / material styles
-    var paperClasses = ['paper-clean','paper-offwhite','paper-ivory','paper-warm','paper-coolgray','paper-report','paper-linen','paper-grain','paper-cardstock','paper-matte','paper-softshadow'];
-    document.querySelectorAll('#paperGroup .btn').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        document.querySelectorAll('#paperGroup .btn').forEach(function(b) { b.classList.remove('active'); });
-        this.classList.add('active');
-        paperClasses.forEach(function(c) { card.classList.remove(c); });
-        card.classList.add(this.dataset.paper);
-      });
-    });
-    // default
-    card.classList.add('paper-clean');
-
-    // Card style (기본 / 에디토리얼 / 인스타)
-    var cardStyleClasses = ['style-standard', 'style-editorial', 'style-insta'];
-    document.querySelectorAll('#cardStyleGroup .btn').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        document.querySelectorAll('#cardStyleGroup .btn').forEach(function(b) { b.classList.remove('active'); });
-        this.classList.add('active');
-        cardStyleClasses.forEach(function(c) { card.classList.remove(c); });
-        card.classList.add(this.dataset.style);
-      });
-    });
-    card.classList.add('style-standard');
-
-    document.getElementById('themeToggle').addEventListener('change', function(e) {
-      document.documentElement.setAttribute('data-theme', e.target.checked ? 'dark' : 'light');
-      if (e.target.checked) {
-        card.style.background = '#1c1c1e';
-        document.documentElement.style.setProperty('--card-bg', '#1c1c1e');
-        document.documentElement.style.setProperty('--card-text', '#f5f5f7');
-        document.documentElement.style.setProperty('--card-muted', '#98989d');
-      } else {
-        card.style.background = '#ffffff';
-        document.documentElement.style.setProperty('--card-bg', '#ffffff');
-        document.documentElement.style.setProperty('--card-text', '#1a1a1a');
-        document.documentElement.style.setProperty('--card-muted', '#4b5563');
-      }
-    });
-
-    document.getElementById('accentColor').addEventListener('input', function(e) { setAccent(e.target.value); });
-    document.querySelectorAll('[data-preset]').forEach(function(btn) {
-      btn.addEventListener('click', function() { setAccent(this.dataset.preset); });
-    });
-
-    document.getElementById('highlightColor').addEventListener('input', function(e) { setHighlight(e.target.value); });
-    document.querySelectorAll('[data-hpreset]').forEach(function(btn) {
-      btn.addEventListener('click', function() { setHighlight(this.dataset.hpreset); });
-    });
-
-    var imgZone = document.getElementById('imgZone');
-    var imgInput = document.getElementById('imgInput');
-    imgZone.addEventListener('click', function() { imgInput.click(); });
-    imgInput.addEventListener('change', function(e) {
-      var file = e.target.files[0];
-      if (!file) return;
-      var reader = new FileReader();
-      reader.onload = function(ev) {
-        imgDataUrl = ev.target.result;
-        imgZone.classList.add('has-img');
-        imgZone.innerHTML = '<img src="' + imgDataUrl + '" alt="preview"><p>클릭하여 변경</p>';
-        imgZone.appendChild(imgInput);
-        document.getElementById('removeImg').style.display = 'block';
-        if (document.getElementById('imgPosition').value === 'none') {
-          document.getElementById('imgPosition').value = 'top';
-        }
-        updateCard();
-      };
-      reader.readAsDataURL(file);
-    });
-
-    document.getElementById('removeImg').addEventListener('click', function() {
-      imgDataUrl = null;
-      imgZone.classList.remove('has-img');
-      imgZone.innerHTML = '<p>클릭하여 이미지 업로드</p>';
-      imgZone.appendChild(imgInput);
-      imgInput.value = '';
-      document.getElementById('removeImg').style.display = 'none';
-      document.getElementById('imgPosition').value = 'none';
-      updateCard();
-    });
-
-    document.getElementById('imgPosition').addEventListener('change', updateCard);
-    document.getElementById('imgBrightness').addEventListener('input', function(e) {
-      document.getElementById('brValue').textContent = parseFloat(e.target.value).toFixed(2);
-      updateCard();
-    });
-    if (document.getElementById('imgOpacity')) {
-      document.getElementById('imgOpacity').addEventListener('input', function(e) {
-        document.getElementById('opValue').textContent = parseFloat(e.target.value).toFixed(2);
-        updateCard();
-      });
-    }
-    if (document.getElementById('textPanel')) {
-      document.getElementById('textPanel').addEventListener('change', updateCard);
-    }
-    document.getElementById('imgHeight').addEventListener('input', function(e) {
-      document.getElementById('ihValue').textContent = e.target.value + '%';
-      updateCard();
-    });
-
-    document.querySelectorAll('#fxGroup .btn').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        document.querySelectorAll('#fxGroup .btn').forEach(function(b) { b.classList.remove('active'); });
-        this.classList.add('active');
-        currentFx = this.dataset.fx;
-        updateCard();
-      });
-    });
-
-    document.getElementById('mockupToggle').addEventListener('change', updateMockupMode);
-
-    document.getElementById('prevPage').addEventListener('click', function() {
-      if (currentPage > 0) { currentPage--; updateCard(); }
-    });
-    document.getElementById('nextPage').addEventListener('click', function() {
-      if (currentPage < pages.length - 1) { currentPage++; updateCard(); }
-    });
-
-    ['sizeTitle','sizeSummary','sizeNum','sizePoints','sizeNumLabel','sizeQuote','sizeType'].forEach(function(id) {
-      var el = document.getElementById(id);
-      if (!el) return;
-      var sv = document.getElementById('sv' + id.replace('size',''));
-      el.addEventListener('input', function() {
-        if (sv) sv.textContent = el.value;
-        updateCard();
-      });
-    });
-
-    document.getElementById('lineHeight').addEventListener('input', function(e) {
-      document.getElementById('lhValue').textContent = parseFloat(e.target.value).toFixed(2);
-      updateCard();
-    });
-
-    var inputs = [
-      'cardNumber','titleInput','summaryInput',
-      'num1','num1Label','num2','num2Label','num3','num3Label','num4','num4Label',
-      'pointsInput','quoteInput','quoteCite','sourceInput','dateInput',
-      'fontSelect','showNumbers','showPoints','showQuote','sourceLastOnly','titleAllPages',
-      'watermarkInput','watermarkPosition'
-    ];
-    inputs.forEach(function(id) {
-      var el = document.getElementById(id);
-      if (el) {
-        el.addEventListener('input', updateCard);
-        el.addEventListener('change', updateCard);
-      }
-    });
-
-    // Wait for web fonts to finish loading (if supported) so PNG exports don't
-    // silently fall back to a system font because html2canvas snapshotted too early.
-    async function waitForFonts() {
-      try {
-        if (document.fonts && document.fonts.ready) {
-          await document.fonts.ready;
-        }
-      } catch (e) { /* font loading API unsupported - proceed anyway */ }
-    }
-
-    async function generateCanvas() {
-      await waitForFonts();
-      var prev = cardWrapper.style.transform;
-      cardWrapper.style.transform = 'scale(1)';
-      // html2canvas 1.4.1 cannot parse modern CSS color functions such as
-      // color-mix()/oklch() and throws instead of exporting. All in-card colors
-      // are now plain rgba()/rgb()/hex via CSS custom properties set in
-      // setAccent()/setHighlight(), so this should no longer happen — but we
-      // still surface a clear message if a browser produces an unusual computed
-      // color value we haven't accounted for.
-      var canvas;
-      try {
-        canvas = await html2canvas(card, {
-          scale: 2, useCORS: true, allowTaint: true,
-          backgroundColor: null, logging: false,
-          width: currentSize.w, height: currentSize.h
-        });
-      } catch (err) {
-        var msg = (err && err.message) ? err.message : String(err);
-        if (/color function|oklch|color-mix/i.test(msg)) {
-          throw new Error('브라우저의 최신 색상 표현 방식(oklch/color-mix)을 캡처 엔진이 인식하지 못했습니다. 페이지를 새로고침한 뒤 다시 시도해 주세요. (' + msg + ')');
-        }
-        throw err;
-      } finally {
-        cardWrapper.style.transform = prev;
-      }
-      return canvas;
-    }
-
-    function downloadCanvas(canvas, name) {
-      var dataUrl;
-      try {
-        dataUrl = canvas.toDataURL('image/png');
-      } catch (e) {
-        throw new Error('이미지를 파일로 변환하지 못했습니다 (' + (e && e.message ? e.message : e) + ')');
-      }
-      var a = document.createElement('a');
-      a.download = name;
-      a.href = dataUrl;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    }
-
-    document.getElementById('savePng').addEventListener('click', async function() {
-      var btn = this;
-      var original = btn.textContent;
-      btn.textContent = '생성 중...'; btn.disabled = true;
-      try {
-        var canvas = await generateCanvas();
-        var num = document.getElementById('cardNumber').value.replace('#','');
-        var suffix = pages.length > 1 ? '_p' + (currentPage+1) : '';
-        downloadCanvas(canvas, 'WEST150_NEWS_CARD_' + num + suffix + '_' + Date.now() + '.png');
-      } catch(e) {
-        showToast('저장 중 오류가 발생했습니다: ' + (e && e.message ? e.message : e));
-        console.error(e);
-      } finally {
-        btn.textContent = original; btn.disabled = false;
-      }
-    });
-
-    document.getElementById('saveAllPng').addEventListener('click', async function() {
-      var btn = this;
-      var original = btn.textContent;
-      btn.textContent = '전체 생성 중...'; btn.disabled = true;
-      var orig = currentPage;
-      var num = document.getElementById('cardNumber').value.replace('#','');
-      try {
-        for (var i = 0; i < pages.length; i++) {
-          currentPage = i; updateCard();
-          await new Promise(function(r) { setTimeout(r, 100); });
-          var canvas = await generateCanvas();
-          var suffix = pages.length > 1 ? '_p' + (i+1) + 'of' + pages.length : '';
-          downloadCanvas(canvas, 'WEST150_NEWS_CARD_' + num + suffix + '.png');
-          await new Promise(function(r) { setTimeout(r, 350); });
-        }
-      } catch(e) {
-        showToast('일괄 저장 중 오류가 발생했습니다: ' + (e && e.message ? e.message : e));
-        console.error(e);
-      } finally {
-        currentPage = orig; updateCard();
-        btn.textContent = original; btn.disabled = false;
-      }
-    });
-
-    document.getElementById('saveIphone').addEventListener('click', async function() {
-      var btn = this;
-      var original = btn.textContent;
-      btn.textContent = '생성 중...'; btn.disabled = true;
-      try {
-        var canvas = await generateCanvas();
-        var dataUrl;
-        try {
-          dataUrl = canvas.toDataURL('image/png');
-        } catch (e) {
-          throw new Error('이미지를 파일로 변환하지 못했습니다 (' + (e && e.message ? e.message : e) + ')');
-        }
-        document.getElementById('iphoneImg').src = dataUrl;
-        document.getElementById('iphoneModal').classList.add('show');
-      } catch(e) {
-        showToast('생성 중 오류가 발생했습니다: ' + (e && e.message ? e.message : e));
-        console.error(e);
-      } finally {
-        btn.textContent = original; btn.disabled = false;
-      }
-    });
-
-    document.getElementById('closeModal').addEventListener('click', function() {
-      document.getElementById('iphoneModal').classList.remove('show');
-    });
-    document.getElementById('iphoneModal').addEventListener('click', function(e) {
-      if (e.target.id === 'iphoneModal') document.getElementById('iphoneModal').classList.remove('show');
-    });
-
-
-    // ===== Auto Fill =====
-    var AUTOFILL_FIELDS = [
-      { key: 'docType', label: '기사 유형·섹션' },
-      { key: 'cardNumber', label: '기사 번호' },
-      { key: 'titleInput', label: '기사 제목' },
-      { key: 'summaryInput', label: '리드문' },
-      { key: 'numbers', label: '주요 수치' },
-      { key: 'pointsInput', label: '본문' },
-      { key: 'quoteInput', label: '인터뷰 인용' },
-      { key: 'quoteCite', label: '인용 출처' },
-      { key: 'sourceInput', label: '출처' },
-      { key: 'dateInput', label: '날짜' }
-    ];
-
-    function autoFillFromText(raw) {
-      if (!raw || !raw.trim()) {
-        showToast('붙여넣을 내용이 없습니다.');
-        return;
-      }
-
-      var filled = {};
-
-      function pick(patterns) {
-        for (var i = 0; i < patterns.length; i++) {
-          var m = raw.match(patterns[i]);
-          if (m && m[1]) return m[1].trim();
-        }
-        return '';
-      }
-
-      // 기사 유형·섹션
-      var docType = pick([
-        /(?:1\.\s*)?(?:기사\s*유형(?:\s*[·・]?\s*섹션)?|문서\s*타입)\s*[:：]\s*(.+)/i,
-        /(?:기사\s*유형(?:\s*[·・]?\s*섹션)?|문서\s*타입)\s*[:：]\s*(.+)/i
-      ]);
-      if (docType) {
-        docType = docType.split('\n')[0].trim();
-        document.getElementById('docType').value = docType;
-        document.getElementById('catLabel').textContent = docType;
-        document.querySelectorAll('.cat-item').forEach(function(item) {
-          item.classList.toggle('active', item.getAttribute('data-value') === docType);
-        });
-        filled.docType = true;
-      }
-
-      // 기사 번호
-      var cardNum = pick([
-        /(?:2\.\s*)?(?:기사|카드)\s*번호\s*[:：]\s*(#+?\d+)/i,
-        /(?:기사|카드)\s*번호\s*[:：]\s*(.+)/i
-      ]);
-      if (cardNum) {
-        cardNum = cardNum.split('\n')[0].trim();
-        if (cardNum.indexOf('#') !== 0) cardNum = '#' + cardNum.replace(/^#/, '');
-        document.getElementById('cardNumber').value = cardNum;
-        filled.cardNumber = true;
-      }
-
-      // 기사 제목
-      var title = pick([
-        /(?:3\.\s*)?(?:기사\s*제목|핵심\s*제목)\s*[:：]\s*(.+)/i,
-        /(?:기사\s*제목|핵심\s*제목)\s*[:：]\s*(.+)/i
-      ]);
-      if (title) {
-        title = title.split('\n')[0].trim();
-        document.getElementById('titleInput').value = title;
-        filled.titleInput = true;
-      }
-
-      // 리드문
-      var summary = pick([
-        /(?:4\.\s*)?(?:리드문|핵심\s*요약)\s*[:：]\s*([\s\S]*?)(?=\n\s*(?:5\.|주요\s*수치)|$)/i,
-        /(?:리드문|핵심\s*요약)\s*[:：]\s*([\s\S]*?)(?=\n\s*(?:5\.|주요\s*수치)|$)/i
-      ]);
-      if (summary) {
-        summary = summary.replace(/^\s*[-•]\s*/gm, '').trim();
-        if (summary) {
-          document.getElementById('summaryInput').value = summary;
-          filled.summaryInput = true;
-        }
-      }
-
-      // 주요 수치
-      var numBlock = pick([
-        /(?:5\.\s*)?주요\s*수치\s*[:：]?\s*([\s\S]*?)(?=\n\s*(?:6\.|본문|주요\s*조치)|$)/i,
-        /주요\s*수치\s*[:：]?\s*([\s\S]*?)(?=\n\s*(?:6\.|본문|주요\s*조치)|$)/i
-      ]);
-      // reset numbers
-      ['num1','num2','num3','num4','num1Label','num2Label','num3Label','num4Label'].forEach(function(id) {
-        document.getElementById(id).value = '';
-      });
-      if (numBlock) {
-        var lines = numBlock.split('\n').map(function(l) { return l.trim(); }).filter(Boolean);
-        var idx = 0;
-        var unmatchedNumLines = 0;
-        lines.forEach(function(line) {
-          if (idx >= 4) return;
-          // formats: - 15% | 라벨  or  - 15% : 라벨  or  수치1 | 라벨1
-          line = line.replace(/^[-•*]\s*/, '').replace(/^\d+\.\s*/, '');
-          var parts = line.split(/\s*[\|｜:：]\s*/);
-          if (parts.length >= 2 && parts[0]) {
-            idx++;
-            document.getElementById('num' + idx).value = parts[0].trim();
-            document.getElementById('num' + idx + 'Label').value = parts.slice(1).join(' ').trim();
-          } else if (line) {
-            unmatchedNumLines++;
-          }
-        });
-        if (idx > 0) filled.numbers = true;
-        if (unmatchedNumLines > 0 && idx === 0) {
-          // Nothing recognizable in the numbers block at all
-        }
-      }
-
-      // 본문
-      var points = pick([
-        /(?:6\.\s*)?(?:본문|주요\s*조치(?:\s*\/\s*본문)?)\s*[:：]?\s*([\s\S]*?)(?=\n\s*(?:7\.|인터뷰\s*인용|공식\s*인용)|$)/i,
-        /(?:본문|주요\s*조치(?:\s*\/\s*본문)?)\s*[:：]?\s*([\s\S]*?)(?=\n\s*(?:7\.|인터뷰\s*인용|공식\s*인용)|$)/i
-      ]);
-      if (points) {
-        // keep --- for multipage, clean bullets
-        var cleaned = points.split('\n').map(function(l) {
-          l = l.trim();
-          if (l === '---') return '---';
-          return l.replace(/^[-•*]\s*/, '').replace(/^\d+\.\s*/, '');
-        }).filter(function(l) { return l.length > 0; }).join('\n');
-        if (cleaned) {
-          document.getElementById('pointsInput').value = cleaned;
-          filled.pointsInput = true;
-        }
-      }
-
-      // 인터뷰 인용
-      var quote = pick([
-        /(?:7\.\s*)?(?:인터뷰\s*인용|공식\s*인용)\s*[:：]\s*([\s\S]*?)(?=\n\s*(?:8\.|인용\s*출처)|$)/i,
-        /(?:인터뷰\s*인용|공식\s*인용)\s*[:：]\s*([\s\S]*?)(?=\n\s*(?:8\.|인용\s*출처)|$)/i
-      ]);
-      if (quote) {
-        quote = quote.replace(/^\s*[-•]\s*/gm, '').trim();
-        if (/생략|없음|—|–|^-$/.test(quote) && quote.length < 15) {
-          document.getElementById('quoteInput').value = '';
-          document.getElementById('showQuote').checked = false;
-        } else if (quote) {
-          document.getElementById('quoteInput').value = quote.split('\n')[0].trim();
-          document.getElementById('showQuote').checked = true;
-          filled.quoteInput = true;
-        }
-      }
-
-      // 인용 출처
-      var cite = pick([
-        /(?:8\.\s*)?인용\s*출처\s*[:：]\s*(.+)/i,
-        /인용\s*출처\s*[:：]\s*(.+)/i
-      ]);
-      if (cite) {
-        cite = cite.split('\n')[0].trim();
-        if (/—|–|^-$|^없음/.test(cite)) cite = '';
-        document.getElementById('quoteCite').value = cite;
-        if (cite) filled.quoteCite = true;
-      }
-
-      // 출처(매체)
-      var source = pick([
-        /(?:9\.\s*)?(?:출처|매체(?:명)?)\s*[:：]\s*(.+)/i,
-        /(?:출처|매체(?:명)?)\s*[:：]\s*(.+)/i
-      ]);
-      if (source) {
-        source = source.split('\n')[0].trim();
-        document.getElementById('sourceInput').value = source;
-        filled.sourceInput = true;
-      }
-
-      // 날짜
-      var dateStr = pick([
-        /(?:10\.\s*)?날짜\s*[:：]\s*(\d{4}[-./]\d{1,2}[-./]\d{1,2})/i,
-        /날짜\s*[:：]\s*(\d{4}[-./]\d{1,2}[-./]\d{1,2})/i
-      ]);
-      if (dateStr) {
-        dateStr = dateStr.replace(/[./]/g, '-');
-        var dp = dateStr.split('-');
-        if (dp.length === 3) {
-          var y = dp[0], m = ('0' + dp[1]).slice(-2), d = ('0' + dp[2]).slice(-2);
-          document.getElementById('dateInput').value = y + '-' + m + '-' + d;
-          filled.dateInput = true;
-        }
-      }
-
-      currentPage = 0;
-      updateCard();
-
-      var missing = AUTOFILL_FIELDS.filter(function(f) { return !filled[f.key]; }).map(function(f) { return f.label; });
-      if (missing.length === 0) {
-        showToast('자동 채우기 완료: 모든 항목을 인식했습니다.');
-      } else {
-        showToast('자동 채우기 완료.\n인식하지 못한 항목(직접 확인 필요): ' + missing.join(', '), 6000);
-      }
-    }
-
-    document.getElementById('autoFillBtn').addEventListener('click', function() {
-      autoFillFromText(document.getElementById('autoFillInput').value);
-    });
-
-    document.getElementById('resetBtn').addEventListener('click', function() {
-      if (!confirm('모든 입력값을 초기화할까요? 되돌릴 수 없습니다.')) return;
-      document.getElementById('autoFillInput').value = '';
-      document.getElementById('docType').value = '종합 (COMPREHENSIVE)';
-      document.getElementById('catLabel').textContent = '종합 (COMPREHENSIVE)';
-      document.querySelectorAll('.cat-item').forEach(function(item) {
-        item.classList.toggle('active', item.getAttribute('data-value') === '종합 (COMPREHENSIVE)');
-      });
-      document.getElementById('cardNumber').value = '#001';
-      document.getElementById('titleInput').value = '';
-      document.getElementById('summaryInput').value = '';
-      ['num1','num1Label','num2','num2Label','num3','num3Label','num4','num4Label'].forEach(function(id) {
-        document.getElementById(id).value = '';
-      });
-      document.getElementById('pointsInput').value = '';
-      document.getElementById('quoteInput').value = '';
-      document.getElementById('quoteCite').value = '';
-      document.getElementById('sourceInput').value = '';
-      document.getElementById('dateInput').valueAsDate = new Date();
-      imgDataUrl = null;
-      imgZone.classList.remove('has-img');
-      imgZone.innerHTML = '<p>클릭하여 이미지 업로드</p>';
-      imgZone.appendChild(imgInput);
-      imgInput.value = '';
-      document.getElementById('removeImg').style.display = 'none';
-      document.getElementById('imgPosition').value = 'none';
-      currentPage = 0;
-      updateCard();
-      showToast('초기화되었습니다.');
-    });
-
-    document.getElementById('dateInput').valueAsDate = new Date();
-    // Initialize accent/highlight-derived CSS variables (fixes html2canvas
-    // export errors caused by unresolved color-mix() on first paint).
-    setAccent(document.getElementById('accentColor').value);
-    setHighlight(document.getElementById('highlightColor').value);
-    updateCard();
-    setSize(1080, 1080);
-    window.addEventListener('resize', scalePreview);
-  </script>
+syncForm();
+renderMainCard();
+renderList();
+</script>
 </body>
 </html>
