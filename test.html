@@ -41,9 +41,14 @@
   .menuWrap{position:relative;}
   .dropdown{position:absolute;top:calc(100% + 6px);left:0;background:#241d3a;border:1px solid var(--chrome-line);border-radius:10px;padding:6px;display:none;flex-direction:column;min-width:160px;box-shadow:0 14px 34px #000a;z-index:50;}
   .dropdown.open{display:flex;}
+  .dropdown.panelDropdown{padding:16px;width:280px;gap:12px;max-height:78vh;overflow-y:auto;}
   .ddItem{padding:9px 11px;border-radius:7px;font-size:13px;cursor:pointer;color:var(--chrome-text);display:flex;align-items:center;gap:8px;}
   .ddItem:hover{background:#352c54;}
   .ddItem .ic{opacity:.7;font-size:14px;width:16px;text-align:center;}
+  .alignRow{display:flex;gap:6px;}
+  .alignBtn{flex:1;padding:9px 0;border-radius:7px;background:#100c1c;border:1px solid var(--chrome-line);color:var(--chrome-sub);font-size:12px;font-weight:600;transition:.15s;}
+  .alignBtn:hover{color:var(--chrome-text);border-color:var(--accent);}
+  .alignBtn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
 
   #body{flex:1;display:flex;min-height:0;}
 
@@ -83,10 +88,15 @@
   #card .imgBox.split{width:100%;height:44%;flex:none;margin-top:14px;}
   #card .imgBox.inset{width:100%;height:140px;flex:none;margin-bottom:16px;}
   #card .imgBox.full{position:absolute;inset:0;border-radius:0;z-index:0;}
+  #card .imgBox.bottom{width:100%;height:38%;flex:none;margin-top:14px;}
+  #card .imgBox.side{width:42%;height:100%;flex:none;}
   #card .imgBox .layer{position:absolute;inset:0;background-repeat:no-repeat;}
   #card .imgBox .duo{position:absolute;inset:0;mix-blend-mode:color;}
   #card .scrim{position:absolute;inset:0;z-index:1;pointer-events:none;}
   #card .z2{position:relative;z-index:2;}
+  #card .frame.sideFrame{flex-direction:row;align-items:stretch;gap:14px;justify-content:flex-start;}
+  #card .frame.sideFrame .sideText{flex:1;display:flex;flex-direction:column;justify-content:center;min-width:0;}
+  #card .frame.boldFrame{border:3px solid currentColor;border-radius:0;padding:30px 26px;}
 
   #card .blk{margin-top:14px;}
   #card .timeline .tl-item{display:flex;gap:10px;margin-bottom:10px;}
@@ -148,6 +158,95 @@
   <div id="topbar">
     <div class="brand"><span class="dot"></span>Card Studio</div>
     <div class="actions">
+      <div class="menuWrap" id="templateMenuWrap">
+        <button class="btn ghost" id="templateMenuBtn">카드 템플릿 ▾</button>
+        <div class="dropdown" id="templateMenu">
+          <div class="ddItem" data-template="text"><span class="ic">Aa</span>텍스트 카드 (사진 없음)</div>
+          <div class="ddItem" data-template="full"><span class="ic">▣</span>풀 이미지 (배경 전체)</div>
+          <div class="ddItem" data-template="split"><span class="ic">⬒</span>상단 이미지</div>
+          <div class="ddItem" data-template="bottom"><span class="ic">⬓</span>하단 이미지</div>
+          <div class="ddItem" data-template="inset"><span class="ic">⬚</span>이미지 인셋 (프레임 안)</div>
+          <div class="ddItem" data-template="side"><span class="ic">◧</span>사이드 이미지 (좌/우 분할)</div>
+          <div class="ddItem" data-template="frame"><span class="ic">❐</span>볼드 프레임 (테두리 강조)</div>
+        </div>
+      </div>
+
+      <div class="menuWrap" id="fontMenuWrap">
+        <button class="btn ghost" id="fontMenuBtn">글꼴 ▾</button>
+        <div class="dropdown panelDropdown" id="fontMenu">
+          <div class="field">
+            <label>글꼴 선택</label>
+            <select id="fontSelect">
+              <option value="pretendard">Pretendard (인기 국문 고딕)</option>
+              <option value="noto">Noto Sans KR (기본 고딕)</option>
+              <option value="plex">IBM Plex Sans KR (모던 고딕)</option>
+              <option value="black">Black Han Sans (임팩트 헤드라인)</option>
+              <option value="dohyeon">Do Hyeon (두꺼운 고딕)</option>
+              <option value="jua">Jua (동글동글)</option>
+              <option value="gaegu">Gaegu (손글씨풍)</option>
+              <option value="myeongjo">Nanum Myeongjo (명조체)</option>
+              <option value="batang">Gowun Batang (부드러운 바탕체)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>정렬</label>
+            <div class="alignRow" id="alignRow">
+              <button type="button" class="alignBtn" data-align="left">왼쪽</button>
+              <button type="button" class="alignBtn" data-align="center">가운데</button>
+              <button type="button" class="alignBtn" data-align="right">오른쪽</button>
+            </div>
+          </div>
+          <div class="hint">현재 선택된 카드에만 적용됩니다.</div>
+        </div>
+      </div>
+
+      <div class="menuWrap" id="imageMenuWrap">
+        <button class="btn ghost" id="imageMenuBtn">사진 ▾</button>
+        <div class="dropdown panelDropdown" id="imageMenu">
+          <div class="imgPreviewRow">
+            <div class="imgThumb" id="imgThumb"></div>
+            <div style="display:flex;flex-direction:column;gap:6px;flex:1;">
+              <label class="btn small full" id="uploadBtn" style="text-align:center;">사진 업로드</label>
+              <input type="file" id="imageUpload" accept="image/*" style="display:none;">
+              <button class="btn ghost small full" id="imageRemove">사진 삭제</button>
+            </div>
+          </div>
+          <div class="row2">
+            <div class="field">
+              <label>배치 방식</label>
+              <select id="imageFit">
+                <option value="cover">꽉 채우기</option>
+                <option value="contain">전체 보이기</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>위치</label>
+              <select id="imagePos">
+                <option value="top">상단</option>
+                <option value="center" selected>중앙</option>
+                <option value="bottom">하단</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label>사진 효과</label>
+            <select id="imageFilter">
+              <option value="none">없음</option>
+              <option value="gray">흑백</option>
+              <option value="sepia">세피아</option>
+              <option value="vivid">선명하게</option>
+              <option value="dark">어둡게</option>
+              <option value="duotone">듀오톤 (포인트색)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>오버레이 어둡기 (풀 이미지/상단·하단 사진용)</label>
+            <div class="slider"><input type="range" id="imageOverlay" min="0" max="85" value="55"><span class="val" id="imageOverlayVal">55</span></div>
+          </div>
+          <div class="hint">사진은 자동으로 리사이즈되어 저장되며, 현재 선택된 카드에만 적용됩니다.</div>
+        </div>
+      </div>
+
       <div class="menuWrap" id="blockMenuWrap">
         <button class="btn ghost" id="blockMenuBtn">콘텐츠 삽입 ▾</button>
         <div class="dropdown" id="blockMenu">
@@ -179,80 +278,6 @@
     </div>
 
     <div id="right">
-      <div class="sec">
-        <h3>템플릿</h3>
-        <div class="field">
-          <select id="templateSelect">
-            <option value="text">텍스트 카드 (사진 없음)</option>
-            <option value="full">풀 이미지 (사진 전체 배경)</option>
-            <option value="split">이미지 + 텍스트 (상단 사진)</option>
-            <option value="inset">이미지 인셋 (프레임 안 사진)</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="sec">
-        <h3>이미지</h3>
-        <div class="imgPreviewRow">
-          <div class="imgThumb" id="imgThumb"></div>
-          <div style="display:flex;flex-direction:column;gap:6px;flex:1;">
-            <label class="btn small full" id="uploadBtn" style="text-align:center;">사진 업로드</label>
-            <input type="file" id="imageUpload" accept="image/*" style="display:none;">
-            <button class="btn ghost small full" id="imageRemove">사진 삭제</button>
-          </div>
-        </div>
-        <div class="row2">
-          <div class="field">
-            <label>배치 방식</label>
-            <select id="imageFit">
-              <option value="cover">꽉 채우기</option>
-              <option value="contain">전체 보이기</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>위치</label>
-            <select id="imagePos">
-              <option value="top">상단</option>
-              <option value="center" selected>중앙</option>
-              <option value="bottom">하단</option>
-            </select>
-          </div>
-        </div>
-        <div class="field">
-          <label>사진 효과</label>
-          <select id="imageFilter">
-            <option value="none">없음</option>
-            <option value="gray">흑백</option>
-            <option value="sepia">세피아</option>
-            <option value="vivid">선명하게</option>
-            <option value="dark">어둡게</option>
-            <option value="duotone">듀오톤 (포인트색)</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>오버레이 어둡기 (풀 이미지/상단 사진용)</label>
-          <div class="slider"><input type="range" id="imageOverlay" min="0" max="85" value="55"><span class="val" id="imageOverlayVal">55</span></div>
-        </div>
-        <div class="hint">사진은 자동으로 리사이즈되어 저장됩니다.</div>
-      </div>
-
-      <div class="sec">
-        <h3>글꼴</h3>
-        <div class="field">
-          <select id="fontSelect">
-            <option value="pretendard">Pretendard (인기 국문 고딕)</option>
-            <option value="noto">Noto Sans KR (기본 고딕)</option>
-            <option value="plex">IBM Plex Sans KR (모던 고딕)</option>
-            <option value="black">Black Han Sans (임팩트 헤드라인)</option>
-            <option value="dohyeon">Do Hyeon (두꺼운 고딕)</option>
-            <option value="jua">Jua (동글동글)</option>
-            <option value="gaegu">Gaegu (손글씨풍)</option>
-            <option value="myeongjo">Nanum Myeongjo (명조체)</option>
-            <option value="batang">Gowun Batang (부드러운 바탕체)</option>
-          </select>
-        </div>
-      </div>
-
       <div class="sec">
         <h3>텍스트</h3>
         <div class="field">
@@ -350,7 +375,7 @@
 </div>
 
 <script>
-const templateLabels = {text:'TEXT', full:'FULL', split:'SPLIT', inset:'INSET'};
+const templateLabels = {text:'TEXT', full:'FULL', split:'SPLIT', bottom:'BOTTOM', inset:'INSET', side:'SIDE', frame:'FRAME'};
 
 const sampleData = {
   timeline: '2024.01 | 프로젝트 시작\n2024.06 | 베타 출시\n2025.01 | 정식 출시',
@@ -376,7 +401,7 @@ const defaults = () => ({
   bg:'#f4efe4', text:'#1a1a1a', pillBg:'#181818', pillColor:'#ffffff',
   mk:'#f6b8c4', accent:'#7c5cff', titleSize:27, subSize:14,
   image:null, imageFit:'cover', imagePos:'center', imageFilter:'none', imageOverlay:55,
-  font:'pretendard',
+  font:'pretendard', align:'left',
   contentBlock:'none', blockData:''
 });
 
@@ -457,7 +482,7 @@ function renderTimeline(s){
   }).join('');
   return '<div class="blk timeline">' + items + '</div>';
 }
-function renderList(s){
+function renderListBlock(s){
   const lines = parseLines(s.blockData);
   if(!lines.length) return '';
   const items = lines.map((l,i) => '<div class="ls-item"><div class="ls-num" style="background:' + s.accent + ';">' + (i+1) + '</div><div class="ls-text">' + escapeHtml(l) + '</div></div>').join('');
@@ -494,7 +519,7 @@ function subFallbackHtml(s){
 function blockHtml(s){
   switch(s.contentBlock){
     case 'timeline': return renderTimeline(s);
-    case 'list': return renderList(s);
+    case 'list': return renderListBlock(s);
     case 'stats': return renderStats(s);
     case 'chart': return renderChart(s);
     case 'quote': return renderQuote(s);
@@ -506,6 +531,7 @@ function blockHtml(s){
 
 function cardMarkup(s, pageIdx, total){
   const font = fontStack(s.font);
+  const align = s.align || 'left';
   const base = 'background:' + s.bg + ';color:' + s.text + ';font-family:' + font + ';';
 
   if(s.template === 'full'){
@@ -514,7 +540,7 @@ function cardMarkup(s, pageIdx, total){
       imageBox(s,'full') +
       '<div class="scrim" style="background:linear-gradient(to top, rgba(0,0,0,' + overlay + ') 0%, rgba(0,0,0,' + (overlay*0.35) + ') 45%, rgba(0,0,0,0) 75%);"></div>' +
       rowTopHtml(s, pageIdx, total, true) +
-      '<div class="z2" style="margin-top:auto;padding-top:20px;">' + pillHtml(s) + titleHtml(s) + blockHtml(s) + '</div>' +
+      '<div class="z2" style="margin-top:auto;padding-top:20px;text-align:' + align + ';">' + pillHtml(s) + titleHtml(s) + blockHtml(s) + '</div>' +
       rowBottomHtml(s, true) +
     '</div>';
   }
@@ -522,20 +548,42 @@ function cardMarkup(s, pageIdx, total){
     return '<div id="card" style="' + base + '">' +
       rowTopHtml(s, pageIdx, total, false) +
       imageBox(s,'split') +
-      '<div class="frame" style="border:none;padding:20px 2px 0;">' + pillHtml(s) + titleHtml(s) + blockHtml(s) + '</div>' +
+      '<div class="frame" style="border:none;padding:20px 2px 0;text-align:' + align + ';">' + pillHtml(s) + titleHtml(s) + blockHtml(s) + '</div>' +
+      rowBottomHtml(s, false) +
+    '</div>';
+  }
+  if(s.template === 'bottom'){
+    return '<div id="card" style="' + base + '">' +
+      rowTopHtml(s, pageIdx, total, false) +
+      '<div class="frame" style="border:none;padding:20px 2px 0;text-align:' + align + ';">' + pillHtml(s) + titleHtml(s) + blockHtml(s) + '</div>' +
+      imageBox(s,'bottom') +
       rowBottomHtml(s, false) +
     '</div>';
   }
   if(s.template === 'inset'){
     return '<div id="card" style="' + base + '">' +
       rowTopHtml(s, pageIdx, total, false) +
-      '<div class="frame">' + imageBox(s,'inset') + pillHtml(s) + titleHtml(s) + blockHtml(s) + '</div>' +
+      '<div class="frame" style="text-align:' + align + ';">' + imageBox(s,'inset') + pillHtml(s) + titleHtml(s) + blockHtml(s) + '</div>' +
+      rowBottomHtml(s, false) +
+    '</div>';
+  }
+  if(s.template === 'side'){
+    return '<div id="card" style="' + base + '">' +
+      rowTopHtml(s, pageIdx, total, false) +
+      '<div class="frame sideFrame">' + imageBox(s,'side') + '<div class="sideText" style="text-align:' + align + ';">' + pillHtml(s) + titleHtml(s) + blockHtml(s) + '</div></div>' +
+      rowBottomHtml(s, false) +
+    '</div>';
+  }
+  if(s.template === 'frame'){
+    return '<div id="card" style="' + base + '">' +
+      rowTopHtml(s, pageIdx, total, false) +
+      '<div class="frame boldFrame" style="text-align:' + align + ';">' + pillHtml(s) + titleHtml(s) + blockHtml(s) + '</div>' +
       rowBottomHtml(s, false) +
     '</div>';
   }
   return '<div id="card" style="' + base + '">' +
     rowTopHtml(s, pageIdx, total, false) +
-    '<div class="frame">' + pillHtml(s) + titleHtml(s) + blockHtml(s) + '</div>' +
+    '<div class="frame" style="text-align:' + align + ';">' + pillHtml(s) + titleHtml(s) + blockHtml(s) + '</div>' +
     rowBottomHtml(s, false) +
   '</div>';
 }
@@ -591,7 +639,6 @@ function updateBlockHint(){
 
 function syncForm(){
   const s = slides[active];
-  $('templateSelect').value = s.template;
   $('badgeTop').value = s.badgeTop;
   $('pillText').value = s.pillText;
   $('titleText').value = s.title;
@@ -614,6 +661,12 @@ function syncForm(){
   $('imageOverlay').value = s.imageOverlay; $('imageOverlayVal').textContent = s.imageOverlay;
   $('fontSelect').value = s.font;
   $('imgThumb').style.backgroundImage = s.image ? "url('" + s.image + "')" : 'none';
+  syncAlignButtons();
+}
+
+function syncAlignButtons(){
+  const a = slides[active].align || 'left';
+  Array.from(document.querySelectorAll('.alignBtn')).forEach(b => b.classList.toggle('active', b.dataset.align === a));
 }
 
 function bindField(id, prop, isColor){
@@ -653,10 +706,6 @@ $('subSize').addEventListener('input', e => {
   renderMainCard(); renderList();
 });
 
-$('templateSelect').addEventListener('change', e => {
-  slides[active].template = e.target.value;
-  renderMainCard(); renderList();
-});
 $('fontSelect').addEventListener('change', e => {
   slides[active].font = e.target.value;
   renderMainCard(); renderList();
@@ -689,10 +738,44 @@ function setContentBlock(type){
 }
 $('contentBlockSelect').addEventListener('change', e => setContentBlock(e.target.value));
 
-$('blockMenuBtn').addEventListener('click', e => { e.stopPropagation(); $('blockMenu').classList.toggle('open'); });
-document.addEventListener('click', () => $('blockMenu').classList.remove('open'));
+function closeAllDropdowns(){
+  Array.from(document.querySelectorAll('.dropdown')).forEach(d => d.classList.remove('open'));
+}
+function bindMenuToggle(btnId, ddId){
+  $(btnId).addEventListener('click', e => {
+    e.stopPropagation();
+    const dd = $(ddId);
+    const wasOpen = dd.classList.contains('open');
+    closeAllDropdowns();
+    if(!wasOpen) dd.classList.add('open');
+  });
+}
+bindMenuToggle('templateMenuBtn','templateMenu');
+bindMenuToggle('fontMenuBtn','fontMenu');
+bindMenuToggle('imageMenuBtn','imageMenu');
+bindMenuToggle('blockMenuBtn','blockMenu');
+document.addEventListener('click', e => {
+  Array.from(document.querySelectorAll('.menuWrap')).forEach(mw => {
+    if(!mw.contains(e.target)) mw.querySelector('.dropdown').classList.remove('open');
+  });
+});
+
 Array.from(document.querySelectorAll('#blockMenu .ddItem')).forEach(item => {
-  item.addEventListener('click', () => { setContentBlock(item.dataset.block); $('blockMenu').classList.remove('open'); });
+  item.addEventListener('click', () => { setContentBlock(item.dataset.block); closeAllDropdowns(); });
+});
+Array.from(document.querySelectorAll('#templateMenu .ddItem')).forEach(item => {
+  item.addEventListener('click', () => {
+    slides[active].template = item.dataset.template;
+    renderMainCard(); renderList();
+    closeAllDropdowns();
+  });
+});
+Array.from(document.querySelectorAll('.alignBtn')).forEach(btn => {
+  btn.addEventListener('click', () => {
+    slides[active].align = btn.dataset.align;
+    syncAlignButtons();
+    renderMainCard(); renderList();
+  });
 });
 
 function openPreview(){
