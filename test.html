@@ -75,7 +75,10 @@
   #card .rowTop{display:flex;justify-content:space-between;align-items:center;}
   #card .badgeTop{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;}
   #card .pageNum{font-size:12px;font-weight:600;opacity:.6;}
-  #card .frame{flex:1;margin-top:16px;border:1.5px solid #1a1a1a22;border-radius:2px;display:flex;flex-direction:column;justify-content:center;padding:26px 24px;position:relative;overflow:hidden;}
+  #card .frame{flex:1;margin-top:16px;border:1.5px solid #1a1a1a22;border-radius:2px;display:flex;flex-direction:column;justify-content:center;padding:26px 24px;position:relative;overflow:hidden;background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));}
+  #card .photoChip{padding:6px 8px;border-radius:999px;background:rgba(0,0,0,.12);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,.15);}
+  #card .glassLayer{position:absolute;inset:0;pointer-events:none;z-index:3;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.10);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
+  #card .scrim{position:absolute;inset:0;pointer-events:none;z-index:1;}
   #card .pill{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.04em;padding:5px 12px;border-radius:20px;margin-bottom:16px;width:fit-content;}
   #card .titleText{font-size:27px;line-height:1.35;font-weight:800;letter-spacing:-.01em;white-space:pre-wrap;word-break:keep-all;}
   #card .titleText mark{background:var(--mk,#f6b8c4);color:inherit;padding:0 3px;box-decoration-break:clone;-webkit-box-decoration-break:clone;}
@@ -243,6 +246,27 @@
             <label>오버레이 어둡기 (풀 이미지/상단·하단 사진용)</label>
             <div class="slider"><input type="range" id="imageOverlay" min="0" max="85" value="55"><span class="val" id="imageOverlayVal">55</span></div>
           </div>
+          <div class="field">
+            <label>비네팅</label>
+            <select id="vignetteMode">
+              <option value="none">없음</option>
+              <option value="soft">부드럽게</option>
+              <option value="medium">중간</option>
+              <option value="strong">강하게</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>비네팅 강도</label>
+            <div class="slider"><input type="range" id="vignetteStrength" min="0" max="100" value="18"><span class="val" id="vignetteStrengthVal">18</span></div>
+          </div>
+          <div class="field">
+            <label>글라스 효과</label>
+            <div class="slider"><input type="range" id="glassStrength" min="0" max="100" value="18"><span class="val" id="glassStrengthVal">18</span></div>
+          </div>
+          <div class="field">
+            <label>글라스 흐림</label>
+            <div class="slider"><input type="range" id="glassBlur" min="0" max="24" value="8"><span class="val" id="glassBlurVal">8</span></div>
+          </div>
           <div class="hint">사진은 자동으로 리사이즈되어 저장되며, 현재 선택된 카드에만 적용됩니다.</div>
         </div>
       </div>
@@ -357,6 +381,26 @@
       <div class="sec">
         <h3>크기</h3>
         <div class="field">
+          <label>카드 사이즈 종류</label>
+          <select id="sizePreset">
+            <option value="4:5">4:5 (기본)</option>
+            <option value="1:1">1:1 (정사각형)</option>
+            <option value="16:9">16:9 (와이드)</option>
+            <option value="9:16">9:16 (세로)</option>
+            <option value="custom">사용자 지정</option>
+          </select>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label>너비</label>
+            <input type="number" id="cardWidth" min="220" max="900" value="400">
+          </div>
+          <div class="field">
+            <label>높이</label>
+            <input type="number" id="cardHeight" min="220" max="1200" value="500">
+          </div>
+        </div>
+        <div class="field">
           <label>제목 크기</label>
           <div class="slider"><input type="range" id="titleSize" min="16" max="40" value="27"><span class="val" id="titleSizeVal">27</span></div>
         </div>
@@ -401,6 +445,8 @@ const defaults = () => ({
   bg:'#f4efe4', text:'#1a1a1a', pillBg:'#181818', pillColor:'#ffffff',
   mk:'#f6b8c4', accent:'#7c5cff', titleSize:27, subSize:14,
   image:null, imageFit:'cover', imagePos:'center', imageFilter:'none', imageOverlay:55,
+  vignetteMode:'soft', vignetteStrength:18, glassStrength:18, glassBlur:8,
+  sizePreset:'4:5', cardWidth:400, cardHeight:500,
   font:'pretendard', align:'left',
   contentBlock:'none', blockData:''
 });
@@ -448,6 +494,26 @@ function filterCss(f){
   }
 }
 
+function getCardSize(s){
+  const preset = s.sizePreset || '4:5';
+  const map = {
+    '4:5': {w: 400, h: 500},
+    '1:1': {w: 420, h: 420},
+    '16:9': {w: 560, h: 315},
+    '9:16': {w: 360, h: 640},
+    custom: {w: Number(s.cardWidth) || 400, h: Number(s.cardHeight) || 500}
+  };
+  return map[preset] || map['4:5'];
+}
+
+function vignetteCss(mode, strength){
+  if(!mode || mode === 'none' || strength <= 0) return 'none';
+  const alpha = (strength / 100) * 0.7;
+  if(mode === 'soft') return 'radial-gradient(circle at center, rgba(0,0,0,0) 52%, rgba(0,0,0,' + (0.18 + alpha) + ') 100%)';
+  if(mode === 'medium') return 'radial-gradient(circle at center, rgba(0,0,0,0) 45%, rgba(0,0,0,' + (0.28 + alpha) + ') 100%)';
+  return 'radial-gradient(circle at center, rgba(0,0,0,0) 38%, rgba(0,0,0,' + (0.48 + alpha) + ') 100%)';
+}
+
 function imageBox(s, variantClass){
   if(!s.image) return '';
   const style = "background-image:url('" + s.image + "');background-size:" + s.imageFit + ";background-position:center " + s.imagePos + ";filter:" + filterCss(s.imageFilter) + ";";
@@ -459,13 +525,20 @@ function pillHtml(s){
   return s.pillText.trim() ? '<div class="pill" style="background:' + s.pillBg + ';color:' + s.pillColor + ';">' + escapeHtml(s.pillText) + '</div>' : '';
 }
 function titleHtml(s){
-  return '<div class="titleText" style="font-size:' + s.titleSize + 'px;">' + highlightedHtml(s.title, s.highlight, s.mk) + '</div>';
+  const imageMode = !!s.image;
+  const textShadow = imageMode ? 'text-shadow:0 2px 12px rgba(0,0,0,.42);' : '';
+  return '<div class="titleText" style="font-size:' + s.titleSize + 'px;' + textShadow + '">' + highlightedHtml(s.title, s.highlight, s.mk) + '</div>';
+}
+function subTextHtml(s){
+  return s.sub && s.sub.trim() ? '<div class="subText" style="font-size:' + s.subSize + 'px;' + (s.image ? 'text-shadow:0 2px 8px rgba(0,0,0,.4);' : '') + '">' + escapeHtml(s.sub).replace(/\n/g,'<br>') + '</div>' : '';
 }
 function rowTopHtml(s, pageIdx, total, z){
-  return '<div class="rowTop ' + (z?'z2':'') + '"><div class="badgeTop">' + escapeHtml(s.badgeTop) + '</div><div class="pageNum">' + (pageIdx+1) + ' / ' + total + '</div></div>';
+  const photoChip = s.image ? ' photoChip' : '';
+  return '<div class="rowTop ' + (z?'z2':'') + '"><div class="badgeTop' + photoChip + '">' + escapeHtml(s.badgeTop) + '</div><div class="pageNum' + photoChip + '">' + (pageIdx+1) + ' / ' + total + '</div></div>';
 }
 function rowBottomHtml(s, z){
-  return '<div class="rowBottom ' + (z?'z2':'') + '"><div class="handle">' + escapeHtml(s.handle) + '</div><div class="arrow" style="color:' + s.accent + ';">&gt;&gt;&gt;&gt;</div></div>';
+  const photoChip = s.image ? ' photoChip' : '';
+  return '<div class="rowBottom ' + (z?'z2':'') + '"><div class="handle' + photoChip + '">' + escapeHtml(s.handle) + '</div><div class="arrow" style="color:' + s.accent + ';">&gt;&gt;&gt;&gt;</div></div>';
 }
 
 function parseLines(data){
@@ -514,7 +587,7 @@ function renderQuote(s){
   return '<div class="blk quote"><div class="q-mark" style="color:' + s.accent + ';">&ldquo;</div><div class="q-text">' + escapeHtml(quote) + '</div>' + (author ? '<div class="q-author">- ' + escapeHtml(author) + '</div>' : '') + '</div>';
 }
 function subFallbackHtml(s){
-  return s.sub && s.sub.trim() ? '<div class="subText" style="font-size:' + s.subSize + 'px;">' + escapeHtml(s.sub).replace(/\n/g,'<br>') + '</div>' : '';
+  return subTextHtml(s);
 }
 function blockHtml(s){
   switch(s.contentBlock){
@@ -532,13 +605,20 @@ function blockHtml(s){
 function cardMarkup(s, pageIdx, total){
   const font = fontStack(s.font);
   const align = s.align || 'left';
-  const base = 'background:' + s.bg + ';color:' + s.text + ';font-family:' + font + ';';
+  const size = getCardSize(s);
+  const base = 'background:' + s.bg + ';color:' + s.text + ';font-family:' + font + ';width:' + size.w + 'px;height:' + size.h + 'px;';
+  const photoVignette = s.image ? '<div class="scrim" style="background:' + vignetteCss(s.vignetteMode, Number(s.vignetteStrength) || 0) + ';"></div>' : '';
+  const glassStrength = Number(s.glassStrength) || 0;
+  const glassBlur = Number(s.glassBlur) || 0;
+  const glassMarkup = s.image && glassStrength > 0 ? '<div class="glassLayer" style="background:rgba(255,255,255,' + (Math.min(0.9, glassStrength / 100 * 0.7 + 0.08)) + ');backdrop-filter:blur(' + glassBlur + 'px);-webkit-backdrop-filter:blur(' + glassBlur + 'px);"></div>' : '';
 
   if(s.template === 'full'){
     const overlay = s.imageOverlay/100;
     return '<div id="card" style="' + base + '">' +
       imageBox(s,'full') +
+      photoVignette +
       '<div class="scrim" style="background:linear-gradient(to top, rgba(0,0,0,' + overlay + ') 0%, rgba(0,0,0,' + (overlay*0.35) + ') 45%, rgba(0,0,0,0) 75%);"></div>' +
+      (glassMarkup || '') +
       rowTopHtml(s, pageIdx, total, true) +
       '<div class="z2" style="margin-top:auto;padding-top:20px;text-align:' + align + ';">' + pillHtml(s) + titleHtml(s) + blockHtml(s) + '</div>' +
       rowBottomHtml(s, true) +
@@ -548,6 +628,8 @@ function cardMarkup(s, pageIdx, total){
     return '<div id="card" style="' + base + '">' +
       rowTopHtml(s, pageIdx, total, false) +
       imageBox(s,'split') +
+      (glassMarkup || '') +
+      photoVignette +
       '<div class="frame" style="border:none;padding:20px 2px 0;text-align:' + align + ';">' + pillHtml(s) + titleHtml(s) + blockHtml(s) + '</div>' +
       rowBottomHtml(s, false) +
     '</div>';
@@ -557,33 +639,35 @@ function cardMarkup(s, pageIdx, total){
       rowTopHtml(s, pageIdx, total, false) +
       '<div class="frame" style="border:none;padding:20px 2px 0;text-align:' + align + ';">' + pillHtml(s) + titleHtml(s) + blockHtml(s) + '</div>' +
       imageBox(s,'bottom') +
+      (glassMarkup || '') +
+      photoVignette +
       rowBottomHtml(s, false) +
     '</div>';
   }
   if(s.template === 'inset'){
     return '<div id="card" style="' + base + '">' +
       rowTopHtml(s, pageIdx, total, false) +
-      '<div class="frame" style="text-align:' + align + ';">' + imageBox(s,'inset') + pillHtml(s) + titleHtml(s) + blockHtml(s) + '</div>' +
+      '<div class="frame" style="text-align:' + align + ';">' + imageBox(s,'inset') + (glassMarkup || '') + photoVignette + pillHtml(s) + titleHtml(s) + blockHtml(s) + '</div>' +
       rowBottomHtml(s, false) +
     '</div>';
   }
   if(s.template === 'side'){
     return '<div id="card" style="' + base + '">' +
       rowTopHtml(s, pageIdx, total, false) +
-      '<div class="frame sideFrame">' + imageBox(s,'side') + '<div class="sideText" style="text-align:' + align + ';">' + pillHtml(s) + titleHtml(s) + blockHtml(s) + '</div></div>' +
+      '<div class="frame sideFrame">' + imageBox(s,'side') + (glassMarkup || '') + photoVignette + '<div class="sideText" style="text-align:' + align + ';">' + pillHtml(s) + titleHtml(s) + blockHtml(s) + '</div></div>' +
       rowBottomHtml(s, false) +
     '</div>';
   }
   if(s.template === 'frame'){
     return '<div id="card" style="' + base + '">' +
       rowTopHtml(s, pageIdx, total, false) +
-      '<div class="frame boldFrame" style="text-align:' + align + ';">' + pillHtml(s) + titleHtml(s) + blockHtml(s) + '</div>' +
+      '<div class="frame boldFrame" style="text-align:' + align + ';">' + (glassMarkup || '') + photoVignette + pillHtml(s) + titleHtml(s) + blockHtml(s) + '</div>' +
       rowBottomHtml(s, false) +
     '</div>';
   }
   return '<div id="card" style="' + base + '">' +
     rowTopHtml(s, pageIdx, total, false) +
-    '<div class="frame" style="text-align:' + align + ';">' + pillHtml(s) + titleHtml(s) + blockHtml(s) + '</div>' +
+    '<div class="frame" style="text-align:' + align + ';">' + (glassMarkup || '') + photoVignette + pillHtml(s) + titleHtml(s) + blockHtml(s) + '</div>' +
     rowBottomHtml(s, false) +
   '</div>';
 }
@@ -655,10 +739,17 @@ function syncForm(){
   $('accentColor').value = s.accent; $('accentColorHex').textContent = s.accent;
   $('titleSize').value = s.titleSize; $('titleSizeVal').textContent = s.titleSize;
   $('subSize').value = s.subSize; $('subSizeVal').textContent = s.subSize;
+  $('sizePreset').value = s.sizePreset || '4:5';
+  $('cardWidth').value = s.cardWidth || 400;
+  $('cardHeight').value = s.cardHeight || 500;
   $('imageFit').value = s.imageFit;
   $('imagePos').value = s.imagePos;
   $('imageFilter').value = s.imageFilter;
   $('imageOverlay').value = s.imageOverlay; $('imageOverlayVal').textContent = s.imageOverlay;
+  $('vignetteMode').value = s.vignetteMode || 'soft';
+  $('vignetteStrength').value = s.vignetteStrength || 18; $('vignetteStrengthVal').textContent = s.vignetteStrength || 18;
+  $('glassStrength').value = s.glassStrength || 18; $('glassStrengthVal').textContent = s.glassStrength || 18;
+  $('glassBlur').value = s.glassBlur || 8; $('glassBlurVal').textContent = s.glassBlur || 8;
   $('fontSelect').value = s.font;
   $('imgThumb').style.backgroundImage = s.image ? "url('" + s.image + "')" : 'none';
   syncAlignButtons();
@@ -706,6 +797,29 @@ $('subSize').addEventListener('input', e => {
   renderMainCard(); renderList();
 });
 
+$('sizePreset').addEventListener('change', e => {
+  const v = e.target.value;
+  slides[active].sizePreset = v;
+  if(v !== 'custom') {
+    const preset = getCardSize(slides[active]);
+    slides[active].cardWidth = preset.w;
+    slides[active].cardHeight = preset.h;
+  }
+  syncForm(); renderMainCard(); renderList();
+});
+$('cardWidth').addEventListener('input', e => {
+  slides[active].sizePreset = 'custom';
+  slides[active].cardWidth = Number(e.target.value) || 400;
+  $('sizePreset').value = 'custom';
+  renderMainCard(); renderList();
+});
+$('cardHeight').addEventListener('input', e => {
+  slides[active].sizePreset = 'custom';
+  slides[active].cardHeight = Number(e.target.value) || 500;
+  $('sizePreset').value = 'custom';
+  renderMainCard(); renderList();
+});
+
 $('fontSelect').addEventListener('change', e => {
   slides[active].font = e.target.value;
   renderMainCard(); renderList();
@@ -725,6 +839,25 @@ $('imageFilter').addEventListener('change', e => {
 $('imageOverlay').addEventListener('input', e => {
   slides[active].imageOverlay = +e.target.value;
   $('imageOverlayVal').textContent = e.target.value;
+  renderMainCard(); renderList();
+});
+$('vignetteMode').addEventListener('change', e => {
+  slides[active].vignetteMode = e.target.value;
+  renderMainCard(); renderList();
+});
+$('vignetteStrength').addEventListener('input', e => {
+  slides[active].vignetteStrength = +e.target.value;
+  $('vignetteStrengthVal').textContent = e.target.value;
+  renderMainCard(); renderList();
+});
+$('glassStrength').addEventListener('input', e => {
+  slides[active].glassStrength = +e.target.value;
+  $('glassStrengthVal').textContent = e.target.value;
+  renderMainCard(); renderList();
+});
+$('glassBlur').addEventListener('input', e => {
+  slides[active].glassBlur = +e.target.value;
+  $('glassBlurVal').textContent = e.target.value;
   renderMainCard(); renderList();
 });
 
@@ -841,10 +974,20 @@ $('addSlide').addEventListener('click', () => {
 });
 
 async function exportNode(node, filename){
-  const canvas = await html2canvas(node, {backgroundColor:null, scale:3, useCORS:true});
+  const canvas = await html2canvas(node, {
+    backgroundColor: null,
+    scale: 2,
+    useCORS: true,
+    logging: false,
+    allowTaint: true,
+    width: node.scrollWidth || node.clientWidth,
+    height: node.scrollHeight || node.clientHeight,
+    windowWidth: node.scrollWidth || node.clientWidth,
+    windowHeight: node.scrollHeight || node.clientHeight
+  });
   const link = document.createElement('a');
   link.download = filename;
-  link.href = canvas.toDataURL('image/png');
+  link.href = canvas.toDataURL('image/png', 0.92);
   link.click();
 }
 $('exportOne').addEventListener('click', () => {
