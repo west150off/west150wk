@@ -405,6 +405,93 @@
   #card.style-alert .pill{background:#d21f1f!important;color:#fff!important;border-radius:4px;}
   #card.style-alert .titleText{color:#d21f1f;font-weight:900;}
 
+  /* 속보 1: 레드 속보 */
+  #card.style-breaking{
+    background:#111!important;
+    color:#fff!important;
+  }
+  #card.style-breaking .badgeTop{
+    background:#e10600;color:#fff!important;padding:3px 10px;border-radius:3px;
+    letter-spacing:.14em;font-weight:900;
+  }
+  #card.style-breaking .pageNum{color:#ffb4b0!important;}
+  #card.style-breaking .pill{
+    background:#e10600!important;color:#fff!important;border-radius:3px;
+    letter-spacing:.12em;font-weight:900;text-transform:uppercase;
+  }
+  #card.style-breaking .frame{
+    border:none;background:transparent;
+    border-left:4px solid #e10600;border-radius:0;padding-left:18px;
+  }
+  #card.style-breaking .titleText{
+    color:#fff;font-weight:900;letter-spacing:-.02em;line-height:1.2;
+  }
+  #card.style-breaking .subText,
+  #card.style-breaking .blk{color:#f0e8e8;opacity:1;}
+  #card.style-breaking .rowBottom{border-top:1px solid #e1060044;padding-top:10px;}
+  #card.style-breaking .handle{color:#ffb4b0!important;}
+  #card.style-breaking .ls-num{background:#e10600!important;border-radius:2px;}
+
+  /* 속보 2: LIVE 방송 */
+  #card.style-breakinglive{
+    background:linear-gradient(165deg,#0b1220 0%,#141a2e 55%,#1a1030 100%)!important;
+    color:#f4f7ff!important;
+  }
+  #card.style-breakinglive .badgeTop{
+    color:#7dffb3!important;letter-spacing:.16em;font-weight:900;
+  }
+  #card.style-breakinglive .badgeTop::before{
+    content:"● ";color:#ff3b5c;
+  }
+  #card.style-breakinglive .pill{
+    background:#ff3b5c!important;color:#fff!important;border-radius:999px;
+    letter-spacing:.1em;font-weight:900;box-shadow:0 0 16px #ff3b5c66;
+  }
+  #card.style-breakinglive .frame{
+    border:1px solid #ffffff22;border-radius:14px;
+    background:rgba(255,255,255,.04);
+  }
+  #card.style-breakinglive .titleText{
+    font-weight:900;letter-spacing:-.02em;
+    text-shadow:0 2px 18px rgba(0,0,0,.45);
+  }
+  #card.style-breakinglive .subText,
+  #card.style-breakinglive .blk{color:#d7def0;opacity:1;}
+  #card.style-breakinglive .handle{color:#9fb0d0!important;}
+  #card.style-breakinglive .ls-num{background:#ff3b5c!important;}
+
+  /* 속보 3: 티커 스트립 */
+  #card.style-breakingticker{
+    background:#f5f5f5!important;
+    color:#111!important;
+    border-top:10px solid #111;
+  }
+  #card.style-breakingticker .rowTop{
+    background:#111;color:#fff;margin:-26px -26px 0;padding:10px 16px 10px;
+    width:calc(100% + 52px);box-sizing:border-box;
+  }
+  #card.style-breakingticker .badgeTop{
+    color:#ffd400!important;font-weight:900;letter-spacing:.18em;
+  }
+  #card.style-breakingticker .pageNum{color:#aaa!important;}
+  #card.style-breakingticker .pill{
+    background:#ffd400!important;color:#111!important;border-radius:0;
+    font-weight:900;letter-spacing:.08em;padding:4px 12px;
+  }
+  #card.style-breakingticker .frame{
+    border:none;border-top:3px solid #111;border-radius:0;background:#fff;
+    margin-top:14px;box-shadow:0 8px 20px #00000014;
+  }
+  #card.style-breakingticker .titleText{
+    font-weight:900;letter-spacing:-.02em;line-height:1.2;
+  }
+  #card.style-breakingticker .subText,
+  #card.style-breakingticker .blk{opacity:1;}
+  #card.style-breakingticker .rowBottom{
+    border-top:2px solid #111;padding-top:10px;margin-top:12px;
+  }
+  #card.style-breakingticker .ls-num{background:#111!important;border-radius:0;}
+
   #card.style-cover .titleText{font-size:1.7em!important;font-weight:900;letter-spacing:-.03em;line-height:1.12;text-shadow:0 3px 16px rgba(0,0,0,.55);}
   #card.style-cover .pill{background:none!important;color:inherit!important;padding:0;border-radius:0;margin-bottom:14px;position:relative;}
   #card.style-cover .pill::before{content:"";display:block;width:56px;height:4px;border-radius:2px;background:var(--accent);margin-bottom:12px;}
@@ -741,6 +828,9 @@
             <div class="ddItem" data-style="certificate">증명서</div>
             <div class="ddItem" data-style="magazine">매거진</div>
             <div class="ddItem" data-style="alert">경보배너</div>
+            <div class="ddItem" data-style="breaking">속보 · 레드</div>
+            <div class="ddItem" data-style="breakinglive">속보 · LIVE</div>
+            <div class="ddItem" data-style="breakingticker">속보 · 티커</div>
             <div class="ddItem" data-style="cover">커버 (인물 발언)</div>
             <div class="ddItem" data-style="official">공문서</div>
             <div class="ddItem" data-style="stickyboard">포스트잇 보드</div>
@@ -1358,7 +1448,7 @@
 
 <script>
 const templateLabels = {text:'TEXT', full:'FULL', split:'SPLIT', bottom:'BOTTOM', inset:'INSET', side:'SIDE', frame:'FRAME', cardincard:'NEST', mapchart:'MAP', headline:'HEAD', profile:'PROF', free:'FREE'};
-const styleLabels = {none:'', insta:'INSTA', grid:'GRID', terminal:'TERM', sticky:'STICKY', receipt:'RECEIPT', timeline:'TIMELINE', newspaper:'NEWS', postcard:'CARD', folder:'FOLDER', blueprint:'BLUE', pastel:'PASTEL', certificate:'CERT', magazine:'MAG', alert:'ALERT', cover:'COVER', official:'공문서', stickyboard:'포스트잇', stickyboarddark:'포스트잇DARK'};
+const styleLabels = {none:'', insta:'INSTA', grid:'GRID', terminal:'TERM', sticky:'STICKY', receipt:'RECEIPT', timeline:'TIMELINE', newspaper:'NEWS', postcard:'CARD', folder:'FOLDER', blueprint:'BLUE', pastel:'PASTEL', certificate:'CERT', magazine:'MAG', alert:'ALERT', breaking:'속보', breakinglive:'LIVE', breakingticker:'티커', cover:'COVER', official:'공문서', stickyboard:'포스트잇', stickyboarddark:'포스트잇DARK'};
 
 const OFFICIAL_SITES = [
   {cat:'미국 정부 · 백악관', items:[
