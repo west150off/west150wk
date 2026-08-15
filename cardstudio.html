@@ -492,6 +492,111 @@
   }
   #card.style-breakingticker .ls-num{background:#111!important;border-radius:0;}
 
+  /* 화이트페이퍼: 여백 많은 보고서형 */
+  #card.style-whitepaper{
+    background:#faf9f6!important;
+    color:#1c1b19!important;
+  }
+  #card.style-whitepaper .badgeTop{
+    letter-spacing:.14em;font-weight:700;opacity:.7;font-size:11px;
+  }
+  #card.style-whitepaper .pill{
+    background:none!important;color:#1c1b19!important;
+    border:none;border-bottom:1px solid #1c1b19;border-radius:0;
+    padding:0 0 6px;letter-spacing:.08em;font-weight:700;
+  }
+  #card.style-whitepaper .frame{
+    border:none;background:transparent;padding:28px 8px 10px;
+  }
+  #card.style-whitepaper .titleText{
+    font-weight:800;letter-spacing:-.02em;line-height:1.35;
+    margin-bottom:6px;
+  }
+  #card.style-whitepaper .subText,
+  #card.style-whitepaper .blk{
+    opacity:1;line-height:1.7;
+  }
+  #card.style-whitepaper .rowBottom{
+    border-top:1px solid #d9d4c8;padding-top:12px;margin-top:8px;
+  }
+  #card.style-whitepaper .ls-num{
+    background:transparent!important;color:#1c1b19!important;
+    border:1px solid #1c1b19;border-radius:0;
+  }
+  #card.style-whitepaper .ls-item{margin-bottom:12px;}
+
+  /* 기관 브리핑: 상단 기관명 바 + 본문 */
+  #card.style-briefing{
+    background:#f4f6f8!important;
+    color:#15202b!important;
+  }
+  #card.style-briefing .rowTop{
+    background:#1b3a5f;color:#fff;
+    margin:-26px -26px 0;padding:12px 18px;
+    width:calc(100% + 52px);box-sizing:border-box;
+  }
+  #card.style-briefing .badgeTop{
+    color:#fff!important;letter-spacing:.12em;font-weight:800;
+  }
+  #card.style-briefing .pageNum{color:#b8c9dc!important;}
+  #card.style-briefing .pill{
+    background:#1b3a5f!important;color:#fff!important;border-radius:3px;
+    letter-spacing:.06em;font-weight:700;
+  }
+  #card.style-briefing .frame{
+    border:none;background:#fff;border-radius:0;
+    box-shadow:0 2px 0 #1b3a5f22;margin-top:16px;
+    border-left:3px solid #1b3a5f;
+  }
+  #card.style-briefing .titleText{
+    font-weight:900;letter-spacing:-.01em;line-height:1.3;
+  }
+  #card.style-briefing .subText,
+  #card.style-briefing .blk{opacity:1;}
+  #card.style-briefing .rowBottom{
+    border-top:1px solid #c5ced8;padding-top:10px;
+  }
+  #card.style-briefing .ls-num{background:#1b3a5f!important;border-radius:2px;}
+  #card.style-briefing .handle{letter-spacing:.04em;}
+
+  /* 인포시트: 숫자 강조 + 짧은 불릿 중심 */
+  #card.style-infosheet{
+    background:#fff!important;
+    color:#121417!important;
+    border:1px solid #e6e8ec;
+  }
+  #card.style-infosheet .badgeTop{
+    color:#5b6570!important;letter-spacing:.1em;font-weight:700;font-size:11px;
+  }
+  #card.style-infosheet .pill{
+    background:#eef3ff!important;color:#2a4d9b!important;border-radius:6px;
+    font-weight:800;letter-spacing:.04em;
+  }
+  #card.style-infosheet .frame{
+    border:none;background:transparent;padding-top:10px;
+  }
+  #card.style-infosheet .titleText{
+    font-weight:900;letter-spacing:-.02em;line-height:1.2;
+    font-size:1.05em;
+  }
+  #card.style-infosheet .subText{opacity:1;}
+  #card.style-infosheet .st-val{
+    font-size:28px!important;font-weight:900;letter-spacing:-.03em;
+  }
+  #card.style-infosheet .st-label{
+    font-size:11px;font-weight:700;opacity:.75;text-transform:uppercase;letter-spacing:.04em;
+  }
+  #card.style-infosheet .stats{gap:12px;margin-top:6px;}
+  #card.style-infosheet .ls-item{
+    background:#f6f8fb;border-radius:8px;padding:8px 10px;margin-bottom:8px;
+  }
+  #card.style-infosheet .ls-num{
+    background:#2a4d9b!important;border-radius:6px;
+  }
+  #card.style-infosheet .ls-bullet{background:#2a4d9b!important;}
+  #card.style-infosheet .ls-text{font-weight:600;opacity:1;}
+  #card.style-infosheet .rowBottom{border-top:1px dashed #d0d5dd;padding-top:10px;}
+
   #card.style-cover .titleText{font-size:1.7em!important;font-weight:900;letter-spacing:-.03em;line-height:1.12;text-shadow:0 3px 16px rgba(0,0,0,.55);}
   #card.style-cover .pill{background:none!important;color:inherit!important;padding:0;border-radius:0;margin-bottom:14px;position:relative;}
   #card.style-cover .pill::before{content:"";display:block;width:56px;height:4px;border-radius:2px;background:var(--accent);margin-bottom:12px;}
@@ -831,6 +936,9 @@
             <div class="ddItem" data-style="breaking">속보 · 레드</div>
             <div class="ddItem" data-style="breakinglive">속보 · LIVE</div>
             <div class="ddItem" data-style="breakingticker">속보 · 티커</div>
+            <div class="ddItem" data-style="whitepaper">화이트페이퍼</div>
+            <div class="ddItem" data-style="briefing">기관 브리핑</div>
+            <div class="ddItem" data-style="infosheet">인포시트</div>
             <div class="ddItem" data-style="cover">커버 (인물 발언)</div>
             <div class="ddItem" data-style="official">공문서</div>
             <div class="ddItem" data-style="stickyboard">포스트잇 보드</div>
@@ -1448,7 +1556,7 @@
 
 <script>
 const templateLabels = {text:'TEXT', full:'FULL', split:'SPLIT', bottom:'BOTTOM', inset:'INSET', side:'SIDE', frame:'FRAME', cardincard:'NEST', mapchart:'MAP', headline:'HEAD', profile:'PROF', free:'FREE'};
-const styleLabels = {none:'', insta:'INSTA', grid:'GRID', terminal:'TERM', sticky:'STICKY', receipt:'RECEIPT', timeline:'TIMELINE', newspaper:'NEWS', postcard:'CARD', folder:'FOLDER', blueprint:'BLUE', pastel:'PASTEL', certificate:'CERT', magazine:'MAG', alert:'ALERT', breaking:'속보', breakinglive:'LIVE', breakingticker:'티커', cover:'COVER', official:'공문서', stickyboard:'포스트잇', stickyboarddark:'포스트잇DARK'};
+const styleLabels = {none:'', insta:'INSTA', grid:'GRID', terminal:'TERM', sticky:'STICKY', receipt:'RECEIPT', timeline:'TIMELINE', newspaper:'NEWS', postcard:'CARD', folder:'FOLDER', blueprint:'BLUE', pastel:'PASTEL', certificate:'CERT', magazine:'MAG', alert:'ALERT', breaking:'속보', breakinglive:'LIVE', breakingticker:'티커', whitepaper:'WP', briefing:'브리핑', infosheet:'인포', cover:'COVER', official:'공문서', stickyboard:'포스트잇', stickyboarddark:'포스트잇DARK'};
 
 const OFFICIAL_SITES = [
   {cat:'미국 정부 · 백악관', items:[
