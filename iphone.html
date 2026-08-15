@@ -271,14 +271,16 @@
   #mobileOverlay.open{display:block;}
 
   @media (max-width: 900px){
-    .mobileOnly{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;padding:0;font-size:18px;}
+    .mobileOnly{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;padding:0;font-size:18px;flex:none;}
     #topbar{padding:0 10px;gap:6px;}
-    #topbar .brand{font-size:14px;}
-    #topbar .actions{gap:6px;}
-    /* 자주 안쓰는 상단 드롭다운 버튼 라벨은 좁은 화면에서 숨기고 아이콘만 남겨도 되지만,
-       우선 가로 스크롤로 대응 */
+    #topbar .brand{font-size:13px;flex:none;gap:5px;}
+    #topbar .brand span:last-child, #topbar .brand{white-space:nowrap;}
+    #topbar .actions{gap:6px;flex:1;min-width:0;justify-content:flex-end;}
+    /* 상단 드롭다운 버튼들(카드/글꼴 등)이 많아 폭이 넘치므로 actions 영역 안에서만 가로 스크롤되게 처리 */
     #topbar .actions{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
     #topbar .actions::-webkit-scrollbar{display:none;}
+    #topbar .actions > *{flex:none;}
+    #mobileRightToggle{position:sticky;left:0;z-index:2;background:var(--chrome-panel);}
 
     #left, #right{
       position:fixed;
@@ -1093,11 +1095,11 @@
         <h3>텍스트</h3>
         <div class="field">
           <label>상단 배지</label>
-          <input type="text" id="badgeTop" placeholder="west150 daily">
+          <input type="text" id="badgeTop" placeholder="MONEY NOTE">
         </div>
         <div class="field">
           <label>카드 배지 (선택)</label>
-          <input type="text" id="pillText" placeholder="west150 daily">
+          <input type="text" id="pillText" placeholder="MONEY NOTE">
         </div>
         <div class="field">
           <label>제목</label>
@@ -1304,7 +1306,7 @@ const blockLabels = {
 
 const defaults = () => ({
   template:'text', style:'none',
-  badgeTop:'west150 daily', pillText:'west150 daily', title:'카드뉴스를 직접\n만드는 이유',
+  badgeTop:'MONEY NOTE', pillText:'MONEY NOTE', title:'카드뉴스를 직접\n만드는 이유',
   highlight:'직접', highlightExtra:'', sub:'AI가 아닌 나만의 문체로 만들어 보자.', handle:'@kkongdon_story',
   bg:'#f4efe4', text:'#1a1a1a', pillBg:'#181818', pillColor:'#ffffff',
   mk:'#f6b8c4', accent:'#7c5cff', titleSize:27, subSize:14,
