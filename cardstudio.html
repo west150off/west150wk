@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Card Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -632,6 +633,60 @@
     font-size:10px;font-weight:500;opacity:.55;letter-spacing:.2px;
     pointer-events:none;
   }
+
+  /* Free shapes */
+  #card .freeShape{
+    position:absolute;z-index:15;cursor:move;user-select:none;
+    border:1px dashed transparent;
+  }
+  #card .freeShape.selected{border-color:var(--accent);}
+  #card .freeShape .ft-resize{
+    position:absolute;right:-5px;bottom:-5px;width:10px;height:10px;
+    background:var(--accent);border-radius:2px;cursor:nwse-resize;display:none;
+  }
+  #card .freeShape.selected .ft-resize{display:block;}
+  #card .freeShape.shape-rect{border-radius:4px;}
+  #card .freeShape.shape-circle{border-radius:50%;}
+  #card .freeShape.shape-line{height:4px!important;border-radius:2px;min-height:4px;}
+  #card .imgBox.secondary{
+    position:absolute;right:16px;bottom:52px;width:34%;height:22%;
+    border-radius:8px;z-index:5;border:2px solid rgba(255,255,255,.55);
+    box-shadow:0 6px 16px rgba(0,0,0,.25);
+  }
+
+  /* Mobile UX */
+  #mobileBar{display:none;gap:6px;align-items:center;}
+  #mobileBar .btn{padding:8px 10px;min-height:40px;}
+  .btn, .alignBtn, .formatBtn, .ddItem, .siteItem{min-height:36px;}
+  @media (max-width:960px){
+    #mobileBar{display:flex;}
+    #left{
+      position:fixed;left:0;top:56px;bottom:0;z-index:80;width:min(280px,82vw);
+      transform:translateX(-105%);transition:transform .2s ease;
+      box-shadow:8px 0 24px #0004;
+    }
+    #left.open{transform:translateX(0);}
+    #right{
+      position:fixed;right:0;top:56px;bottom:0;z-index:80;width:min(320px,88vw);
+      transform:translateX(105%);transition:transform .2s ease;
+      box-shadow:-8px 0 24px #0004;
+    }
+    #right.open{transform:translateX(0);}
+    #stage{padding:16px;}
+    #topbar{padding:0 10px;gap:6px;}
+    #topbar .actions{flex-wrap:wrap;justify-content:flex-end;gap:4px;}
+    #topbar .brand{font-size:13px;}
+    .btn{padding:8px 10px;font-size:12px;}
+    .dropdown.panelDropdown{width:min(300px,92vw);max-height:70vh;}
+  }
+  @media (max-width:640px){
+    #undoRedoFloat{right:10px;bottom:10px;}
+    #card{max-width:calc(100vw - 32px);}
+  }
+  /* a11y focus */
+  button:focus-visible, select:focus-visible, input:focus-visible, textarea:focus-visible{
+    outline:2px solid var(--accent);outline-offset:2px;
+  }
 </style>
 
 
@@ -641,6 +696,10 @@
 <div id="app">
   <div id="topbar">
     <div class="brand"><span class="dot"></span>Card Studio</div>
+    <div id="mobileBar">
+      <button type="button" class="btn ghost" id="mobileSlidesBtn" aria-label="슬라이드 목록">슬라이드</button>
+      <button type="button" class="btn ghost" id="mobilePanelBtn" aria-label="편집 패널">패널</button>
+    </div>
     <div class="actions">
       <div class="menuWrap" id="cardMenuWrap">
         <button class="btn ghost" id="cardMenuBtn">카드 ▾</button>
@@ -941,6 +1000,37 @@
               <label>확대/축소</label>
               <div class="slider"><input type="range" id="imgScale" min="50" max="200" value="100"><span class="val" id="imgScaleVal">100</span></div>
             </div>
+            <div class="field">
+              <label>크롭 위 (%)</label>
+              <div class="slider"><input type="range" id="imgCropT" min="0" max="40" value="0"><span class="val" id="imgCropTVal">0</span></div>
+            </div>
+            <div class="field">
+              <label>크롭 아래 (%)</label>
+              <div class="slider"><input type="range" id="imgCropB" min="0" max="40" value="0"><span class="val" id="imgCropBVal">0</span></div>
+            </div>
+            <div class="field">
+              <label>크롭 왼쪽 (%)</label>
+              <div class="slider"><input type="range" id="imgCropL" min="0" max="40" value="0"><span class="val" id="imgCropLVal">0</span></div>
+            </div>
+            <div class="field">
+              <label>크롭 오른쪽 (%)</label>
+              <div class="slider"><input type="range" id="imgCropR" min="0" max="40" value="0"><span class="val" id="imgCropRVal">0</span></div>
+            </div>
+            <div class="hint">크롭은 사진 가장자리를 잘라 보이는 영역만 남깁니다.</div>
+          </div>
+
+          <!-- Second image -->
+          <div class="field" style="border-top:1px solid var(--chrome-line);padding-top:12px;margin-top:4px;">
+            <label>추가 사진 (2번째)</label>
+            <div class="imgPreviewRow">
+              <div class="imgThumb" id="img2Thumb"></div>
+              <div style="display:flex;flex-direction:column;gap:6px;flex:1;">
+                <label class="btn small full" id="upload2Btn" style="text-align:center;">추가 사진 업로드</label>
+                <input type="file" id="image2Upload" accept="image/*" style="display:none;">
+                <button class="btn ghost small full" id="image2Remove">추가 사진 삭제</button>
+              </div>
+            </div>
+            <div class="hint">있으면 카드 우측 하단에 작은 두 번째 사진으로 표시됩니다.</div>
           </div>
 
           <!-- Logo / Watermark -->
@@ -1003,6 +1093,9 @@
           <div class="ddItem" data-block="sources"><span class="ic">🔗</span>출처 링크 모음</div>
           <div class="ddItem" data-block="compare"><span class="ic">⇄</span>원문·번역 대조</div>
           <div class="ddItem" data-action="addFreeText"><span class="ic">＋</span>자유 텍스트 박스 추가</div>
+          <div class="ddItem" data-action="addShapeRect"><span class="ic">▢</span>도형 · 사각형</div>
+          <div class="ddItem" data-action="addShapeCircle"><span class="ic">◎</span>도형 · 원</div>
+          <div class="ddItem" data-action="addShapeLine"><span class="ic">─</span>도형 · 선</div>
         </div>
       </div>
 
@@ -1385,6 +1478,10 @@ const defaults = () => ({
   titleLetter:0, titleLine:135, bodyLetter:0, bodyLine:160,
   image:null, imageFit:'cover', imagePos:'center', imageFilter:'none', imageOverlay:55,
   imgOffsetX:0, imgOffsetY:0, imgScale:100,
+  imgCropT:0, imgCropB:0, imgCropL:0, imgCropR:0,
+  image2:null,
+  freeShapes:[],
+  selectedShapeId:null,
   vignetteMode:'soft', vignetteStrength:18, glassStrength:18, glassBlur:8,
   logo:null, logoPos:'br', logoSize:16, logoOpacity:70,
   sizePreset:'4:5', cardWidth:400, cardHeight:500,
@@ -1483,18 +1580,29 @@ function vignetteCss(mode, strength){
   return 'radial-gradient(circle at center, rgba(0,0,0,0) 38%, rgba(0,0,0,' + (0.48 + alpha) + ') 100%)';
 }
 
-function imageBox(s, variantClass){
-  if(!s.image) return '';
+function imageBox(s, variantClass, srcOverride){
+  const src = srcOverride || s.image;
+  if(!src) return '';
   const ox = Number(s.imgOffsetX) || 0;
   const oy = Number(s.imgOffsetY) || 0;
   const sc = (Number(s.imgScale) || 100) / 100;
   const fit = (s.imageFit === 'contain') ? 'contain' : 'cover';
   const posX = 50 + ox;
   const posY = (s.imagePos === 'top' ? 0 : s.imagePos === 'bottom' ? 100 : 50) + oy;
+  const ct = Number(s.imgCropT) || 0;
+  const cb = Number(s.imgCropB) || 0;
+  const cl = Number(s.imgCropL) || 0;
+  const cr = Number(s.imgCropR) || 0;
+  const clip = (ct || cb || cl || cr) ? ('clip-path:inset(' + ct + '% ' + cr + '% ' + cb + '% ' + cl + '%);') : '';
   // cover/contain 유지 + 확대는 transform:scale 로 분리 (background-size % 는 cover와 동작이 다름)
-  const style = "background-image:url('" + s.image + "');background-size:" + fit + ";background-position:" + posX + "% " + posY + "%;background-repeat:no-repeat;filter:" + filterCss(s.imageFilter) + ";transform:scale(" + sc + ");transform-origin:center center;";
+  const style = "background-image:url('" + src + "');background-size:" + fit + ";background-position:" + posX + "% " + posY + "%;background-repeat:no-repeat;filter:" + filterCss(s.imageFilter) + ";transform:scale(" + sc + ");transform-origin:center center;" + clip;
   const duo = s.imageFilter === 'duotone' ? '<div class="duo" style="background:' + s.accent + ';opacity:.8;"></div>' : '';
   return '<div class="imgBox ' + variantClass + '"><div class="layer" style="' + style + '"></div>' + duo + '</div>';
+}
+
+function image2Html(s){
+  if(!s.image2) return '';
+  return imageBox(s, 'secondary', s.image2);
 }
 
 
@@ -1516,6 +1624,26 @@ function freeTextsHtml(s){
     const shadow = ft.shadow ? 'text-shadow:0 1px 4px rgba(0,0,0,.35);' : '';
     return '<div class="freeText' + sel + '" data-ftid="' + ft.id + '" style="left:' + ft.x + 'px;top:' + ft.y + 'px;width:' + (ft.w || 160) + 'px;font-size:' + (ft.fontSize || 18) + 'px;color:' + (ft.color || s.text) + ';text-align:' + (ft.align || 'left') + ';font-weight:' + fw + ';font-style:' + fs + ';text-decoration:' + td + ';' + shadow + '">' +
       escapeHtml(ft.text || '텍스트').replace(/\n/g,'<br>') +
+      '<div class="ft-resize" data-resize="1"></div></div>';
+  }).join('');
+}
+
+function freeShapesHtml(s){
+  if(!s.freeShapes || !s.freeShapes.length) return '';
+  return s.freeShapes.map(sh => {
+    const sel = (s.selectedShapeId === sh.id) ? ' selected' : '';
+    const op = (sh.opacity != null ? Number(sh.opacity) : 85) / 100;
+    const col = sh.color || s.accent || '#7c5cff';
+    const type = sh.type || 'rect';
+    let extra = '';
+    if(type === 'line'){
+      extra = 'height:4px;min-height:4px;background:' + col + ';opacity:' + op + ';';
+    } else {
+      extra = 'background:' + col + ';opacity:' + op + ';';
+      if(type === 'circle') extra += 'border-radius:50%;';
+      else extra += 'border-radius:' + (sh.radius != null ? sh.radius : 4) + 'px;';
+    }
+    return '<div class="freeShape shape-' + type + sel + '" data-sid="' + sh.id + '" style="left:' + sh.x + 'px;top:' + sh.y + 'px;width:' + (sh.w || 80) + 'px;height:' + (type === 'line' ? 4 : (sh.h || 80)) + 'px;' + extra + '">' +
       '<div class="ft-resize" data-resize="1"></div></div>';
   }).join('');
 }
@@ -1837,7 +1965,7 @@ function cardMarkup(s, pageIdx, total){
   const glassBlur = Number(s.glassBlur) || 0;
   const glassMarkup = s.image && glassStrength > 0 ? '<div class="glassLayer" style="background:rgba(255,255,255,' + (Math.min(0.9, glassStrength / 100 * 0.7 + 0.08)) + ');backdrop-filter:blur(' + glassBlur + 'px);-webkit-backdrop-filter:blur(' + glassBlur + 'px);"></div>' : '';
   const logo = logoHtml(s);
-  const freeT = freeTextsHtml(s);
+  const freeT = freeTextsHtml(s) + freeShapesHtml(s) + image2Html(s);
 
   if(isFree){
     return '<div ' + cls + ' style="' + base + 'position:relative;">' +
@@ -2099,6 +2227,11 @@ function syncForm(){
   $('imgOffsetX').value = s.imgOffsetX || 0; $('imgOffsetXVal').textContent = s.imgOffsetX || 0;
   $('imgOffsetY').value = s.imgOffsetY || 0; $('imgOffsetYVal').textContent = s.imgOffsetY || 0;
   $('imgScale').value = s.imgScale || 100; $('imgScaleVal').textContent = s.imgScale || 100;
+  if($('imgCropT')){ $('imgCropT').value = s.imgCropT || 0; $('imgCropTVal').textContent = s.imgCropT || 0; }
+  if($('imgCropB')){ $('imgCropB').value = s.imgCropB || 0; $('imgCropBVal').textContent = s.imgCropB || 0; }
+  if($('imgCropL')){ $('imgCropL').value = s.imgCropL || 0; $('imgCropLVal').textContent = s.imgCropL || 0; }
+  if($('imgCropR')){ $('imgCropR').value = s.imgCropR || 0; $('imgCropRVal').textContent = s.imgCropR || 0; }
+  if($('img2Thumb')) $('img2Thumb').style.backgroundImage = s.image2 ? "url('" + s.image2 + "')" : 'none';
   // logo
   $('logoPos').value = s.logoPos || 'br';
   $('logoSize').value = s.logoSize || 16; $('logoSizeVal').textContent = s.logoSize || 16;
@@ -2437,6 +2570,50 @@ $('imgOffsetY').addEventListener('input', e => {
 $('imgScale').addEventListener('input', e => {
   slides[active].imgScale = +e.target.value;
   $('imgScaleVal').textContent = e.target.value;
+  renderMainCard(); renderList();
+});
+function bindCropSlider(id, prop, valId){
+  const el = $(id);
+  if(!el) return;
+  el.addEventListener('input', e => {
+    slides[active][prop] = +e.target.value;
+    if($(valId)) $(valId).textContent = e.target.value;
+    renderMainCard(); renderList();
+  });
+}
+bindCropSlider('imgCropT', 'imgCropT', 'imgCropTVal');
+bindCropSlider('imgCropB', 'imgCropB', 'imgCropBVal');
+bindCropSlider('imgCropL', 'imgCropL', 'imgCropLVal');
+bindCropSlider('imgCropR', 'imgCropR', 'imgCropRVal');
+
+// Second image
+if($('upload2Btn')) $('upload2Btn').addEventListener('click', () => $('image2Upload') && $('image2Upload').click());
+if($('image2Upload')) $('image2Upload').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = new Image();
+    img.onload = () => {
+      const maxW = 1000;
+      const scale = Math.min(1, maxW / img.width);
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width * scale;
+      canvas.height = img.height * scale;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      slides[active].image2 = canvas.toDataURL('image/jpeg', 0.85);
+      if($('img2Thumb')) $('img2Thumb').style.backgroundImage = "url('" + slides[active].image2 + "')";
+      renderMainCard(); renderList();
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+  e.target.value = '';
+});
+if($('image2Remove')) $('image2Remove').addEventListener('click', () => {
+  slides[active].image2 = null;
+  if($('img2Thumb')) $('img2Thumb').style.backgroundImage = 'none';
   renderMainCard(); renderList();
 });
 
@@ -2996,23 +3173,44 @@ if(delBtn) delBtn.addEventListener('click', deleteSelectedFT);
 // Shared drag state so mousedown (rebound each render) and window mousemove/up stay in sync
 const ftDrag = {
   mode: null, // 'move' | 'resize'
+  kind: null, // 'text' | 'shape'
   targetId: null,
   startX: 0,
   startY: 0,
   origX: 0,
   origY: 0,
-  origW: 160
+  origW: 160,
+  origH: 80
 };
 
 function ftOnMove(e){
   if(!ftDrag.mode || !ftDrag.targetId) return;
   const s = slides[active];
-  if(!s.freeTexts) return;
-  const ft = s.freeTexts.find(f => f.id === ftDrag.targetId);
-  if(!ft) return;
   const wrap = $('canvasWrap');
   const dx = e.clientX - ftDrag.startX;
   const dy = e.clientY - ftDrag.startY;
+  if(ftDrag.kind === 'shape'){
+    if(!s.freeShapes) return;
+    const sh = s.freeShapes.find(f => f.id === ftDrag.targetId);
+    if(!sh) return;
+    const el = wrap && wrap.querySelector('.freeShape[data-sid="'+ftDrag.targetId+'"]');
+    if(ftDrag.mode === 'move'){
+      sh.x = Math.round(ftDrag.origX + dx);
+      sh.y = Math.round(ftDrag.origY + dy);
+      if(el){ el.style.left = sh.x + 'px'; el.style.top = sh.y + 'px'; }
+    } else {
+      sh.w = Math.max(20, Math.round(ftDrag.origW + dx));
+      if(sh.type !== 'line') sh.h = Math.max(12, Math.round(ftDrag.origH + dy));
+      if(el){
+        el.style.width = sh.w + 'px';
+        if(sh.type !== 'line') el.style.height = sh.h + 'px';
+      }
+    }
+    return;
+  }
+  if(!s.freeTexts) return;
+  const ft = s.freeTexts.find(f => f.id === ftDrag.targetId);
+  if(!ft) return;
   const el = wrap && wrap.querySelector('.freeText[data-ftid="'+ftDrag.targetId+'"]');
   if(ftDrag.mode === 'move'){
     ft.x = Math.round(ftDrag.origX + dx);
@@ -3027,6 +3225,7 @@ function ftOnMove(e){
 function ftOnUp(){
   if(!ftDrag.mode) return;
   ftDrag.mode = null;
+  ftDrag.kind = null;
   ftDrag.targetId = null;
   renderList();
 }
@@ -3053,22 +3252,48 @@ function bindFreeTextInteractions(){
   function onDown(e){
     const point = (e.touches && e.touches[0]) ? e.touches[0] : e;
     const target = e.target;
+    const shapeEl = target.closest ? target.closest('.freeShape') : null;
     const el = target.closest ? target.closest('.freeText') : null;
-    if(!el) return;
+    if(!shapeEl && !el) return;
     e.preventDefault();
     e.stopPropagation();
-    const id = el.dataset.ftid;
     const s = slides[active];
+    const isResize = target.classList.contains('ft-resize') || target.dataset.resize;
+
+    if(shapeEl){
+      const id = shapeEl.dataset.sid;
+      if(!s.freeShapes) return;
+      s.selectedShapeId = id;
+      s.selectedFreeTextId = null;
+      wrap.querySelectorAll('.freeShape').forEach(n => n.classList.toggle('selected', n.dataset.sid === id));
+      wrap.querySelectorAll('.freeText').forEach(n => n.classList.remove('selected'));
+      const sh = s.freeShapes.find(f => f.id === id);
+      if(!sh) return;
+      ftDrag.mode = isResize ? 'resize' : 'move';
+      ftDrag.kind = 'shape';
+      ftDrag.targetId = id;
+      ftDrag.startX = point.clientX;
+      ftDrag.startY = point.clientY;
+      ftDrag.origX = sh.x;
+      ftDrag.origY = sh.y;
+      ftDrag.origW = sh.w || 80;
+      ftDrag.origH = sh.h || 80;
+      return;
+    }
+
+    const id = el.dataset.ftid;
     if(!s.freeTexts) return;
     s.selectedFreeTextId = id;
+    s.selectedShapeId = null;
     syncFreeTextForm();
     wrap.querySelectorAll('.freeText').forEach(n => n.classList.toggle('selected', n.dataset.ftid === id));
+    wrap.querySelectorAll('.freeShape').forEach(n => n.classList.remove('selected'));
 
     const ft = s.freeTexts.find(f => f.id === id);
     if(!ft) return;
 
-    const isResize = target.classList.contains('ft-resize') || target.dataset.resize;
     ftDrag.mode = isResize ? 'resize' : 'move';
+    ftDrag.kind = 'text';
     ftDrag.targetId = id;
     ftDrag.startX = point.clientX;
     ftDrag.startY = point.clientY;
@@ -3080,6 +3305,56 @@ function bindFreeTextInteractions(){
   card.onmousedown = onDown;
   card.ontouchstart = onDown;
 }
+
+function addShape(type){
+  const s = slides[active];
+  if(!s.freeShapes) s.freeShapes = [];
+  const n = s.freeShapes.length;
+  const sh = {
+    id: 'sh_' + Date.now().toString(36) + Math.random().toString(36).slice(2,5),
+    type: type || 'rect',
+    x: 48 + (n % 3) * 24,
+    y: 160 + (n % 3) * 24,
+    w: type === 'line' ? 140 : 90,
+    h: type === 'line' ? 4 : 90,
+    color: s.accent || '#7c5cff',
+    opacity: 85
+  };
+  s.freeShapes.push(sh);
+  s.selectedShapeId = sh.id;
+  renderMainCard(); renderList();
+  bindFreeTextInteractions();
+}
+Array.from(document.querySelectorAll('#blockMenu .ddItem')).forEach(item => {
+  if(item.dataset.action === 'addShapeRect') item.addEventListener('click', () => { addShape('rect'); closeAllDropdowns(); });
+  if(item.dataset.action === 'addShapeCircle') item.addEventListener('click', () => { addShape('circle'); closeAllDropdowns(); });
+  if(item.dataset.action === 'addShapeLine') item.addEventListener('click', () => { addShape('line'); closeAllDropdowns(); });
+});
+
+// Mobile panel toggles
+(function setupMobileChrome(){
+  const left = $('left');
+  const right = $('right');
+  function closePanels(){
+    if(left) left.classList.remove('open');
+    if(right) right.classList.remove('open');
+  }
+  if($('mobileSlidesBtn')) $('mobileSlidesBtn').addEventListener('click', e => {
+    e.stopPropagation();
+    if(right) right.classList.remove('open');
+    if(left) left.classList.toggle('open');
+  });
+  if($('mobilePanelBtn')) $('mobilePanelBtn').addEventListener('click', e => {
+    e.stopPropagation();
+    if(left) left.classList.remove('open');
+    if(right) right.classList.toggle('open');
+  });
+  document.addEventListener('click', e => {
+    if(window.innerWidth > 960) return;
+    if(left && left.classList.contains('open') && !left.contains(e.target) && e.target !== $('mobileSlidesBtn')) left.classList.remove('open');
+    if(right && right.classList.contains('open') && !right.contains(e.target) && e.target !== $('mobilePanelBtn') && !(e.target.closest && e.target.closest('#mobilePanelBtn'))) right.classList.remove('open');
+  });
+})();
 
 // patch renderMainCard to re-bind
 const _origRenderMainCard = renderMainCard;
