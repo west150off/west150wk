@@ -1141,7 +1141,7 @@
           </div>
           <div class="field">
             <label>오버레이 어둡기 (풀 이미지/상단·하단 사진용)</label>
-            <div class="slider"><input type="range" id="imageOverlay" min="0" max="85" value="55"><span class="val" id="imageOverlayVal">55</span></div>
+            <div class="slider"><input type="range" id="imageOverlay" min="0" max="85" value="0"><span class="val" id="imageOverlayVal">0</span></div>
           </div>
           <div class="field">
             <label>스크림 방향</label>
@@ -1172,11 +1172,12 @@
           </div>
           <div class="field">
             <label>비네팅 강도</label>
-            <div class="slider"><input type="range" id="vignetteStrength" min="0" max="100" value="18"><span class="val" id="vignetteStrengthVal">18</span></div>
+            <div class="slider"><input type="range" id="vignetteStrength" min="0" max="100" value="0"><span class="val" id="vignetteStrengthVal">0</span></div>
           </div>
           <div class="field">
             <label>글라스 효과</label>
-            <div class="slider"><input type="range" id="glassStrength" min="0" max="100" value="18"><span class="val" id="glassStrengthVal">18</span></div>
+            <div class="slider"><input type="range" id="glassStrength" min="0" max="100" value="0"><span class="val" id="glassStrengthVal">0</span></div>
+
           </div>
           <div class="field">
             <label>글라스 흐림</label>
@@ -1674,13 +1675,13 @@ const defaults = () => ({
   bg:'#f4efe4', text:'#1a1a1a', bodyText:'#1a1a1a', pillBg:'#181818', pillColor:'#ffffff',
   mk:'#f6b8c4', accent:'#7c5cff', titleSize:27, subSize:14,
   titleLetter:0, titleLine:135, bodyLetter:0, bodyLine:160,
-  image:null, imageFit:'cover', imagePos:'center', imageFilter:'none', imageOverlay:55,
+  image:null, imageFit:'cover', imagePos:'center', imageFilter:'none', imageOverlay:0,
   imgOffsetX:0, imgOffsetY:0, imgScale:100,
   imgCropT:0, imgCropB:0, imgCropL:0, imgCropR:0,
   image2:null,
   freeShapes:[],
   selectedShapeId:null,
-  vignetteMode:'soft', vignetteStrength:18, glassStrength:18, glassBlur:8,
+  vignetteMode:'none', vignetteStrength:0, glassStrength:0, glassBlur:8,
   logo:null, logoPos:'br', logoSize:16, logoOpacity:70,
   sizePreset:'4:5', cardWidth:400, cardHeight:500,
   font:'pretendard', titleFont:'', bodyFont:'', align:'left',
@@ -1932,6 +1933,8 @@ function photoCreditHtml(s){
 
 function scrimOverlayCss(dir, strength){
   const base = Math.max(0, Math.min(0.85, (Number(strength) || 0) / 100));
+  // 오버레이 0이면 절대 어둡게 덮지 않음
+  if(base <= 0) return 'transparent';
   if(dir === 'left'){
     return 'linear-gradient(100deg, rgba(0,0,0,' + (0.55 + base * 0.4) + ') 0%, rgba(0,0,0,' + (0.25 + base * 0.3) + ') 38%, rgba(0,0,0,' + (base * 0.15) + ') 62%, rgba(0,0,0,0) 82%), linear-gradient(to top, rgba(0,0,0,' + (0.55 + base * 0.3) + ') 0%, rgba(0,0,0,0) 42%)';
   }
