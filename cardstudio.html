@@ -825,6 +825,119 @@
     transform:rotate(-1deg);
   }
 
+  /* 인터뷰형: 크림톤 + 인용 포커스 */
+  #card.style-interview{
+    background:#f8f0e0!important;
+    color:#382c1e!important;
+  }
+  #card.style-interview .badgeTop{
+    color:#a9895f!important;letter-spacing:.1em;font-weight:700;
+  }
+  #card.style-interview .pageNum{color:#b6a281!important;}
+  #card.style-interview .pill{
+    background:none!important;color:#a9895f!important;
+    border:1px solid #a9895f;border-radius:20px;
+    letter-spacing:.06em;font-weight:700;
+  }
+  #card.style-interview .frame{
+    border:none;background:transparent;padding-top:14px;
+  }
+  #card.style-interview .titleText{
+    font-weight:800;letter-spacing:-.01em;line-height:1.32;
+  }
+  #card.style-interview .quote{
+    padding:18px 20px 16px;background:#fffaf1;border-radius:14px;
+    box-shadow:0 8px 22px #38281208;border:1px solid #e9dcc4;
+    position:relative;margin-top:8px;
+  }
+  #card.style-interview .q-mark{
+    color:#c99a5b!important;font-size:40px;
+  }
+  #card.style-interview .q-text{
+    font-weight:700;line-height:1.55;color:#3a2c1a;
+  }
+  #card.style-interview .q-author{
+    color:#a9895f;font-weight:600;opacity:1;
+  }
+  #card.style-interview .subText,
+  #card.style-interview .blk{color:#4a3a26;opacity:1;}
+  #card.style-interview .rowBottom{border-top:1px solid #e0d1b3;padding-top:10px;}
+  #card.style-interview .handle{color:#a9895f;}
+
+  /* 브랜드 프로모션형: 비비드 그라데이션 + 리본 배지 */
+  #card.style-brandpromo{
+    background:linear-gradient(135deg, #6a3df5 0%, #b93ddb 48%, #ff6f61 100%)!important;
+    color:#fff!important;
+  }
+  #card.style-brandpromo .badgeTop{
+    color:#fff!important;opacity:.9;letter-spacing:.12em;font-weight:800;
+  }
+  #card.style-brandpromo .pageNum{color:#ffffffcc!important;}
+  #card.style-brandpromo .pill{
+    position:relative;background:#ffde59!important;color:#3a1f00!important;
+    border-radius:2px 10px 10px 2px;font-weight:900;letter-spacing:.03em;
+    padding:6px 16px 6px 14px;box-shadow:0 4px 10px #00000022;
+  }
+  #card.style-brandpromo .pill::after{
+    content:"";position:absolute;right:-9px;top:0;
+    border-top:14px solid transparent;
+    border-bottom:14px solid transparent;
+    border-left:9px solid #b8931f;
+  }
+  #card.style-brandpromo .frame{
+    border:none;background:rgba(255,255,255,.14);border-radius:18px;
+    backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+    border:1px solid rgba(255,255,255,.28);
+    box-shadow:0 10px 30px #00000022;
+  }
+  #card.style-brandpromo .titleText{
+    font-weight:900;letter-spacing:-.02em;text-shadow:0 2px 10px #00000030;
+  }
+  #card.style-brandpromo .subText,
+  #card.style-brandpromo .blk{opacity:1;color:#fff;}
+  #card.style-brandpromo .st-val{color:#ffde59!important;}
+  #card.style-brandpromo .ls-num{background:#ffde59!important;color:#3a1f00!important;}
+  #card.style-brandpromo .ls-bullet{background:#ffde59!important;}
+  #card.style-brandpromo .rowBottom{border-top:1px solid rgba(255,255,255,.3);padding-top:10px;}
+  #card.style-brandpromo .handle{letter-spacing:.05em;}
+
+  /* 통계리포트형: 그리드 라인 + 쿨톤 데이터 강조 */
+  #card.style-statsreport{
+    background-color:#f7f9fb!important;
+    background-image:linear-gradient(#c9d6e414 1px, transparent 1px),linear-gradient(90deg, #c9d6e414 1px, transparent 1px);
+    background-size:22px 22px;
+    color:#1c2733!important;
+    border:1px solid #d7e0ea;
+  }
+  #card.style-statsreport .badgeTop{
+    color:#4a6fa1!important;letter-spacing:.1em;font-weight:800;
+  }
+  #card.style-statsreport .pageNum{color:#7b93ac!important;}
+  #card.style-statsreport .pill{
+    background:none!important;color:#2a5ba8!important;
+    border:1.5px solid #2a5ba8;border-radius:5px;font-weight:800;
+  }
+  #card.style-statsreport .frame{
+    border:none;background:#fff;border-radius:10px;
+    box-shadow:0 4px 16px #1c273310;border:1px solid #e2e9f1;
+  }
+  #card.style-statsreport .titleText{
+    font-weight:900;letter-spacing:-.02em;line-height:1.28;
+  }
+  #card.style-statsreport .subText,
+  #card.style-statsreport .blk{opacity:1;}
+  #card.style-statsreport .st-val{
+    color:#2a5ba8!important;font-weight:900;letter-spacing:-.02em;
+  }
+  #card.style-statsreport .st-label{
+    color:#5a7188;font-weight:700;letter-spacing:.03em;text-transform:uppercase;font-size:10.5px;
+  }
+  #card.style-statsreport .ch-fill{background:#2a5ba8!important;}
+  #card.style-statsreport .ch-track{background:#dde6ef;}
+  #card.style-statsreport .ls-num{background:#2a5ba8!important;border-radius:4px;}
+  #card.style-statsreport .ls-bullet{background:#2a5ba8!important;}
+  #card.style-statsreport .rowBottom{border-top:1px dashed #c9d6e4;padding-top:10px;}
+
   .titleText .t-bold, .subText .t-bold, .bodyFontWrap .t-bold, .ls-text .t-bold{font-weight:900;}
   .titleText .t-accent, .subText .t-accent, .bodyFontWrap .t-accent, .ls-text .t-accent{font-weight:900;}
   .titleText .t-small, .subText .t-small, .bodyFontWrap .t-small, .ls-text .t-small{font-size:.55em;font-weight:500;opacity:.88;margin-left:4px;}
@@ -964,6 +1077,9 @@
             <div class="ddItem" data-style="official">공문서</div>
             <div class="ddItem" data-style="stickyboard">포스트잇 보드</div>
             <div class="ddItem" data-style="stickyboarddark">포스트잇 보드 (다크 코르크)</div>
+            <div class="ddItem" data-style="interview">인터뷰형 (크림톤·인용포커스)</div>
+            <div class="ddItem" data-style="brandpromo">브랜드 프로모션형 (그라데이션·리본배지)</div>
+            <div class="ddItem" data-style="statsreport">통계리포트형 (그리드·쿨톤강조)</div>
           </div>
         </div>
       </div>
@@ -3039,6 +3155,17 @@ function setStyle(styleVal){
       s.contentBlock = 'list';
       s.blockData = '노랑|오늘 할 일\n분홍|아이디어 메모\n파랑|회의 안건\n초록|다음 단계';
       if($('contentBlockSelect')) $('contentBlockSelect').value = 'list';
+      if($('blockDataText')) $('blockDataText').value = s.blockData;
+      updateBlockHint();
+    }
+  }
+  // 인터뷰형 선택 시 인용구 콘텐츠가 없으면 샘플 채우기
+  if(styleVal === 'interview'){
+    const s = slides[active];
+    if(s.contentBlock === 'none' || !s.blockData || !s.blockData.trim()){
+      s.contentBlock = 'quote';
+      s.blockData = sampleData.quote;
+      if($('contentBlockSelect')) $('contentBlockSelect').value = 'quote';
       if($('blockDataText')) $('blockDataText').value = s.blockData;
       updateBlockHint();
     }
