@@ -1300,6 +1300,42 @@
   button:focus-visible, select:focus-visible, input:focus-visible, textarea:focus-visible{
     outline:2px solid var(--accent);outline-offset:2px;
   }
+
+  /* ===== 템플릿 고유 시그니처 장식 (색은 accent만 재사용, 폰트 무관) ===== */
+
+/* headline: 프레임 모서리 브라켓 */
+#card .frame.tplHeadline{position:relative;}
+#card .frame.tplHeadline::before,
+#card .frame.tplHeadline::after{
+  content:"";
+  position:absolute;
+  width:14px;height:14px;
+  border-color:var(--tpl-accent, currentColor);
+  opacity:.55;
+  pointer-events:none;
+}
+#card .frame.tplHeadline::before{ top:0; left:0; border-top:2px solid; border-left:2px solid; }
+#card .frame.tplHeadline::after{ bottom:0; right:0; border-bottom:2px solid; border-right:2px solid; }
+
+/* profile: 아바타 둘레 점선 링 */
+#card .profileWrap .imgBox.avatar{
+  outline:2px dotted var(--tpl-accent, currentColor);
+  outline-offset:6px;
+}
+
+/* mapchart: 이미지 영역 모서리 좌표 틱 */
+#card .mapchartWrap{position:relative;}
+#card .mapchartWrap::before,
+#card .mapchartWrap::after{
+  content:"";
+  position:absolute;
+  width:16px;height:16px;
+  border-color:var(--tpl-accent, currentColor);
+  opacity:.6;
+  pointer-events:none;
+}
+#card .mapchartWrap::before{ top:-6px; left:-6px; border-top:2px solid; border-left:2px solid; }
+#card .mapchartWrap::after{ bottom:-6px; right:-6px; border-bottom:2px solid; border-right:2px solid; }
 </style>
 
 
@@ -2844,9 +2880,11 @@ function cardMarkup(s, pageIdx, total){
     return '<div ' + cls + ' style="' + base + '">' +
       rowTopHtml(s, pageIdx, total, false) +
       '<div style="padding:4px 2px 0;text-align:' + align + ';">' + pillHtml(s) + titleHtml(s) + '</div>' +
+      '<div class="mapchartWrap" style="--tpl-accent:' + (s.accent || '#7c5cff') + ';">' +
       (s.image
         ? imageBox(s,'mapchart') + photoVignette
         : '<div class="imgBox mapchart" style="display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.06);color:inherit;opacity:.45;font-size:12px;font-weight:700;">맵 · 도표 영역 (사진 업로드)</div>') +
+      '</div>' +
       '<div style="margin-top:12px;text-align:' + align + ';">' + blockHtml(s) + brandHtml(s) + '</div>' +
       logo + freeT + photoCreditHtml(s) +
       rowBottomHtml(s, false) +
@@ -2855,7 +2893,7 @@ function cardMarkup(s, pageIdx, total){
   if(s.template === 'headline'){
     return '<div ' + cls + ' style="' + base + '">' +
       rowTopHtml(s, pageIdx, total, false) +
-      '<div class="frame" style="border:none;justify-content:flex-start;padding-top:18px;text-align:' + align + ';">' +
+      '<div class="frame tplHeadline" style="--tpl-accent:' + (s.accent || '#7c5cff') + ';border:none;justify-content:flex-start;padding-top:18px;text-align:' + align + ';">' +
         pillHtml(s) +
         titleHtml(s) +
         '<div class="headlineRule" style="background:' + (s.accent || 'currentColor') + ';opacity:1;' + (align === 'center' ? 'margin-left:auto;margin-right:auto;' : align === 'right' ? 'margin-left:auto;' : '') + '"></div>' +
@@ -2868,7 +2906,7 @@ function cardMarkup(s, pageIdx, total){
   if(s.template === 'profile'){
     return '<div ' + cls + ' style="' + base + '">' +
       rowTopHtml(s, pageIdx, total, false) +
-      '<div class="profileWrap">' +
+      '<div class="profileWrap" style="--tpl-accent:' + (s.accent || '#7c5cff') + ';">' +
         (s.image
           ? imageBox(s,'avatar')
           : '<div class="imgBox avatar" style="display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.08);font-size:11px;font-weight:700;opacity:.5;">사진</div>') +
