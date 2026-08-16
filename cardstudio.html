@@ -95,10 +95,8 @@
   .thumb .del{position:absolute;top:4px;right:4px;width:18px;height:18px;border-radius:5px;background:#000a;color:#fff;font-size:11px;line-height:18px;text-align:center;opacity:0;transition:.15s;}
   .thumb:hover .del{opacity:1;}
   .thumb .del:hover{background:var(--danger);}
-  #addSlide{margin:0 12px 14px;padding:10px;border-radius:10px;background:var(--chrome-btn);color:var(--chrome-sub);font-size:12px;font-weight:600;border:1px dashed var(--chrome-line);width:100%;}
+  #addSlide{margin:0 12px 14px;padding:10px;border-radius:10px;background:var(--chrome-btn);color:var(--chrome-sub);font-size:12px;font-weight:600;border:1px dashed var(--chrome-line);}
   #addSlide:hover{color:var(--chrome-text);border-color:var(--accent);}
-  #addSlideWrap{margin:0 12px 14px;}
-  #addSlideWrap #addSlide{margin:0;}
 
   #undoRedoFloat{
     position:fixed;
@@ -1531,6 +1529,14 @@
             <textarea id="stBodyMenu" style="min-height:56px;" placeholder="본문"></textarea>
           </div>
           <div class="field">
+            <label>제목 글꼴 크기 (10~36)</label>
+            <div class="slider"><input type="range" id="stTitleSizeMenu" min="10" max="36" value="13"><span class="val" id="stTitleSizeMenuVal">13</span></div>
+          </div>
+          <div class="field">
+            <label>본문 글꼴 크기 (10~28)</label>
+            <div class="slider"><input type="range" id="stBodySizeMenu" min="10" max="28" value="12"><span class="val" id="stBodySizeMenuVal">12</span></div>
+          </div>
+          <div class="field">
             <label>색상</label>
             <select id="stColorMenu">
               <option value="#fff6b8">노랑</option>
@@ -1871,13 +1877,7 @@
     <div id="left">
       <div class="hd">슬라이드 (<span id="slideCount">0</span>)</div>
       <div id="slideList"></div>
-      <div class="menuWrap" id="addSlideWrap" style="margin:0 12px 14px;">
-        <button id="addSlide" style="margin:0;width:100%;">+ 카드 추가 ▾</button>
-        <div class="dropdown" id="addSlideMenu" style="left:0;right:0;width:auto;min-width:0;">
-          <div class="ddItem" data-add="clone"><span class="ic">⧉</span>현재 카드 복제</div>
-          <div class="ddItem" data-add="new"><span class="ic">＋</span>새로 만들기</div>
-        </div>
-      </div>
+      <button id="addSlide">+ 카드 추가</button>
     </div>
 
     <div id="stage">
@@ -1969,16 +1969,6 @@
           <div class="field">
             <label>본문 글자색</label>
             <div class="colorField"><input type="color" id="bodyColor" value="#1a1a1a"><span id="bodyColorHex">#1a1a1a</span></div>
-          </div>
-        </div>
-        <div class="row2">
-          <div class="field">
-            <label>상단 배지 글자색</label>
-            <div class="colorField"><input type="color" id="badgeColor" value="#1a1a1a"><span id="badgeColorHex">#1a1a1a</span></div>
-          </div>
-          <div class="field">
-            <label>계정 핸들 글자색</label>
-            <div class="colorField"><input type="color" id="handleColor" value="#1a1a1a"><span id="handleColorHex">#1a1a1a</span></div>
           </div>
         </div>
         <div class="row2">
@@ -2150,7 +2140,7 @@ const defaults = () => ({
   template:'text', style:'none',
   badgeTop:'west150daily', pillText:'west150daily', title:'헤드라인',
   highlight:'직접', highlightExtra:'', sub:'AI가 아닌 나만의 문체로 만들어 보자.', handle:'출처:',
-  bg:'#f4efe4', text:'#1a1a1a', bodyText:'#1a1a1a', badgeColor:'#1a1a1a', handleColor:'#1a1a1a', pillBg:'#181818', pillColor:'#ffffff',
+  bg:'#f4efe4', text:'#1a1a1a', bodyText:'#1a1a1a', pillBg:'#181818', pillColor:'#ffffff',
   mk:'#f6b8c4', accent:'#7c5cff', titleSize:27, subSize:14,
   titleLetter:0, titleLine:135, bodyLetter:0, bodyLine:160,
   image:null, imageFit:'cover', imagePos:'center', imageFilter:'none', imageOverlay:0,
@@ -2321,11 +2311,13 @@ function freeStickiesHtml(s){
   return s.freeStickies.map(st => {
     const sel = (s.selectedStickyId === st.id) ? ' selected' : '';
     const bg = st.color || '#fff6b8';
+    const titleSz = st.titleSize != null ? st.titleSize : 13;
+    const bodySz = st.bodySize != null ? st.bodySize : 12;
     // rotate 제거: 브라우저 서브픽셀 때문에 글씨가 번져 보임
     return '<div class="freeSticky' + sel + '" data-stid="' + st.id + '" style="left:' + st.x + 'px;top:' + st.y + 'px;width:' + (st.w || 150) + 'px;height:' + (st.h || 120) + 'px;background:' + bg + ';">' +
       '<div class="st-tape"></div>' +
-      '<div class="st-title">' + escapeHtml(st.title || '제목').replace(/\n/g,'<br>') + '</div>' +
-      '<div class="st-body">' + escapeHtml(st.body || '').replace(/\n/g,'<br>') + '</div>' +
+      '<div class="st-title" style="font-size:' + titleSz + 'px;">' + escapeHtml(st.title || '제목').replace(/\n/g,'<br>') + '</div>' +
+      '<div class="st-body" style="font-size:' + bodySz + 'px;">' + escapeHtml(st.body || '').replace(/\n/g,'<br>') + '</div>' +
       '<div class="ft-resize" data-resize="1"></div></div>';
   }).join('');
 }
@@ -2403,7 +2395,7 @@ function titleHtml(s){
   const ls = (s.titleLetter != null ? Number(s.titleLetter) : 0);
   const lh = (s.titleLine != null ? Number(s.titleLine) : 135) / 100;
   const typo = 'letter-spacing:' + ls + 'px;line-height:' + lh + ';';
-  const col = 'color:' + (s.text || '#1a1a1a') + ' !important;';
+  const col = 'color:' + (s.text || '#1a1a1a') + ';';
   let body = parseTitleSyntax(s.title, s.accent);
   body = applyHighlightToHtml(body, s.highlight, s.highlightExtra, s.mk);
   return '<div class="titleText" style="font-size:' + s.titleSize + 'px;' + ff + typo + col + fmt + '">' + body + '</div>';
@@ -2455,7 +2447,7 @@ function bodyTypoCss(s){
   return 'letter-spacing:' + ls + 'px;line-height:' + lh + ';';
 }
 function bodyColorCss(s){
-  return 'color:' + (s.bodyText || s.text || '#1a1a1a') + ' !important;';
+  return 'color:' + (s.bodyText || s.text || '#1a1a1a') + ';';
 }
 
 function subTextHtml(s){
@@ -2467,8 +2459,7 @@ function subTextHtml(s){
 }
 function rowTopHtml(s, pageIdx, total, z){
   const photoChip = s.image ? ' photoChip' : '';
-  const badgeCol = s.badgeColor || s.text || '#1a1a1a';
-  return '<div class="rowTop ' + (z?'z2':'') + '"><div class="badgeTop' + photoChip + '" style="color:' + badgeCol + ' !important;">' + escapeHtml(s.badgeTop) + '</div><div class="pageNum' + photoChip + '">' + (pageIdx+1) + ' / ' + total + '</div></div>';
+  return '<div class="rowTop ' + (z?'z2':'') + '"><div class="badgeTop' + photoChip + '">' + escapeHtml(s.badgeTop) + '</div><div class="pageNum' + photoChip + '">' + (pageIdx+1) + ' / ' + total + '</div></div>';
 }
 function rowBottomHtml(s, z){
   const photoChip = s.image ? ' photoChip' : '';
@@ -2483,8 +2474,7 @@ function rowBottomHtml(s, z){
   else rowClass += ' arrow-right';
   if(!s.handle || !s.handle.trim()) rowClass += ' hide-handle';
 
-  const handleCol = s.handleColor || s.text || '#1a1a1a';
-  const handleHtml = '<div class="handle' + photoChip + '" style="color:' + handleCol + ' !important;">' + escapeHtml(s.handle) + '</div>';
+  const handleHtml = '<div class="handle' + photoChip + '">' + escapeHtml(s.handle) + '</div>';
   const arrowHtml = showArrow
     ? '<div class="arrow" data-arrow="1" style="color:' + s.accent + ';transform:translateX(' + offsetX + 'px);">' + escapeHtml(arrowText) + '</div>'
     : '';
@@ -2690,7 +2680,7 @@ function cardMarkup(s, pageIdx, total){
   const font = fontStack(s.font);
   const align = s.align || 'left';
   const size = getCardSize(s);
-  const base = 'background:' + s.bg + ' !important;color:' + s.text + ' !important;font-family:' + font + ';width:' + size.w + 'px;height:' + size.h + 'px;';
+  const base = 'background:' + s.bg + ';color:' + s.text + ';font-family:' + font + ';width:' + size.w + 'px;height:' + size.h + 'px;';
   const isFree = s.template === 'free';
   const cls = 'id="card"' + (styleClass(s) ? ' class="' + styleClass(s).trim() + (isFree ? ' freeLayout' : '') + '"' : (isFree ? ' class="freeLayout"' : ''));
   const photoVignette = s.image ? '<div class="scrim" style="background:' + vignetteCss(s.vignetteMode, Number(s.vignetteStrength) || 0) + ';"></div>' : '';
@@ -2937,14 +2927,6 @@ function syncForm(){
     const bc = s.bodyText || s.text || '#1a1a1a';
     $('bodyColor').value = bc; $('bodyColorHex').textContent = bc;
   }
-  if($('badgeColor')){
-    const bdc = s.badgeColor || s.text || '#1a1a1a';
-    $('badgeColor').value = bdc; $('badgeColorHex').textContent = bdc;
-  }
-  if($('handleColor')){
-    const hdc = s.handleColor || s.text || '#1a1a1a';
-    $('handleColor').value = hdc; $('handleColorHex').textContent = hdc;
-  }
   $('pillBg').value = s.pillBg; $('pillBgHex').textContent = s.pillBg;
   $('pillColor').value = s.pillColor; $('pillColorHex').textContent = s.pillColor;
   $('mkColor').value = s.mk; $('mkColorHex').textContent = s.mk;
@@ -3092,8 +3074,6 @@ if($('bodyColor')){
     renderMainCard(); renderList();
   });
 }
-bindField('badgeColor','badgeColor',true);
-bindField('handleColor','handleColor',true);
 bindField('pillBg','pillBg',true);
 bindField('pillColor','pillColor',true);
 bindField('mkColor','mk',true);
@@ -3659,22 +3639,11 @@ mkPresets.forEach(c => {
   $('mkSwatches').appendChild(sw);
 });
 
-$('addSlide').addEventListener('click', e => {
-  e.stopPropagation();
-  const dd = $('addSlideMenu');
-  const wasOpen = dd.classList.contains('open');
-  closeAllDropdowns();
-  if(!wasOpen) dd.classList.add('open');
-});
-Array.from(document.querySelectorAll('#addSlideMenu .ddItem')).forEach(item => {
-  item.addEventListener('click', () => {
-    const mode = item.dataset.add;
-    const next = (mode === 'new') ? defaults() : JSON.parse(JSON.stringify(slides[active]));
-    slides.splice(active+1, 0, next);
-    active = active+1;
-    syncForm(); renderMainCard(); renderList();
-    closeAllDropdowns();
-  });
+$('addSlide').addEventListener('click', () => {
+  const clone = JSON.parse(JSON.stringify(slides[active]));
+  slides.splice(active+1, 0, clone);
+  active = active+1;
+  syncForm(); renderMainCard(); renderList();
 });
 
 function isIOS(){
@@ -4001,11 +3970,17 @@ function syncStickyForm(){
     if($('stTitleMenu')) $('stTitleMenu').value = '';
     if($('stBodyMenu')) $('stBodyMenu').value = '';
     if($('stColorMenu')) $('stColorMenu').value = '#fff6b8';
+    if($('stTitleSizeMenu')){ $('stTitleSizeMenu').value = 13; if($('stTitleSizeMenuVal')) $('stTitleSizeMenuVal').textContent = 13; }
+    if($('stBodySizeMenu')){ $('stBodySizeMenu').value = 12; if($('stBodySizeMenuVal')) $('stBodySizeMenuVal').textContent = 12; }
     return;
   }
   if($('stTitleMenu')) $('stTitleMenu').value = st.title || '';
   if($('stBodyMenu')) $('stBodyMenu').value = st.body || '';
   if($('stColorMenu')) $('stColorMenu').value = st.color || '#fff6b8';
+  const ts = st.titleSize != null ? st.titleSize : 13;
+  const bs = st.bodySize != null ? st.bodySize : 12;
+  if($('stTitleSizeMenu')){ $('stTitleSizeMenu').value = ts; if($('stTitleSizeMenuVal')) $('stTitleSizeMenuVal').textContent = ts; }
+  if($('stBodySizeMenu')){ $('stBodySizeMenu').value = bs; if($('stBodySizeMenuVal')) $('stBodySizeMenuVal').textContent = bs; }
 }
 
 function addFreeSticky(){
@@ -4023,7 +3998,9 @@ function addFreeSticky(){
     w: 150,
     h: 120,
     color: colors[n % colors.length],
-    rotate: rots[n % rots.length]
+    rotate: rots[n % rots.length],
+    titleSize: 13,
+    bodySize: 12
   };
   s.freeStickies.push(st);
   s.selectedStickyId = st.id;
@@ -4063,6 +4040,18 @@ if($('stBodyMenu')) $('stBodyMenu').addEventListener('input', e => {
 if($('stColorMenu')) $('stColorMenu').addEventListener('change', e => {
   const st = getSelectedSticky(); if(!st) return;
   st.color = e.target.value;
+  renderMainCard(); renderList(); bindFreeTextInteractions();
+});
+if($('stTitleSizeMenu')) $('stTitleSizeMenu').addEventListener('input', e => {
+  const st = getSelectedSticky(); if(!st) return;
+  st.titleSize = +e.target.value;
+  if($('stTitleSizeMenuVal')) $('stTitleSizeMenuVal').textContent = e.target.value;
+  renderMainCard(); renderList(); bindFreeTextInteractions();
+});
+if($('stBodySizeMenu')) $('stBodySizeMenu').addEventListener('input', e => {
+  const st = getSelectedSticky(); if(!st) return;
+  st.bodySize = +e.target.value;
+  if($('stBodySizeMenuVal')) $('stBodySizeMenuVal').textContent = e.target.value;
   renderMainCard(); renderList(); bindFreeTextInteractions();
 });
 if($('stDeleteMenu')) $('stDeleteMenu').addEventListener('click', deleteSelectedSticky);
