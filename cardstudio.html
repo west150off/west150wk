@@ -2040,8 +2040,6 @@ function resolveFontId(s, which){
 }
 
 function titleHtml(s){
-  const imageMode = !!s.image;
-  const textShadow = imageMode ? 'text-shadow:0 2px 12px rgba(0,0,0,.42);' : '';
   let fmt = '';
   if(s.titleFormat){
     if(s.titleFormat.bold) fmt += 'font-weight:900;';
@@ -2055,8 +2053,9 @@ function titleHtml(s){
   const col = 'color:' + (s.text || '#1a1a1a') + ';';
   let body = parseTitleSyntax(s.title, s.accent);
   body = applyHighlightToHtml(body, s.highlight, s.highlightExtra, s.mk);
-  return '<div class="titleText" style="font-size:' + s.titleSize + 'px;' + ff + typo + col + textShadow + fmt + '">' + body + '</div>';
+  return '<div class="titleText" style="font-size:' + s.titleSize + 'px;' + ff + typo + col + fmt + '">' + body + '</div>';
 }
+
 
 function brandHtml(s){
   if(!s.showBrand) return '';
@@ -2110,7 +2109,8 @@ function subTextHtml(s){
   const ff = 'font-family:' + fontStack(resolveFontId(s, 'body')) + ';';
   const typo = bodyTypoCss(s);
   const col = bodyColorCss(s);
-  return s.sub && s.sub.trim() ? '<div class="subText" style="font-size:' + s.subSize + 'px;' + ff + typo + col + (s.image ? 'text-shadow:0 2px 8px rgba(0,0,0,.4);' : '') + '">' + parseTitleSyntax(s.sub, s.accent) + '</div>' : '';
+  return s.sub && s.sub.trim() ? '<div class="subText" style="font-size:' + s.subSize + 'px;' + ff + typo + col + '">' + parseTitleSyntax(s.sub, s.accent) + '</div>' : '';
+
 }
 function rowTopHtml(s, pageIdx, total, z){
   const photoChip = s.image ? ' photoChip' : '';
