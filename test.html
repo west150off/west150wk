@@ -3706,6 +3706,42 @@ function showIOSSaveModal(blob, filename){
   });
 }
 
+// 저장본 가장자리의 순수 검정/투명 여백 제거
+function trimCanvasEdges(source){
+  const w = source.width;
+  const h = source.height;
+  const ctx = source.getContext('2d');
+  const data = ctx.getImageData(0, 0, w, h).data;
+  function isEmpty(x, y){
+    const i = (y * w + x) * 4;
+    const r = data[i], g = data[i+1], b = data[i+2], a = data[i+3];
+    if(a < 8) return true;
+    return r < 12 && g < 12 && b < 12 && a > 200;
+  }
+  let top = 0, bottom = h - 1, left = 0, right = w - 1;
+  scanTop: for(; top < h; top++){
+    for(let x = 0; x < w; x++){ if(!isEmpty(x, top)) break scanTop; }
+  }
+  scanBot: for(; bottom > top; bottom--){
+    for(let x = 0; x < w; x++){ if(!isEmpty(x, bottom)) break scanBot; }
+  }
+  scanLeft: for(; left < w; left++){
+    for(let y = top; y <= bottom; y++){ if(!isEmpty(left, y)) break scanLeft; }
+  }
+  scanRight: for(; right > left; right--){
+    for(let y = top; y <= bottom; y++){ if(!isEmpty(right, y)) break scanRight; }
+  }
+  const tw = right - left + 1;
+  const th = bottom - top + 1;
+  if(tw <= 0 || th <= 0 || (tw === w && th === h)) return source;
+  if(tw < w * 0.7 || th < h * 0.7) return source;
+  const out = document.createElement('canvas');
+  out.width = tw;
+  out.height = th;
+  out.getContext('2d').drawImage(source, left, top, tw, th, 0, 0, tw, th);
+  return out;
+}
+
 async function captureCardBlob(){
   // 고화질 저장: #card 영역만 정확히 캡처 (그림자·여백·스테이지 제외)
   const wrap = $('canvasWrap');
@@ -3727,17 +3763,22 @@ async function captureCardBlob(){
   card.style.transform = 'none';
   card.style.margin = '0';
 
-  // 레이아웃 확정 후 실제 픽셀 크기 사용
   await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
   const w = Math.round(card.offsetWidth);
   const h = Math.round(card.offsetHeight);
-  // 짧은 변 기준 약 1080px 이상 나오도록 scale 계산 (최소 2, 최대 4)
   const minSide = Math.min(w, h) || 400;
   const scale = Math.max(2, Math.min(4, Math.ceil(1080 / minSide)));
 
+  let bg = '#f5f0e6';
+  try {
+    const cs = getComputedStyle(card);
+    const bgc = cs.backgroundColor;
+    if(bgc && bgc !== 'rgba(0, 0, 0, 0)' && bgc !== 'transparent') bg = bgc;
+  } catch(e){}
+
   try {
     const canvas = await html2canvas(card, {
-      backgroundColor: null,
+      backgroundColor: bg,
       scale: scale,
       useCORS: true,
       logging: false,
@@ -3746,8 +3787,8 @@ async function captureCardBlob(){
       height: h,
       windowWidth: w,
       windowHeight: h,
-      scrollX: 0,
-      scrollY: 0,
+      scrollX: -window.scrollX,
+      scrollY: -window.scrollY,
       x: 0,
       y: 0,
       onclone: function(doc){
@@ -3757,26 +3798,32 @@ async function captureCardBlob(){
           c.style.margin = '0';
           c.style.transform = 'none';
           c.style.outline = 'none';
+          c.style.overflow = 'hidden';
         }
         doc.querySelectorAll('#canvasWrap').forEach(function(el){
           el.style.boxShadow = 'none';
           el.style.borderRadius = '0';
           el.style.overflow = 'hidden';
         });
+        if(doc.body){
+          doc.body.style.margin = '0';
+          doc.body.style.padding = '0';
+          doc.body.style.background = bg;
+        }
       }
     });
-    // 혹시 모를 1px 여백 제거: 카드 비율로 크롭
     const outW = Math.round(w * scale);
     const outH = Math.round(h * scale);
+    let result = canvas;
     if(canvas.width !== outW || canvas.height !== outH){
       const tight = document.createElement('canvas');
       tight.width = outW;
       tight.height = outH;
-      const ctx = tight.getContext('2d');
-      ctx.drawImage(canvas, 0, 0, outW, outH, 0, 0, outW, outH);
-      return canvasToBlob(tight, 'image/png');
+      tight.getContext('2d').drawImage(canvas, 0, 0, outW, outH, 0, 0, outW, outH);
+      result = tight;
     }
-    return canvasToBlob(canvas, 'image/png');
+    result = trimCanvasEdges(result);
+    return canvasToBlob(result, 'image/png');
   } finally {
     wrap.style.boxShadow = prev.wrapShadow;
     wrap.style.borderRadius = prev.wrapRadius;
