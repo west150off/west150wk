@@ -824,7 +824,120 @@
     transform:rotate(-1deg);
   }
 
+  /* 포스트잇 · 뉴스 요약 (제목/본문 분리) */
+  #card.style-stickysummary{
+    background-color:#efe9dc!important;
+    background-image:radial-gradient(#c4bba8 1.1px, transparent 1.1px);
+    background-size:16px 16px;
+    color:#1a1a1a!important;
+  }
+  #card.style-stickysummary .frame{
+    border:none;background:transparent;padding:8px 4px;justify-content:flex-start;
+  }
+  #card.style-stickysummary .pill{
+    background:#fff!important;color:#333!important;border-radius:3px;
+    box-shadow:1px 2px 6px #0000001a;margin-bottom:10px;
+  }
+  #card.style-stickysummary .titleText{
+    background:#fff6b8;
+    padding:12px 14px 14px;
+    border-radius:2px;
+    box-shadow:2px 4px 10px #00000022;
+    transform:rotate(-1.2deg);
+    margin-bottom:10px;
+    position:relative;
+    font-size:0.95em;
+    line-height:1.35;
+  }
+  #card.style-stickysummary .titleText::after{
+    content:"";position:absolute;top:0;left:50%;width:22px;height:9px;
+    transform:translateX(-50%);background:rgba(0,0,0,.08);border-radius:0 0 3px 3px;
+  }
+  #card.style-stickysummary .subText,
+  #card.style-stickysummary .blk{
+    background:#ffffff;
+    padding:12px 14px 14px;
+    border-radius:2px;
+    box-shadow:2px 4px 10px #0000001c;
+    transform:rotate(0.8deg);
+    margin-top:0;
+    position:relative;
+  }
+  #card.style-stickysummary .subText::after,
+  #card.style-stickysummary .blk::after{
+    content:"";position:absolute;top:0;left:42%;width:20px;height:8px;
+    transform:translateX(-50%);background:rgba(0,0,0,.07);border-radius:0 0 3px 3px;
+  }
+  #card.style-stickysummary .imgBox{
+    border-radius:3px;
+    box-shadow:2px 4px 12px #00000028;
+    background:#fff;
+    border:6px solid #fff;
+    box-sizing:border-box;
+  }
+  #card.style-stickysummary .imgBox.split{height:38%;margin-top:10px;}
+  #card.style-stickysummary .imgBox.inset{height:120px;margin-bottom:12px;}
+  #card.style-stickysummary .imgBox.bottom{height:34%;margin-top:10px;}
+  #card.style-stickysummary .rowBottom{margin-top:12px;}
+
+  /* 포스트잇 · 뉴스 브리핑 (제목/본문 분리, 다른 색감) */
+  #card.style-stickybrief{
+    background-color:#e8eef5!important;
+    background-image:linear-gradient(#c5d0dc 1px, transparent 1px),linear-gradient(90deg, #c5d0dc 1px, transparent 1px);
+    background-size:20px 20px;
+    color:#152033!important;
+  }
+  #card.style-stickybrief .frame{
+    border:none;background:transparent;padding:8px 4px;justify-content:flex-start;
+  }
+  #card.style-stickybrief .pill{
+    background:#1e3a5f!important;color:#fff!important;border-radius:3px;
+    box-shadow:1px 2px 6px #0000001a;margin-bottom:10px;
+  }
+  #card.style-stickybrief .titleText{
+    background:#ffe0e9;
+    padding:12px 14px 14px;
+    border-radius:2px;
+    box-shadow:2px 4px 10px #00000020;
+    transform:rotate(1deg);
+    margin-bottom:10px;
+    position:relative;
+    font-size:0.95em;
+    line-height:1.35;
+  }
+  #card.style-stickybrief .titleText::after{
+    content:"";position:absolute;top:0;left:50%;width:22px;height:9px;
+    transform:translateX(-50%);background:rgba(0,0,0,.08);border-radius:0 0 3px 3px;
+  }
+  #card.style-stickybrief .subText,
+  #card.style-stickybrief .blk{
+    background:#d4f0ff;
+    padding:12px 14px 14px;
+    border-radius:2px;
+    box-shadow:2px 4px 10px #0000001a;
+    transform:rotate(-0.9deg);
+    margin-top:0;
+    position:relative;
+  }
+  #card.style-stickybrief .subText::after,
+  #card.style-stickybrief .blk::after{
+    content:"";position:absolute;top:0;left:55%;width:20px;height:8px;
+    transform:translateX(-50%);background:rgba(0,0,0,.07);border-radius:0 0 3px 3px;
+  }
+  #card.style-stickybrief .imgBox{
+    border-radius:3px;
+    box-shadow:2px 4px 12px #00000028;
+    background:#fff;
+    border:6px solid #fff;
+    box-sizing:border-box;
+  }
+  #card.style-stickybrief .imgBox.split{height:38%;margin-top:10px;}
+  #card.style-stickybrief .imgBox.inset{height:120px;margin-bottom:12px;}
+  #card.style-stickybrief .imgBox.bottom{height:34%;margin-top:10px;}
+  #card.style-stickybrief .rowBottom{margin-top:12px;}
+
   /* 인터뷰형: 크림톤 + 인용 포커스 */
+
   #card.style-interview{
     background:#f8f0e0!important;
     color:#382c1e!important;
@@ -1076,6 +1189,9 @@
             <div class="ddItem" data-style="official">공문서</div>
             <div class="ddItem" data-style="stickyboard">포스트잇 보드</div>
             <div class="ddItem" data-style="stickyboarddark">포스트잇 보드 (다크 코르크)</div>
+            <div class="ddItem" data-style="stickysummary">포스트잇 · 뉴스 요약</div>
+            <div class="ddItem" data-style="stickybrief">포스트잇 · 뉴스 브리핑</div>
+
             <div class="ddItem" data-style="interview">인터뷰형 (크림톤·인용포커스)</div>
             <div class="ddItem" data-style="brandpromo">브랜드 프로모션형 (그라데이션·리본배지)</div>
             <div class="ddItem" data-style="statsreport">통계리포트형 (그리드·쿨톤강조)</div>
@@ -1699,7 +1815,8 @@
 
 <script>
 const templateLabels = {text:'TEXT', full:'FULL', split:'SPLIT', bottom:'BOTTOM', inset:'INSET', side:'SIDE', frame:'FRAME', cardincard:'NEST', mapchart:'MAP', headline:'HEAD', profile:'PROF', free:'FREE', sponsor:'SPONSOR'};
-const styleLabels = {none:'', insta:'INSTA', grid:'GRID', terminal:'TERM', sticky:'STICKY', receipt:'RECEIPT', timeline:'TIMELINE', newspaper:'NEWS', postcard:'CARD', folder:'FOLDER', blueprint:'BLUE', pastel:'PASTEL', certificate:'CERT', magazine:'MAG', alert:'ALERT', breaking:'속보', breakinglive:'LIVE', breakingticker:'티커', whitepaper:'WP', briefing:'브리핑', infosheet:'인포', cover:'COVER', official:'공문서', stickyboard:'포스트잇', stickyboarddark:'포스트잇DARK'};
+const styleLabels = {none:'', insta:'INSTA', grid:'GRID', terminal:'TERM', sticky:'STICKY', receipt:'RECEIPT', timeline:'TIMELINE', newspaper:'NEWS', postcard:'CARD', folder:'FOLDER', blueprint:'BLUE', pastel:'PASTEL', certificate:'CERT', magazine:'MAG', alert:'ALERT', breaking:'속보', breakinglive:'LIVE', breakingticker:'티커', whitepaper:'WP', briefing:'브리핑', infosheet:'인포', cover:'COVER', official:'공문서', stickyboard:'포스트잇', stickyboarddark:'포스트잇DARK', stickysummary:'뉴스요약', stickybrief:'뉴스브리핑'};
+
 
 const OFFICIAL_SITES = [
   {cat:'미국 정부 · 백악관', items:[
@@ -2040,6 +2157,8 @@ function resolveFontId(s, which){
 }
 
 function titleHtml(s){
+  const imageMode = !!s.image;
+  const textShadow = imageMode ? 'text-shadow:0 2px 12px rgba(0,0,0,.42);' : '';
   let fmt = '';
   if(s.titleFormat){
     if(s.titleFormat.bold) fmt += 'font-weight:900;';
@@ -2053,9 +2172,8 @@ function titleHtml(s){
   const col = 'color:' + (s.text || '#1a1a1a') + ';';
   let body = parseTitleSyntax(s.title, s.accent);
   body = applyHighlightToHtml(body, s.highlight, s.highlightExtra, s.mk);
-  return '<div class="titleText" style="font-size:' + s.titleSize + 'px;' + ff + typo + col + fmt + '">' + body + '</div>';
+  return '<div class="titleText" style="font-size:' + s.titleSize + 'px;' + ff + typo + col + textShadow + fmt + '">' + body + '</div>';
 }
-
 
 function brandHtml(s){
   if(!s.showBrand) return '';
@@ -2109,8 +2227,7 @@ function subTextHtml(s){
   const ff = 'font-family:' + fontStack(resolveFontId(s, 'body')) + ';';
   const typo = bodyTypoCss(s);
   const col = bodyColorCss(s);
-  return s.sub && s.sub.trim() ? '<div class="subText" style="font-size:' + s.subSize + 'px;' + ff + typo + col + '">' + parseTitleSyntax(s.sub, s.accent) + '</div>' : '';
-
+  return s.sub && s.sub.trim() ? '<div class="subText" style="font-size:' + s.subSize + 'px;' + ff + typo + col + (s.image ? 'text-shadow:0 2px 8px rgba(0,0,0,.4);' : '') + '">' + parseTitleSyntax(s.sub, s.accent) + '</div>' : '';
 }
 function rowTopHtml(s, pageIdx, total, z){
   const photoChip = s.image ? ' photoChip' : '';
@@ -3131,6 +3248,24 @@ function setStyle(styleVal){
       updateBlockHint();
     }
   }
+  // 뉴스 요약/브리핑 포스트잇: 제목+본문 분리형 샘플
+  if(styleVal === 'stickysummary' || styleVal === 'stickybrief'){
+    const s = slides[active];
+    s.contentBlock = 'none';
+    if($('contentBlockSelect')) $('contentBlockSelect').value = 'none';
+    if(!s.title || !String(s.title).trim()){
+      s.title = '헤드라인 제목을 입력하세요';
+    }
+    if((!s.sub || !String(s.sub).trim()) && (!s.blockData || !String(s.blockData).trim())){
+      s.sub = '여기에 뉴스 요약 본문을 입력하세요.\n핵심 사실만 짧게 정리하면 됩니다.';
+      s.blockData = s.sub;
+    }
+    if($('titleText')) $('titleText').value = s.title;
+    if($('subText')) $('subText').value = s.sub || '';
+    if($('blockDataText')) $('blockDataText').value = s.blockData || s.sub || '';
+    updateBlockHint();
+  }
+
   // 인터뷰형 선택 시 인용구 콘텐츠가 없으면 샘플 채우기
   if(styleVal === 'interview'){
     const s = slides[active];
