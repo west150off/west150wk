@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Card Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -178,16 +179,6 @@
   #card .imgBox .duo{position:absolute;inset:0;mix-blend-mode:color;}
   #card .scrim{position:absolute;inset:0;z-index:1;pointer-events:none;}
   #card .z2{position:relative;z-index:2;}
-  #card .textPanel{
-    background:rgba(0,0,0,.46);
-    backdrop-filter:blur(6px);
-    -webkit-backdrop-filter:blur(6px);
-    border-radius:12px;
-    padding:16px 18px;
-    margin-left:-6px;
-    margin-right:-6px;
-    width:calc(100% + 12px);
-  }
   #card .frame.sideFrame{flex-direction:row;align-items:stretch;gap:14px;justify-content:flex-start;}
   #card .frame.sideFrame .sideText{flex:1;display:flex;flex-direction:column;justify-content:center;min-width:0;}
   #card .frame.boldFrame{border:3px solid currentColor;border-radius:0;padding:30px 26px;}
@@ -252,35 +243,6 @@
   #card .cmp-original .cmp-text{opacity:.75;}
   #card .cmp-text .t-bold{font-weight:900;}
   #card .cmp-text .t-accent{font-weight:900;}
-
-  /* Q&A block */
-  #card .qna .qna-item{margin-bottom:14px;}
-  #card .qna .qna-item:last-child{margin-bottom:0;}
-  #card .qna-q{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;font-weight:800;line-height:1.5;}
-  #card .qna-a{display:flex;gap:8px;align-items:flex-start;font-size:12.5px;line-height:1.55;opacity:.75;margin-top:6px;padding-left:2px;}
-  #card .qna-tag{flex:none;width:18px;height:18px;border-radius:5px;color:#fff;font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center;margin-top:1px;}
-  #card .qna-tag-a{background:rgba(0,0,0,.16)!important;}
-
-  /* Places / map pin block */
-  #card .places .place-item{display:flex;gap:10px;margin-bottom:12px;}
-  #card .places .place-item:last-child{margin-bottom:0;}
-  #card .place-pin{flex:none;width:10px;height:10px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);margin-top:4px;}
-  #card .place-name{font-size:13.5px;font-weight:800;line-height:1.4;}
-  #card .place-desc{font-size:11.5px;line-height:1.45;opacity:.65;margin-top:2px;}
-
-  /* Page indicator dots */
-  #card .indicatorDots{
-    position:absolute;
-    left:50%;
-    bottom:14px;
-    transform:translateX(-50%);
-    z-index:15;
-    display:flex;
-    gap:6px;
-    pointer-events:none;
-  }
-  #card .indicatorDots .dot{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.3;}
-  #card .indicatorDots .dot.on{opacity:1;width:16px;border-radius:3px;}
 
   /* Logo / Watermark */
   #card .logoMark{position:absolute;z-index:10;pointer-events:none;max-width:30%;max-height:18%;object-fit:contain;}
@@ -442,6 +404,198 @@
   #card.style-alert .frame{background:#fff;margin:14px;border-radius:6px;box-shadow:0 10px 30px #00000040;border:none;}
   #card.style-alert .pill{background:#d21f1f!important;color:#fff!important;border-radius:4px;}
   #card.style-alert .titleText{color:#d21f1f;font-weight:900;}
+
+  /* 속보 1: 레드 속보 */
+  #card.style-breaking{
+    background:#111!important;
+    color:#fff!important;
+  }
+  #card.style-breaking .badgeTop{
+    background:#e10600;color:#fff!important;padding:3px 10px;border-radius:3px;
+    letter-spacing:.14em;font-weight:900;
+  }
+  #card.style-breaking .pageNum{color:#ffb4b0!important;}
+  #card.style-breaking .pill{
+    background:#e10600!important;color:#fff!important;border-radius:3px;
+    letter-spacing:.12em;font-weight:900;text-transform:uppercase;
+  }
+  #card.style-breaking .frame{
+    border:none;background:transparent;
+    border-left:4px solid #e10600;border-radius:0;padding-left:18px;
+  }
+  #card.style-breaking .titleText{
+    color:#fff;font-weight:900;letter-spacing:-.02em;line-height:1.2;
+  }
+  #card.style-breaking .subText,
+  #card.style-breaking .blk{color:#f0e8e8;opacity:1;}
+  #card.style-breaking .rowBottom{border-top:1px solid #e1060044;padding-top:10px;}
+  #card.style-breaking .handle{color:#ffb4b0!important;}
+  #card.style-breaking .ls-num{background:#e10600!important;border-radius:2px;}
+
+  /* 속보 2: LIVE 방송 */
+  #card.style-breakinglive{
+    background:linear-gradient(165deg,#0b1220 0%,#141a2e 55%,#1a1030 100%)!important;
+    color:#f4f7ff!important;
+  }
+  #card.style-breakinglive .badgeTop{
+    color:#7dffb3!important;letter-spacing:.16em;font-weight:900;
+  }
+  #card.style-breakinglive .badgeTop::before{
+    content:"● ";color:#ff3b5c;
+  }
+  #card.style-breakinglive .pill{
+    background:#ff3b5c!important;color:#fff!important;border-radius:999px;
+    letter-spacing:.1em;font-weight:900;box-shadow:0 0 16px #ff3b5c66;
+  }
+  #card.style-breakinglive .frame{
+    border:1px solid #ffffff22;border-radius:14px;
+    background:rgba(255,255,255,.04);
+  }
+  #card.style-breakinglive .titleText{
+    font-weight:900;letter-spacing:-.02em;
+    text-shadow:0 2px 18px rgba(0,0,0,.45);
+  }
+  #card.style-breakinglive .subText,
+  #card.style-breakinglive .blk{color:#d7def0;opacity:1;}
+  #card.style-breakinglive .handle{color:#9fb0d0!important;}
+  #card.style-breakinglive .ls-num{background:#ff3b5c!important;}
+
+  /* 속보 3: 티커 스트립 */
+  #card.style-breakingticker{
+    background:#f5f5f5!important;
+    color:#111!important;
+    border-top:10px solid #111;
+  }
+  #card.style-breakingticker .rowTop{
+    background:#111;color:#fff;margin:-26px -26px 0;padding:10px 16px 10px;
+    width:calc(100% + 52px);box-sizing:border-box;
+  }
+  #card.style-breakingticker .badgeTop{
+    color:#ffd400!important;font-weight:900;letter-spacing:.18em;
+  }
+  #card.style-breakingticker .pageNum{color:#aaa!important;}
+  #card.style-breakingticker .pill{
+    background:#ffd400!important;color:#111!important;border-radius:0;
+    font-weight:900;letter-spacing:.08em;padding:4px 12px;
+  }
+  #card.style-breakingticker .frame{
+    border:none;border-top:3px solid #111;border-radius:0;background:#fff;
+    margin-top:14px;box-shadow:0 8px 20px #00000014;
+  }
+  #card.style-breakingticker .titleText{
+    font-weight:900;letter-spacing:-.02em;line-height:1.2;
+  }
+  #card.style-breakingticker .subText,
+  #card.style-breakingticker .blk{opacity:1;}
+  #card.style-breakingticker .rowBottom{
+    border-top:2px solid #111;padding-top:10px;margin-top:12px;
+  }
+  #card.style-breakingticker .ls-num{background:#111!important;border-radius:0;}
+
+  /* 화이트페이퍼: 여백 많은 보고서형 */
+  #card.style-whitepaper{
+    background:#faf9f6!important;
+    color:#1c1b19!important;
+  }
+  #card.style-whitepaper .badgeTop{
+    letter-spacing:.14em;font-weight:700;opacity:.7;font-size:11px;
+  }
+  #card.style-whitepaper .pill{
+    background:none!important;color:#1c1b19!important;
+    border:none;border-bottom:1px solid #1c1b19;border-radius:0;
+    padding:0 0 6px;letter-spacing:.08em;font-weight:700;
+  }
+  #card.style-whitepaper .frame{
+    border:none;background:transparent;padding:28px 8px 10px;
+  }
+  #card.style-whitepaper .titleText{
+    font-weight:800;letter-spacing:-.02em;line-height:1.35;
+    margin-bottom:6px;
+  }
+  #card.style-whitepaper .subText,
+  #card.style-whitepaper .blk{
+    opacity:1;line-height:1.7;
+  }
+  #card.style-whitepaper .rowBottom{
+    border-top:1px solid #d9d4c8;padding-top:12px;margin-top:8px;
+  }
+  #card.style-whitepaper .ls-num{
+    background:transparent!important;color:#1c1b19!important;
+    border:1px solid #1c1b19;border-radius:0;
+  }
+  #card.style-whitepaper .ls-item{margin-bottom:12px;}
+
+  /* 기관 브리핑: 상단 기관명 바 + 본문 */
+  #card.style-briefing{
+    background:#f4f6f8!important;
+    color:#15202b!important;
+  }
+  #card.style-briefing .rowTop{
+    background:#1b3a5f;color:#fff;
+    margin:-26px -26px 0;padding:12px 18px;
+    width:calc(100% + 52px);box-sizing:border-box;
+  }
+  #card.style-briefing .badgeTop{
+    color:#fff!important;letter-spacing:.12em;font-weight:800;
+  }
+  #card.style-briefing .pageNum{color:#b8c9dc!important;}
+  #card.style-briefing .pill{
+    background:#1b3a5f!important;color:#fff!important;border-radius:3px;
+    letter-spacing:.06em;font-weight:700;
+  }
+  #card.style-briefing .frame{
+    border:none;background:#fff;border-radius:0;
+    box-shadow:0 2px 0 #1b3a5f22;margin-top:16px;
+    border-left:3px solid #1b3a5f;
+  }
+  #card.style-briefing .titleText{
+    font-weight:900;letter-spacing:-.01em;line-height:1.3;
+  }
+  #card.style-briefing .subText,
+  #card.style-briefing .blk{opacity:1;}
+  #card.style-briefing .rowBottom{
+    border-top:1px solid #c5ced8;padding-top:10px;
+  }
+  #card.style-briefing .ls-num{background:#1b3a5f!important;border-radius:2px;}
+  #card.style-briefing .handle{letter-spacing:.04em;}
+
+  /* 인포시트: 숫자 강조 + 짧은 불릿 중심 */
+  #card.style-infosheet{
+    background:#fff!important;
+    color:#121417!important;
+    border:1px solid #e6e8ec;
+  }
+  #card.style-infosheet .badgeTop{
+    color:#5b6570!important;letter-spacing:.1em;font-weight:700;font-size:11px;
+  }
+  #card.style-infosheet .pill{
+    background:#eef3ff!important;color:#2a4d9b!important;border-radius:6px;
+    font-weight:800;letter-spacing:.04em;
+  }
+  #card.style-infosheet .frame{
+    border:none;background:transparent;padding-top:10px;
+  }
+  #card.style-infosheet .titleText{
+    font-weight:900;letter-spacing:-.02em;line-height:1.2;
+    font-size:1.05em;
+  }
+  #card.style-infosheet .subText{opacity:1;}
+  #card.style-infosheet .st-val{
+    font-size:28px!important;font-weight:900;letter-spacing:-.03em;
+  }
+  #card.style-infosheet .st-label{
+    font-size:11px;font-weight:700;opacity:.75;text-transform:uppercase;letter-spacing:.04em;
+  }
+  #card.style-infosheet .stats{gap:12px;margin-top:6px;}
+  #card.style-infosheet .ls-item{
+    background:#f6f8fb;border-radius:8px;padding:8px 10px;margin-bottom:8px;
+  }
+  #card.style-infosheet .ls-num{
+    background:#2a4d9b!important;border-radius:6px;
+  }
+  #card.style-infosheet .ls-bullet{background:#2a4d9b!important;}
+  #card.style-infosheet .ls-text{font-weight:600;opacity:1;}
+  #card.style-infosheet .rowBottom{border-top:1px dashed #d0d5dd;padding-top:10px;}
 
   #card.style-cover .titleText{font-size:1.7em!important;font-weight:900;letter-spacing:-.03em;line-height:1.12;text-shadow:0 3px 16px rgba(0,0,0,.55);}
   #card.style-cover .pill{background:none!important;color:inherit!important;padding:0;border-radius:0;margin-bottom:14px;position:relative;}
@@ -651,170 +805,6 @@
     transform:rotate(-1deg);
   }
 
-  /* ===== 속보 (BREAKING) 3종 ===== */
-
-  /* 1) 속보 배너형 - 검정 배경 + 크림슨 스트라이프 */
-  #card.style-breaking{
-    background:#141414!important;
-    color:#f5f0ea!important;
-  }
-  #card.style-breaking::before{
-    content:"";
-    position:absolute;
-    top:0;left:0;right:0;
-    height:6px;
-    background:repeating-linear-gradient(-45deg,#e21b1b,#e21b1b 10px,#141414 10px,#141414 20px);
-    z-index:6;
-  }
-  #card.style-breaking .rowTop{margin-top:6px;}
-  #card.style-breaking .badgeTop{
-    display:inline-flex;align-items:center;gap:6px;
-    background:#e21b1b!important;color:#fff!important;
-    padding:4px 10px;border-radius:3px;
-    letter-spacing:.14em;font-weight:900;
-  }
-  #card.style-breaking .badgeTop::before{
-    content:"";width:7px;height:7px;border-radius:50%;background:#fff;
-    box-shadow:0 0 6px #fff;
-  }
-  #card.style-breaking .pageNum{color:#9a9186!important;}
-  #card.style-breaking .pill{
-    background:none!important;color:#ff4747!important;
-    border:1px solid #ff4747;border-radius:3px;
-    letter-spacing:.1em;
-  }
-  #card.style-breaking .frame{
-    border:none;border-left:4px solid #e21b1b;
-    border-radius:0;background:none;padding-left:18px;
-  }
-  #card.style-breaking .titleText{font-weight:900;letter-spacing:-.01em;}
-  #card.style-breaking .subText, #card.style-breaking .blk{opacity:.85;}
-  #card.style-breaking .rowBottom{border-top:1px solid #333;padding-top:10px;}
-  #card.style-breaking .handle{color:#9a9186!important;}
-  #card.style-breaking .arrow{color:#ff4747!important;}
-  #card.style-breaking .ls-num{background:#e21b1b!important;}
-  #card.style-breaking .tl-dot{background:#e21b1b!important;}
-
-  /* 2) 속보 헤드라인형 - 화이트 + 대형 타이틀 + 레드 룰 */
-  #card.style-breakingheadline{
-    background:#fdfaf7!important;
-    color:#1a1414!important;
-  }
-  #card.style-breakingheadline .badgeTop{
-    display:inline-flex;align-items:center;gap:6px;
-    background:#c81616!important;color:#fff!important;
-    padding:5px 11px;border-radius:2px;
-    letter-spacing:.14em;font-weight:900;
-  }
-  #card.style-breakingheadline .badgeTop::before{
-    content:"";width:7px;height:7px;border-radius:50%;background:#fff;
-  }
-  #card.style-breakingheadline .pill{
-    background:none!important;color:#c81616!important;
-    padding:0;border-radius:0;
-    border-bottom:3px solid #c81616;
-  }
-  #card.style-breakingheadline .titleText{
-    font-size:1.15em;font-weight:900;letter-spacing:-.03em;line-height:1.15;
-  }
-  #card.style-breakingheadline .frame{border:none;background:none;padding-top:14px;}
-  #card.style-breakingheadline .subText{border-left:3px solid #c81616;padding-left:12px;opacity:.8;}
-  #card.style-breakingheadline .rowBottom{border-top:2px solid #1a1414;padding-top:10px;}
-  #card.style-breakingheadline .ls-num{background:#c81616!important;}
-  #card.style-breakingheadline .tl-dot{background:#c81616!important;}
-
-  /* 3) 속보 인용형 - 크림슨 그라데이션 + 대형 인용부호 */
-  #card.style-breakingquote{
-    background:linear-gradient(160deg,#7a0f18 0%,#3d0a10 100%)!important;
-    color:#fbeeee!important;
-  }
-  #card.style-breakingquote .badgeTop{
-    background:#fff!important;color:#7a0f18!important;
-    padding:4px 10px;border-radius:3px;font-weight:900;letter-spacing:.12em;
-  }
-  #card.style-breakingquote .pageNum{color:#e8b9b9!important;}
-  #card.style-breakingquote .pill{
-    background:rgba(255,255,255,.12)!important;color:#fff!important;
-    border:1px solid rgba(255,255,255,.35);border-radius:20px;
-  }
-  #card.style-breakingquote .frame{border:none;background:none;}
-  #card.style-breakingquote .titleText{font-weight:800;text-shadow:0 2px 10px rgba(0,0,0,.35);}
-  #card.style-breakingquote .q-mark{color:#fff;opacity:.5;}
-  #card.style-breakingquote .q-text{color:#fff;font-weight:700;}
-  #card.style-breakingquote .q-author{color:#e8b9b9;}
-  #card.style-breakingquote .subText{opacity:.85;}
-  #card.style-breakingquote .rowBottom{border-top:1px solid rgba(255,255,255,.25);padding-top:10px;}
-  #card.style-breakingquote .handle{color:#e8b9b9!important;}
-  #card.style-breakingquote .arrow{color:#fff!important;}
-
-  /* ===== 프리셋 팩 2탄: 인터뷰 / 프로모션 / 통계 리포트 ===== */
-
-  /* 4) 인터뷰형 - 부드러운 크림톤 + 인용 포커스 */
-  #card.style-interview{
-    background:#faf5ec!important;
-    color:#2a2118!important;
-  }
-  #card.style-interview .badgeTop{
-    background:none!important;color:#8a6a3c!important;
-    letter-spacing:.14em;font-weight:800;
-    border-bottom:1px solid #d8c6a3;padding-bottom:5px;
-  }
-  #card.style-interview .pill{
-    background:#8a6a3c!important;color:#fff!important;border-radius:20px;
-  }
-  #card.style-interview .frame{border:none;background:none;padding-top:10px;}
-  #card.style-interview .titleText{font-weight:700;font-style:italic;}
-  #card.style-interview .q-mark{color:#c9a96e;}
-  #card.style-interview .q-text{color:#2a2118;}
-  #card.style-interview .imgBox.avatar{border-color:#d8c6a3;}
-  #card.style-interview .rowBottom{border-top:1px solid #d8c6a3;padding-top:10px;}
-  #card.style-interview .handle{color:#8a6a3c!important;}
-  #card.style-interview .arrow{color:#8a6a3c!important;}
-
-  /* 5) 브랜드 프로모션형 - 비비드 그라데이션 + 리본 배지 */
-  #card.style-promo{
-    background:linear-gradient(135deg,#ff6a3d 0%,#ff3d77 55%,#7c3dff 100%)!important;
-    color:#fff!important;
-  }
-  #card.style-promo .badgeTop{
-    background:#fff!important;color:#ff3d77!important;
-    padding:5px 12px;border-radius:20px;font-weight:900;letter-spacing:.08em;
-  }
-  #card.style-promo .pill{
-    background:rgba(255,255,255,.22)!important;color:#fff!important;
-    border:1px solid rgba(255,255,255,.5);border-radius:20px;
-  }
-  #card.style-promo .frame{border:none;background:none;}
-  #card.style-promo .titleText{font-weight:900;text-shadow:0 3px 14px rgba(0,0,0,.25);}
-  #card.style-promo .subText{opacity:.92;}
-  #card.style-promo .rowBottom{border-top:1px solid rgba(255,255,255,.35);padding-top:10px;}
-  #card.style-promo .handle, #card.style-promo .arrow{color:#fff!important;}
-  #card.style-promo .ls-num{background:#fff!important;color:#ff3d77!important;}
-  #card.style-promo .st-val{color:#fff!important;}
-
-  /* 6) 통계 리포트형 - 그리드 라인 + 쿨톤 데이터 강조 */
-  #card.style-statsreport{
-    background-color:#f6f8fb!important;
-    background-image:linear-gradient(#0b2a4a0d 1px, transparent 1px),linear-gradient(90deg, #0b2a4a0d 1px, transparent 1px);
-    background-size:22px 22px;
-    color:#12233b!important;
-  }
-  #card.style-statsreport .badgeTop{
-    background:#12233b!important;color:#fff!important;
-    padding:4px 10px;border-radius:3px;letter-spacing:.1em;
-  }
-  #card.style-statsreport .pill{
-    background:none!important;color:#2f6fed!important;
-    border:1px solid #2f6fed;border-radius:3px;
-  }
-  #card.style-statsreport .frame{border:none;border-top:2px solid #12233b;border-radius:0;background:none;padding-top:14px;}
-  #card.style-statsreport .titleText{font-weight:800;}
-  #card.style-statsreport .st-val{color:#2f6fed!important;}
-  #card.style-statsreport .ch-fill{background:#2f6fed!important;}
-  #card.style-statsreport .ls-num{background:#2f6fed!important;border-radius:3px;}
-  #card.style-statsreport .tl-dot{background:#2f6fed!important;border-radius:2px;}
-  #card.style-statsreport .rowBottom{border-top:1px solid #d3dae4;padding-top:10px;}
-
   .titleText .t-bold, .subText .t-bold, .bodyFontWrap .t-bold, .ls-text .t-bold{font-weight:900;}
   .titleText .t-accent, .subText .t-accent, .bodyFontWrap .t-accent, .ls-text .t-accent{font-weight:900;}
   .titleText .t-small, .subText .t-small, .bodyFontWrap .t-small, .ls-text .t-small{font-size:.55em;font-weight:500;opacity:.88;margin-left:4px;}
@@ -835,6 +825,60 @@
     font-size:10px;font-weight:500;opacity:.55;letter-spacing:.2px;
     pointer-events:none;
   }
+
+  /* Free shapes */
+  #card .freeShape{
+    position:absolute;z-index:15;cursor:move;user-select:none;
+    border:1px dashed transparent;
+  }
+  #card .freeShape.selected{border-color:var(--accent);}
+  #card .freeShape .ft-resize{
+    position:absolute;right:-5px;bottom:-5px;width:10px;height:10px;
+    background:var(--accent);border-radius:2px;cursor:nwse-resize;display:none;
+  }
+  #card .freeShape.selected .ft-resize{display:block;}
+  #card .freeShape.shape-rect{border-radius:4px;}
+  #card .freeShape.shape-circle{border-radius:50%;}
+  #card .freeShape.shape-line{height:4px!important;border-radius:2px;min-height:4px;}
+  #card .imgBox.secondary{
+    position:absolute;right:16px;bottom:52px;width:34%;height:22%;
+    border-radius:8px;z-index:5;border:2px solid rgba(255,255,255,.55);
+    box-shadow:0 6px 16px rgba(0,0,0,.25);
+  }
+
+  /* Mobile UX */
+  #mobileBar{display:none;gap:6px;align-items:center;}
+  #mobileBar .btn{padding:8px 10px;min-height:40px;}
+  .btn, .alignBtn, .formatBtn, .ddItem, .siteItem{min-height:36px;}
+  @media (max-width:960px){
+    #mobileBar{display:flex;}
+    #left{
+      position:fixed;left:0;top:56px;bottom:0;z-index:80;width:min(280px,82vw);
+      transform:translateX(-105%);transition:transform .2s ease;
+      box-shadow:8px 0 24px #0004;
+    }
+    #left.open{transform:translateX(0);}
+    #right{
+      position:fixed;right:0;top:56px;bottom:0;z-index:80;width:min(320px,88vw);
+      transform:translateX(105%);transition:transform .2s ease;
+      box-shadow:-8px 0 24px #0004;
+    }
+    #right.open{transform:translateX(0);}
+    #stage{padding:16px;}
+    #topbar{padding:0 10px;gap:6px;}
+    #topbar .actions{flex-wrap:wrap;justify-content:flex-end;gap:4px;}
+    #topbar .brand{font-size:13px;}
+    .btn{padding:8px 10px;font-size:12px;}
+    .dropdown.panelDropdown{width:min(300px,92vw);max-height:70vh;}
+  }
+  @media (max-width:640px){
+    #undoRedoFloat{right:10px;bottom:10px;}
+    #card{max-width:calc(100vw - 32px);}
+  }
+  /* a11y focus */
+  button:focus-visible, select:focus-visible, input:focus-visible, textarea:focus-visible{
+    outline:2px solid var(--accent);outline-offset:2px;
+  }
 </style>
 
 
@@ -844,6 +888,10 @@
 <div id="app">
   <div id="topbar">
     <div class="brand"><span class="dot"></span>Card Studio</div>
+    <div id="mobileBar">
+      <button type="button" class="btn ghost" id="mobileSlidesBtn" aria-label="슬라이드 목록">슬라이드</button>
+      <button type="button" class="btn ghost" id="mobilePanelBtn" aria-label="편집 패널">패널</button>
+    </div>
     <div class="actions">
       <div class="menuWrap" id="cardMenuWrap">
         <button class="btn ghost" id="cardMenuBtn">카드 ▾</button>
@@ -871,12 +919,6 @@
           </div>
           <div id="styleMenu">
             <div class="ddItem" data-style="none">기본 (스타일 없음)</div>
-            <div class="ddItem" data-style="breaking">속보 (브레이킹)</div>
-            <div class="ddItem" data-style="breakingheadline">속보 헤드라인</div>
-            <div class="ddItem" data-style="breakingquote">속보 인용문</div>
-            <div class="ddItem" data-style="interview">인터뷰형</div>
-            <div class="ddItem" data-style="promo">브랜드 프로모션형</div>
-            <div class="ddItem" data-style="statsreport">통계 리포트형</div>
             <div class="ddItem" data-style="insta">인스타 카드뉴스</div>
             <div class="ddItem" data-style="grid">모눈노트</div>
             <div class="ddItem" data-style="terminal">터미널</div>
@@ -891,6 +933,12 @@
             <div class="ddItem" data-style="certificate">증명서</div>
             <div class="ddItem" data-style="magazine">매거진</div>
             <div class="ddItem" data-style="alert">경보배너</div>
+            <div class="ddItem" data-style="breaking">속보 · 레드</div>
+            <div class="ddItem" data-style="breakinglive">속보 · LIVE</div>
+            <div class="ddItem" data-style="breakingticker">속보 · 티커</div>
+            <div class="ddItem" data-style="whitepaper">화이트페이퍼</div>
+            <div class="ddItem" data-style="briefing">기관 브리핑</div>
+            <div class="ddItem" data-style="infosheet">인포시트</div>
             <div class="ddItem" data-style="cover">커버 (인물 발언)</div>
             <div class="ddItem" data-style="official">공문서</div>
             <div class="ddItem" data-style="stickyboard">포스트잇 보드</div>
@@ -957,15 +1005,6 @@
               <button type="button" class="alignBtn" data-align="center">가운데</button>
               <button type="button" class="alignBtn" data-align="right">오른쪽</button>
             </div>
-          </div>
-          <div class="field">
-            <label>사진 위 글씨 가독성 처리</label>
-            <select id="textLegibilitySelect">
-              <option value="panel">배경 패널 (추천 · 반투명 박스)</option>
-              <option value="shadow">그림자</option>
-              <option value="none">없음</option>
-            </select>
-            <div class="hint">풀 이미지·자유 레이아웃에서만 적용됩니다. 배경 패널은 글씨 뒤에 반투명 박스를 깔아 어떤 사진에도 안정적으로 가독성을 확보합니다.</div>
           </div>
           <div class="field">
             <label>부분 서식 (제목에 적용)</label>
@@ -1102,7 +1141,7 @@
           </div>
           <div class="field">
             <label>오버레이 어둡기 (풀 이미지/상단·하단 사진용)</label>
-            <div class="slider"><input type="range" id="imageOverlay" min="0" max="85" value="55"><span class="val" id="imageOverlayVal">55</span></div>
+            <div class="slider"><input type="range" id="imageOverlay" min="0" max="85" value="0"><span class="val" id="imageOverlayVal">0</span></div>
           </div>
           <div class="field">
             <label>스크림 방향</label>
@@ -1119,11 +1158,7 @@
           </div>
           <div class="field">
             <button type="button" class="btn small full" id="coverPresetBtn">커버 프리셋 적용</button>
-            <div class="hint">풀 이미지 + 커버 스타일 + 좌측 스크림 + 흰색 텍스트로 한 번에 맞춥니다.</div>
-          </div>
-          <div class="field">
-            <button type="button" class="btn ghost small full" id="lightTextBtn">사진 위 텍스트 밝게 (흰색으로)</button>
-            <div class="hint">사진 위에 글씨가 안 보일 때 제목·본문·핸들 색을 흰색으로 한 번에 바꿉니다.</div>
+            <div class="hint">풀 이미지 + 커버 스타일 + 좌측 스크림으로 한 번에 맞춥니다.</div>
           </div>
           <div class="field">
             <label>비네팅</label>
@@ -1137,11 +1172,12 @@
           </div>
           <div class="field">
             <label>비네팅 강도</label>
-            <div class="slider"><input type="range" id="vignetteStrength" min="0" max="100" value="18"><span class="val" id="vignetteStrengthVal">18</span></div>
+            <div class="slider"><input type="range" id="vignetteStrength" min="0" max="100" value="0"><span class="val" id="vignetteStrengthVal">0</span></div>
           </div>
           <div class="field">
             <label>글라스 효과</label>
-            <div class="slider"><input type="range" id="glassStrength" min="0" max="100" value="18"><span class="val" id="glassStrengthVal">18</span></div>
+            <div class="slider"><input type="range" id="glassStrength" min="0" max="100" value="0"><span class="val" id="glassStrengthVal">0</span></div>
+
           </div>
           <div class="field">
             <label>글라스 흐림</label>
@@ -1163,6 +1199,37 @@
               <label>확대/축소</label>
               <div class="slider"><input type="range" id="imgScale" min="50" max="200" value="100"><span class="val" id="imgScaleVal">100</span></div>
             </div>
+            <div class="field">
+              <label>크롭 위 (%)</label>
+              <div class="slider"><input type="range" id="imgCropT" min="0" max="40" value="0"><span class="val" id="imgCropTVal">0</span></div>
+            </div>
+            <div class="field">
+              <label>크롭 아래 (%)</label>
+              <div class="slider"><input type="range" id="imgCropB" min="0" max="40" value="0"><span class="val" id="imgCropBVal">0</span></div>
+            </div>
+            <div class="field">
+              <label>크롭 왼쪽 (%)</label>
+              <div class="slider"><input type="range" id="imgCropL" min="0" max="40" value="0"><span class="val" id="imgCropLVal">0</span></div>
+            </div>
+            <div class="field">
+              <label>크롭 오른쪽 (%)</label>
+              <div class="slider"><input type="range" id="imgCropR" min="0" max="40" value="0"><span class="val" id="imgCropRVal">0</span></div>
+            </div>
+            <div class="hint">크롭은 사진 가장자리를 잘라 보이는 영역만 남깁니다.</div>
+          </div>
+
+          <!-- Second image -->
+          <div class="field" style="border-top:1px solid var(--chrome-line);padding-top:12px;margin-top:4px;">
+            <label>추가 사진 (2번째)</label>
+            <div class="imgPreviewRow">
+              <div class="imgThumb" id="img2Thumb"></div>
+              <div style="display:flex;flex-direction:column;gap:6px;flex:1;">
+                <label class="btn small full" id="upload2Btn" style="text-align:center;">추가 사진 업로드</label>
+                <input type="file" id="image2Upload" accept="image/*" style="display:none;">
+                <button class="btn ghost small full" id="image2Remove">추가 사진 삭제</button>
+              </div>
+            </div>
+            <div class="hint">있으면 카드 우측 하단에 작은 두 번째 사진으로 표시됩니다.</div>
           </div>
 
           <!-- Logo / Watermark -->
@@ -1224,9 +1291,10 @@
           <div class="ddItem" data-block="quote"><span class="ic">"</span>인용구</div>
           <div class="ddItem" data-block="sources"><span class="ic">🔗</span>출처 링크 모음</div>
           <div class="ddItem" data-block="compare"><span class="ic">⇄</span>원문·번역 대조</div>
-          <div class="ddItem" data-block="qna"><span class="ic">?</span>Q&A (질문-답변)</div>
-          <div class="ddItem" data-block="places"><span class="ic">📍</span>지도 핀·장소 카드</div>
           <div class="ddItem" data-action="addFreeText"><span class="ic">＋</span>자유 텍스트 박스 추가</div>
+          <div class="ddItem" data-action="addShapeRect"><span class="ic">▢</span>도형 · 사각형</div>
+          <div class="ddItem" data-action="addShapeCircle"><span class="ic">◎</span>도형 · 원</div>
+          <div class="ddItem" data-action="addShapeLine"><span class="ic">─</span>도형 · 선</div>
         </div>
       </div>
 
@@ -1257,15 +1325,6 @@
             <div class="slider"><input type="range" id="arrowOffsetX" min="-80" max="80" value="0"><span class="val" id="arrowOffsetXVal">0</span></div>
           </div>
           <div class="hint">카드에서 화살표를 드래그해 위치를 옮길 수도 있습니다.</div>
-
-          <div style="border-top:1px solid var(--chrome-line);margin:12px 0 10px;"></div>
-
-          <div class="field">
-            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
-              <input type="checkbox" id="showIndicator" style="width:auto;"> 카드뉴스 인디케이터(점) 표시
-            </label>
-            <div class="hint">인스타 캐러셀처럼 하단에 슬라이드 개수만큼 점을 표시하고, 현재 카드 위치를 강조합니다.</div>
-          </div>
 
           <div style="border-top:1px solid var(--chrome-line);margin:12px 0 10px;"></div>
 
@@ -1345,16 +1404,6 @@
         </div>
       </div>
 
-      <div class="menuWrap" id="projectMenuWrap">
-        <button class="btn ghost" id="projectMenuBtn">프로젝트 ▾</button>
-        <div class="dropdown" id="projectMenu">
-          <div class="ddItem" id="projectSaveBtn"><span class="ic">💾</span>프로젝트 저장 (.json)</div>
-          <div class="ddItem" id="projectLoadBtn"><span class="ic">📂</span>프로젝트 불러오기</div>
-          <input type="file" id="projectLoadInput" accept="application/json" style="display:none;">
-          <div class="ddItem" id="applyDesignAllBtn"><span class="ic">⇅</span>현재 디자인 모든 카드에 적용</div>
-        </div>
-      </div>
-
       <button class="btn ghost" id="previewAllBtn">전체 미리보기</button>
       <button class="btn ghost" id="exportOne">현재 카드 저장</button>
       <button class="btn primary" id="exportAll">전체 저장</button>
@@ -1425,8 +1474,6 @@
             <option value="quote">인용구</option>
             <option value="sources">출처 링크 모음</option>
             <option value="compare">원문·번역 대조</option>
-            <option value="qna">Q&A (질문-답변)</option>
-            <option value="places">지도 핀·장소 카드</option>
           </select>
         </div>
         <div class="field" id="sourceLayoutField" style="display:none;">
@@ -1510,7 +1557,7 @@
 
 <script>
 const templateLabels = {text:'TEXT', full:'FULL', split:'SPLIT', bottom:'BOTTOM', inset:'INSET', side:'SIDE', frame:'FRAME', cardincard:'NEST', mapchart:'MAP', headline:'HEAD', profile:'PROF', free:'FREE'};
-const styleLabels = {none:'', breaking:'속보', breakingheadline:'속보헤드', breakingquote:'속보인용', interview:'인터뷰', promo:'프로모', statsreport:'통계', insta:'INSTA', grid:'GRID', terminal:'TERM', sticky:'STICKY', receipt:'RECEIPT', timeline:'TIMELINE', newspaper:'NEWS', postcard:'CARD', folder:'FOLDER', blueprint:'BLUE', pastel:'PASTEL', certificate:'CERT', magazine:'MAG', alert:'ALERT', cover:'COVER', official:'공문서', stickyboard:'포스트잇', stickyboarddark:'포스트잇DARK'};
+const styleLabels = {none:'', insta:'INSTA', grid:'GRID', terminal:'TERM', sticky:'STICKY', receipt:'RECEIPT', timeline:'TIMELINE', newspaper:'NEWS', postcard:'CARD', folder:'FOLDER', blueprint:'BLUE', pastel:'PASTEL', certificate:'CERT', magazine:'MAG', alert:'ALERT', breaking:'속보', breakinglive:'LIVE', breakingticker:'티커', whitepaper:'WP', briefing:'브리핑', infosheet:'인포', cover:'COVER', official:'공문서', stickyboard:'포스트잇', stickyboarddark:'포스트잇DARK'};
 
 const OFFICIAL_SITES = [
   {cat:'미국 정부 · 백악관', items:[
@@ -1606,9 +1653,7 @@ const sampleData = {
   chart: '1월 | 30\n2월 | 55\n3월 | 80',
   quote: '이 자리에 인용할 문장을 입력하세요.\n작성자 이름',
   sources: '**미 국무부** 여행경보 | travel.state.gov 공식 안내 | https://travel.state.gov | 공식\n스페인 정부 보도자료 | 현장 병력·경찰 배치 관련 | https:// | 공식\n주요 외신 보도 | 경보 상향 배경 설명 | https:// | 언론',
-  compare: 'This is the original sentence to translate.\n===\n**번역**된 문장이 여기 들어갑니다.',
-  qna: 'Q. 첫 번째 질문을 입력하세요 | A. 답변을 입력하세요\nQ. 두 번째 질문 | A. 두 번째 답변',
-  places: '광화문광장 | 서울 종로구 · 집회 예정지\n용산 대통령실 | 서울 용산구 · 통제 구간 발생'
+  compare: 'This is the original sentence to translate.\n===\n**번역**된 문장이 여기 들어갑니다.'
 };
 
 const blockLabels = {
@@ -1620,9 +1665,7 @@ const blockLabels = {
   chart: {label:'그래프 항목', hint:'"라벨 | 숫자값" 형식으로 한 줄에 하나씩 입력하세요.', ph:'1월 | 30'},
   quote: {label:'인용구', hint:'첫 줄은 인용 문장, 둘째 줄은 작성자(선택)입니다.', ph:'인용할 문장\n작성자 이름'},
   sources: {label:'출처 항목', hint:'"제목 | 설명 | URL | 유형" 형식으로 한 줄에 하나씩. 제목엔 **강조** 가능. 유형: 공식/언론/통계/법령/기타', ph:'**미 국무부** 여행경보 | travel.state.gov 공식 안내 | https://travel.state.gov | 공식'},
-  compare: {label:'원문 · 번역', hint:'첫 부분은 원문, "===" 구분선 아래는 번역문입니다. **강조** 가능.', ph:'This is the original text.\n===\n**번역**된 문장'},
-  qna: {label:'Q&A 항목', hint:'"질문 | 답변" 형식으로 한 줄에 하나씩. **강조** 가능.', ph:'Q. 질문을 입력하세요 | A. 답변을 입력하세요'},
-  places: {label:'장소 항목', hint:'"장소명 | 설명" 형식으로 한 줄에 하나씩. 지도 핀 마커와 함께 표시됩니다.', ph:'광화문광장 | 서울 종로구 · 집회 예정지'}
+  compare: {label:'원문 · 번역', hint:'첫 부분은 원문, "===" 구분선 아래는 번역문입니다. **강조** 가능.', ph:'This is the original text.\n===\n**번역**된 문장'}
 };
 
 const defaults = () => ({
@@ -1632,9 +1675,13 @@ const defaults = () => ({
   bg:'#f4efe4', text:'#1a1a1a', bodyText:'#1a1a1a', pillBg:'#181818', pillColor:'#ffffff',
   mk:'#f6b8c4', accent:'#7c5cff', titleSize:27, subSize:14,
   titleLetter:0, titleLine:135, bodyLetter:0, bodyLine:160,
-  image:null, imageFit:'cover', imagePos:'center', imageFilter:'none', imageOverlay:55,
+  image:null, imageFit:'cover', imagePos:'center', imageFilter:'none', imageOverlay:0,
   imgOffsetX:0, imgOffsetY:0, imgScale:100,
-  vignetteMode:'soft', vignetteStrength:18, glassStrength:18, glassBlur:8,
+  imgCropT:0, imgCropB:0, imgCropL:0, imgCropR:0,
+  image2:null,
+  freeShapes:[],
+  selectedShapeId:null,
+  vignetteMode:'none', vignetteStrength:0, glassStrength:0, glassBlur:8,
   logo:null, logoPos:'br', logoSize:16, logoOpacity:70,
   sizePreset:'4:5', cardWidth:400, cardHeight:500,
   font:'pretendard', titleFont:'', bodyFont:'', align:'left',
@@ -1654,9 +1701,7 @@ const defaults = () => ({
   brandSub: 'DAILY',
   showThreads: false,
   showInsta: false,
-  showX: false,
-  showIndicator: false,
-  textLegibility: 'panel'
+  showX: false
 
 });
 
@@ -1734,18 +1779,29 @@ function vignetteCss(mode, strength){
   return 'radial-gradient(circle at center, rgba(0,0,0,0) 38%, rgba(0,0,0,' + (0.48 + alpha) + ') 100%)';
 }
 
-function imageBox(s, variantClass){
-  if(!s.image) return '';
+function imageBox(s, variantClass, srcOverride){
+  const src = srcOverride || s.image;
+  if(!src) return '';
   const ox = Number(s.imgOffsetX) || 0;
   const oy = Number(s.imgOffsetY) || 0;
   const sc = (Number(s.imgScale) || 100) / 100;
   const fit = (s.imageFit === 'contain') ? 'contain' : 'cover';
   const posX = 50 + ox;
   const posY = (s.imagePos === 'top' ? 0 : s.imagePos === 'bottom' ? 100 : 50) + oy;
+  const ct = Number(s.imgCropT) || 0;
+  const cb = Number(s.imgCropB) || 0;
+  const cl = Number(s.imgCropL) || 0;
+  const cr = Number(s.imgCropR) || 0;
+  const clip = (ct || cb || cl || cr) ? ('clip-path:inset(' + ct + '% ' + cr + '% ' + cb + '% ' + cl + '%);') : '';
   // cover/contain 유지 + 확대는 transform:scale 로 분리 (background-size % 는 cover와 동작이 다름)
-  const style = "background-image:url('" + s.image + "');background-size:" + fit + ";background-position:" + posX + "% " + posY + "%;background-repeat:no-repeat;filter:" + filterCss(s.imageFilter) + ";transform:scale(" + sc + ");transform-origin:center center;";
+  const style = "background-image:url('" + src + "');background-size:" + fit + ";background-position:" + posX + "% " + posY + "%;background-repeat:no-repeat;filter:" + filterCss(s.imageFilter) + ";transform:scale(" + sc + ");transform-origin:center center;" + clip;
   const duo = s.imageFilter === 'duotone' ? '<div class="duo" style="background:' + s.accent + ';opacity:.8;"></div>' : '';
   return '<div class="imgBox ' + variantClass + '"><div class="layer" style="' + style + '"></div>' + duo + '</div>';
+}
+
+function image2Html(s){
+  if(!s.image2) return '';
+  return imageBox(s, 'secondary', s.image2);
 }
 
 
@@ -1767,6 +1823,26 @@ function freeTextsHtml(s){
     const shadow = ft.shadow ? 'text-shadow:0 1px 4px rgba(0,0,0,.35);' : '';
     return '<div class="freeText' + sel + '" data-ftid="' + ft.id + '" style="left:' + ft.x + 'px;top:' + ft.y + 'px;width:' + (ft.w || 160) + 'px;font-size:' + (ft.fontSize || 18) + 'px;color:' + (ft.color || s.text) + ';text-align:' + (ft.align || 'left') + ';font-weight:' + fw + ';font-style:' + fs + ';text-decoration:' + td + ';' + shadow + '">' +
       escapeHtml(ft.text || '텍스트').replace(/\n/g,'<br>') +
+      '<div class="ft-resize" data-resize="1"></div></div>';
+  }).join('');
+}
+
+function freeShapesHtml(s){
+  if(!s.freeShapes || !s.freeShapes.length) return '';
+  return s.freeShapes.map(sh => {
+    const sel = (s.selectedShapeId === sh.id) ? ' selected' : '';
+    const op = (sh.opacity != null ? Number(sh.opacity) : 85) / 100;
+    const col = sh.color || s.accent || '#7c5cff';
+    const type = sh.type || 'rect';
+    let extra = '';
+    if(type === 'line'){
+      extra = 'height:4px;min-height:4px;background:' + col + ';opacity:' + op + ';';
+    } else {
+      extra = 'background:' + col + ';opacity:' + op + ';';
+      if(type === 'circle') extra += 'border-radius:50%;';
+      else extra += 'border-radius:' + (sh.radius != null ? sh.radius : 4) + 'px;';
+    }
+    return '<div class="freeShape shape-' + type + sel + '" data-sid="' + sh.id + '" style="left:' + sh.x + 'px;top:' + sh.y + 'px;width:' + (sh.w || 80) + 'px;height:' + (type === 'line' ? 4 : (sh.h || 80)) + 'px;' + extra + '">' +
       '<div class="ft-resize" data-resize="1"></div></div>';
   }).join('');
 }
@@ -1811,13 +1887,9 @@ function resolveFontId(s, which){
   return s.font || 'pretendard';
 }
 
-function textOverPhoto(s){
-  return !!s.image && (s.template === 'full' || s.template === 'free');
-}
-
 function titleHtml(s){
-  const overPhoto = textOverPhoto(s);
-  const textShadow = (overPhoto && s.textLegibility === 'shadow') ? 'text-shadow:0 1px 5px rgba(0,0,0,.4);' : '';
+  const imageMode = !!s.image;
+  const textShadow = imageMode ? 'text-shadow:0 2px 12px rgba(0,0,0,.42);' : '';
   let fmt = '';
   if(s.titleFormat){
     if(s.titleFormat.bold) fmt += 'font-weight:900;';
@@ -1861,6 +1933,8 @@ function photoCreditHtml(s){
 
 function scrimOverlayCss(dir, strength){
   const base = Math.max(0, Math.min(0.85, (Number(strength) || 0) / 100));
+  // 오버레이 0이면 절대 어둡게 덮지 않음
+  if(base <= 0) return 'transparent';
   if(dir === 'left'){
     return 'linear-gradient(100deg, rgba(0,0,0,' + (0.55 + base * 0.4) + ') 0%, rgba(0,0,0,' + (0.25 + base * 0.3) + ') 38%, rgba(0,0,0,' + (base * 0.15) + ') 62%, rgba(0,0,0,0) 82%), linear-gradient(to top, rgba(0,0,0,' + (0.55 + base * 0.3) + ') 0%, rgba(0,0,0,0) 42%)';
   }
@@ -1881,19 +1955,17 @@ function bodyColorCss(s){
 }
 
 function subTextHtml(s){
-  const overPhoto = textOverPhoto(s);
   const ff = 'font-family:' + fontStack(resolveFontId(s, 'body')) + ';';
   const typo = bodyTypoCss(s);
   const col = bodyColorCss(s);
-  const shadow = (overPhoto && s.textLegibility === 'shadow') ? 'text-shadow:0 1px 4px rgba(0,0,0,.38);' : '';
-  return s.sub && s.sub.trim() ? '<div class="subText" style="font-size:' + s.subSize + 'px;' + ff + typo + col + shadow + '">' + parseTitleSyntax(s.sub, s.accent) + '</div>' : '';
+  return s.sub && s.sub.trim() ? '<div class="subText" style="font-size:' + s.subSize + 'px;' + ff + typo + col + (s.image ? 'text-shadow:0 2px 8px rgba(0,0,0,.4);' : '') + '">' + parseTitleSyntax(s.sub, s.accent) + '</div>' : '';
 }
 function rowTopHtml(s, pageIdx, total, z){
-  const photoChip = textOverPhoto(s) ? ' photoChip' : '';
+  const photoChip = s.image ? ' photoChip' : '';
   return '<div class="rowTop ' + (z?'z2':'') + '"><div class="badgeTop' + photoChip + '">' + escapeHtml(s.badgeTop) + '</div><div class="pageNum' + photoChip + '">' + (pageIdx+1) + ' / ' + total + '</div></div>';
 }
 function rowBottomHtml(s, z){
-  const photoChip = textOverPhoto(s) ? ' photoChip' : '';
+  const photoChip = s.image ? ' photoChip' : '';
   const showArrow = s.showArrow !== false;
   const arrowText = (s.arrowText && s.arrowText.trim()) ? s.arrowText.trim() : '>>>>';
   const align = s.arrowAlign || 'right';
@@ -2049,46 +2121,13 @@ function renderCompare(s){
   return '<div class="blk compare">' + origHtml + transHtml + '</div>';
 }
 
-function renderQnA(s){
-  const lines = parseLines(s.blockData);
-  if(!lines.length) return '';
-  const items = lines.map(l => {
-    const parts = l.split('|');
-    const q = (parts[0]||'').trim().replace(/^Q\.?\s*/i, '');
-    const a = (parts.slice(1).join('|')||'').trim().replace(/^A\.?\s*/i, '');
-    return '<div class="qna-item">' +
-      '<div class="qna-q"><span class="qna-tag" style="background:' + s.accent + ';">Q</span>' + parseTitleSyntax(q, s.accent).replace(/<br>/g,' ') + '</div>' +
-      (a ? '<div class="qna-a"><span class="qna-tag qna-tag-a">A</span>' + parseTitleSyntax(a, s.accent).replace(/<br>/g,' ') + '</div>' : '') +
-    '</div>';
-  }).join('');
-  return '<div class="blk qna">' + items + '</div>';
-}
-
-function renderPlaces(s){
-  const lines = parseLines(s.blockData);
-  if(!lines.length) return '';
-  const items = lines.map(l => {
-    const parts = l.split('|');
-    const name = (parts[0]||'').trim();
-    const desc = (parts.slice(1).join('|')||'').trim();
-    return '<div class="place-item">' +
-      '<div class="place-pin" style="background:' + s.accent + ';"></div>' +
-      '<div class="place-body"><div class="place-name">' + parseTitleSyntax(name, s.accent).replace(/<br>/g,' ') + '</div>' +
-      (desc ? '<div class="place-desc">' + escapeHtml(desc) + '</div>' : '') + '</div>' +
-    '</div>';
-  }).join('');
-  return '<div class="blk places">' + items + '</div>';
-}
-
 function subFallbackHtml(s){
   return subTextHtml(s);
 }
 function blockHtml(s){
-  const overPhoto = textOverPhoto(s);
   const ff = 'font-family:' + fontStack(resolveFontId(s, 'body')) + ';';
   const typo = bodyTypoCss(s);
   const col = bodyColorCss(s);
-  const shadow = (overPhoto && s.textLegibility === 'shadow') ? 'text-shadow:0 1px 4px rgba(0,0,0,.35);' : '';
   let html = '';
   switch(s.contentBlock){
     case 'timeline': html = renderTimeline(s); break;
@@ -2099,16 +2138,14 @@ function blockHtml(s){
     case 'quote': html = renderQuote(s); break;
     case 'sources': html = renderSourceList(s); break;
     case 'compare': html = renderCompare(s); break;
-    case 'qna': html = renderQnA(s); break;
-    case 'places': html = renderPlaces(s); break;
     default: html = s.blockData && s.blockData.trim()
-      ? '<div class="subText" style="font-size:' + s.subSize + 'px;' + ff + typo + col + shadow + '">' + parseTitleSyntax(s.blockData, s.accent) + '</div>'
+      ? '<div class="subText" style="font-size:' + s.subSize + 'px;' + ff + typo + col + '">' + parseTitleSyntax(s.blockData, s.accent) + '</div>'
       : subFallbackHtml(s);
   }
   if(!html) return '';
   // 본문 글꼴·자간·행간·색을 블록 전체에 적용
   if(s.contentBlock && s.contentBlock !== 'none'){
-    return '<div class="bodyFontWrap" style="' + ff + typo + col + shadow + '">' + html + '</div>';
+    return '<div class="bodyFontWrap" style="' + ff + typo + col + '">' + html + '</div>';
   }
   return html;
 }
@@ -2117,16 +2154,7 @@ function styleClass(s){
   return (s.style && s.style !== 'none') ? ' style-' + s.style : '';
 }
 
-function indicatorHtml(pageIdx, total){
-  if(total <= 1) return '';
-  let dots = '';
-  for(let i=0;i<total;i++){
-    dots += '<div class="dot' + (i===pageIdx ? ' on' : '') + '"></div>';
-  }
-  return '<div class="indicatorDots">' + dots + '</div>';
-}
-
-function cardMarkupInner(s, pageIdx, total){
+function cardMarkup(s, pageIdx, total){
   const font = fontStack(s.font);
   const align = s.align || 'left';
   const size = getCardSize(s);
@@ -2138,8 +2166,7 @@ function cardMarkupInner(s, pageIdx, total){
   const glassBlur = Number(s.glassBlur) || 0;
   const glassMarkup = s.image && glassStrength > 0 ? '<div class="glassLayer" style="background:rgba(255,255,255,' + (Math.min(0.9, glassStrength / 100 * 0.7 + 0.08)) + ');backdrop-filter:blur(' + glassBlur + 'px);-webkit-backdrop-filter:blur(' + glassBlur + 'px);"></div>' : '';
   const logo = logoHtml(s);
-  const freeT = freeTextsHtml(s);
-  const panelOn = textOverPhoto(s) && (s.textLegibility || 'panel') === 'panel';
+  const freeT = freeTextsHtml(s) + freeShapesHtml(s) + image2Html(s);
 
   if(isFree){
     return '<div ' + cls + ' style="' + base + 'position:relative;">' +
@@ -2147,7 +2174,7 @@ function cardMarkupInner(s, pageIdx, total){
       logo + freeT + photoCreditHtml(s) +
       '<div class="z2" style="position:relative;padding:26px;height:100%;box-sizing:border-box;display:flex;flex-direction:column;">' +
         rowTopHtml(s, pageIdx, total, false) +
-        '<div class="' + (panelOn ? 'textPanel' : '') + '" style="flex:1;display:flex;flex-direction:column;justify-content:center;text-align:' + align + ';">' +
+        '<div style="flex:1;display:flex;flex-direction:column;justify-content:center;text-align:' + align + ';">' +
           pillHtml(s) + titleHtml(s) + blockHtml(s) + brandHtml(s) +
         '</div>' +
         rowBottomHtml(s, false) +
@@ -2165,7 +2192,7 @@ function cardMarkupInner(s, pageIdx, total){
       logo + freeT +
       photoCreditHtml(s) +
       rowTopHtml(s, pageIdx, total, true) +
-      '<div class="z2' + (panelOn ? ' textPanel' : '') + '" style="margin-top:auto;padding-top:' + (panelOn ? '0' : '20px') + ';text-align:' + align + ';">' + pillHtml(s) + titleHtml(s) + blockHtml(s) + brandHtml(s) + '</div>' +
+      '<div class="z2" style="margin-top:auto;padding-top:20px;text-align:' + align + ';">' + pillHtml(s) + titleHtml(s) + blockHtml(s) + brandHtml(s) + '</div>' +
       rowBottomHtml(s, true) +
     '</div>';
   }
@@ -2280,14 +2307,6 @@ function cardMarkupInner(s, pageIdx, total){
   '</div>';
 }
 
-function cardMarkup(s, pageIdx, total){
-  let markup = cardMarkupInner(s, pageIdx, total);
-  if(s.showIndicator){
-    markup = markup.slice(0, -6) + indicatorHtml(pageIdx, total) + '</div>';
-  }
-  return markup;
-}
-
 
 
 const fullCss = document.querySelector('style').textContent;
@@ -2306,8 +2325,6 @@ function renderList(){
   slides.forEach((s, i) => {
     const div = document.createElement('div');
     div.className = 'thumb' + (i === active ? ' active' : '');
-    div.draggable = true;
-    div.dataset.idx = i;
     const iframe = document.createElement('iframe');
     iframe.srcdoc = thumbSrcDoc(s, i);
     div.appendChild(iframe);
@@ -2324,25 +2341,6 @@ function renderList(){
     del.onclick = (e) => { e.stopPropagation(); deleteSlide(i); };
     div.appendChild(del);
     div.onclick = () => { active = i; syncForm(); renderMainCard(); renderList(); };
-    div.addEventListener('dragstart', e => {
-      dragSrcIndex = i;
-      div.style.opacity = '0.4';
-      e.dataTransfer.effectAllowed = 'move';
-    });
-    div.addEventListener('dragend', () => { div.style.opacity = '1'; });
-    div.addEventListener('dragover', e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; });
-    div.addEventListener('drop', e => {
-      e.preventDefault();
-      const targetIdx = Number(div.dataset.idx);
-      if(dragSrcIndex === null || dragSrcIndex === targetIdx) return;
-      const moved = slides.splice(dragSrcIndex, 1)[0];
-      slides.splice(targetIdx, 0, moved);
-      if(active === dragSrcIndex) active = targetIdx;
-      else if(dragSrcIndex < active && targetIdx >= active) active--;
-      else if(dragSrcIndex > active && targetIdx <= active) active++;
-      dragSrcIndex = null;
-      syncForm(); renderMainCard(); renderList();
-    });
     list.appendChild(div);
   });
   $('slideCount').textContent = slides.length;
@@ -2422,8 +2420,6 @@ function syncForm(){
   if($('showThreads')) $('showThreads').checked = !!s.showThreads;
   if($('showInsta')) $('showInsta').checked = !!s.showInsta;
   if($('showX')) $('showX').checked = !!s.showX;
-  if($('textLegibilitySelect')) $('textLegibilitySelect').value = s.textLegibility || 'panel';
-  if($('showIndicator')) $('showIndicator').checked = !!s.showIndicator;
   $('vignetteMode').value = s.vignetteMode || 'soft';
   $('vignetteStrength').value = s.vignetteStrength || 18; $('vignetteStrengthVal').textContent = s.vignetteStrength || 18;
   $('glassStrength').value = s.glassStrength || 18; $('glassStrengthVal').textContent = s.glassStrength || 18;
@@ -2432,6 +2428,11 @@ function syncForm(){
   $('imgOffsetX').value = s.imgOffsetX || 0; $('imgOffsetXVal').textContent = s.imgOffsetX || 0;
   $('imgOffsetY').value = s.imgOffsetY || 0; $('imgOffsetYVal').textContent = s.imgOffsetY || 0;
   $('imgScale').value = s.imgScale || 100; $('imgScaleVal').textContent = s.imgScale || 100;
+  if($('imgCropT')){ $('imgCropT').value = s.imgCropT || 0; $('imgCropTVal').textContent = s.imgCropT || 0; }
+  if($('imgCropB')){ $('imgCropB').value = s.imgCropB || 0; $('imgCropBVal').textContent = s.imgCropB || 0; }
+  if($('imgCropL')){ $('imgCropL').value = s.imgCropL || 0; $('imgCropLVal').textContent = s.imgCropL || 0; }
+  if($('imgCropR')){ $('imgCropR').value = s.imgCropR || 0; $('imgCropRVal').textContent = s.imgCropR || 0; }
+  if($('img2Thumb')) $('img2Thumb').style.backgroundImage = s.image2 ? "url('" + s.image2 + "')" : 'none';
   // logo
   $('logoPos').value = s.logoPos || 'br';
   $('logoSize').value = s.logoSize || 16; $('logoSizeVal').textContent = s.logoSize || 16;
@@ -2492,30 +2493,6 @@ $('arrowOffsetX').addEventListener('input', e => {
   $('arrowOffsetXVal').textContent = e.target.value;
   renderMainCard(); renderList();
 });
-
-if($('textLegibilitySelect')){
-  $('textLegibilitySelect').addEventListener('change', e => {
-    slides[active].textLegibility = e.target.value;
-    renderMainCard(); renderList();
-  });
-}
-
-if($('showIndicator')){
-  $('showIndicator').addEventListener('change', e => {
-    slides[active].showIndicator = e.target.checked;
-    renderMainCard(); renderList();
-  });
-}
-
-if($('lightTextBtn')){
-  $('lightTextBtn').addEventListener('click', () => {
-    const s = slides[active];
-    s.text = '#ffffff';
-    s.bodyText = '#ffffff';
-    syncForm();
-    renderMainCard(); renderList();
-  });
-}
 
 // Drag arrow on the live card
 (function setupArrowDrag(){
@@ -2719,8 +2696,6 @@ if($('coverPresetBtn')) $('coverPresetBtn').addEventListener('click', () => {
   s.imagePos = 'center';
   if(s.imageOverlay < 40) s.imageOverlay = 55;
   s.showBrand = true;
-  s.text = '#ffffff';
-  s.bodyText = '#ffffff';
   syncForm();
   renderMainCard(); renderList();
   closeAllDropdowns();
@@ -2796,6 +2771,50 @@ $('imgOffsetY').addEventListener('input', e => {
 $('imgScale').addEventListener('input', e => {
   slides[active].imgScale = +e.target.value;
   $('imgScaleVal').textContent = e.target.value;
+  renderMainCard(); renderList();
+});
+function bindCropSlider(id, prop, valId){
+  const el = $(id);
+  if(!el) return;
+  el.addEventListener('input', e => {
+    slides[active][prop] = +e.target.value;
+    if($(valId)) $(valId).textContent = e.target.value;
+    renderMainCard(); renderList();
+  });
+}
+bindCropSlider('imgCropT', 'imgCropT', 'imgCropTVal');
+bindCropSlider('imgCropB', 'imgCropB', 'imgCropBVal');
+bindCropSlider('imgCropL', 'imgCropL', 'imgCropLVal');
+bindCropSlider('imgCropR', 'imgCropR', 'imgCropRVal');
+
+// Second image
+if($('upload2Btn')) $('upload2Btn').addEventListener('click', () => $('image2Upload') && $('image2Upload').click());
+if($('image2Upload')) $('image2Upload').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = new Image();
+    img.onload = () => {
+      const maxW = 1000;
+      const scale = Math.min(1, maxW / img.width);
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width * scale;
+      canvas.height = img.height * scale;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      slides[active].image2 = canvas.toDataURL('image/jpeg', 0.85);
+      if($('img2Thumb')) $('img2Thumb').style.backgroundImage = "url('" + slides[active].image2 + "')";
+      renderMainCard(); renderList();
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+  e.target.value = '';
+});
+if($('image2Remove')) $('image2Remove').addEventListener('click', () => {
+  slides[active].image2 = null;
+  if($('img2Thumb')) $('img2Thumb').style.backgroundImage = 'none';
   renderMainCard(); renderList();
 });
 
@@ -2947,7 +2966,6 @@ bindMenuToggle('imageMenuBtn','imageMenu');
 bindMenuToggle('sitesMenuBtn','sitesMenu');
 bindMenuToggle('blockMenuBtn','blockMenu');
 bindMenuToggle('editMenuBtn','editMenu');
-bindMenuToggle('projectMenuBtn','projectMenu');
 renderSitesMenu();
 
 
@@ -3012,14 +3030,8 @@ $('imageUpload').addEventListener('change', e => {
       canvas.height = img.height * scale;
       const ctx = canvas.getContext('2d');
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      const wasText = slides[active].template === 'text';
       slides[active].image = canvas.toDataURL('image/jpeg', 0.85);
-      if(wasText){
-        slides[active].template = 'full';
-        // 풀 이미지로 전환되면서 기본(검정) 글자색을 그대로 쓰면 스크림 위에서 안 보이므로 자동으로 흰색 전환
-        if(slides[active].text === '#1a1a1a') slides[active].text = '#ffffff';
-        if(slides[active].bodyText === '#1a1a1a') slides[active].bodyText = '#ffffff';
-      }
+      if(slides[active].template === 'text') slides[active].template = 'full';
       syncForm(); renderMainCard(); renderList();
     };
     img.src = ev.target.result;
@@ -3047,89 +3059,6 @@ $('addSlide').addEventListener('click', () => {
   active = active+1;
   syncForm(); renderMainCard(); renderList();
 });
-
-/* ========== 프로젝트 저장 / 불러오기 / 디자인 일괄 적용 ========== */
-function downloadTextFile(text, filename, mime){
-  const blob = new Blob([text], {type: mime || 'application/json'});
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.download = filename;
-  link.href = url;
-  link.rel = 'noopener';
-  document.body.appendChild(link);
-  link.click();
-  setTimeout(() => { document.body.removeChild(link); URL.revokeObjectURL(url); }, 1000);
-}
-
-if($('projectSaveBtn')){
-  $('projectSaveBtn').addEventListener('click', () => {
-    const payload = JSON.stringify({ version:1, slides: slides, active: active }, null, 0);
-    const ts = new Date().toISOString().slice(0,10);
-    downloadTextFile(payload, 'card-studio-project-' + ts + '.json');
-    closeAllDropdowns();
-  });
-}
-
-if($('projectLoadBtn')){
-  $('projectLoadBtn').addEventListener('click', () => {
-    $('projectLoadInput').click();
-    closeAllDropdowns();
-  });
-}
-if($('projectLoadInput')){
-  $('projectLoadInput').addEventListener('change', e => {
-    const file = e.target.files[0];
-    if(!file) return;
-    const reader = new FileReader();
-    reader.onload = ev => {
-      try {
-        const data = JSON.parse(ev.target.result);
-        if(!data || !Array.isArray(data.slides) || !data.slides.length){
-          alert('올바른 프로젝트 파일이 아닙니다.');
-          return;
-        }
-        slides = data.slides;
-        active = Math.min(Math.max(0, data.active || 0), slides.length - 1);
-        historyStack = [];
-        historyIndex = -1;
-        syncForm(); renderMainCard(); renderList();
-        pushHistory();
-        updateUndoRedoButtons();
-      } catch(err){
-        console.error(err);
-        alert('프로젝트 파일을 읽는 중 오류가 발생했습니다.');
-      }
-    };
-    reader.readAsText(file);
-    e.target.value = '';
-  });
-}
-
-const DESIGN_FIELDS = ['font','titleFont','bodyFont','align','bg','text','bodyText','pillBg','pillColor','mk','accent',
-  'titleSize','subSize','titleLetter','titleLine','bodyLetter','bodyLine','style','textLegibility',
-  'showArrow','arrowAlign','arrowText','sizePreset','cardWidth','cardHeight','vignetteMode','vignetteStrength',
-  'glassStrength','glassBlur','scrimDir','showBrand','brandMain','brandSub','showThreads','showInsta','showX',
-  'showIndicator','logoPos','logoSize','logoOpacity'];
-
-if($('applyDesignAllBtn')){
-  $('applyDesignAllBtn').addEventListener('click', () => {
-    if(slides.length <= 1){ closeAllDropdowns(); return; }
-    if(!confirm('현재 카드의 글꼴·색상·크기 등 디자인 설정을 다른 모든 카드(' + (slides.length-1) + '장)에 적용할까요? 각 카드의 제목·본문·사진 내용은 그대로 유지됩니다.')) {
-      closeAllDropdowns();
-      return;
-    }
-    const src = slides[active];
-    slides.forEach((sl, i) => {
-      if(i === active) return;
-      DESIGN_FIELDS.forEach(f => { sl[f] = src[f]; });
-    });
-    syncForm(); renderMainCard(); renderList();
-    closeAllDropdowns();
-  });
-}
-
-/* ========== 슬라이드 드래그 순서 변경 ========== */
-let dragSrcIndex = null;
 
 function isIOS(){
   return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
@@ -3210,8 +3139,8 @@ async function captureCardBlob(node){
     allowTaint: true,
     width: node.scrollWidth || node.clientWidth,
     height: node.scrollHeight || node.clientHeight,
-    windowWidth: node.scrollWidth || node.clientWidth,
-    windowHeight: node.scrollHeight || node.clientHeight
+    windowWidth: Math.max(document.documentElement.clientWidth, node.scrollWidth || node.clientWidth),
+    windowHeight: Math.max(document.documentElement.clientHeight, node.scrollHeight || node.clientHeight)
   });
   return canvasToBlob(canvas, 'image/png', 0.92);
 }
@@ -3445,23 +3374,44 @@ if(delBtn) delBtn.addEventListener('click', deleteSelectedFT);
 // Shared drag state so mousedown (rebound each render) and window mousemove/up stay in sync
 const ftDrag = {
   mode: null, // 'move' | 'resize'
+  kind: null, // 'text' | 'shape'
   targetId: null,
   startX: 0,
   startY: 0,
   origX: 0,
   origY: 0,
-  origW: 160
+  origW: 160,
+  origH: 80
 };
 
 function ftOnMove(e){
   if(!ftDrag.mode || !ftDrag.targetId) return;
   const s = slides[active];
-  if(!s.freeTexts) return;
-  const ft = s.freeTexts.find(f => f.id === ftDrag.targetId);
-  if(!ft) return;
   const wrap = $('canvasWrap');
   const dx = e.clientX - ftDrag.startX;
   const dy = e.clientY - ftDrag.startY;
+  if(ftDrag.kind === 'shape'){
+    if(!s.freeShapes) return;
+    const sh = s.freeShapes.find(f => f.id === ftDrag.targetId);
+    if(!sh) return;
+    const el = wrap && wrap.querySelector('.freeShape[data-sid="'+ftDrag.targetId+'"]');
+    if(ftDrag.mode === 'move'){
+      sh.x = Math.round(ftDrag.origX + dx);
+      sh.y = Math.round(ftDrag.origY + dy);
+      if(el){ el.style.left = sh.x + 'px'; el.style.top = sh.y + 'px'; }
+    } else {
+      sh.w = Math.max(20, Math.round(ftDrag.origW + dx));
+      if(sh.type !== 'line') sh.h = Math.max(12, Math.round(ftDrag.origH + dy));
+      if(el){
+        el.style.width = sh.w + 'px';
+        if(sh.type !== 'line') el.style.height = sh.h + 'px';
+      }
+    }
+    return;
+  }
+  if(!s.freeTexts) return;
+  const ft = s.freeTexts.find(f => f.id === ftDrag.targetId);
+  if(!ft) return;
   const el = wrap && wrap.querySelector('.freeText[data-ftid="'+ftDrag.targetId+'"]');
   if(ftDrag.mode === 'move'){
     ft.x = Math.round(ftDrag.origX + dx);
@@ -3476,6 +3426,7 @@ function ftOnMove(e){
 function ftOnUp(){
   if(!ftDrag.mode) return;
   ftDrag.mode = null;
+  ftDrag.kind = null;
   ftDrag.targetId = null;
   renderList();
 }
@@ -3502,22 +3453,48 @@ function bindFreeTextInteractions(){
   function onDown(e){
     const point = (e.touches && e.touches[0]) ? e.touches[0] : e;
     const target = e.target;
+    const shapeEl = target.closest ? target.closest('.freeShape') : null;
     const el = target.closest ? target.closest('.freeText') : null;
-    if(!el) return;
+    if(!shapeEl && !el) return;
     e.preventDefault();
     e.stopPropagation();
-    const id = el.dataset.ftid;
     const s = slides[active];
+    const isResize = target.classList.contains('ft-resize') || target.dataset.resize;
+
+    if(shapeEl){
+      const id = shapeEl.dataset.sid;
+      if(!s.freeShapes) return;
+      s.selectedShapeId = id;
+      s.selectedFreeTextId = null;
+      wrap.querySelectorAll('.freeShape').forEach(n => n.classList.toggle('selected', n.dataset.sid === id));
+      wrap.querySelectorAll('.freeText').forEach(n => n.classList.remove('selected'));
+      const sh = s.freeShapes.find(f => f.id === id);
+      if(!sh) return;
+      ftDrag.mode = isResize ? 'resize' : 'move';
+      ftDrag.kind = 'shape';
+      ftDrag.targetId = id;
+      ftDrag.startX = point.clientX;
+      ftDrag.startY = point.clientY;
+      ftDrag.origX = sh.x;
+      ftDrag.origY = sh.y;
+      ftDrag.origW = sh.w || 80;
+      ftDrag.origH = sh.h || 80;
+      return;
+    }
+
+    const id = el.dataset.ftid;
     if(!s.freeTexts) return;
     s.selectedFreeTextId = id;
+    s.selectedShapeId = null;
     syncFreeTextForm();
     wrap.querySelectorAll('.freeText').forEach(n => n.classList.toggle('selected', n.dataset.ftid === id));
+    wrap.querySelectorAll('.freeShape').forEach(n => n.classList.remove('selected'));
 
     const ft = s.freeTexts.find(f => f.id === id);
     if(!ft) return;
 
-    const isResize = target.classList.contains('ft-resize') || target.dataset.resize;
     ftDrag.mode = isResize ? 'resize' : 'move';
+    ftDrag.kind = 'text';
     ftDrag.targetId = id;
     ftDrag.startX = point.clientX;
     ftDrag.startY = point.clientY;
@@ -3529,6 +3506,56 @@ function bindFreeTextInteractions(){
   card.onmousedown = onDown;
   card.ontouchstart = onDown;
 }
+
+function addShape(type){
+  const s = slides[active];
+  if(!s.freeShapes) s.freeShapes = [];
+  const n = s.freeShapes.length;
+  const sh = {
+    id: 'sh_' + Date.now().toString(36) + Math.random().toString(36).slice(2,5),
+    type: type || 'rect',
+    x: 48 + (n % 3) * 24,
+    y: 160 + (n % 3) * 24,
+    w: type === 'line' ? 140 : 90,
+    h: type === 'line' ? 4 : 90,
+    color: s.accent || '#7c5cff',
+    opacity: 85
+  };
+  s.freeShapes.push(sh);
+  s.selectedShapeId = sh.id;
+  renderMainCard(); renderList();
+  bindFreeTextInteractions();
+}
+Array.from(document.querySelectorAll('#blockMenu .ddItem')).forEach(item => {
+  if(item.dataset.action === 'addShapeRect') item.addEventListener('click', () => { addShape('rect'); closeAllDropdowns(); });
+  if(item.dataset.action === 'addShapeCircle') item.addEventListener('click', () => { addShape('circle'); closeAllDropdowns(); });
+  if(item.dataset.action === 'addShapeLine') item.addEventListener('click', () => { addShape('line'); closeAllDropdowns(); });
+});
+
+// Mobile panel toggles
+(function setupMobileChrome(){
+  const left = $('left');
+  const right = $('right');
+  function closePanels(){
+    if(left) left.classList.remove('open');
+    if(right) right.classList.remove('open');
+  }
+  if($('mobileSlidesBtn')) $('mobileSlidesBtn').addEventListener('click', e => {
+    e.stopPropagation();
+    if(right) right.classList.remove('open');
+    if(left) left.classList.toggle('open');
+  });
+  if($('mobilePanelBtn')) $('mobilePanelBtn').addEventListener('click', e => {
+    e.stopPropagation();
+    if(left) left.classList.remove('open');
+    if(right) right.classList.toggle('open');
+  });
+  document.addEventListener('click', e => {
+    if(window.innerWidth > 960) return;
+    if(left && left.classList.contains('open') && !left.contains(e.target) && e.target !== $('mobileSlidesBtn')) left.classList.remove('open');
+    if(right && right.classList.contains('open') && !right.contains(e.target) && e.target !== $('mobilePanelBtn') && !(e.target.closest && e.target.closest('#mobilePanelBtn'))) right.classList.remove('open');
+  });
+})();
 
 // patch renderMainCard to re-bind
 const _origRenderMainCard = renderMainCard;
