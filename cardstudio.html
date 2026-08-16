@@ -147,7 +147,6 @@
   #card .pageNum{font-size:12px;font-weight:600;opacity:.6;}
   #card .frame{flex:1;margin-top:16px;border:1.5px solid #1a1a1a22;border-radius:2px;display:flex;flex-direction:column;justify-content:center;padding:26px 24px;position:relative;overflow:hidden;background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));}
   #card .photoChip{padding:6px 8px;border-radius:999px;background:rgba(0,0,0,.12);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,.15);}
-  #card .glassLayer{position:absolute;inset:0;pointer-events:none;z-index:3;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.10);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
   #card .scrim{position:absolute;inset:0;pointer-events:none;z-index:1;}
   #card .pill{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.04em;padding:5px 12px;border-radius:20px;margin-bottom:16px;width:fit-content;}
   #card .titleText{font-size:27px;line-height:1.35;font-weight:800;letter-spacing:-.01em;white-space:pre-wrap;word-break:keep-all;}
@@ -1311,15 +1310,6 @@
             <label>비네팅 강도</label>
             <div class="slider"><input type="range" id="vignetteStrength" min="0" max="100" value="0"><span class="val" id="vignetteStrengthVal">0</span></div>
           </div>
-          <div class="field">
-            <label>글라스 효과</label>
-            <div class="slider"><input type="range" id="glassStrength" min="0" max="100" value="0"><span class="val" id="glassStrengthVal">0</span></div>
-
-          </div>
-          <div class="field">
-            <label>글라스 흐림</label>
-            <div class="slider"><input type="range" id="glassBlur" min="0" max="24" value="8"><span class="val" id="glassBlurVal">8</span></div>
-          </div>
 
           <!-- Image fine-tune -->
           <div class="field" style="border-top:1px solid var(--chrome-line);padding-top:12px;margin-top:4px;">
@@ -1835,7 +1825,7 @@ const defaults = () => ({
   image2:null,
   freeShapes:[],
   selectedShapeId:null,
-  vignetteMode:'none', vignetteStrength:0, glassStrength:0, glassBlur:8,
+  vignetteMode:'none', vignetteStrength:0,
   logo:null, logoPos:'br', logoSize:16, logoOpacity:70, logoBg:false,
   sizePreset:'4:5', cardWidth:400, cardHeight:500,
   font:'pretendard', titleFont:'', bodyFont:'', align:'left',
@@ -2349,15 +2339,12 @@ function cardMarkup(s, pageIdx, total){
   const isFree = s.template === 'free';
   const cls = 'id="card"' + (styleClass(s) ? ' class="' + styleClass(s).trim() + (isFree ? ' freeLayout' : '') + '"' : (isFree ? ' class="freeLayout"' : ''));
   const photoVignette = s.image ? '<div class="scrim" style="background:' + vignetteCss(s.vignetteMode, Number(s.vignetteStrength) || 0) + ';"></div>' : '';
-  const glassStrength = Number(s.glassStrength) || 0;
-  const glassBlur = Number(s.glassBlur) || 0;
-  const glassMarkup = s.image && glassStrength > 0 ? '<div class="glassLayer" style="background:rgba(255,255,255,' + (Math.min(0.9, glassStrength / 100 * 0.7 + 0.08)) + ');backdrop-filter:blur(' + glassBlur + 'px);-webkit-backdrop-filter:blur(' + glassBlur + 'px);"></div>' : '';
   const logo = logoHtml(s);
   const freeT = freeTextsHtml(s) + freeShapesHtml(s) + image2Html(s);
 
   if(isFree){
     return '<div ' + cls + ' style="' + base + 'position:relative;">' +
-      (s.image ? imageBox(s,'full') + photoVignette + (glassMarkup||'') : '') +
+      (s.image ? imageBox(s,'full') + photoVignette : '') +
       logo + freeT + photoCreditHtml(s) +
       '<div class="z2" style="position:relative;padding:26px;height:100%;box-sizing:border-box;display:flex;flex-direction:column;">' +
         rowTopHtml(s, pageIdx, total, false) +
@@ -2373,7 +2360,7 @@ function cardMarkup(s, pageIdx, total){
     const imgH = Math.round(size.h * 0.66);
     return '<div ' + cls + ' style="' + base + '">' +
       imageBox(s,'sponsorTop') +
-      (glassMarkup || '') + photoVignette +
+      photoVignette +
       logo + freeT + photoCreditHtml(s) +
       '<div style="margin-top:' + imgH + 'px;text-align:' + align + ';">' +
         kickerHtml(s) + titleHtml(s) + blockHtml(s) + brandHtml(s) +
@@ -2388,7 +2375,6 @@ function cardMarkup(s, pageIdx, total){
       imageBox(s,'full') +
       photoVignette +
       '<div class="scrim" style="background:' + scrimOverlayCss(s.scrimDir || 'bottom', s.imageOverlay) + ';"></div>' +
-      (glassMarkup || '') +
       logo + freeT +
       photoCreditHtml(s) +
       rowTopHtml(s, pageIdx, total, true) +
@@ -2401,7 +2387,6 @@ function cardMarkup(s, pageIdx, total){
     return '<div ' + cls + ' style="' + base + '">' +
       rowTopHtml(s, pageIdx, total, false) +
       imageBox(s,'split') +
-      (glassMarkup || '') +
       photoVignette +
       logo + freeT +
       '<div class="frame" style="border:none;padding:20px 2px 0;text-align:' + align + ';">' + pillHtml(s) + titleHtml(s) + blockHtml(s) + brandHtml(s) + '</div>' +
@@ -2415,7 +2400,6 @@ function cardMarkup(s, pageIdx, total){
       rowTopHtml(s, pageIdx, total, false) +
       '<div class="frame" style="border:none;padding:20px 2px 0;text-align:' + align + ';">' + pillHtml(s) + titleHtml(s) + blockHtml(s) + brandHtml(s) + '</div>' +
       imageBox(s,'bottom') +
-      (glassMarkup || '') +
       photoVignette +
       logo + freeT + photoCreditHtml(s) +
       rowBottomHtml(s, false) +
@@ -2425,7 +2409,7 @@ function cardMarkup(s, pageIdx, total){
   if(s.template === 'inset'){
     return '<div ' + cls + ' style="' + base + '">' +
       rowTopHtml(s, pageIdx, total, false) +
-      '<div class="frame" style="text-align:' + align + ';">' + imageBox(s,'inset') + (glassMarkup || '') + photoVignette + pillHtml(s) + titleHtml(s) + blockHtml(s) + '</div>' +
+      '<div class="frame" style="text-align:' + align + ';">' + imageBox(s,'inset') + photoVignette + pillHtml(s) + titleHtml(s) + blockHtml(s) + '</div>' +
       logo + freeT +
       rowBottomHtml(s, false) +
     '</div>';
@@ -2433,7 +2417,7 @@ function cardMarkup(s, pageIdx, total){
   if(s.template === 'side'){
     return '<div ' + cls + ' style="' + base + '">' +
       rowTopHtml(s, pageIdx, total, false) +
-      '<div class="frame sideFrame">' + imageBox(s,'side') + (glassMarkup || '') + photoVignette + '<div class="sideText" style="text-align:' + align + ';">' + pillHtml(s) + titleHtml(s) + blockHtml(s) + '</div></div>' +
+      '<div class="frame sideFrame">' + imageBox(s,'side') + photoVignette + '<div class="sideText" style="text-align:' + align + ';">' + pillHtml(s) + titleHtml(s) + blockHtml(s) + '</div></div>' +
       logo + freeT +
       rowBottomHtml(s, false) +
     '</div>';
@@ -2441,7 +2425,7 @@ function cardMarkup(s, pageIdx, total){
   if(s.template === 'frame'){
     return '<div ' + cls + ' style="' + base + '">' +
       rowTopHtml(s, pageIdx, total, false) +
-      '<div class="frame boldFrame" style="text-align:' + align + ';">' + (glassMarkup || '') + photoVignette + pillHtml(s) + titleHtml(s) + blockHtml(s) + '</div>' +
+      '<div class="frame boldFrame" style="text-align:' + align + ';">' + photoVignette + pillHtml(s) + titleHtml(s) + blockHtml(s) + '</div>' +
       logo + freeT +
       rowBottomHtml(s, false) +
     '</div>';
@@ -2451,7 +2435,7 @@ function cardMarkup(s, pageIdx, total){
       rowTopHtml(s, pageIdx, total, false) +
       '<div class="innerCard" style="text-align:' + align + ';">' +
         (s.image ? imageBox(s,'inset') : '') +
-        (glassMarkup || '') + photoVignette +
+        photoVignette +
         pillHtml(s) + titleHtml(s) + blockHtml(s) + brandHtml(s) +
       '</div>' +
       logo + freeT + photoCreditHtml(s) +
@@ -2463,7 +2447,7 @@ function cardMarkup(s, pageIdx, total){
       rowTopHtml(s, pageIdx, total, false) +
       '<div style="padding:4px 2px 0;text-align:' + align + ';">' + pillHtml(s) + titleHtml(s) + '</div>' +
       (s.image
-        ? imageBox(s,'mapchart') + (glassMarkup || '') + photoVignette
+        ? imageBox(s,'mapchart') + photoVignette
         : '<div class="imgBox mapchart" style="display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.06);color:inherit;opacity:.45;font-size:12px;font-weight:700;">맵 · 도표 영역 (사진 업로드)</div>') +
       '<div style="margin-top:12px;text-align:' + align + ';">' + blockHtml(s) + brandHtml(s) + '</div>' +
       logo + freeT + photoCreditHtml(s) +
@@ -2501,7 +2485,7 @@ function cardMarkup(s, pageIdx, total){
   }
   return '<div ' + cls + ' style="' + base + '">' +
     rowTopHtml(s, pageIdx, total, false) +
-    '<div class="frame" style="text-align:' + align + ';">' + (glassMarkup || '') + photoVignette + pillHtml(s) + titleHtml(s) + blockHtml(s) + brandHtml(s) + '</div>' +
+    '<div class="frame" style="text-align:' + align + ';">' + photoVignette + pillHtml(s) + titleHtml(s) + blockHtml(s) + brandHtml(s) + '</div>' +
     logo + freeT + photoCreditHtml(s) +
     rowBottomHtml(s, false) +
   '</div>';
@@ -2624,8 +2608,6 @@ function syncForm(){
   if($('showX')) $('showX').checked = !!s.showX;
   $('vignetteMode').value = s.vignetteMode || 'soft';
   $('vignetteStrength').value = s.vignetteStrength || 18; $('vignetteStrengthVal').textContent = s.vignetteStrength || 18;
-  $('glassStrength').value = s.glassStrength || 18; $('glassStrengthVal').textContent = s.glassStrength || 18;
-  $('glassBlur').value = s.glassBlur || 8; $('glassBlurVal').textContent = s.glassBlur || 8;
   // image fine-tune
   $('imgOffsetX').value = s.imgOffsetX || 0; $('imgOffsetXVal').textContent = s.imgOffsetX || 0;
   $('imgOffsetY').value = s.imgOffsetY || 0; $('imgOffsetYVal').textContent = s.imgOffsetY || 0;
@@ -2947,16 +2929,6 @@ $('vignetteMode').addEventListener('change', e => {
 $('vignetteStrength').addEventListener('input', e => {
   slides[active].vignetteStrength = +e.target.value;
   $('vignetteStrengthVal').textContent = e.target.value;
-  renderMainCard(); renderList();
-});
-$('glassStrength').addEventListener('input', e => {
-  slides[active].glassStrength = +e.target.value;
-  $('glassStrengthVal').textContent = e.target.value;
-  renderMainCard(); renderList();
-});
-$('glassBlur').addEventListener('input', e => {
-  slides[active].glassBlur = +e.target.value;
-  $('glassBlurVal').textContent = e.target.value;
   renderMainCard(); renderList();
 });
 
