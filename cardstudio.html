@@ -233,6 +233,21 @@
   #card .sourcelist.variant-compact .src-desc,
   #card .sourcelist.variant-compact .src-type{display:none;}
 
+  /* Q&A block: faq / interview variants */
+  #card .qa{display:flex;flex-direction:column;}
+  #card .qa .qa-item{margin-bottom:14px;}
+  #card .qa .qa-item:last-child{margin-bottom:0;}
+
+  #card .qa.variant-faq .qa-item{display:flex;flex-direction:column;gap:6px;}
+  #card .qa.variant-faq .qa-q{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;font-weight:800;line-height:1.4;word-break:keep-all;}
+  #card .qa.variant-faq .qa-q-mark{flex:none;width:20px;height:20px;border-radius:6px;color:#fff;font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center;}
+  #card .qa.variant-faq .qa-a{display:flex;gap:8px;align-items:flex-start;font-size:12.5px;line-height:1.5;opacity:.82;word-break:keep-all;padding-left:2px;}
+  #card .qa.variant-faq .qa-a-mark{flex:none;width:20px;height:20px;border-radius:6px;font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.06);}
+
+  #card .qa.variant-interview .qa-item{display:flex;flex-direction:column;gap:8px;}
+  #card .qa.variant-interview .qa-q{align-self:flex-end;max-width:88%;font-size:12.5px;font-weight:700;line-height:1.5;padding:9px 13px;border-radius:14px 14px 3px 14px;word-break:keep-all;}
+  #card .qa.variant-interview .qa-a{align-self:flex-start;max-width:88%;font-size:13px;line-height:1.55;padding:10px 14px;border-radius:14px 14px 14px 3px;word-break:keep-all;background:rgba(0,0,0,.045);border:1px solid rgba(0,0,0,.06);}
+
   /* Compare block: original vs translation */
   #card .blk.compare{display:flex;flex-direction:column;gap:10px;}
   #card .cmp-box{border-radius:12px;padding:14px 16px;}
@@ -251,6 +266,11 @@
   #card .logoMark.pos-bl{bottom:12px;left:12px;}
   #card .logoMark.pos-br{bottom:12px;right:12px;}
   #card .logoMark.pos-center{top:50%;left:50%;transform:translate(-50%,-50%);}
+  #card .logoMark.logoMarkBox{background:#fff;padding:8px 12px;border-radius:10px;box-shadow:0 4px 14px rgba(0,0,0,.16);box-sizing:border-box;}
+  #card .logoMark.logoMarkBox.pos-center{transform:translate(-50%,-50%);}
+
+  #card .imgBox.sponsorTop{position:absolute;top:0;left:0;right:0;height:66%;border-radius:0;}
+  #card .kickerLine{font-size:12px;font-weight:700;margin-bottom:6px;letter-spacing:.01em;}
 
   /* Free text boxes */
   #card .freeText{
@@ -912,6 +932,7 @@
             <div class="ddItem" data-template="headline"><span class="ic">Ｈ</span>뉴스 헤드라인</div>
             <div class="ddItem" data-template="profile"><span class="ic">◎</span>프로필·인물</div>
             <div class="ddItem" data-template="free"><span class="ic">✥</span>자유 레이아웃</div>
+            <div class="ddItem" data-template="sponsor"><span class="ic">🏷</span>스폰서 프리뷰형 (사진 상단+화이트 하단)</div>
           </div>
           <div style="border-top:1px solid var(--chrome-line);margin:10px 0 8px;"></div>
           <div class="field" style="margin-bottom:4px;">
@@ -1262,6 +1283,12 @@
               <div class="slider"><input type="range" id="logoOpacity" min="10" max="100" value="70"><span class="val" id="logoOpacityVal">70</span></div>
             </div>
             <div class="field">
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                <input type="checkbox" id="logoBg" style="width:auto;"> 로고 배경 박스 (흰색 필)
+              </label>
+              <div class="hint">스폰서 로고처럼 흰 배경 박스 위에 로고를 올려 사진 위에서도 잘 보이게 합니다.</div>
+            </div>
+            <div class="field">
               <label>적용 범위</label>
               <select id="logoScope">
                 <option value="current">현재 카드만</option>
@@ -1290,6 +1317,7 @@
           <div class="ddItem" data-block="chart"><span class="ic">▤</span>막대 그래프</div>
           <div class="ddItem" data-block="quote"><span class="ic">"</span>인용구</div>
           <div class="ddItem" data-block="sources"><span class="ic">🔗</span>출처 링크 모음</div>
+          <div class="ddItem" data-block="qa"><span class="ic">Q</span>Q&A</div>
           <div class="ddItem" data-block="compare"><span class="ic">⇄</span>원문·번역 대조</div>
           <div class="ddItem" data-action="addFreeText"><span class="ic">＋</span>자유 텍스트 박스 추가</div>
           <div class="ddItem" data-action="addShapeRect"><span class="ic">▢</span>도형 · 사각형</div>
@@ -1473,6 +1501,7 @@
             <option value="chart">막대 그래프</option>
             <option value="quote">인용구</option>
             <option value="sources">출처 링크 모음</option>
+            <option value="qa">Q&A</option>
             <option value="compare">원문·번역 대조</option>
           </select>
         </div>
@@ -1482,6 +1511,13 @@
             <option value="list">리스트형 (번호+설명)</option>
             <option value="box">박스 카드형</option>
             <option value="compact">컴팩트형 (한 줄)</option>
+          </select>
+        </div>
+        <div class="field" id="qaLayoutField" style="display:none;">
+          <label>Q&A 레이아웃</label>
+          <select id="qaLayoutSelect">
+            <option value="faq">FAQ형 (Q/A 뱃지)</option>
+            <option value="interview">인터뷰형 (말풍선 대화)</option>
           </select>
         </div>
         <div class="field">
@@ -1556,7 +1592,7 @@
 </div>
 
 <script>
-const templateLabels = {text:'TEXT', full:'FULL', split:'SPLIT', bottom:'BOTTOM', inset:'INSET', side:'SIDE', frame:'FRAME', cardincard:'NEST', mapchart:'MAP', headline:'HEAD', profile:'PROF', free:'FREE'};
+const templateLabels = {text:'TEXT', full:'FULL', split:'SPLIT', bottom:'BOTTOM', inset:'INSET', side:'SIDE', frame:'FRAME', cardincard:'NEST', mapchart:'MAP', headline:'HEAD', profile:'PROF', free:'FREE', sponsor:'SPONSOR'};
 const styleLabels = {none:'', insta:'INSTA', grid:'GRID', terminal:'TERM', sticky:'STICKY', receipt:'RECEIPT', timeline:'TIMELINE', newspaper:'NEWS', postcard:'CARD', folder:'FOLDER', blueprint:'BLUE', pastel:'PASTEL', certificate:'CERT', magazine:'MAG', alert:'ALERT', breaking:'속보', breakinglive:'LIVE', breakingticker:'티커', whitepaper:'WP', briefing:'브리핑', infosheet:'인포', cover:'COVER', official:'공문서', stickyboard:'포스트잇', stickyboarddark:'포스트잇DARK'};
 
 const OFFICIAL_SITES = [
@@ -1653,6 +1689,7 @@ const sampleData = {
   chart: '1월 | 30\n2월 | 55\n3월 | 80',
   quote: '이 자리에 인용할 문장을 입력하세요.\n작성자 이름',
   sources: '**미 국무부** 여행경보 | travel.state.gov 공식 안내 | https://travel.state.gov | 공식\n스페인 정부 보도자료 | 현장 병력·경찰 배치 관련 | https:// | 공식\n주요 외신 보도 | 경보 상향 배경 설명 | https:// | 언론',
+  qa: '이번 결정의 배경은 무엇인가요? | 여러 요인을 종합적으로 검토한 결과입니다.\n향후 계획은 어떻게 되나요? | 단계적으로 추진할 예정입니다.',
   compare: 'This is the original sentence to translate.\n===\n**번역**된 문장이 여기 들어갑니다.'
 };
 
@@ -1665,6 +1702,7 @@ const blockLabels = {
   chart: {label:'그래프 항목', hint:'"라벨 | 숫자값" 형식으로 한 줄에 하나씩 입력하세요.', ph:'1월 | 30'},
   quote: {label:'인용구', hint:'첫 줄은 인용 문장, 둘째 줄은 작성자(선택)입니다.', ph:'인용할 문장\n작성자 이름'},
   sources: {label:'출처 항목', hint:'"제목 | 설명 | URL | 유형" 형식으로 한 줄에 하나씩. 제목엔 **강조** 가능. 유형: 공식/언론/통계/법령/기타', ph:'**미 국무부** 여행경보 | travel.state.gov 공식 안내 | https://travel.state.gov | 공식'},
+  qa: {label:'Q&A 항목', hint:'"질문 | 답변" 형식으로 한 줄에 하나씩 입력하세요. **강조** 가능.', ph:'이번 결정의 배경은 무엇인가요? | 여러 요인을 종합적으로 검토했습니다.'},
   compare: {label:'원문 · 번역', hint:'첫 부분은 원문, "===" 구분선 아래는 번역문입니다. **강조** 가능.', ph:'This is the original text.\n===\n**번역**된 문장'}
 };
 
@@ -1682,10 +1720,10 @@ const defaults = () => ({
   freeShapes:[],
   selectedShapeId:null,
   vignetteMode:'none', vignetteStrength:0, glassStrength:0, glassBlur:8,
-  logo:null, logoPos:'br', logoSize:16, logoOpacity:70,
+  logo:null, logoPos:'br', logoSize:16, logoOpacity:70, logoBg:false,
   sizePreset:'4:5', cardWidth:400, cardHeight:500,
   font:'pretendard', titleFont:'', bodyFont:'', align:'left',
-  contentBlock:'none', blockData:'', sourceLayout:'list',
+  contentBlock:'none', blockData:'', sourceLayout:'list', qaLayout:'faq',
   titleFormat: {bold:false, italic:false, underline:false},
   freeElements: null,
   freeTexts: [],
@@ -1810,7 +1848,15 @@ function logoHtml(s){
   const size = Number(s.logoSize) || 16;
   const op = (Number(s.logoOpacity) || 70) / 100;
   const pos = s.logoPos || 'br';
+  if(s.logoBg){
+    return '<div class="logoMark logoMarkBox pos-' + pos + '" style="width:' + size + '%;opacity:' + op + ';"><img src="' + s.logo + '" style="display:block;width:100%;height:auto;" alt="logo"></div>';
+  }
   return '<img class="logoMark pos-' + pos + '" src="' + s.logo + '" style="width:' + size + '%;opacity:' + op + ';" alt="logo">';
+}
+
+function kickerHtml(s){
+  if(!s.pillText || !s.pillText.trim()) return '';
+  return '<div class="kickerLine" style="color:' + (s.accent || '#7c5cff') + ';">' + escapeHtml(s.pillText) + '</div>';
 }
 
 function freeTextsHtml(s){
@@ -2101,6 +2147,30 @@ function renderSourceList(s){
   return '<div class="blk sourcelist variant-' + variant + '">' + items + '</div>';
 }
 
+function renderQA(s){
+  const lines = parseLines(s.blockData);
+  if(!lines.length) return '';
+  const variant = s.qaLayout || 'faq';
+  const accent = s.accent;
+  const items = lines.map(l => {
+    const parts = l.split('|');
+    const q = (parts[0]||'').trim();
+    const a = (parts[1]||'').trim();
+    if(variant === 'interview'){
+      return '<div class="qa-item">' +
+        (q ? '<div class="qa-q" style="background:' + accent + ';color:#fff;">' + parseTitleSyntax(q, accent).replace(/<br>/g,' ') + '</div>' : '') +
+        (a ? '<div class="qa-a">' + parseTitleSyntax(a, accent).replace(/<br>/g,' ') + '</div>' : '') +
+      '</div>';
+    }
+    // default: faq (옵션 선택형)
+    return '<div class="qa-item">' +
+      (q ? '<div class="qa-q"><div class="qa-q-mark" style="background:' + accent + ';">Q</div><div>' + parseTitleSyntax(q, accent).replace(/<br>/g,' ') + '</div></div>' : '') +
+      (a ? '<div class="qa-a"><div class="qa-a-mark" style="color:' + accent + ';">A</div><div>' + parseTitleSyntax(a, accent).replace(/<br>/g,' ') + '</div></div>' : '') +
+    '</div>';
+  }).join('');
+  return '<div class="blk qa variant-' + variant + '">' + items + '</div>';
+}
+
 function renderCompare(s){
   const raw = s.blockData || '';
   if(!raw.trim()) return '';
@@ -2137,6 +2207,7 @@ function blockHtml(s){
     case 'chart': html = renderChart(s); break;
     case 'quote': html = renderQuote(s); break;
     case 'sources': html = renderSourceList(s); break;
+    case 'qa': html = renderQA(s); break;
     case 'compare': html = renderCompare(s); break;
     default: html = s.blockData && s.blockData.trim()
       ? '<div class="subText" style="font-size:' + s.subSize + 'px;' + ff + typo + col + '">' + parseTitleSyntax(s.blockData, s.accent) + '</div>'
@@ -2179,6 +2250,19 @@ function cardMarkup(s, pageIdx, total){
         '</div>' +
         rowBottomHtml(s, false) +
       '</div>' +
+    '</div>';
+  }
+
+  if(s.template === 'sponsor'){
+    const imgH = Math.round(size.h * 0.66);
+    return '<div ' + cls + ' style="' + base + '">' +
+      imageBox(s,'sponsorTop') +
+      (glassMarkup || '') + photoVignette +
+      logo + freeT + photoCreditHtml(s) +
+      '<div style="margin-top:' + imgH + 'px;text-align:' + align + ';">' +
+        kickerHtml(s) + titleHtml(s) + blockHtml(s) + brandHtml(s) +
+      '</div>' +
+      rowBottomHtml(s, false) +
     '</div>';
   }
 
@@ -2387,6 +2471,8 @@ function syncForm(){
   $('blockDataText').value = s.contentBlock === 'none' ? (s.blockData || s.sub || '') : s.blockData;
   if($('sourceLayoutField')) $('sourceLayoutField').style.display = s.contentBlock === 'sources' ? '' : 'none';
   if($('sourceLayoutSelect')) $('sourceLayoutSelect').value = s.sourceLayout || 'list';
+  if($('qaLayoutField')) $('qaLayoutField').style.display = s.contentBlock === 'qa' ? '' : 'none';
+  if($('qaLayoutSelect')) $('qaLayoutSelect').value = s.qaLayout || 'faq';
   updateBlockHint();
   syncStyleMenu();
   $('bgColor').value = s.bg; $('bgColorHex').textContent = s.bg;
@@ -2437,6 +2523,7 @@ function syncForm(){
   $('logoPos').value = s.logoPos || 'br';
   $('logoSize').value = s.logoSize || 16; $('logoSizeVal').textContent = s.logoSize || 16;
   $('logoOpacity').value = s.logoOpacity || 70; $('logoOpacityVal').textContent = s.logoOpacity || 70;
+  if($('logoBg')) $('logoBg').checked = !!s.logoBg;
   $('logoThumb').style.backgroundImage = s.logo ? "url('" + s.logo + "')" : 'none';
   $('fontSelect').value = s.font;
   if($('titleFontSelect')) $('titleFontSelect').value = s.titleFont || '';
@@ -2850,6 +2937,18 @@ $('logoOpacity').addEventListener('input', e => {
   }
   renderMainCard(); renderList();
 });
+if($('logoBg')){
+  $('logoBg').addEventListener('change', e => {
+    const scope = $('logoScope').value;
+    const v = e.target.checked;
+    if(scope === 'all'){
+      slides.forEach(sl => { sl.logoBg = v; });
+    } else {
+      slides[active].logoBg = v;
+    }
+    renderMainCard(); renderList();
+  });
+}
 $('logoUploadBtn').addEventListener('click', () => $('logoUpload').click());
 $('logoUpload').addEventListener('change', e => {
   const file = e.target.files[0];
@@ -2924,6 +3023,10 @@ function setContentBlock(type){
 $('contentBlockSelect').addEventListener('change', e => setContentBlock(e.target.value));
 if($('sourceLayoutSelect')) $('sourceLayoutSelect').addEventListener('change', e => {
   slides[active].sourceLayout = e.target.value;
+  renderMainCard(); renderList();
+});
+if($('qaLayoutSelect')) $('qaLayoutSelect').addEventListener('change', e => {
+  slides[active].qaLayout = e.target.value;
   renderMainCard(); renderList();
 });
 
