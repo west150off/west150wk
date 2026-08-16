@@ -3720,6 +3720,7 @@ let autoPaletteOnTemplate = true;
 
 Array.from(document.querySelectorAll('#templateMenu .ddItem')).forEach(item => {
   item.addEventListener('click', () => {
+    console.log('클릭됨!', item.dataset.template);
     const s = slides[active];
     s.template = item.dataset.template;
     if(autoPaletteOnTemplate){
