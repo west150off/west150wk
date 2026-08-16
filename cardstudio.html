@@ -1317,9 +1317,11 @@
       <div class="menuWrap" id="cardMenuWrap">
         <button class="btn ghost" id="cardMenuBtn">카드 ▾</button>
         <div class="dropdown panelDropdown" id="cardMenu">
-          <div class="field" style="margin-bottom:4px;">
-            <label style="font-weight:700;color:var(--chrome-text);letter-spacing:.04em;">템플릿</label>
+          <div class="field" style="margin-bottom:4px;display:flex;align-items:center;gap:6px;">
+            <label style="font-weight:700;color:var(--chrome-text);letter-spacing:.04em;">스타일</label>
+            <span id="styleRecommendBadge" style="display:none;font-size:10px;font-weight:700;color:#fff;background:var(--accent);padding:2px 7px;border-radius:999px;">추천 · 아직 미선택</span>
           </div>
+          <div class="hint" style="margin:0 0 8px;">💡 템플릿은 사진 위치·구조 같은 <b style="color:var(--chrome-text);">레이아웃</b>만 바꿔요. 배경색·분위기 같은 <b style="color:var(--chrome-text);">색감</b>을 내려면 아래 스타일도 함께 골라보세요.</div>
           <div id="templateMenu">
             <div class="ddItem" data-template="text"><span class="ic">Aa</span>텍스트 카드 (사진 없음)</div>
             <div class="ddItem" data-template="full"><span class="ic">▣</span>풀 이미지 (배경 전체)</div>
@@ -2945,6 +2947,8 @@ function syncStyleMenu(){
   Array.from(document.querySelectorAll('#styleMenu .ddItem')).forEach(item => {
     item.classList.toggle('active', item.dataset.style === (s.style || 'none'));
   });
+  const badge = $('styleRecommendBadge');
+  if(badge) badge.style.display = (!s.style || s.style === 'none') ? 'inline-block' : 'none';
 }
 
 function syncForm(){
