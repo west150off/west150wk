@@ -1381,7 +1381,7 @@
             <input type="checkbox" id="autoPaletteToggle" checked style="width:auto;">
             <label for="autoPaletteToggle" style="margin:0;cursor:pointer;font-size:12px;">템플릿 선택 시 어울리는 색상 자동 적용</label>
           </div>
-          <div id="templateMenu">
+          <div id="styleMenu">
             <div class="ddItem" data-style="none">기본 (스타일 없음)</div>
             <div class="ddItem" data-style="insta">인스타 카드뉴스</div>
             <div class="ddItem" data-style="grid">모눈노트</div>
@@ -3711,16 +3711,11 @@ Array.from(document.querySelectorAll('#blockMenu .ddItem')).forEach(item => {
     closeAllDropdowns();
   });
 });
-if($('autoPaletteToggle')){
-  $('autoPaletteToggle').addEventListener('change', e => {
-    autoPaletteOnTemplate = e.target.checked;
-  });
-}
+
 let autoPaletteOnTemplate = true;
 
 Array.from(document.querySelectorAll('#templateMenu .ddItem')).forEach(item => {
   item.addEventListener('click', () => {
-    console.log('클릭됨!', item.dataset.template);
     const s = slides[active];
     s.template = item.dataset.template;
     if(autoPaletteOnTemplate){
