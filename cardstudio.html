@@ -971,7 +971,123 @@
   #card.style-stickybrief .imgBox.bottom{height:34%;margin-top:10px;}
   #card.style-stickybrief .rowBottom{margin-top:12px;}
 
+  /* ========== 빈 용지 (포스트잇 전용 배경) ========== */
+  #card.style-paperdot,
+  #card.style-papergrid,
+  #card.style-paperline,
+  #card.style-paperkraft,
+  #card.style-papergraph,
+  #card.style-papernavy{
+    color:#1a1a1a!important;
+  }
+  #card.style-paperdot .frame,
+  #card.style-papergrid .frame,
+  #card.style-paperline .frame,
+  #card.style-paperkraft .frame,
+  #card.style-papergraph .frame,
+  #card.style-papernavy .frame{
+    border:none;background:transparent;padding:6px 2px;
+    justify-content:flex-start;
+  }
+  #card.style-paperdot .pill,
+  #card.style-papergrid .pill,
+  #card.style-paperline .pill,
+  #card.style-paperkraft .pill,
+  #card.style-papergraph .pill,
+  #card.style-papernavy .pill{display:none!important;}
+  #card.style-paperdot .titleText,
+  #card.style-papergrid .titleText,
+  #card.style-paperline .titleText,
+  #card.style-paperkraft .titleText,
+  #card.style-papergraph .titleText,
+  #card.style-papernavy .titleText{
+    font-size:11px!important;font-weight:700;opacity:.35;margin:0 0 4px;
+  }
+  #card.style-paperdot .subText,
+  #card.style-papergrid .subText,
+  #card.style-paperline .subText,
+  #card.style-paperkraft .subText,
+  #card.style-papergraph .subText,
+  #card.style-papernavy .subText,
+  #card.style-paperdot .blk,
+  #card.style-papergrid .blk,
+  #card.style-paperline .blk,
+  #card.style-paperkraft .blk,
+  #card.style-papergraph .blk,
+  #card.style-papernavy .blk{display:none!important;}
+  #card.style-paperdot .rowBottom,
+  #card.style-papergrid .rowBottom,
+  #card.style-paperline .rowBottom,
+  #card.style-paperkraft .rowBottom,
+  #card.style-papergraph .rowBottom,
+  #card.style-papernavy .rowBottom{
+    margin-top:auto;padding-top:8px;border-top:1px dashed rgba(0,0,0,.12);
+  }
+  #card.style-paperdot .handle,
+  #card.style-papergrid .handle,
+  #card.style-paperline .handle,
+  #card.style-paperkraft .handle,
+  #card.style-papergraph .handle,
+  #card.style-papernavy .handle{
+    font-size:11px;font-weight:600;opacity:.7;
+  }
+  #card.style-papernavy .rowBottom{border-top-color:rgba(255,255,255,.18);}
+  #card.style-papernavy .handle{color:#c8d4e8!important;opacity:.85;}
+  #card.style-papernavy .badgeTop,
+  #card.style-papernavy .pageNum{color:#9eb0cc!important;}
+  #card.style-papernavy{color:#e8eef8!important;}
+
+  /* 닷 용지 */
+  #card.style-paperdot{
+    background-color:#f7f4ec!important;
+    background-image:radial-gradient(#b8b0a0 1.1px, transparent 1.1px);
+    background-size:18px 18px;
+  }
+  /* 모눈 용지 */
+  #card.style-papergrid{
+    background-color:#f5f7fa!important;
+    background-image:linear-gradient(#c5cdd8 1px, transparent 1px),linear-gradient(90deg, #c5cdd8 1px, transparent 1px);
+    background-size:20px 20px;
+  }
+  /* 줄노트 */
+  #card.style-paperline{
+    background-color:#fffcf5!important;
+    background-image:repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 27px,
+      #c9d4e8 27px,
+      #c9d4e8 28px
+    );
+    background-position:0 40px;
+  }
+  /* 크라프트 */
+  #card.style-paperkraft{
+    background-color:#d4b896!important;
+    background-image:radial-gradient(#00000012 0.8px, transparent 0.8px);
+    background-size:12px 12px;
+    color:#2a1f14!important;
+  }
+  #card.style-paperkraft .handle{color:#3a2a1a!important;}
+  /* 그래프 용지 (큰 격자) */
+  #card.style-papergraph{
+    background-color:#f8faf8!important;
+    background-image:
+      linear-gradient(#b0c4b8 1px, transparent 1px),
+      linear-gradient(90deg, #b0c4b8 1px, transparent 1px),
+      linear-gradient(#d0ddd4 1px, transparent 1px),
+      linear-gradient(90deg, #d0ddd4 1px, transparent 1px);
+    background-size:40px 40px, 40px 40px, 8px 8px, 8px 8px;
+  }
+  /* 네이비 도트 */
+  #card.style-papernavy{
+    background-color:#1a2438!important;
+    background-image:radial-gradient(#6a7a98 1px, transparent 1px);
+    background-size:16px 16px;
+  }
+
   /* 인터뷰형: 크림톤 + 인용 포커스 */
+
 
   #card.style-interview{
     background:#f8f0e0!important;
@@ -1226,8 +1342,15 @@
             <div class="ddItem" data-style="stickyboarddark">포스트잇 보드 (다크 코르크)</div>
             <div class="ddItem" data-style="stickysummary">포스트잇 · 뉴스 요약</div>
             <div class="ddItem" data-style="stickybrief">포스트잇 · 뉴스 브리핑</div>
+            <div class="ddItem" data-style="paperdot">용지 · 닷</div>
+            <div class="ddItem" data-style="papergrid">용지 · 모눈</div>
+            <div class="ddItem" data-style="paperline">용지 · 줄노트</div>
+            <div class="ddItem" data-style="paperkraft">용지 · 크라프트</div>
+            <div class="ddItem" data-style="papergraph">용지 · 그래프</div>
+            <div class="ddItem" data-style="papernavy">용지 · 네이비 닷</div>
 
             <div class="ddItem" data-style="interview">인터뷰형 (크림톤·인용포커스)</div>
+
             <div class="ddItem" data-style="brandpromo">브랜드 프로모션형 (그라데이션·리본배지)</div>
             <div class="ddItem" data-style="statsreport">통계리포트형 (그리드·쿨톤강조)</div>
           </div>
@@ -1882,7 +2005,8 @@
 
 <script>
 const templateLabels = {text:'TEXT', full:'FULL', split:'SPLIT', bottom:'BOTTOM', inset:'INSET', side:'SIDE', frame:'FRAME', cardincard:'NEST', mapchart:'MAP', headline:'HEAD', profile:'PROF', free:'FREE', sponsor:'SPONSOR'};
-const styleLabels = {none:'', insta:'INSTA', grid:'GRID', terminal:'TERM', sticky:'STICKY', receipt:'RECEIPT', timeline:'TIMELINE', newspaper:'NEWS', postcard:'CARD', folder:'FOLDER', blueprint:'BLUE', pastel:'PASTEL', certificate:'CERT', magazine:'MAG', alert:'ALERT', breaking:'속보', breakinglive:'LIVE', breakingticker:'티커', whitepaper:'WP', briefing:'브리핑', infosheet:'인포', cover:'COVER', official:'공문서', stickyboard:'포스트잇', stickyboarddark:'포스트잇DARK', stickysummary:'뉴스요약', stickybrief:'뉴스브리핑'};
+const styleLabels = {none:'', insta:'INSTA', grid:'GRID', terminal:'TERM', sticky:'STICKY', receipt:'RECEIPT', timeline:'TIMELINE', newspaper:'NEWS', postcard:'CARD', folder:'FOLDER', blueprint:'BLUE', pastel:'PASTEL', certificate:'CERT', magazine:'MAG', alert:'ALERT', breaking:'속보', breakinglive:'LIVE', breakingticker:'티커', whitepaper:'WP', briefing:'브리핑', infosheet:'인포', cover:'COVER', official:'공문서', stickyboard:'포스트잇', stickyboarddark:'포스트잇DARK', stickysummary:'뉴스요약', stickybrief:'뉴스브리핑', paperdot:'닷용지', papergrid:'모눈용지', paperline:'줄노트', paperkraft:'크라프트', papergraph:'그래프용지', papernavy:'네이비용지'};
+
 
 
 const OFFICIAL_SITES = [
@@ -3334,8 +3458,26 @@ function setStyle(styleVal){
       updateBlockHint();
     }
   }
+  // 빈 용지: 포스트잇만 두기 좋게 기본 정리 + 하단에 출처(핸들) 안내
+  if(['paperdot','papergrid','paperline','paperkraft','papergraph','papernavy'].indexOf(styleVal) !== -1){
+    const s = slides[active];
+    s.contentBlock = 'none';
+    s.title = s.title && String(s.title).trim() ? s.title : '';
+    s.sub = '';
+    s.blockData = '';
+    s.pillText = '';
+    if(!s.handle || !String(s.handle).trim()) s.handle = '출처: ';
+    if($('contentBlockSelect')) $('contentBlockSelect').value = 'none';
+    if($('titleText')) $('titleText').value = s.title;
+    if($('subText')) $('subText').value = '';
+    if($('blockDataText')) $('blockDataText').value = '';
+    if($('pillText')) $('pillText').value = '';
+    if($('handleText')) $('handleText').value = s.handle;
+    updateBlockHint();
+  }
   // 뉴스 요약/브리핑 포스트잇: 제목+본문 분리형 샘플
   if(styleVal === 'stickysummary' || styleVal === 'stickybrief'){
+
     const s = slides[active];
     s.contentBlock = 'none';
     if($('contentBlockSelect')) $('contentBlockSelect').value = 'none';
