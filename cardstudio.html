@@ -1375,9 +1375,13 @@
           </div>
           <div style="border-top:1px solid var(--chrome-line);margin:10px 0 8px;"></div>
           <div class="field" style="margin-bottom:4px;">
-            <label style="font-weight:700;color:var(--chrome-text);letter-spacing:.04em;">스타일</label>
+            <label style="font-weight:700;color:var(--chrome-text);letter-spacing:.04em;">템플릿</label>
           </div>
-          <div id="styleMenu">
+          <div class="field" style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <input type="checkbox" id="autoPaletteToggle" checked style="width:auto;">
+            <label for="autoPaletteToggle" style="margin:0;cursor:pointer;font-size:12px;">템플릿 선택 시 어울리는 색상 자동 적용</label>
+          </div>
+          <div id="templateMenu">
             <div class="ddItem" data-style="none">기본 (스타일 없음)</div>
             <div class="ddItem" data-style="insta">인스타 카드뉴스</div>
             <div class="ddItem" data-style="grid">모눈노트</div>
@@ -2105,6 +2109,21 @@
 const templateLabels = {text:'TEXT', full:'FULL', split:'SPLIT', bottom:'BOTTOM', inset:'INSET', side:'SIDE', frame:'FRAME', cardincard:'NEST', mapchart:'MAP', headline:'HEAD', profile:'PROF', free:'FREE', sponsor:'SPONSOR'};
 const styleLabels = {none:'', insta:'INSTA', grid:'GRID', terminal:'TERM', sticky:'STICKY', receipt:'RECEIPT', timeline:'TIMELINE', newspaper:'NEWS', postcard:'CARD', folder:'FOLDER', blueprint:'BLUE', pastel:'PASTEL', certificate:'CERT', magazine:'MAG', alert:'ALERT', breaking:'속보', breakinglive:'LIVE', breakingticker:'티커', whitepaper:'WP', briefing:'브리핑', infosheet:'인포', cover:'COVER', official:'공문서', stickyboard:'포스트잇', stickyboarddark:'포스트잇DARK', stickysummary:'뉴스요약', stickybrief:'뉴스브리핑', paperdot:'닷용지', papergrid:'모눈용지', paperline:'줄노트', paperkraft:'크라프트', papergraph:'그래프용지', papernavy:'네이비용지'};
 
+const TEMPLATE_PALETTES = {
+  text:      {bg:'#f4efe4', text:'#1a1a1a', bodyText:'#1a1a1a', accent:'#7c5cff', mk:'#f6b8c4', pillBg:'#181818', pillColor:'#ffffff'},
+  full:      {bg:'#0e0e12', text:'#ffffff', bodyText:'#f0f0f0', accent:'#ff5c7a', mk:'#ffe08a', pillBg:'#ffffff', pillColor:'#1a1a1a'},
+  split:     {bg:'#eef3f8', text:'#16324f', bodyText:'#2b4a68', accent:'#3d8bff', mk:'#cfe6ff', pillBg:'#3d8bff', pillColor:'#ffffff'},
+  bottom:    {bg:'#f7f2e9', text:'#3a2c1a', bodyText:'#4a3a26', accent:'#c9a44c', mk:'#ffe6a8', pillBg:'#3a2c1a', pillColor:'#ffffff'},
+  inset:     {bg:'#f0eef5', text:'#241d3a', bodyText:'#352c54', accent:'#7c5cff', mk:'#e0d5ff', pillBg:'#7c5cff', pillColor:'#ffffff'},
+  side:      {bg:'#f5f5f0', text:'#1e2b1e', bodyText:'#33422f', accent:'#2fb380', mk:'#c8f0d8', pillBg:'#2fb380', pillColor:'#ffffff'},
+  frame:     {bg:'#ffffff', text:'#111111', bodyText:'#222222', accent:'#111111', mk:'#ffd400', pillBg:'#111111', pillColor:'#ffffff'},
+  cardincard:{bg:'#e9ecf3', text:'#1c2733', bodyText:'#2a3a4a', accent:'#2a5ba8', mk:'#cfe0ff', pillBg:'#2a5ba8', pillColor:'#ffffff'},
+  mapchart:  {bg:'#f7f9fb', text:'#1c2733', bodyText:'#3a4a5a', accent:'#2a5ba8', mk:'#c9d6e4', pillBg:'#2a5ba8', pillColor:'#ffffff'},
+  headline:  {bg:'#f8f6f0', text:'#1a1a1a', bodyText:'#333333', accent:'#d21f1f', mk:'#ffe08a', pillBg:'#1a1a1a', pillColor:'#ffffff'},
+  profile:   {bg:'#faf7f2', text:'#382c1e', bodyText:'#4a3a26', accent:'#c99a5b', mk:'#f0e0c0', pillBg:'#c99a5b', pillColor:'#ffffff'},
+  free:      {bg:'#f4efe4', text:'#1a1a1a', bodyText:'#1a1a1a', accent:'#7c5cff', mk:'#f6b8c4', pillBg:'#181818', pillColor:'#ffffff'},
+  sponsor:   {bg:'#ffffff', text:'#1a1a1a', bodyText:'#333333', accent:'#ff8a3d', mk:'#ffe0c2', pillBg:'#ff8a3d', pillColor:'#ffffff'}
+};
 
 
 const OFFICIAL_SITES = [
@@ -3692,10 +3711,32 @@ Array.from(document.querySelectorAll('#blockMenu .ddItem')).forEach(item => {
     closeAllDropdowns();
   });
 });
-Array.from(document.querySelectorAll('#templateMenu .ddItem')).forEach(item => {
+if($('autoPaletteToggle')){
+  $('autoPaletteToggle').addEventListener('change', e => {
+    autoPaletteOnTemplate = e.target.checked;
+  });
+}
+let autoPaletteOnTemplate = true;
 
+Array.from(document.querySelectorAll('#templateMenu .ddItem')).forEach(item => {
   item.addEventListener('click', () => {
-    slides[active].template = item.dataset.template;
+    const s = slides[active];
+    s.template = item.dataset.template;
+    if(autoPaletteOnTemplate){
+      const pal = TEMPLATE_PALETTES[s.template];
+      if(pal){
+        s.bg = pal.bg;
+        s.text = pal.text;
+        s.bodyText = pal.bodyText;
+        s.accent = pal.accent;
+        s.mk = pal.mk;
+        s.pillBg = pal.pillBg;
+        s.pillColor = pal.pillColor;
+        s.badgeColor = pal.text;
+        s.handleColor = pal.text;
+      }
+    }
+    syncForm();
     renderMainCard(); renderList();
     closeAllDropdowns();
   });
