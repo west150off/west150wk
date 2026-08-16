@@ -149,9 +149,11 @@
   #card .photoChip{padding:6px 8px;border-radius:999px;background:rgba(0,0,0,.12);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,.15);}
   #card .scrim{position:absolute;inset:0;pointer-events:none;z-index:1;}
   #card .pill{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.04em;padding:5px 12px;border-radius:20px;margin-bottom:16px;width:fit-content;}
-  #card .titleText{font-size:27px;line-height:1.35;font-weight:800;letter-spacing:-.01em;white-space:pre-wrap;word-break:keep-all;}
+  #card .titleText{font-size:27px;line-height:1.35;font-weight:800;letter-spacing:-.01em;white-space:pre-wrap;word-break:keep-all;text-shadow:none!important;}
   #card .titleText mark{background:var(--mk,#f6b8c4);color:inherit;padding:0 3px;box-decoration-break:clone;-webkit-box-decoration-break:clone;}
-  #card .subText{margin-top:14px;font-size:14px;line-height:1.6;font-weight:500;opacity:1;white-space:pre-wrap;word-break:keep-all;}
+  #card .subText{margin-top:14px;font-size:14px;line-height:1.6;font-weight:500;opacity:1;white-space:pre-wrap;word-break:keep-all;text-shadow:none!important;}
+  #card .blk, #card .handle, #card .badgeTop, #card .pill, #card .st-title, #card .st-body{text-shadow:none!important;}
+
   #card .rowBottom{display:flex;justify-content:space-between;align-items:center;margin-top:18px;position:relative;}
   #card .handle{font-size:12px;font-weight:700;opacity:.75;}
   #card .arrow{font-size:13px;font-weight:800;letter-spacing:.05em;cursor:grab;user-select:none;}
@@ -507,8 +509,8 @@
   }
   #card.style-breakinglive .titleText{
     font-weight:900;letter-spacing:-.02em;
-    text-shadow:0 2px 18px rgba(0,0,0,.45);
   }
+
   #card.style-breakinglive .subText,
   #card.style-breakinglive .blk{color:#d7def0;opacity:1;}
   #card.style-breakinglive .handle{color:#9fb0d0!important;}
@@ -651,10 +653,11 @@
   #card.style-infosheet .ls-text{font-weight:600;opacity:1;}
   #card.style-infosheet .rowBottom{border-top:1px dashed #d0d5dd;padding-top:10px;}
 
-  #card.style-cover .titleText{font-size:1.7em!important;font-weight:900;letter-spacing:-.03em;line-height:1.12;text-shadow:0 3px 16px rgba(0,0,0,.55);}
+  #card.style-cover .titleText{font-size:1.7em!important;font-weight:900;letter-spacing:-.03em;line-height:1.12;}
   #card.style-cover .pill{background:none!important;color:inherit!important;padding:0;border-radius:0;margin-bottom:14px;position:relative;}
   #card.style-cover .pill::before{content:"";display:block;width:56px;height:4px;border-radius:2px;background:var(--accent);margin-bottom:12px;}
-  #card.style-cover .subText{font-size:1.05em;opacity:.85;text-shadow:0 2px 10px rgba(0,0,0,.5);}
+  #card.style-cover .subText{font-size:1.05em;opacity:.85;}
+
   #card.style-cover .badgeTop, #card.style-cover .handle{letter-spacing:.12em;text-transform:uppercase;font-weight:800;}
   #card.style-cover .arrow{font-size:1.15em;}
 
@@ -878,12 +881,13 @@
     padding:12px 14px 14px;
     border-radius:2px;
     box-shadow:2px 4px 10px #00000022;
-    transform:rotate(-1.2deg);
     margin-bottom:10px;
     position:relative;
     font-size:0.95em;
     line-height:1.35;
+    text-shadow:none!important;
   }
+
   #card.style-stickysummary .titleText::after{
     content:"";position:absolute;top:0;left:50%;width:22px;height:9px;
     transform:translateX(-50%);background:rgba(0,0,0,.08);border-radius:0 0 3px 3px;
@@ -894,10 +898,11 @@
     padding:12px 14px 14px;
     border-radius:2px;
     box-shadow:2px 4px 10px #0000001c;
-    transform:rotate(0.8deg);
     margin-top:0;
     position:relative;
+    text-shadow:none!important;
   }
+
   #card.style-stickysummary .subText::after,
   #card.style-stickysummary .blk::after{
     content:"";position:absolute;top:0;left:42%;width:20px;height:8px;
@@ -934,12 +939,13 @@
     padding:12px 14px 14px;
     border-radius:2px;
     box-shadow:2px 4px 10px #00000020;
-    transform:rotate(1deg);
     margin-bottom:10px;
     position:relative;
     font-size:0.95em;
     line-height:1.35;
+    text-shadow:none!important;
   }
+
   #card.style-stickybrief .titleText::after{
     content:"";position:absolute;top:0;left:50%;width:22px;height:9px;
     transform:translateX(-50%);background:rgba(0,0,0,.08);border-radius:0 0 3px 3px;
@@ -950,10 +956,11 @@
     padding:12px 14px 14px;
     border-radius:2px;
     box-shadow:2px 4px 10px #0000001a;
-    transform:rotate(-0.9deg);
     margin-top:0;
     position:relative;
+    text-shadow:none!important;
   }
+
   #card.style-stickybrief .subText::after,
   #card.style-stickybrief .blk::after{
     content:"";position:absolute;top:0;left:55%;width:20px;height:8px;
@@ -1154,8 +1161,9 @@
     box-shadow:0 10px 30px #00000022;
   }
   #card.style-brandpromo .titleText{
-    font-weight:900;letter-spacing:-.02em;text-shadow:0 2px 10px #00000030;
+    font-weight:900;letter-spacing:-.02em;
   }
+
   #card.style-brandpromo .subText,
   #card.style-brandpromo .blk{opacity:1;color:#fff;}
   #card.style-brandpromo .st-val{color:#ffde59!important;}
@@ -2294,15 +2302,16 @@ function freeStickiesHtml(s){
   if(!s.freeStickies || !s.freeStickies.length) return '';
   return s.freeStickies.map(st => {
     const sel = (s.selectedStickyId === st.id) ? ' selected' : '';
-    const rot = (st.rotate != null ? Number(st.rotate) : -1.2);
     const bg = st.color || '#fff6b8';
-    return '<div class="freeSticky' + sel + '" data-stid="' + st.id + '" style="left:' + st.x + 'px;top:' + st.y + 'px;width:' + (st.w || 150) + 'px;height:' + (st.h || 120) + 'px;background:' + bg + ';transform:rotate(' + rot + 'deg);">' +
+    // rotate 제거: 브라우저 서브픽셀 때문에 글씨가 번져 보임
+    return '<div class="freeSticky' + sel + '" data-stid="' + st.id + '" style="left:' + st.x + 'px;top:' + st.y + 'px;width:' + (st.w || 150) + 'px;height:' + (st.h || 120) + 'px;background:' + bg + ';">' +
       '<div class="st-tape"></div>' +
       '<div class="st-title">' + escapeHtml(st.title || '제목').replace(/\n/g,'<br>') + '</div>' +
       '<div class="st-body">' + escapeHtml(st.body || '').replace(/\n/g,'<br>') + '</div>' +
       '<div class="ft-resize" data-resize="1"></div></div>';
   }).join('');
 }
+
 
 
 function freeShapesHtml(s){
@@ -2366,8 +2375,6 @@ function resolveFontId(s, which){
 }
 
 function titleHtml(s){
-  const imageMode = !!s.image;
-  const textShadow = imageMode ? 'text-shadow:0 2px 12px rgba(0,0,0,.42);' : '';
   let fmt = '';
   if(s.titleFormat){
     if(s.titleFormat.bold) fmt += 'font-weight:900;';
@@ -2381,8 +2388,9 @@ function titleHtml(s){
   const col = 'color:' + (s.text || '#1a1a1a') + ';';
   let body = parseTitleSyntax(s.title, s.accent);
   body = applyHighlightToHtml(body, s.highlight, s.highlightExtra, s.mk);
-  return '<div class="titleText" style="font-size:' + s.titleSize + 'px;' + ff + typo + col + textShadow + fmt + '">' + body + '</div>';
+  return '<div class="titleText" style="font-size:' + s.titleSize + 'px;' + ff + typo + col + fmt + '">' + body + '</div>';
 }
+
 
 function brandHtml(s){
   if(!s.showBrand) return '';
@@ -2436,7 +2444,8 @@ function subTextHtml(s){
   const ff = 'font-family:' + fontStack(resolveFontId(s, 'body')) + ';';
   const typo = bodyTypoCss(s);
   const col = bodyColorCss(s);
-  return s.sub && s.sub.trim() ? '<div class="subText" style="font-size:' + s.subSize + 'px;' + ff + typo + col + (s.image ? 'text-shadow:0 2px 8px rgba(0,0,0,.4);' : '') + '">' + parseTitleSyntax(s.sub, s.accent) + '</div>' : '';
+  return s.sub && s.sub.trim() ? '<div class="subText" style="font-size:' + s.subSize + 'px;' + ff + typo + col + '">' + parseTitleSyntax(s.sub, s.accent) + '</div>' : '';
+
 }
 function rowTopHtml(s, pageIdx, total, z){
   const photoChip = s.image ? ' photoChip' : '';
