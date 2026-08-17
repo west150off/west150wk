@@ -74,6 +74,8 @@
   .siteItem .dom{font-size:11px;color:var(--chrome-sub);flex:none;white-space:nowrap;}
   .siteMenuEmpty{padding:16px 10px;font-size:12px;color:var(--chrome-sub);}
   .ddItem{padding:9px 11px;border-radius:7px;font-size:13px;cursor:pointer;color:var(--chrome-text);display:flex;align-items:center;gap:8px;}
+  a.ddItem{text-decoration:none;}
+  a.ddItem:visited{color:var(--chrome-text);}
   .ddItem:hover{background:var(--chrome-btn-hover);}
   .ddItem.active{background:var(--accent-soft);color:var(--accent);}
   .ddItem .ic{opacity:.7;font-size:14px;width:16px;text-align:center;}
@@ -694,7 +696,7 @@
     display:flex;align-items:center;gap:8px;
   }
   #card.style-official .badgeTop::before{
-    content:"";display:inline-block;width:18px;height:18px;border-radius:50%;
+    content:"OFFICIAL";display:inline-block;width:18px;height:18px;border-radius:50%;
     border:2px solid #1a1a1a;flex:none;
   }
   #card.style-official .pageNum{
@@ -732,14 +734,6 @@
     border-top:1px solid #1a1a1a;
     padding-top:12px;
     position:relative;
-  }
-  #card.style-official .rowBottom::after{
-    content:"공인";position:absolute;right:6px;top:-16px;
-    width:34px;height:34px;border-radius:50%;
-    border:2px solid #c0272d;color:#c0272d;
-    display:flex;align-items:center;justify-content:center;
-    font-size:10px;font-weight:900;letter-spacing:.05em;
-    transform:rotate(-8deg);opacity:.8;
   }
   #card.style-official .handle{
     letter-spacing:.06em;
@@ -959,12 +953,6 @@
   #card.style-legal::before{
     content:"";position:absolute;inset:8px;border:1px solid #1a1a1a;pointer-events:none;
   }
-  #card.style-legal::after{
-    content:"정본";position:absolute;left:50%;top:50%;
-    transform:translate(-50%,-50%) rotate(-24deg);
-    font-size:60px;font-weight:900;color:#1a1a1a;opacity:.028;
-    letter-spacing:.3em;white-space:nowrap;pointer-events:none;
-  }
   #card.style-legal .rowTop{
     justify-content:center;flex-direction:column;align-items:center;gap:6px;
     border-bottom:3px double #1a1a1a;padding-bottom:12px;text-align:center;
@@ -978,7 +966,7 @@
     color:#555!important;font-family:'Courier New',monospace;font-size:9.5px;
     letter-spacing:.03em;
   }
-  #card.style-legal .pageNum::before{content:"사건번호  ";opacity:.7;}
+  #card.style-legal .pageNum::before{content:"법원 관련 소식  ";opacity:.7;}
   #card.style-legal .pill{
     background:none!important;color:#1a1a1a!important;border:none;
     font-weight:900;letter-spacing:.4em;font-size:1em;
@@ -1013,21 +1001,16 @@
     border-top:1px solid #1a1a1a;padding-top:16px;margin-top:6px;
     justify-content:center;position:relative;flex-direction:column;align-items:center;gap:10px;
   }
-  #card.style-legal .rowBottom::before{
-    content:"위와 같이 결정함";position:absolute;left:0;right:0;top:-30px;
-    text-align:center;font-size:10.5px;letter-spacing:.08em;color:#1a1a1a99;
-  }
   #card.style-legal .handle{
     letter-spacing:.25em;font-weight:700;font-size:11px;
   }
-  #card.style-legal .handle::after{content:"  (인)";font-size:9px;opacity:.7;letter-spacing:0;}
   #card.style-legal .rowBottom::after{
-    content:"법원판결";position:absolute;right:14px;bottom:-6px;
+    content:"법원";position:absolute;right:14px;bottom:-6px;
     width:52px;height:52px;border-radius:50%;
     border:2.5px solid #b8272d;outline:1px solid #b8272d;outline-offset:3px;
     color:#b8272d;background:radial-gradient(circle, transparent 55%, #b8272d 56%, #b8272d 58%, transparent 59%), radial-gradient(circle, transparent 70%, #b8272d18 70%);
     display:flex;align-items:center;justify-content:center;
-    font-size:9px;font-weight:900;transform:rotate(-9deg);
+    font-size:11px;font-weight:900;transform:rotate(-9deg);
     opacity:.82;mix-blend-mode:multiply;
   }
 
@@ -1733,6 +1716,17 @@
         </div>
       </div>
 
+      <div class="menuWrap" id="otherToolsMenuWrap">
+        <button class="btn ghost" id="otherToolsMenuBtn">그외 편집기 ▾</button>
+        <div class="dropdown" id="otherToolsMenu">
+          <a class="ddItem" href="https://west150off.github.io/west150wk/ver2/wee.html" target="_blank" rel="noopener"><span class="ic">🗂</span>포스트잇 편집기</a>
+          <a class="ddItem" href="https://west150off.github.io/west150wk/ver2/officialcard.html" target="_blank" rel="noopener"><span class="ic">📊</span>오피셜 카드 편집기</a>
+          <a class="ddItem" href="https://west150off.github.io/west150wk/ver2/sns.html" target="_blank" rel="noopener"><span class="ic">📰</span>SNS 번역 편집기</a>
+          <a class="ddItem" href="https://west150off.github.io/west150wk/ver2/breaking.html" target="_blank" rel="noopener"><span class="ic">🌐</span>속보 편집기</a>
+          <div class="hint" style="margin:6px 10px 4px;">같은 폴더에 있는 파일만 바로 열립니다. 파일명이 다르면 아래에서 직접 고쳐주세요.</div>
+        </div>
+      </div>
+
       <button class="btn ghost" id="previewAllBtn">전체 미리보기</button>
       <button class="btn ghost" id="exportOne">현재 카드 저장</button>
       <button class="btn primary" id="exportAll">전체 저장</button>
@@ -2028,7 +2022,7 @@ const sampleData = {
 };
 
 const blockLabels = {
-  none: {label:'설명', hint:'한 줄이든 여러 줄이든 자유롭게 입력하세요.', ph:'AI가 아닌 나만의 문체로 만들어 보자.'},
+  none: {label:'설명', hint:'한 줄이든 여러 줄이든 자유롭게 입력하세요.', ph:'본문 입력'},
   timeline: {label:'타임라인 항목', hint:'"날짜 | 설명" 형식으로 한 줄에 하나씩 입력하세요.', ph:'2024.01 | 프로젝트 시작'},
   list: {label:'리스트 항목', hint:'한 줄에 항목 하나씩 입력하면 자동으로 번호가 매겨집니다.', ph:'첫 번째 항목'},
   bullet: {label:'불릿 항목', hint:'한 줄에 항목 하나씩 입력하면 • 불릿으로 표시됩니다. (번호 없음)', ph:'핵심 포인트'},
@@ -2043,7 +2037,7 @@ const blockLabels = {
 const defaults = () => ({
   template:'text', style:'none',
   badgeTop:'west150daily', pillText:'west150daily', title:'헤드라인',
-  highlight:'직접', highlightExtra:'', sub:'AI가 아닌 나만의 문체로 만들어 보자.', handle:'출처:',
+  highlight:'직접', highlightExtra:'', sub:'본문 입력.', handle:'출처:',
   bg:'#f4efe4', text:'#1a1a1a', bodyText:'#1a1a1a', badgeColor:'#1a1a1a', handleColor:'#1a1a1a', pillBg:'#181818', pillColor:'#ffffff',
   mk:'#f6b8c4', accent:'#7c5cff', titleSize:27, subSize:14,
   titleLetter:0, titleLine:135, bodyLetter:0, bodyLine:160,
@@ -3534,6 +3528,7 @@ bindMenuToggle('imageMenuBtn','imageMenu');
 bindMenuToggle('sitesMenuBtn','sitesMenu');
 bindMenuToggle('blockMenuBtn','blockMenu');
 bindMenuToggle('editMenuBtn','editMenu');
+bindMenuToggle('otherToolsMenuBtn','otherToolsMenu');
 renderSitesMenu();
 
 
