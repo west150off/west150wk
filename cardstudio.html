@@ -297,13 +297,13 @@
   #card .cmp-text .t-accent{font-weight:900;}
 
   /* Logo / Watermark */
-  #card .logoMark{position:absolute;z-index:10;pointer-events:none;max-width:30%;max-height:18%;object-fit:contain;}
-  #card .logoMark.pos-tl{top:12px;left:12px;}
-  #card .logoMark.pos-tr{top:12px;right:12px;}
-  #card .logoMark.pos-bl{bottom:12px;left:12px;}
-  #card .logoMark.pos-br{bottom:12px;right:12px;}
+  #card .logoMark{position:absolute;z-index:10;pointer-events:none;max-width:26%;max-height:14%;object-fit:contain;}
+  #card .logoMark.pos-tl{top:54px;left:14px;}
+  #card .logoMark.pos-tr{top:54px;right:14px;}
+  #card .logoMark.pos-bl{bottom:54px;left:14px;}
+  #card .logoMark.pos-br{bottom:54px;right:14px;}
   #card .logoMark.pos-center{top:50%;left:50%;transform:translate(-50%,-50%);}
-  #card .logoMark.logoMarkBox{background:#fff;padding:8px 12px;border-radius:10px;box-shadow:0 4px 14px rgba(0,0,0,.16);box-sizing:border-box;}
+  #card .logoMark.logoMarkBox{background:#fff;padding:6px 10px;border-radius:10px;box-shadow:0 4px 14px rgba(0,0,0,.16);box-sizing:border-box;}
   #card .logoMark.logoMarkBox.pos-center{transform:translate(-50%,-50%);}
 
   #card .imgBox.sponsorTop{position:absolute;top:0;left:0;right:0;height:66%;border-radius:0;}
@@ -948,37 +948,59 @@
   #card.style-darkgold .ls-num{background:none!important;border:1px solid #c9a44c;color:#c9a44c!important;border-radius:0;}
   #card.style-darkgold .ls-bullet{background:#c9a44c!important;}
 
-  /* 법률/판결문형: 세로줄글 + 조항 번호 + 관인 스탬프 */
+  /* 법률/판결문형: 정식 판결문/계약서 레이아웃 — 이중괘선 + 조항 + 정식 관인 */
   #card.style-legal{
-    background:#faf9f5!important;
+    background:#fbfaf6!important;
     color:#1a1a1a!important;
     position:relative;
     font-family:'Nanum Myeongjo',serif;
+    border:1px solid #1a1a1a;
+  }
+  #card.style-legal::before{
+    content:"";position:absolute;inset:8px;border:1px solid #1a1a1a;pointer-events:none;
+  }
+  #card.style-legal::after{
+    content:"정본";position:absolute;left:50%;top:50%;
+    transform:translate(-50%,-50%) rotate(-24deg);
+    font-size:60px;font-weight:900;color:#1a1a1a;opacity:.028;
+    letter-spacing:.3em;white-space:nowrap;pointer-events:none;
   }
   #card.style-legal .rowTop{
-    justify-content:center;flex-direction:column;align-items:center;gap:2px;
-    border-bottom:2px solid #1a1a1a;padding-bottom:10px;text-align:center;
+    justify-content:center;flex-direction:column;align-items:center;gap:6px;
+    border-bottom:3px double #1a1a1a;padding-bottom:12px;text-align:center;
+    position:relative;
   }
   #card.style-legal .badgeTop{
-    color:#1a1a1a!important;letter-spacing:.3em;font-size:10px;font-weight:700;
+    color:#1a1a1a!important;letter-spacing:.55em;font-size:15px;font-weight:800;
+    padding-left:.55em;
   }
-  #card.style-legal .pageNum{color:#666!important;font-family:'Courier New',monospace;font-size:9px;}
+  #card.style-legal .pageNum{
+    color:#555!important;font-family:'Courier New',monospace;font-size:9.5px;
+    letter-spacing:.03em;
+  }
+  #card.style-legal .pageNum::before{content:"사건번호  ";opacity:.7;}
   #card.style-legal .pill{
     background:none!important;color:#1a1a1a!important;border:none;
-    font-weight:900;letter-spacing:.05em;font-size:1.1em;padding:6px 0 0;
+    font-weight:900;letter-spacing:.4em;font-size:1em;
+    padding:10px 0 8px .4em;text-align:center;display:block;
+    border-top:1px solid #1a1a1a;border-bottom:1px solid #1a1a1a;
+    margin-top:16px;
   }
   #card.style-legal .frame{
-    border:none;background:transparent;margin-top:14px;
+    border:none;background:transparent;margin-top:6px;padding-top:14px;
   }
   #card.style-legal .titleText{
-    font-weight:900;text-align:center;letter-spacing:.01em;
+    font-weight:800;text-align:center;letter-spacing:.01em;line-height:1.5;
+    font-size:.98em;
   }
   #card.style-legal .subText,
-  #card.style-legal .blk{text-align:justify;line-height:1.75;}
-  #card.style-legal .list{counter-reset:jo;}
+  #card.style-legal .blk{
+    text-align:justify;line-height:1.85;text-indent:1em;font-size:12.5px;
+  }
+  #card.style-legal .list{counter-reset:jo;margin-top:6px;}
   #card.style-legal .ls-item{
-    counter-increment:jo;position:relative;padding-left:44px;
-    border-bottom:1px dotted #1a1a1a33;padding-bottom:8px;
+    counter-increment:jo;position:relative;padding-left:46px;
+    border-bottom:1px dotted #1a1a1a2e;padding-bottom:9px;line-height:1.7;
   }
   #card.style-legal .ls-num{
     display:none;
@@ -988,16 +1010,26 @@
     font-size:11px;font-weight:800;letter-spacing:.02em;color:#1a1a1a;
   }
   #card.style-legal .rowBottom{
-    border-top:1px solid #1a1a1a;padding-top:14px;
-    justify-content:center;position:relative;
+    border-top:1px solid #1a1a1a;padding-top:16px;margin-top:6px;
+    justify-content:center;position:relative;flex-direction:column;align-items:center;gap:10px;
   }
+  #card.style-legal .rowBottom::before{
+    content:"위와 같이 결정함";position:absolute;left:0;right:0;top:-30px;
+    text-align:center;font-size:10.5px;letter-spacing:.08em;color:#1a1a1a99;
+  }
+  #card.style-legal .handle{
+    letter-spacing:.25em;font-weight:700;font-size:11px;
+  }
+  #card.style-legal .handle::after{content:"  (인)";font-size:9px;opacity:.7;letter-spacing:0;}
   #card.style-legal .rowBottom::after{
-    content:"印";position:absolute;right:8px;top:-20px;
-    width:38px;height:38px;border-radius:2px;border:2px solid #c0272d;color:#c0272d;
+    content:"법원판결";position:absolute;right:14px;bottom:-6px;
+    width:52px;height:52px;border-radius:50%;
+    border:2.5px solid #b8272d;outline:1px solid #b8272d;outline-offset:3px;
+    color:#b8272d;background:radial-gradient(circle, transparent 55%, #b8272d 56%, #b8272d 58%, transparent 59%), radial-gradient(circle, transparent 70%, #b8272d18 70%);
     display:flex;align-items:center;justify-content:center;
-    font-size:16px;font-weight:900;transform:rotate(-4deg);opacity:.85;
+    font-size:9px;font-weight:900;transform:rotate(-9deg);
+    opacity:.82;mix-blend-mode:multiply;
   }
-  #card.style-legal .handle{letter-spacing:.1em;}
 
 
   .titleText .t-bold, .subText .t-bold, .bodyFontWrap .t-bold, .ls-text .t-bold{font-weight:900;}
@@ -1580,6 +1612,7 @@
           <div class="ddItem" data-action="addShapeRect"><span class="ic">▢</span>도형 · 사각형</div>
           <div class="ddItem" data-action="addShapeCircle"><span class="ic">◎</span>도형 · 원</div>
           <div class="ddItem" data-action="addShapeLine"><span class="ic">─</span>도형 · 선</div>
+          <div class="ddItem" data-action="addMaskBar"><span class="ic">■</span>마스킹 · 검정 블록</div>
         </div>
       </div>
 
@@ -1796,7 +1829,7 @@
         </div>
         <div class="field">
           <label id="blockDataLabel">내용</label>
-          <textarea id="blockDataText" style="min-height:100px;" placeholder="AI가 아닌 나만의 문체로 만들어 보자."></textarea>
+          <textarea id="blockDataText" style="min-height:100px;" placeholder="본문 입력."></textarea>
         </div>
         <div class="hint" id="blockDataHint">한 줄씩 입력하세요.</div>
       </div>
@@ -2048,8 +2081,8 @@ const defaults = () => ({
   showFactStamp: false,
   factStampLabel: 'FACT CHECK',
   factStampColor: '#c0272d',
-  factStampX: 286,
-  factStampY: 386,
+  factStampX: 280,
+  factStampY: 64,
   selectedStampId: null
 
 });
@@ -2309,8 +2342,8 @@ function factStampHtml(s){
   if(!s.showFactStamp) return '';
   const color = s.factStampColor || '#c0272d';
   const label = escapeHtml(s.factStampLabel || 'FACT CHECK');
-  const x = s.factStampX != null ? s.factStampX : 286;
-  const y = s.factStampY != null ? s.factStampY : 386;
+  const x = s.factStampX != null ? s.factStampX : 280;
+  const y = s.factStampY != null ? s.factStampY : 64;
   const sel = s.selectedStampId ? ' selected' : '';
   return '<div class="factStamp' + sel + '" data-stampid="1" style="--fs-color:' + color + ';left:' + x + 'px;top:' + y + 'px;">' +
     '<div class="fsRing">' +
@@ -3516,6 +3549,7 @@ Array.from(document.querySelectorAll('#blockMenu .ddItem')).forEach(item => {
     if(item.dataset.action === 'addFreeText') return; // handled separately
     if(item.dataset.action === 'addSticky') return; // handled separately
     if(item.dataset.action && item.dataset.action.indexOf('addShape') === 0) return;
+    if(item.dataset.action === 'addMaskBar') return;
     if(item.dataset.block) setContentBlock(item.dataset.block);
     closeAllDropdowns();
   });
@@ -4245,8 +4279,8 @@ function bindFreeTextInteractions(){
       ftDrag.targetId = '1';
       ftDrag.startX = point.clientX;
       ftDrag.startY = point.clientY;
-      ftDrag.origX = s.factStampX != null ? s.factStampX : 286;
-      ftDrag.origY = s.factStampY != null ? s.factStampY : 386;
+      ftDrag.origX = s.factStampX != null ? s.factStampX : 280;
+      ftDrag.origY = s.factStampY != null ? s.factStampY : 64;
       return;
     }
 
@@ -4306,11 +4340,11 @@ function bindFreeTextInteractions(){
   card.ontouchstart = onDown;
 }
 
-function addShape(type){
+function addShape(type, overrides){
   const s = slides[active];
   if(!s.freeShapes) s.freeShapes = [];
   const n = s.freeShapes.length;
-  const sh = {
+  const sh = Object.assign({
     id: 'sh_' + Date.now().toString(36) + Math.random().toString(36).slice(2,5),
     type: type || 'rect',
     x: 48 + (n % 3) * 24,
@@ -4319,16 +4353,22 @@ function addShape(type){
     h: type === 'line' ? 4 : 90,
     color: s.accent || '#7c5cff',
     opacity: 85
-  };
+  }, overrides || {});
   s.freeShapes.push(sh);
   s.selectedShapeId = sh.id;
   renderMainCard(); renderList();
   bindFreeTextInteractions();
 }
+function addMaskBar(){
+  addShape('rect', {
+    w: 160, h: 26, color: '#000000', opacity: 100, radius: 0
+  });
+}
 Array.from(document.querySelectorAll('#blockMenu .ddItem')).forEach(item => {
   if(item.dataset.action === 'addShapeRect') item.addEventListener('click', () => { addShape('rect'); closeAllDropdowns(); });
   if(item.dataset.action === 'addShapeCircle') item.addEventListener('click', () => { addShape('circle'); closeAllDropdowns(); });
   if(item.dataset.action === 'addShapeLine') item.addEventListener('click', () => { addShape('line'); closeAllDropdowns(); });
+  if(item.dataset.action === 'addMaskBar') item.addEventListener('click', () => { addMaskBar(); closeAllDropdowns(); });
 });
 
 // Mobile panel toggles
