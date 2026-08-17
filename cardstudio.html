@@ -187,10 +187,19 @@
   #card .frame.boldFrame{border:3px solid currentColor;border-radius:0;padding:30px 26px;}
 
   #card .blk{margin-top:14px;}
-  #card .timeline .tl-item{display:flex;gap:10px;margin-bottom:10px;}
-  #card .tl-dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex:none;}
-  #card .tl-date{font-size:12px;font-weight:800;opacity:.85;}
-  #card .tl-desc{font-size:12.5px;line-height:1.5;opacity:1;margin-top:2px;}
+  #card .timeline{position:relative;}
+  #card .timeline .tl-item{display:flex;gap:12px;margin-bottom:14px;position:relative;}
+  #card .timeline .tl-item:last-child{margin-bottom:0;}
+  #card .timeline .tl-item:not(:last-child)::before{
+    content:"";position:absolute;left:5px;top:16px;bottom:-14px;width:2px;
+    background:linear-gradient(180deg,currentColor,transparent);opacity:.22;
+  }
+  #card .tl-dot{width:11px;height:11px;border-radius:50%;margin-top:3px;flex:none;position:relative;
+    box-shadow:0 0 0 3px #ffffff;background-clip:padding-box;}
+  #card .tl-body{flex:1;min-width:0;background:#00000006;border-radius:10px;padding:8px 12px;}
+  #card .tl-date{font-size:11.5px;font-weight:900;letter-spacing:.02em;display:inline-block;
+    padding:2px 9px;border-radius:20px;color:#fff;}
+  #card .tl-desc{font-size:12.5px;line-height:1.5;opacity:1;margin-top:4px;}
   #card .list .ls-item{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px;}
   #card .ls-num{width:18px;height:18px;border-radius:50%;color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex:none;}
   #card .ls-bullet{width:8px;height:8px;border-radius:50%;margin-top:6px;flex:none;}
@@ -208,6 +217,31 @@
   #card .q-mark{font-size:34px;font-weight:900;line-height:1;}
   #card .q-text{font-size:16px;font-weight:700;line-height:1.5;margin-top:4px;}
   #card .q-author{font-size:12px;opacity:.6;margin-top:8px;}
+
+  /* 팩트체크 도장 (Fact-check ink stamp overlay, 자유 이동) */
+  #card .factStamp{position:absolute;z-index:6;width:96px;height:96px;cursor:grab;
+    filter:drop-shadow(0 2px 4px rgba(0,0,0,.18));}
+  body.menu-open #card .factStamp{z-index:1;pointer-events:none;}
+  body.menu-open #card .factStamp.selected{pointer-events:auto;}
+  #card .factStamp.selected{outline:1.5px dashed #7c5cff;outline-offset:4px;cursor:grabbing;}
+  body.exporting #card .factStamp.selected{outline:none;}
+  #card .factStamp .fsRing{
+    width:100%;height:100%;border-radius:50%;
+    border:3px solid var(--fs-color);
+    outline:1px solid var(--fs-color);outline-offset:3px;
+    color:var(--fs-color);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    transform:rotate(-14deg);
+    background:radial-gradient(circle, transparent 60%, var(--fs-color));
+    opacity:.88;
+    mix-blend-mode:multiply;
+    pointer-events:none;
+  }
+  #card .factStamp .fsTop{font-size:10.5px;font-weight:900;letter-spacing:.06em;line-height:1.05;text-align:center;padding:0 8px;}
+  #card .factStamp .fsMid{margin:2px 0;}
+  #card .factStamp .fsCheck{font-size:20px;font-weight:900;}
+  #card .factStamp .fsBot{font-size:9px;font-weight:800;letter-spacing:.14em;margin-top:1px;}
+  #card .factStamp .fsStars{font-size:6px;letter-spacing:3px;margin-top:2px;opacity:.85;}
 
   /* Source list block (list / box / compact variants) */
   #card .sourcelist{display:flex;flex-direction:column;}
@@ -421,9 +455,9 @@
   #card.style-newspaper .rowTop{border-bottom:4px double #1a1a1a;padding-bottom:8px;}
   #card.style-newspaper .badgeTop{display:block!important;font-family:'Nanum Myeongjo',serif;font-size:10px;letter-spacing:.3em;text-align:center;width:100%;color:#1a1a1a!important;}
   #card.style-newspaper .pill{background:none!important;color:#1a1a1a!important;border-top:3px double #1a1a1a;border-bottom:3px double #1a1a1a;border-radius:0;padding:5px 0;letter-spacing:3px;}
-  #card.style-newspaper .titleText{font-weight:900;font-family:'Nanum Myeongjo',serif;}
+  #card.style-newspaper .titleText{font-weight:900;font-family:'Nanum Myeongjo',serif;color:#1a1a1a;}
   #card.style-newspaper .titleText::first-letter{font-size:2em;font-weight:900;float:left;line-height:.75;padding:4px 6px 0 0;font-family:'Nanum Myeongjo',serif;}
-  #card.style-newspaper .subText{column-count:2;column-gap:14px;column-rule:1px solid #1a1a1a33;font-size:12.5px;}
+  #card.style-newspaper .subText{column-count:2;column-gap:14px;column-rule:1px solid #1a1a1a33;font-size:12.5px;color:#1a1a1a;}
   #card.style-newspaper .frame{border:none;border-top:3px double #1a1a1a;border-radius:0;}
   #card.style-newspaper .rowBottom{border-top:2px solid #1a1a1a;padding-top:10px;position:relative;}
   #card.style-newspaper .rowBottom::before{content:"EXTRA · EXTRA";position:absolute;left:0;top:-22px;font-size:8px;letter-spacing:.25em;color:#1a1a1a99;}
@@ -872,6 +906,99 @@
   #card.style-statsreport .ls-bullet{background:#2a5ba8!important;}
   #card.style-statsreport .rowBottom{border-top:1px dashed #c9d6e4;padding-top:10px;}
 
+  /* 다크 프리미엄 에디토리얼: 블랙 + 골드, 럭셔리 매거진 커버 톤 */
+  #card.style-darkgold{
+    background:#0d0d0d!important;
+    color:#f2ead8!important;
+    position:relative;
+  }
+  #card.style-darkgold::before{
+    content:"";position:absolute;inset:10px;border:1px solid #c9a44c55;pointer-events:none;
+  }
+  #card.style-darkgold .rowTop{
+    border-bottom:1px solid #c9a44c66;padding-bottom:10px;
+  }
+  #card.style-darkgold .badgeTop{
+    color:#c9a44c!important;letter-spacing:.22em;font-weight:700;font-size:10.5px;
+  }
+  #card.style-darkgold .pageNum{color:#8a7a58!important;font-family:'Courier New',monospace;}
+  #card.style-darkgold .pill{
+    background:none!important;color:#c9a44c!important;
+    border:1px solid #c9a44c;border-radius:0;letter-spacing:.14em;font-weight:700;
+    padding:5px 16px;
+  }
+  #card.style-darkgold .frame{
+    border:none;background:transparent;margin-top:18px;
+  }
+  #card.style-darkgold .titleText{
+    font-weight:900;letter-spacing:-.015em;line-height:1.15;
+    font-family:'Nanum Myeongjo',serif;
+    background:linear-gradient(120deg,#fff,#e8d9b0 55%,#c9a44c);
+    -webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;
+  }
+  #card.style-darkgold .subText,
+  #card.style-darkgold .blk{color:#cfc4ac;opacity:1;}
+  #card.style-darkgold .rowBottom{
+    border-top:1px solid #c9a44c44;padding-top:12px;position:relative;
+  }
+  #card.style-darkgold .rowBottom::before{
+    content:"";position:absolute;left:0;top:-1px;width:40px;height:1px;background:#c9a44c;
+  }
+  #card.style-darkgold .handle{color:#c9a44c!important;letter-spacing:.08em;}
+  #card.style-darkgold .ls-num{background:none!important;border:1px solid #c9a44c;color:#c9a44c!important;border-radius:0;}
+  #card.style-darkgold .ls-bullet{background:#c9a44c!important;}
+
+  /* 법률/판결문형: 세로줄글 + 조항 번호 + 관인 스탬프 */
+  #card.style-legal{
+    background:#faf9f5!important;
+    color:#1a1a1a!important;
+    position:relative;
+    font-family:'Nanum Myeongjo',serif;
+  }
+  #card.style-legal .rowTop{
+    justify-content:center;flex-direction:column;align-items:center;gap:2px;
+    border-bottom:2px solid #1a1a1a;padding-bottom:10px;text-align:center;
+  }
+  #card.style-legal .badgeTop{
+    color:#1a1a1a!important;letter-spacing:.3em;font-size:10px;font-weight:700;
+  }
+  #card.style-legal .pageNum{color:#666!important;font-family:'Courier New',monospace;font-size:9px;}
+  #card.style-legal .pill{
+    background:none!important;color:#1a1a1a!important;border:none;
+    font-weight:900;letter-spacing:.05em;font-size:1.1em;padding:6px 0 0;
+  }
+  #card.style-legal .frame{
+    border:none;background:transparent;margin-top:14px;
+  }
+  #card.style-legal .titleText{
+    font-weight:900;text-align:center;letter-spacing:.01em;
+  }
+  #card.style-legal .subText,
+  #card.style-legal .blk{text-align:justify;line-height:1.75;}
+  #card.style-legal .list{counter-reset:jo;}
+  #card.style-legal .ls-item{
+    counter-increment:jo;position:relative;padding-left:44px;
+    border-bottom:1px dotted #1a1a1a33;padding-bottom:8px;
+  }
+  #card.style-legal .ls-num{
+    display:none;
+  }
+  #card.style-legal .ls-item::before{
+    content:"제"counter(jo)"조";position:absolute;left:0;top:0;
+    font-size:11px;font-weight:800;letter-spacing:.02em;color:#1a1a1a;
+  }
+  #card.style-legal .rowBottom{
+    border-top:1px solid #1a1a1a;padding-top:14px;
+    justify-content:center;position:relative;
+  }
+  #card.style-legal .rowBottom::after{
+    content:"印";position:absolute;right:8px;top:-20px;
+    width:38px;height:38px;border-radius:2px;border:2px solid #c0272d;color:#c0272d;
+    display:flex;align-items:center;justify-content:center;
+    font-size:16px;font-weight:900;transform:rotate(-4deg);opacity:.85;
+  }
+  #card.style-legal .handle{letter-spacing:.1em;}
+
 
   .titleText .t-bold, .subText .t-bold, .bodyFontWrap .t-bold, .ls-text .t-bold{font-weight:900;}
   .titleText .t-accent, .subText .t-accent, .bodyFontWrap .t-accent, .ls-text .t-accent{font-weight:900;}
@@ -1039,6 +1166,8 @@
 
             <div class="ddItem" data-style="brandpromo">브랜드 프로모션형 (그라데이션·리본배지)</div>
             <div class="ddItem" data-style="statsreport">통계리포트형 (그리드·쿨톤강조)</div>
+            <div class="ddItem" data-style="darkgold">다크 프리미엄 에디토리얼 (블랙·골드)</div>
+            <div class="ddItem" data-style="legal">법률/판결문형 (조항·관인)</div>
           </div>
         </div>
       </div>
@@ -1150,6 +1279,28 @@
             </div>
           </div>
           <div class="hint">로고는 사진 메뉴의 로고/워터마크를 사용합니다. 브랜드 텍스트·소셜은 카드 하단에 표시됩니다.</div>
+
+          <div style="border-top:1px solid var(--chrome-line);margin:8px 0 4px;"></div>
+          <div class="field">
+            <label style="font-weight:700;color:var(--chrome-text);">팩트체크 도장</label>
+          </div>
+          <div class="field">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+              <input type="checkbox" id="showFactStamp" style="width:auto;"> 팩트체크 도장 표시
+            </label>
+          </div>
+          <div class="row2">
+            <div class="field">
+              <label>문구</label>
+              <input type="text" id="factStampLabel" value="FACT CHECK" placeholder="FACT CHECK">
+            </div>
+            <div class="field">
+              <label>색상</label>
+              <input type="color" id="factStampColor" value="#c0272d" style="height:38px;">
+            </div>
+          </div>
+          <div class="hint">카드 위 도장을 클릭한 채로 끌면 자유롭게 위치를 옮길 수 있습니다. (스티키노트와 동일한 방식)</div>
+          <div class="hint">실제 잉크 도장처럼 반투명 겹침(mix-blend-mode) 효과가 적용됩니다.</div>
 
           <div style="border-top:1px solid var(--chrome-line);margin:8px 0 4px;"></div>
           <div class="field">
@@ -1726,7 +1877,7 @@
 
 <script>
 const templateLabels = {text:'TEXT', full:'FULL', split:'SPLIT', bottom:'BOTTOM', inset:'INSET', side:'SIDE', frame:'FRAME', cardincard:'NEST', mapchart:'MAP', headline:'HEAD', profile:'PROF', free:'FREE', sponsor:'SPONSOR'};
-const styleLabels = {none:'', insta:'INSTA', newspaper:'NEWS', folder:'FOLDER', alert:'ALERT', breaking:'속보', breakinglive:'LIVE', breakingticker:'티커', briefing:'브리핑', cover:'COVER', official:'공문서', papergrid:'모눈용지'};
+const styleLabels = {none:'', insta:'INSTA', newspaper:'NEWS', folder:'FOLDER', alert:'ALERT', breaking:'속보', breakinglive:'LIVE', breakingticker:'티커', briefing:'브리핑', cover:'COVER', official:'공문서', papergrid:'모눈용지', darkgold:'다크골드', legal:'판결문'};
 
 const TEMPLATE_PALETTES = {
   text:      {bg:'#f4efe4', text:'#1a1a1a', bodyText:'#1a1a1a', accent:'#7c5cff', mk:'#f6b8c4', pillBg:'#181818', pillColor:'#ffffff'},
@@ -1893,7 +2044,13 @@ const defaults = () => ({
   brandSub: 'DAILY',
   showThreads: false,
   showInsta: false,
-  showX: false
+  showX: false,
+  showFactStamp: false,
+  factStampLabel: 'FACT CHECK',
+  factStampColor: '#c0272d',
+  factStampX: 286,
+  factStampY: 386,
+  selectedStampId: null
 
 });
 
@@ -2148,6 +2305,23 @@ function photoCreditHtml(s){
   return '<div class="photoCredit">' + escapeHtml(s.photoCredit) + '</div>';
 }
 
+function factStampHtml(s){
+  if(!s.showFactStamp) return '';
+  const color = s.factStampColor || '#c0272d';
+  const label = escapeHtml(s.factStampLabel || 'FACT CHECK');
+  const x = s.factStampX != null ? s.factStampX : 286;
+  const y = s.factStampY != null ? s.factStampY : 386;
+  const sel = s.selectedStampId ? ' selected' : '';
+  return '<div class="factStamp' + sel + '" data-stampid="1" style="--fs-color:' + color + ';left:' + x + 'px;top:' + y + 'px;">' +
+    '<div class="fsRing">' +
+      '<div class="fsTop">' + label + '</div>' +
+      '<div class="fsMid"><span class="fsCheck">✓</span></div>' +
+      '<div class="fsBot">VERIFIED</div>' +
+      '<div class="fsStars">★ ★ ★</div>' +
+    '</div>' +
+  '</div>';
+}
+
 function scrimOverlayCss(dir, strength){
   const base = Math.max(0, Math.min(0.85, (Number(strength) || 0) / 100));
   // 오버레이 0이면 절대 어둡게 덮지 않음
@@ -2225,7 +2399,7 @@ function renderTimeline(s){
   const items = lines.map(l => {
     const parts = l.split('|');
     const a = (parts[0]||'').trim(), b = (parts[1]||'').trim();
-    return '<div class="tl-item"><div class="tl-dot" style="background:' + s.accent + ';"></div><div class="tl-body"><div class="tl-date">' + escapeHtml(a) + '</div><div class="tl-desc">' + escapeHtml(b) + '</div></div></div>';
+    return '<div class="tl-item"><div class="tl-dot" style="background:' + s.accent + ';"></div><div class="tl-body"><div class="tl-date" style="background:' + s.accent + ';">' + escapeHtml(a) + '</div><div class="tl-desc">' + escapeHtml(b) + '</div></div></div>';
   }).join('');
   return '<div class="blk timeline">' + items + '</div>';
 }
@@ -2411,13 +2585,14 @@ function cardMarkup(s, pageIdx, total){
   const cls = 'id="card"' + (styleClass(s) ? ' class="' + styleClass(s).trim() + (isFree ? ' freeLayout' : '') + '"' : (isFree ? ' class="freeLayout"' : ''));
   const photoVignette = s.image ? '<div class="scrim" style="background:' + vignetteCss(s.vignetteMode, Number(s.vignetteStrength) || 0) + ';"></div>' : '';
   const logo = logoHtml(s);
+  const factStamp = factStampHtml(s);
   const freeT = freeTextsHtml(s) + freeStickiesHtml(s) + freeShapesHtml(s) + image2Html(s);
 
 
   if(isFree){
     return '<div ' + cls + ' style="' + base + 'position:relative;">' +
       (s.image ? imageBox(s,'full') + photoVignette : '') +
-      logo + freeT + photoCreditHtml(s) +
+      logo + factStamp + freeT + photoCreditHtml(s) +
       '<div class="z2" style="position:relative;padding:26px;height:100%;box-sizing:border-box;display:flex;flex-direction:column;">' +
         rowTopHtml(s, pageIdx, total, false) +
         '<div style="flex:1;display:flex;flex-direction:column;justify-content:center;text-align:' + align + ';">' +
@@ -2433,7 +2608,7 @@ function cardMarkup(s, pageIdx, total){
     return '<div ' + cls + ' style="' + base + '">' +
       imageBox(s,'sponsorTop') +
       photoVignette +
-      logo + freeT + photoCreditHtml(s) +
+      logo + factStamp + freeT + photoCreditHtml(s) +
       '<div style="margin-top:' + imgH + 'px;text-align:' + align + ';">' +
         kickerHtml(s) + titleHtml(s) + blockHtml(s) + brandHtml(s) +
       '</div>' +
@@ -2447,7 +2622,7 @@ function cardMarkup(s, pageIdx, total){
       imageBox(s,'full') +
       photoVignette +
       '<div class="scrim" style="background:' + scrimOverlayCss(s.scrimDir || 'bottom', s.imageOverlay) + ';"></div>' +
-      logo + freeT +
+      logo + factStamp + freeT +
       photoCreditHtml(s) +
       rowTopHtml(s, pageIdx, total, true) +
       '<div class="z2" style="margin-top:auto;padding-top:20px;text-align:' + align + ';">' + pillHtml(s) + titleHtml(s) + blockHtml(s) + brandHtml(s) + '</div>' +
@@ -2460,7 +2635,7 @@ function cardMarkup(s, pageIdx, total){
       rowTopHtml(s, pageIdx, total, false) +
       imageBox(s,'split') +
       photoVignette +
-      logo + freeT +
+      logo + factStamp + freeT +
       '<div class="frame" style="border:none;padding:20px 2px 0;text-align:' + align + ';">' + pillHtml(s) + titleHtml(s) + blockHtml(s) + brandHtml(s) + '</div>' +
       photoCreditHtml(s) +
       rowBottomHtml(s, false) +
@@ -2473,7 +2648,7 @@ function cardMarkup(s, pageIdx, total){
       '<div class="frame" style="border:none;padding:20px 2px 0;text-align:' + align + ';">' + pillHtml(s) + titleHtml(s) + blockHtml(s) + brandHtml(s) + '</div>' +
       imageBox(s,'bottom') +
       photoVignette +
-      logo + freeT + photoCreditHtml(s) +
+      logo + factStamp + freeT + photoCreditHtml(s) +
       rowBottomHtml(s, false) +
     '</div>';
   }
@@ -2482,7 +2657,7 @@ function cardMarkup(s, pageIdx, total){
     return '<div ' + cls + ' style="' + base + '">' +
       rowTopHtml(s, pageIdx, total, false) +
       '<div class="frame" style="text-align:' + align + ';">' + imageBox(s,'inset') + photoVignette + pillHtml(s) + titleHtml(s) + blockHtml(s) + '</div>' +
-      logo + freeT +
+      logo + factStamp + freeT +
       rowBottomHtml(s, false) +
     '</div>';
   }
@@ -2490,7 +2665,7 @@ function cardMarkup(s, pageIdx, total){
     return '<div ' + cls + ' style="' + base + '">' +
       rowTopHtml(s, pageIdx, total, false) +
       '<div class="frame sideFrame">' + imageBox(s,'side') + photoVignette + '<div class="sideText" style="text-align:' + align + ';">' + pillHtml(s) + titleHtml(s) + blockHtml(s) + '</div></div>' +
-      logo + freeT +
+      logo + factStamp + freeT +
       rowBottomHtml(s, false) +
     '</div>';
   }
@@ -2498,7 +2673,7 @@ function cardMarkup(s, pageIdx, total){
     return '<div ' + cls + ' style="' + base + '">' +
       rowTopHtml(s, pageIdx, total, false) +
       '<div class="frame boldFrame" style="text-align:' + align + ';">' + photoVignette + pillHtml(s) + titleHtml(s) + blockHtml(s) + '</div>' +
-      logo + freeT +
+      logo + factStamp + freeT +
       rowBottomHtml(s, false) +
     '</div>';
   }
@@ -2510,7 +2685,7 @@ function cardMarkup(s, pageIdx, total){
         photoVignette +
         pillHtml(s) + titleHtml(s) + blockHtml(s) + brandHtml(s) +
       '</div>' +
-      logo + freeT + photoCreditHtml(s) +
+      logo + factStamp + freeT + photoCreditHtml(s) +
       rowBottomHtml(s, false) +
     '</div>';
   }
@@ -2524,7 +2699,7 @@ function cardMarkup(s, pageIdx, total){
         : '<div class="imgBox mapchart" style="display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.06);color:inherit;opacity:.45;font-size:12px;font-weight:700;">맵 · 도표 영역 (사진 업로드)</div>') +
       '</div>' +
       '<div style="margin-top:12px;text-align:' + align + ';">' + blockHtml(s) + brandHtml(s) + '</div>' +
-      logo + freeT + photoCreditHtml(s) +
+      logo + factStamp + freeT + photoCreditHtml(s) +
       rowBottomHtml(s, false) +
     '</div>';
   }
@@ -2537,7 +2712,7 @@ function cardMarkup(s, pageIdx, total){
         '<div class="headlineRule" style="background:' + (s.accent || 'currentColor') + ';opacity:1;' + (align === 'center' ? 'margin-left:auto;margin-right:auto;' : align === 'right' ? 'margin-left:auto;' : '') + '"></div>' +
         blockHtml(s) + brandHtml(s) +
       '</div>' +
-      logo + freeT + photoCreditHtml(s) +
+      logo + factStamp + freeT + photoCreditHtml(s) +
       rowBottomHtml(s, false) +
     '</div>';
   }
@@ -2553,14 +2728,14 @@ function cardMarkup(s, pageIdx, total){
         '<div style="text-align:center;width:100%;max-width:92%;">' + blockHtml(s) + '</div>' +
         brandHtml(s) +
       '</div>' +
-      logo + freeT + photoCreditHtml(s) +
+      logo + factStamp + freeT + photoCreditHtml(s) +
       rowBottomHtml(s, false) +
     '</div>';
   }
   return '<div ' + cls + ' style="' + base + '">' +
     rowTopHtml(s, pageIdx, total, false) +
     '<div class="frame" style="text-align:' + align + ';">' + photoVignette + pillHtml(s) + titleHtml(s) + blockHtml(s) + brandHtml(s) + '</div>' +
-    logo + freeT + photoCreditHtml(s) +
+    logo + factStamp + freeT + photoCreditHtml(s) +
     rowBottomHtml(s, false) +
   '</div>';
 }
@@ -2688,6 +2863,9 @@ function syncForm(){
   if($('scrimDir')) $('scrimDir').value = s.scrimDir || 'bottom';
   if($('photoCredit')) $('photoCredit').value = s.photoCredit || '';
   if($('showBrand')) $('showBrand').checked = !!s.showBrand;
+  if($('showFactStamp')) $('showFactStamp').checked = !!s.showFactStamp;
+  if($('factStampLabel')) $('factStampLabel').value = s.factStampLabel != null ? s.factStampLabel : 'FACT CHECK';
+  if($('factStampColor')) $('factStampColor').value = s.factStampColor || '#c0272d';
   if($('brandMain')) $('brandMain').value = s.brandMain || 'WEST150';
   if($('brandSub')) $('brandSub').value = s.brandSub || 'DAILY';
   if($('showThreads')) $('showThreads').checked = !!s.showThreads;
@@ -2988,6 +3166,18 @@ if($('coverPresetBtn')) $('coverPresetBtn').addEventListener('click', () => {
 });
 if($('showBrand')) $('showBrand').addEventListener('change', e => {
   slides[active].showBrand = e.target.checked;
+  renderMainCard(); renderList();
+});
+if($('showFactStamp')) $('showFactStamp').addEventListener('change', e => {
+  slides[active].showFactStamp = e.target.checked;
+  renderMainCard(); renderList();
+});
+if($('factStampLabel')) $('factStampLabel').addEventListener('input', e => {
+  slides[active].factStampLabel = e.target.value;
+  renderMainCard(); renderList();
+});
+if($('factStampColor')) $('factStampColor').addEventListener('input', e => {
+  slides[active].factStampColor = e.target.value;
   renderMainCard(); renderList();
 });
 if($('brandMain')) $('brandMain').addEventListener('input', e => {
@@ -3893,6 +4083,15 @@ function ftOnMove(e){
     }
     return;
   }
+  if(ftDrag.kind === 'stamp'){
+    const el = wrap && wrap.querySelector('.factStamp[data-stampid="1"]');
+    if(ftDrag.mode === 'move'){
+      s.factStampX = Math.round(ftDrag.origX + dx);
+      s.factStampY = Math.round(ftDrag.origY + dy);
+      if(el){ el.style.left = s.factStampX + 'px'; el.style.top = s.factStampY + 'px'; }
+    }
+    return;
+  }
   if(ftDrag.kind === 'sticky'){
     if(!s.freeStickies) return;
     const st = s.freeStickies.find(f => f.id === ftDrag.targetId);
@@ -3949,10 +4148,11 @@ if(!window._ftMoveBound){
 function clearCardSelection(){
   const s = slides[active];
   if(!s) return false;
-  if(!s.selectedFreeTextId && !s.selectedShapeId && !s.selectedStickyId) return false;
+  if(!s.selectedFreeTextId && !s.selectedShapeId && !s.selectedStickyId && !s.selectedStampId) return false;
   s.selectedFreeTextId = null;
   s.selectedShapeId = null;
   s.selectedStickyId = null;
+  s.selectedStampId = null;
   // 드래그 상태가 남은 경우 해제
   if(typeof ftDrag !== 'undefined' && ftDrag){
     ftDrag.mode = null;
@@ -3968,7 +4168,7 @@ function clearCardSelection(){
 
 function shouldKeepSelection(t){
   if(!t || !t.closest) return true;
-  if(t.closest('.freeSticky, .freeText, .freeShape')) return true;
+  if(t.closest('.freeSticky, .freeText, .freeShape, .factStamp')) return true;
   if(t.closest('.dropdown, .menuWrap, #right, #left, #topbar, #undoRedoFloat')) return true;
   if(t.closest('button, input, textarea, select, label, a')) return true;
   return false;
@@ -3995,8 +4195,9 @@ function bindFreeTextInteractions(){
     const target = e.target;
     const shapeEl = target.closest ? target.closest('.freeShape') : null;
     const stickyEl = target.closest ? target.closest('.freeSticky') : null;
+    const stampEl = target.closest ? target.closest('.factStamp') : null;
     const el = target.closest ? target.closest('.freeText') : null;
-    if(!shapeEl && !stickyEl && !el){
+    if(!shapeEl && !stickyEl && !stampEl && !el){
       clearCardSelection();
       return;
     }
@@ -4011,9 +4212,11 @@ function bindFreeTextInteractions(){
       s.selectedShapeId = id;
       s.selectedFreeTextId = null;
       s.selectedStickyId = null;
+      s.selectedStampId = null;
       wrap.querySelectorAll('.freeShape').forEach(n => n.classList.toggle('selected', n.dataset.sid === id));
       wrap.querySelectorAll('.freeText').forEach(n => n.classList.remove('selected'));
       wrap.querySelectorAll('.freeSticky').forEach(n => n.classList.remove('selected'));
+      wrap.querySelectorAll('.factStamp').forEach(n => n.classList.remove('selected'));
       const sh = s.freeShapes.find(f => f.id === id);
       if(!sh) return;
       ftDrag.mode = isResize ? 'resize' : 'move';
@@ -4028,16 +4231,37 @@ function bindFreeTextInteractions(){
       return;
     }
 
+    if(stampEl){
+      s.selectedStampId = '1';
+      s.selectedStickyId = null;
+      s.selectedFreeTextId = null;
+      s.selectedShapeId = null;
+      wrap.querySelectorAll('.factStamp').forEach(n => n.classList.add('selected'));
+      wrap.querySelectorAll('.freeText').forEach(n => n.classList.remove('selected'));
+      wrap.querySelectorAll('.freeShape').forEach(n => n.classList.remove('selected'));
+      wrap.querySelectorAll('.freeSticky').forEach(n => n.classList.remove('selected'));
+      ftDrag.mode = 'move';
+      ftDrag.kind = 'stamp';
+      ftDrag.targetId = '1';
+      ftDrag.startX = point.clientX;
+      ftDrag.startY = point.clientY;
+      ftDrag.origX = s.factStampX != null ? s.factStampX : 286;
+      ftDrag.origY = s.factStampY != null ? s.factStampY : 386;
+      return;
+    }
+
     if(stickyEl){
       const id = stickyEl.dataset.stid;
       if(!s.freeStickies) return;
       s.selectedStickyId = id;
       s.selectedFreeTextId = null;
       s.selectedShapeId = null;
+      s.selectedStampId = null;
       syncStickyForm();
       wrap.querySelectorAll('.freeSticky').forEach(n => n.classList.toggle('selected', n.dataset.stid === id));
       wrap.querySelectorAll('.freeText').forEach(n => n.classList.remove('selected'));
       wrap.querySelectorAll('.freeShape').forEach(n => n.classList.remove('selected'));
+      wrap.querySelectorAll('.factStamp').forEach(n => n.classList.remove('selected'));
       const st = s.freeStickies.find(f => f.id === id);
       if(!st) return;
       ftDrag.mode = isResize ? 'resize' : 'move';
@@ -4057,10 +4281,12 @@ function bindFreeTextInteractions(){
     s.selectedFreeTextId = id;
     s.selectedShapeId = null;
     s.selectedStickyId = null;
+    s.selectedStampId = null;
     syncFreeTextForm();
     wrap.querySelectorAll('.freeText').forEach(n => n.classList.toggle('selected', n.dataset.ftid === id));
     wrap.querySelectorAll('.freeShape').forEach(n => n.classList.remove('selected'));
     wrap.querySelectorAll('.freeSticky').forEach(n => n.classList.remove('selected'));
+    wrap.querySelectorAll('.factStamp').forEach(n => n.classList.remove('selected'));
 
     const ft = s.freeTexts.find(f => f.id === id);
     if(!ft) return;
