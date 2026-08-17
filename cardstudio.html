@@ -449,7 +449,6 @@
   #card.style-insta .titleText{font-weight:900;letter-spacing:-.02em;}
   #card.style-insta .ls-num{background:linear-gradient(135deg,var(--accent),#ff6bb3)!important;box-shadow:0 0 0 3px #fff,0 0 0 5px #7c5cff33;}
   #card.style-insta .rowBottom{position:relative;}
-  #card.style-insta .rowBottom::after{content:"❤ 🔥 💬";position:absolute;right:0;top:-2px;font-size:11px;opacity:.35;letter-spacing:4px;}
 
   /* 4. 신문 1면 — 드롭캡 + 단 분리 + 이중 괘선 (프리미엄) */
   #card.style-newspaper{background:#fbfaf6!important;position:relative;}
@@ -462,16 +461,15 @@
   #card.style-newspaper .subText{column-count:2;column-gap:14px;column-rule:1px solid #1a1a1a33;font-size:12.5px;color:#1a1a1a;}
   #card.style-newspaper .frame{border:none;border-top:3px double #1a1a1a;border-radius:0;}
   #card.style-newspaper .rowBottom{border-top:2px solid #1a1a1a;padding-top:10px;position:relative;}
-  #card.style-newspaper .rowBottom::before{content:"EXTRA · EXTRA";position:absolute;left:0;top:-22px;font-size:8px;letter-spacing:.25em;color:#1a1a1a99;}
-
+  
   /* 6. 서류철 — 폴더 탭 + 사이드 인덱스 + 클립 (프리미엄) */
   #card.style-folder{background:#f1ece0!important;position:relative;background-image:radial-gradient(#00000006 1px,transparent 1px);background-size:14px 14px;}
   #card.style-folder .rowTop{background:linear-gradient(135deg,var(--accent),var(--accent) 70%,#ffffff22);color:#fff;padding:7px 12px;border-radius:4px 4px 0 0;margin:-26px -26px 0;width:calc(100% + 52px);box-shadow:0 3px 8px #00000022;}
   #card.style-folder .badgeTop, #card.style-folder .pageNum{color:#fff!important;}
   #card.style-folder .pill{background:#fff!important;color:#1a1a1a!important;border:1px solid #ccc;box-shadow:0 3px 8px #00000018;}
   #card.style-folder .frame{position:relative;background:#fffdf8;border:1px solid #00000012;box-shadow:0 6px 18px #00000014;}
-  #card.style-folder .frame::after{content:"";position:absolute;top:20px;right:-10px;width:22px;height:64px;background:var(--accent);opacity:.9;border-radius:0 4px 4px 0;box-shadow:2px 3px 6px #00000030;}
-  #card.style-folder::before{content:"";position:absolute;top:0;left:24px;width:30px;height:16px;background:#c8c0ac;border-radius:4px 4px 0 0;box-shadow:0 2px 4px #00000024;}
+  #card.style-folder .frame::after{content:"";position:absolute;top:40px;right:-10px;width:22px;height:64px;background:var(--accent);opacity:.9;border-radius:0 4px 4px 0;box-shadow:2px 3px 6px #00000030;}
+  #card.style-folder::before{content:"";position:absolute;top:-14px;left:24px;width:30px;height:16px;background:#c8c0ac;border-radius:4px 4px 0 0;box-shadow:0 2px 4px #00000024;}
   #card.style-folder .titleText{font-weight:800;}
 
   /* 9. 경보배너 — 경고 리본 + 다중 링 배지 (프리미엄, 중복 정의 통합) */
