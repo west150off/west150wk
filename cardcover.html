@@ -103,9 +103,7 @@
   .social-row{display:flex;align-items:center;gap:9px;margin-top:2px;}
   .social-row svg{width:18px;height:18px;fill:#fff;opacity:.92;}
   .social-sep{width:1px;height:14px;background:rgba(255,255,255,.35);}
-  .swipe-text{font-size:16px;font-weight:600;color:#fff;display:flex;align-items:center;gap:8px;white-space:nowrap;}
-  .swipe-text .arrow{font-size:20px;color:var(--accent);}
-
+  
   .card-number-badge{position:absolute;top:36px;right:40px;z-index:3;font-size:13px;font-weight:700;color:#fff;background:rgba(20,20,22,.5);padding:5px 12px;border-radius:20px;letter-spacing:.5px;}
 
   .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;align-items:center;justify-content:center;padding:20px;flex-direction:column;}
@@ -272,15 +270,6 @@
     </div>
 
     <div class="section">
-      <div class="section-title">스와이프 문구</div>
-      <input type="text" id="swipeText" value="밀어보기">
-      <div class="toggle-row" style="margin-top:36px">
-        <span style="font-size:35px">화살표 표시</span>
-        <label class="switch"><input type="checkbox" id="showArrow" checked><span class="slider"></span></label>
-      </div>
-    </div>
-
-    <div class="section">
       <div class="section-title">카드 번호 (선택)</div>
       <input type="text" id="cardNumber" value="" placeholder="예: #001 (비우면 표시 안 함)">
     </div>
@@ -326,9 +315,6 @@
               </div>
               <div class="brand-text" id="brandTextEl" style="display:none">WEST150<span class="bd">DAILY</span></div>
               <div class="social-row" id="socialRow"></div>
-            </div>
-            <div class="swipe-text" id="swipeTextEl">
-              <span id="swipeLabel">밀어보기</span><span class="arrow" id="arrowEl">→</span>
             </div>
           </div>
         </div>
@@ -651,10 +637,7 @@ function updateCard(){
   // Social
   renderSocial();
 
-  // Swipe text
-  document.getElementById('swipeLabel').textContent = document.getElementById('swipeText').value || '밀어보기';
-  document.getElementById('arrowEl').style.display = document.getElementById('showArrow').checked ? 'inline' : 'none';
-
+  
   // Card number
   var num = document.getElementById('cardNumber').value.trim();
   var badge = document.getElementById('cardNumberBadge');
@@ -835,9 +818,6 @@ document.getElementById('showBrand').addEventListener('change', updateCard);
   document.getElementById(id).addEventListener('change', updateCard);
 });
 
-// Swipe
-document.getElementById('swipeText').addEventListener('input', updateCard);
-document.getElementById('showArrow').addEventListener('change', updateCard);
 
 // Card number & credit
 document.getElementById('cardNumber').addEventListener('input', updateCard);
