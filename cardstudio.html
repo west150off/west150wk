@@ -1779,6 +1779,40 @@
         </div>
       </div>
 
+      <div class="menuWrap" id="blockTplMenuWrap">
+        <button class="btn ghost" id="blockTplMenuBtn">블록 템플릿 ▾</button>
+        <div class="dropdown panelDropdown" id="blockTplMenu">
+          <div class="field">
+            <label style="font-weight:700;color:var(--chrome-text);">블록 템플릿</label>
+            <div class="hint" style="margin:0 0 8px;">현재 카드의 블록 종류·내용·글자 크기·포인트색만 저장합니다.</div>
+            <input type="text" id="blockTplName" placeholder="예: 발언 카드, 팩트체크" style="margin-bottom:8px;">
+            <div style="display:flex;gap:6px;margin-bottom:8px;">
+              <button type="button" class="btn small primary" id="blockTplSaveBtn" style="flex:1;">현재 저장</button>
+              <button type="button" class="btn small" id="blockTplApplyBtn" style="flex:1;">불러오기</button>
+              <button type="button" class="btn small" id="blockTplDeleteBtn" style="flex:none;">삭제</button>
+            </div>
+            <select id="blockTplSelect"><option value="">— 저장된 템플릿 없음 —</option></select>
+          </div>
+        </div>
+      </div>
+
+      <div class="menuWrap" id="cardTplMenuWrap">
+        <button class="btn ghost" id="cardTplMenuBtn">카드 템플릿 ▾</button>
+        <div class="dropdown panelDropdown" id="cardTplMenu">
+          <div class="field">
+            <label style="font-weight:700;color:var(--chrome-text);">전체 카드 템플릿</label>
+            <div class="hint" style="margin:0 0 8px;">레이아웃·색·글꼴·제목·본문·블록·화살표 등 카드 설정 전체를 저장합니다. (사진·로고 파일은 용량 때문에 제외)</div>
+            <input type="text" id="cardTplName" placeholder="예: 속보 기본, 인용 골드" style="margin-bottom:8px;">
+            <div style="display:flex;gap:6px;margin-bottom:8px;">
+              <button type="button" class="btn small primary" id="cardTplSaveBtn" style="flex:1;">현재 저장</button>
+              <button type="button" class="btn small" id="cardTplApplyBtn" style="flex:1;">불러오기</button>
+              <button type="button" class="btn small" id="cardTplDeleteBtn" style="flex:none;">삭제</button>
+            </div>
+            <select id="cardTplSelect"><option value="">— 저장된 템플릿 없음 —</option></select>
+          </div>
+        </div>
+      </div>
+
       <button class="btn ghost" id="previewAllBtn">전체 미리보기</button>
       <button class="btn ghost" id="exportOne">현재 카드 저장</button>
       <button class="btn primary" id="exportAll">전체 저장</button>
@@ -1897,17 +1931,6 @@
           <div class="slider"><input type="range" id="blockSize" min="10" max="26" value="14"><span class="val" id="blockSizeVal">14</span></div>
         </div>
         <div class="hint" id="blockDataHint">한 줄씩 입력하세요.</div>
-        <div class="field" style="margin-top:12px;border-top:1px solid var(--chrome-line);padding-top:12px;">
-          <label style="font-weight:700;color:var(--chrome-text);">블록 템플릿</label>
-          <input type="text" id="blockTplName" placeholder="예: 발언 카드, 팩트체크" style="margin-bottom:8px;">
-          <div style="display:flex;gap:6px;margin-bottom:8px;">
-            <button type="button" class="btn small primary" id="blockTplSaveBtn" style="flex:1;">현재 저장</button>
-            <button type="button" class="btn small" id="blockTplApplyBtn" style="flex:1;">불러오기</button>
-            <button type="button" class="btn small" id="blockTplDeleteBtn" style="flex:none;">삭제</button>
-          </div>
-          <select id="blockTplSelect"><option value="">— 저장된 템플릿 없음 —</option></select>
-          <div class="hint" style="margin-top:6px;">블록 종류·내용·글자 크기·포인트색을 저장합니다. (브라우저에 보관)</div>
-        </div>
       </div>
 
       <div class="sec">
@@ -3444,6 +3467,103 @@ if($('blockTplDeleteBtn')) $('blockTplDeleteBtn').addEventListener('click', dele
 // init template list
 refreshBlockTplSelect();
 
+/* ===== 전체 카드 템플릿 ===== */
+const CARD_TPL_KEY = 'cardstudio_card_templates_v1';
+const CARD_TPL_SKIP = {image:1, image2:1, logo:1, selectedFreeTextId:1, selectedShapeId:1, selectedStickyId:1, selectedStampId:1};
+
+function loadCardTemplates(){
+  try { return JSON.parse(localStorage.getItem(CARD_TPL_KEY) || '[]'); }
+  catch(e){ return []; }
+}
+function saveCardTemplates(list){
+  try { localStorage.setItem(CARD_TPL_KEY, JSON.stringify(list)); } catch(e){ alert('저장 공간이 부족합니다. 템플릿을 일부 삭제한 뒤 다시 시도하세요.'); }
+}
+function refreshCardTplSelect(){
+  const sel = $('cardTplSelect');
+  if(!sel) return;
+  const list = loadCardTemplates();
+  const cur = sel.value;
+  sel.innerHTML = '';
+  if(!list.length){
+    const o = document.createElement('option');
+    o.value = ''; o.textContent = '— 저장된 템플릿 없음 —';
+    sel.appendChild(o);
+    return;
+  }
+  list.forEach((t, i) => {
+    const o = document.createElement('option');
+    o.value = String(i);
+    o.textContent = (t.name || '이름 없음') + (t.payload && t.payload.template ? ' · ' + t.payload.template : '');
+    sel.appendChild(o);
+  });
+  if(cur && +cur < list.length) sel.value = cur;
+}
+function snapshotCardForTemplate(s){
+  const raw = JSON.parse(JSON.stringify(s));
+  Object.keys(CARD_TPL_SKIP).forEach(k => { delete raw[k]; });
+  // freeTexts / shapes / stickies 는 구조만 유지 (이미지 없음)
+  return raw;
+}
+function saveCurrentCardTemplate(){
+  const s = slides[active];
+  if(!s) return;
+  const name = (($('cardTplName') && $('cardTplName').value) || '').trim();
+  if(!name){ alert('카드 템플릿 이름을 입력하세요.'); return; }
+  const list = loadCardTemplates();
+  const item = { name: name, payload: snapshotCardForTemplate(s), savedAt: Date.now() };
+  const idx = list.findIndex(t => t.name === name);
+  if(idx >= 0) list[idx] = item;
+  else list.push(item);
+  saveCardTemplates(list);
+  refreshCardTplSelect();
+  const sel = $('cardTplSelect');
+  if(sel){
+    const ni = list.findIndex(t => t.name === name);
+    if(ni >= 0) sel.value = String(ni);
+  }
+  console.log('card template saved', name);
+}
+function applyCardTemplate(){
+  const sel = $('cardTplSelect');
+  if(!sel || sel.value === ''){ alert('불러올 카드 템플릿을 선택하세요.'); return; }
+  const list = loadCardTemplates();
+  const t = list[+sel.value];
+  if(!t || !t.payload) return;
+  const s = slides[active];
+  const keepImage = s.image;
+  const keepImage2 = s.image2;
+  const keepLogo = s.logo;
+  const payload = JSON.parse(JSON.stringify(t.payload));
+  Object.keys(CARD_TPL_SKIP).forEach(k => { delete payload[k]; });
+  Object.assign(s, payload);
+  // 사진은 유지 (템플릿에 없음)
+  s.image = keepImage;
+  s.image2 = keepImage2;
+  s.logo = keepLogo;
+  s.selectedFreeTextId = null;
+  s.selectedShapeId = null;
+  s.selectedStickyId = null;
+  s.selectedStampId = null;
+  if($('cardTplName')) $('cardTplName').value = t.name || '';
+  syncForm(); renderMainCard(); renderList();
+}
+function deleteCardTemplate(){
+  const sel = $('cardTplSelect');
+  if(!sel || sel.value === ''){ alert('삭제할 카드 템플릿을 선택하세요.'); return; }
+  const list = loadCardTemplates();
+  const t = list[+sel.value];
+  if(!t) return;
+  if(!confirm('"' + (t.name||'') + '" 카드 템플릿을 삭제할까요?')) return;
+  list.splice(+sel.value, 1);
+  saveCardTemplates(list);
+  refreshCardTplSelect();
+  if($('cardTplName')) $('cardTplName').value = '';
+}
+if($('cardTplSaveBtn')) $('cardTplSaveBtn').addEventListener('click', saveCurrentCardTemplate);
+if($('cardTplApplyBtn')) $('cardTplApplyBtn').addEventListener('click', applyCardTemplate);
+if($('cardTplDeleteBtn')) $('cardTplDeleteBtn').addEventListener('click', deleteCardTemplate);
+refreshCardTplSelect();
+
 function bindTypoSlider(id, prop, valId){
   const el = $(id);
   if(!el) return;
@@ -3917,6 +4037,8 @@ bindMenuToggle('sitesMenuBtn','sitesMenu');
 bindMenuToggle('blockMenuBtn','blockMenu');
 bindMenuToggle('editMenuBtn','editMenu');
 bindMenuToggle('otherToolsMenuBtn','otherToolsMenu');
+bindMenuToggle('blockTplMenuBtn','blockTplMenu');
+bindMenuToggle('cardTplMenuBtn','cardTplMenu');
 renderSitesMenu();
 
 
