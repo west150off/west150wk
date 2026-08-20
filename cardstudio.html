@@ -1622,8 +1622,8 @@
       </div>
 
       <div class="menuWrap" id="blockMenuWrap">
-        <button class="btn ghost" id="blockMenuBtn">콘텐츠 삽입 ▾</button>
-        <div class="dropdown" id="blockMenu">
+        <button class="btn ghost" id="blockMenuBtn">블록 · 도구 ▾</button>
+        <div class="dropdown wide" id="blockMenu" style="max-height:72vh;overflow-y:auto;">
           <div class="ddItem" data-block="none"><span class="ic">Aa</span>텍스트 설명</div>
           <div class="ddItem" data-block="timeline"><span class="ic">⏱</span>타임라인</div>
           <div class="ddItem" data-block="list"><span class="ic">☰</span>번호 리스트</div>
@@ -1843,7 +1843,7 @@
 
 
       <div class="sec">
-        <h3>콘텐츠 블록 <span style="font-weight:400;text-transform:none;color:var(--chrome-sub);">(상단 메뉴에서도 선택 가능)</span></h3>
+        <h3>블록 · 도구 <span style="font-weight:400;text-transform:none;color:var(--chrome-sub);">(상단 메뉴와 동일)</span></h3>
         <div class="field">
           <select id="contentBlockSelect">
             <option value="none">텍스트 설명</option>
@@ -1884,7 +1884,30 @@
           <label id="blockDataLabel">내용</label>
           <textarea id="blockDataText" style="min-height:100px;" placeholder="본문 입력."></textarea>
         </div>
+        <div class="field" id="blockLineOrderField" style="display:none;">
+          <label>줄 순서</label>
+          <div style="display:flex;gap:6px;">
+            <button type="button" class="btn small" id="blockLineUpBtn" style="flex:1;">▲ 선택 줄 위</button>
+            <button type="button" class="btn small" id="blockLineDownBtn" style="flex:1;">▼ 선택 줄 아래</button>
+          </div>
+          <div class="hint" style="margin-top:6px;">커서가 있는 줄을 위·아래로 옮깁니다. (리스트·타임라인·팩트 등)</div>
+        </div>
+        <div class="field" id="blockSizeField" style="display:none;">
+          <label>블록 글자 크기 <span style="font-weight:400;color:var(--chrome-sub);">(본문과 별도)</span></label>
+          <div class="slider"><input type="range" id="blockSize" min="10" max="26" value="14"><span class="val" id="blockSizeVal">14</span></div>
+        </div>
         <div class="hint" id="blockDataHint">한 줄씩 입력하세요.</div>
+        <div class="field" style="margin-top:12px;border-top:1px solid var(--chrome-line);padding-top:12px;">
+          <label style="font-weight:700;color:var(--chrome-text);">블록 템플릿</label>
+          <input type="text" id="blockTplName" placeholder="예: 발언 카드, 팩트체크" style="margin-bottom:8px;">
+          <div style="display:flex;gap:6px;margin-bottom:8px;">
+            <button type="button" class="btn small primary" id="blockTplSaveBtn" style="flex:1;">현재 저장</button>
+            <button type="button" class="btn small" id="blockTplApplyBtn" style="flex:1;">불러오기</button>
+            <button type="button" class="btn small" id="blockTplDeleteBtn" style="flex:none;">삭제</button>
+          </div>
+          <select id="blockTplSelect"><option value="">— 저장된 템플릿 없음 —</option></select>
+          <div class="hint" style="margin-top:6px;">블록 종류·내용·글자 크기·포인트색을 저장합니다. (브라우저에 보관)</div>
+        </div>
       </div>
 
       <div class="sec">
@@ -2112,7 +2135,7 @@ const defaults = () => ({
   badgeTop:'west150daily', pillText:'west150daily', title:'헤드라인',
   highlight:'직접', highlightExtra:'', sub:'본문 입력.', handle:'출처:',
   bg:'#f4efe4', text:'#1a1a1a', bodyText:'#1a1a1a', badgeColor:'#1a1a1a', handleColor:'#1a1a1a', pillBg:'#181818', pillColor:'#ffffff',
-  mk:'#f6b8c4', accent:'#7c5cff', titleSize:27, subSize:14,
+  mk:'#f6b8c4', accent:'#7c5cff', titleSize:27, subSize:14, blockSize:14,
   titleLetter:0, titleLine:135, bodyLetter:0, bodyLine:160,
   image:null, imageFit:'cover', imagePos:'center', imageFilter:'none', imageOverlay:0,
   imgOffsetX:0, imgOffsetY:0, imgScale:100,
@@ -2810,7 +2833,8 @@ function blockHtml(s){
   if(!html) return '';
   // 본문 글꼴·자간·행간·색을 블록 전체에 적용
     if(s.contentBlock && s.contentBlock !== 'none'){
-    const sz = 'font-size:' + (s.subSize || 14) + 'px;';
+    const bs = (s.blockSize != null ? s.blockSize : (s.subSize || 14));
+    const sz = 'font-size:' + bs + 'px;';
     return '<div class="bodyFontWrap" style="' + sz + ff + typo + col + '">' + html + '</div>';
   }
   return html;
@@ -3071,6 +3095,16 @@ function syncForm(){
   if($('sourceLayoutSelect')) $('sourceLayoutSelect').value = s.sourceLayout || 'list';
   if($('qaLayoutField')) $('qaLayoutField').style.display = s.contentBlock === 'qa' ? '' : 'none';
   if($('qaLayoutSelect')) $('qaLayoutSelect').value = s.qaLayout || 'faq';
+  // block size + line order (list-like blocks)
+  const lineOrderBlocks = {timeline:1,list:1,bullet:1,stats:1,chart:1,sources:1,qa:1,factlist:1};
+  const isBlock = s.contentBlock && s.contentBlock !== 'none';
+  if($('blockSizeField')) $('blockSizeField').style.display = isBlock ? '' : 'none';
+  if($('blockLineOrderField')) $('blockLineOrderField').style.display = lineOrderBlocks[s.contentBlock] ? '' : 'none';
+  if($('blockSize')){
+    const bs = s.blockSize != null ? s.blockSize : (s.subSize || 14);
+    $('blockSize').value = bs;
+    if($('blockSizeVal')) $('blockSizeVal').textContent = bs;
+  }
   updateBlockHint();
   syncStyleMenu();
   $('bgColor').value = s.bg; $('bgColorHex').textContent = s.bg;
@@ -3273,6 +3307,143 @@ $('subSize').addEventListener('input', e => {
   $('subSizeVal').textContent = e.target.value;
   renderMainCard(); renderList();
 });
+if($('blockSize')){
+  $('blockSize').addEventListener('input', e => {
+    slides[active].blockSize = +e.target.value;
+    if($('blockSizeVal')) $('blockSizeVal').textContent = e.target.value;
+    renderMainCard(); renderList();
+  });
+}
+
+/* ===== 블록 줄 순서 위/아래 ===== */
+function getTextareaLineInfo(ta){
+  const val = ta.value;
+  const pos = ta.selectionStart || 0;
+  const lines = val.split('\n');
+  let start = 0, idx = 0;
+  for(let i=0;i<lines.length;i++){
+    const end = start + lines[i].length + (i < lines.length - 1 ? 1 : 0);
+    if(pos <= end || i === lines.length - 1){ idx = i; break; }
+    start = end;
+  }
+  return {lines, idx, pos};
+}
+function moveBlockLine(dir){
+  const ta = $('blockDataText');
+  if(!ta) return;
+  const s = slides[active];
+  if(!s || !s.contentBlock || s.contentBlock === 'none') return;
+  const info = getTextareaLineInfo(ta);
+  const lines = info.lines;
+  const i = info.idx;
+  const j = i + dir;
+  if(j < 0 || j >= lines.length) return;
+  const tmp = lines[i]; lines[i] = lines[j]; lines[j] = tmp;
+  const next = lines.join('\n');
+  ta.value = next;
+  s.blockData = next;
+  let caret = 0;
+  for(let k=0;k<j;k++) caret += lines[k].length + 1;
+  ta.focus();
+  ta.setSelectionRange(caret, caret + lines[j].length);
+  renderMainCard(); renderList();
+}
+if($('blockLineUpBtn')) $('blockLineUpBtn').addEventListener('click', () => moveBlockLine(-1));
+if($('blockLineDownBtn')) $('blockLineDownBtn').addEventListener('click', () => moveBlockLine(1));
+
+/* ===== 블록 템플릿 저장/불러오기 ===== */
+const BLOCK_TPL_KEY = 'cardstudio_block_templates_v1';
+function loadBlockTemplates(){
+  try { return JSON.parse(localStorage.getItem(BLOCK_TPL_KEY) || '[]'); }
+  catch(e){ return []; }
+}
+function saveBlockTemplates(list){
+  try { localStorage.setItem(BLOCK_TPL_KEY, JSON.stringify(list)); } catch(e){}
+}
+function refreshBlockTplSelect(){
+  const sel = $('blockTplSelect');
+  if(!sel) return;
+  const list = loadBlockTemplates();
+  const cur = sel.value;
+  sel.innerHTML = '';
+  if(!list.length){
+    const o = document.createElement('option');
+    o.value = ''; o.textContent = '— 저장된 템플릿 없음 —';
+    sel.appendChild(o);
+    return;
+  }
+  list.forEach((t, i) => {
+    const o = document.createElement('option');
+    o.value = String(i);
+    const label = (t.name || '이름 없음') + ' · ' + (t.contentBlock || 'none');
+    o.textContent = label;
+    sel.appendChild(o);
+  });
+  if(cur && +cur < list.length) sel.value = cur;
+}
+function saveCurrentBlockTemplate(){
+  const s = slides[active];
+  if(!s) return;
+  const name = (($('blockTplName') && $('blockTplName').value) || '').trim();
+  if(!name){ alert('템플릿 이름을 입력하세요.'); return; }
+  const list = loadBlockTemplates();
+  const item = {
+    name: name,
+    contentBlock: s.contentBlock || 'none',
+    blockData: s.blockData || '',
+    blockSize: s.blockSize != null ? s.blockSize : (s.subSize || 14),
+    accent: s.accent,
+    sourceLayout: s.sourceLayout || 'list',
+    qaLayout: s.qaLayout || 'faq'
+  };
+  const idx = list.findIndex(t => t.name === name);
+  if(idx >= 0) list[idx] = item;
+  else list.push(item);
+  saveBlockTemplates(list);
+  refreshBlockTplSelect();
+  const sel = $('blockTplSelect');
+  if(sel){
+    const ni = list.findIndex(t => t.name === name);
+    if(ni >= 0) sel.value = String(ni);
+  }
+  if(typeof showToast === 'function') showToast('템플릿 저장됨: ' + name);
+  else console.log('template saved', name);
+}
+function applyBlockTemplate(){
+  const sel = $('blockTplSelect');
+  if(!sel || sel.value === ''){ alert('불러올 템플릿을 선택하세요.'); return; }
+  const list = loadBlockTemplates();
+  const t = list[+sel.value];
+  if(!t) return;
+  const s = slides[active];
+  s.contentBlock = t.contentBlock || 'none';
+  s.blockData = t.blockData || '';
+  if(t.blockSize != null) s.blockSize = t.blockSize;
+  if(t.accent) s.accent = t.accent;
+  if(t.sourceLayout) s.sourceLayout = t.sourceLayout;
+  if(t.qaLayout) s.qaLayout = t.qaLayout;
+  if(s.contentBlock === 'none') s.sub = s.blockData;
+  if($('blockTplName')) $('blockTplName').value = t.name || '';
+  syncForm(); renderMainCard(); renderList();
+}
+function deleteBlockTemplate(){
+  const sel = $('blockTplSelect');
+  if(!sel || sel.value === ''){ alert('삭제할 템플릿을 선택하세요.'); return; }
+  const list = loadBlockTemplates();
+  const t = list[+sel.value];
+  if(!t) return;
+  if(!confirm('"' + (t.name||'') + '" 템플릿을 삭제할까요?')) return;
+  list.splice(+sel.value, 1);
+  saveBlockTemplates(list);
+  refreshBlockTplSelect();
+  if($('blockTplName')) $('blockTplName').value = '';
+}
+if($('blockTplSaveBtn')) $('blockTplSaveBtn').addEventListener('click', saveCurrentBlockTemplate);
+if($('blockTplApplyBtn')) $('blockTplApplyBtn').addEventListener('click', applyBlockTemplate);
+if($('blockTplDeleteBtn')) $('blockTplDeleteBtn').addEventListener('click', deleteBlockTemplate);
+// init template list
+refreshBlockTplSelect();
+
 function bindTypoSlider(id, prop, valId){
   const el = $(id);
   if(!el) return;
