@@ -68,7 +68,7 @@
   #card{width:1080px;height:1350px;position:relative;overflow:hidden;background:#0a0a0a;font-family:'Pretendard','Noto Sans KR',sans-serif;}
 
   .photo-layer{position:absolute;inset:0;overflow:hidden;z-index:0;}
-  .photo-layer .photo-bg{position:absolute;inset:0;background-repeat:no-repeat;background-position:center;background-size:cover;}
+  .photo-layer .photo-bg{position:absolute;inset:0;background-repeat:no-repeat;background-position:center;background-size:cover;transform-origin:center center;}
   .no-photo-msg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.25);font-size:20px;z-index:0;}
 
   .scrim{position:absolute;inset:0;z-index:1;pointer-events:none;}
@@ -147,19 +147,20 @@
       <div style="margin-top:10px">
         <div class="slider-row">
           <label>줌</label>
-          <input type="range" id="imgZoom" min="1" max="2.5" step="0.02" value="1.15">
-          <span class="slider-value" id="zoomV">1.15</span>
+          <input type="range" id="imgZoom" min="0.5" max="3" step="0.01" value="1">
+          <span class="slider-value" id="zoomV">1.00</span>
         </div>
         <div class="slider-row">
           <label>좌우 이동</label>
-          <input type="range" id="imgTx" min="-40" max="40" step="1" value="0">
+          <input type="range" id="imgTx" min="-50" max="50" step="0.5" value="0">
           <span class="slider-value" id="txV">0%</span>
         </div>
         <div class="slider-row">
           <label>상하 이동</label>
-          <input type="range" id="imgTy" min="-40" max="40" step="1" value="0">
+          <input type="range" id="imgTy" min="-50" max="50" step="0.5" value="0">
           <span class="slider-value" id="tyV">0%</span>
         </div>
+        <button class="btn" id="resetImgPos" style="margin-top:8px;width:100%">위치·줌 초기화</button>
       </div>
       <button class="btn" id="removeImg" style="margin-top:8px;width:100%;display:none">이미지 제거</button>
       <div style="margin-top:10px">
@@ -405,6 +406,7 @@ function applyImage(){
   div.className='photo-bg';
   div.style.backgroundImage="url('"+safeUrl+"')";
   div.style.transform='scale('+zoom+') translate('+tx+'%,'+ty+'%)';
+  div.style.transformOrigin='center center';
   pl.innerHTML='';
   pl.appendChild(div);
 }
@@ -423,6 +425,15 @@ function applyScrim(){
   }
 }
 
+document.getElementById('resetImgPos').addEventListener('click',function(){
+  document.getElementById('imgZoom').value=1;
+  document.getElementById('imgTx').value=0;
+  document.getElementById('imgTy').value=0;
+  document.getElementById('zoomV').textContent='1.00';
+  document.getElementById('txV').textContent='0%';
+  document.getElementById('tyV').textContent='0%';
+  updateCard();
+});
 function updateCard(){
   document.getElementById('titleWrap').innerHTML=parseTitle(document.getElementById('titleInput').value);
   document.getElementById('titleWrap').style.fontSize=document.getElementById('titleSize').value+'px';
