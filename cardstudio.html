@@ -195,19 +195,43 @@
   #card .blockStack > .bodyFontWrap .blk{margin-top:0;}
   #card .blockStack > .subText{margin-top:0;}
 
-  #card .timeline{position:relative;}
-  #card .timeline .tl-item{display:flex;gap:12px;margin-bottom:14px;position:relative;}
+  #card .timeline{position:relative;padding-left:2px;}
+  #card .timeline .tl-item{display:flex;gap:12px;margin-bottom:12px;position:relative;}
   #card .timeline .tl-item:last-child{margin-bottom:0;}
   #card .timeline .tl-item:not(:last-child)::before{
-    content:"";position:absolute;left:5px;top:16px;bottom:-14px;width:2px;
-    background:linear-gradient(180deg,currentColor,transparent);opacity:.22;
+    content:"";position:absolute;left:9px;top:22px;bottom:-12px;width:3px;border-radius:2px;
+    background:linear-gradient(180deg,var(--tl-accent,currentColor),transparent);
+    opacity:.28;
   }
-  #card .tl-dot{width:11px;height:11px;border-radius:50%;margin-top:3px;flex:none;position:relative;
-    box-shadow:0 0 0 3px #ffffff;background-clip:padding-box;}
-  #card .tl-body{flex:1;min-width:0;background:#00000006;border-radius:10px;padding:8px 12px;}
-  #card .tl-date{font-size:11.5px;font-weight:900;letter-spacing:.02em;display:inline-block;
-    padding:2px 9px;border-radius:20px;color:#fff;}
-  #card .tl-desc{font-size:inherit;line-height:1.5;opacity:1;margin-top:4px;}
+  #card .tl-rail{flex:none;width:20px;display:flex;justify-content:center;padding-top:2px;}
+  #card .tl-dot{
+    width:14px;height:14px;border-radius:50%;flex:none;position:relative;z-index:1;
+    box-shadow:0 0 0 3px rgba(255,255,255,.92), 0 0 0 6px var(--tl-ring, rgba(124,92,255,.18));
+    background:var(--tl-accent, currentColor);
+  }
+  #card .tl-item.tl-first .tl-dot{
+    width:16px;height:16px;
+    box-shadow:0 0 0 3px rgba(255,255,255,.95), 0 0 0 7px var(--tl-ring, rgba(124,92,255,.28));
+  }
+  #card .tl-item.tl-last .tl-dot{opacity:.95;}
+  #card .tl-body{
+    flex:1;min-width:0;
+    background:linear-gradient(135deg, rgba(0,0,0,.045), rgba(0,0,0,.02));
+    border:1px solid rgba(0,0,0,.06);
+    border-radius:12px;padding:10px 12px 10px 12px;
+    box-shadow:0 1px 0 rgba(255,255,255,.35) inset;
+  }
+  #card .tl-item.tl-first .tl-body{
+    border-color:var(--tl-accent, currentColor);
+    background:linear-gradient(135deg, var(--tl-soft, rgba(124,92,255,.10)), rgba(0,0,0,.02));
+  }
+  #card .tl-date{
+    font-size:11px;font-weight:900;letter-spacing:.04em;display:inline-block;
+    padding:3px 10px;border-radius:999px;color:#fff;
+    background:var(--tl-accent, currentColor);
+    box-shadow:0 2px 6px rgba(0,0,0,.12);
+  }
+  #card .tl-desc{font-size:inherit;line-height:1.5;opacity:1;margin-top:6px;word-break:keep-all;}
   #card .list .ls-item{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px;}
   #card .ls-num{width:18px;height:18px;border-radius:50%;color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex:none;}
   #card .ls-bullet{width:8px;height:8px;border-radius:50%;margin-top:6px;flex:none;}
@@ -216,11 +240,32 @@
   #card .st-item{flex:1;min-width:80px;}
   #card .st-val{font-size:24px;font-weight:900;}
   #card .st-label{font-size:11px;opacity:.65;margin-top:2px;}
-  #card .chart .ch-row{display:flex;align-items:center;gap:8px;margin-bottom:9px;}
-  #card .ch-label{font-size:11px;width:56px;flex:none;opacity:.75;}
-  #card .ch-track{flex:1;height:8px;background:#00000014;border-radius:4px;overflow:hidden;}
-  #card .ch-fill{height:100%;border-radius:4px;}
-  #card .ch-val{font-size:11px;width:30px;text-align:right;opacity:.7;}
+  #card .chart{display:flex;flex-direction:column;gap:10px;}
+  #card .chart .ch-row{display:flex;align-items:center;gap:10px;}
+  #card .ch-label{
+    font-size:11.5px;width:58px;flex:none;font-weight:700;opacity:.85;
+    line-height:1.25;word-break:keep-all;
+  }
+  #card .ch-track{
+    flex:1;height:14px;background:rgba(0,0,0,.07);
+    border-radius:999px;overflow:hidden;position:relative;
+    box-shadow:inset 0 1px 2px rgba(0,0,0,.06);
+  }
+  #card .ch-fill{
+    height:100%;border-radius:999px;min-width:4px;
+    background:linear-gradient(90deg, var(--ch-from, #7c5cff), var(--ch-to, #a78bfa));
+    box-shadow:0 1px 4px rgba(0,0,0,.12);
+    transition:none;
+  }
+  #card .ch-row.ch-max .ch-fill{
+    box-shadow:0 2px 8px rgba(0,0,0,.16);
+  }
+  #card .ch-row.ch-max .ch-label{font-weight:900;opacity:1;}
+  #card .ch-val{
+    font-size:12px;width:36px;text-align:right;font-weight:800;opacity:.9;
+    font-variant-numeric:tabular-nums;
+  }
+  #card .ch-row.ch-max .ch-val{color:var(--ch-to, #7c5cff);}
   #card .quote{padding-top:2px;}
   #card .q-mark{font-size:34px;font-weight:900;line-height:1;}
   #card .q-text{font-size:inherit;font-weight:700;line-height:1.5;margin-top:4px;}
@@ -661,7 +706,12 @@
     content:"";position:absolute;left:0;right:0;top:-14px;height:26px;
     background:#111;
   }
-  
+  #card.style-breakingticker .rowBottom::after{
+    content:"LIVE  •  속보 자막 스트립  •  WEST150 DAILY";
+    position:absolute;left:8px;right:0;top:-8px;
+    color:#ffd400;font-size:10px;font-weight:800;letter-spacing:.06em;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
   #card.style-breakingticker .ls-num{background:#111!important;border-radius:0;}
 
 
@@ -2554,12 +2604,21 @@ function parseLines(data){
 function renderTimeline(s){
   const lines = parseLines(s.blockData);
   if(!lines.length) return '';
-  const items = lines.map(l => {
+  const accent = s.accent || '#7c5cff';
+  const soft = accent.length === 7 ? accent + '18' : 'rgba(124,92,255,.12)';
+  const ring = accent.length === 7 ? accent + '2e' : 'rgba(124,92,255,.18)';
+  const items = lines.map((l, i) => {
     const parts = l.split('|');
     const a = (parts[0]||'').trim(), b = (parts[1]||'').trim();
-    return '<div class="tl-item"><div class="tl-dot" style="background:' + s.accent + ';"></div><div class="tl-body"><div class="tl-date" style="background:' + s.accent + ';">' + escapeHtml(a) + '</div><div class="tl-desc">' + escapeHtml(b) + '</div></div></div>';
+    const cls = 'tl-item' + (i === 0 ? ' tl-first' : '') + (i === lines.length - 1 ? ' tl-last' : '');
+    return '<div class="' + cls + '">' +
+      '<div class="tl-rail"><div class="tl-dot"></div></div>' +
+      '<div class="tl-body">' +
+        '<div class="tl-date">' + escapeHtml(a) + '</div>' +
+        (b ? '<div class="tl-desc">' + parseTitleSyntax(b, accent).replace(/<br>/g,' ') + '</div>' : '') +
+      '</div></div>';
   }).join('');
-  return '<div class="blk timeline">' + items + '</div>';
+  return '<div class="blk timeline" style="--tl-accent:' + accent + ';--tl-soft:' + soft + ';--tl-ring:' + ring + ';">' + items + '</div>';
 }
 function renderListBlock(s, mode){
   const lines = parseLines(s.blockData);
@@ -2608,10 +2667,29 @@ function renderStats(s){
 function renderChart(s){
   const lines = parseLines(s.blockData);
   if(!lines.length) return '';
-  const parsed = lines.map(l => { const parts = l.split('|'); return {label:(parts[0]||'').trim(), v: parseFloat(parts[1])||0}; });
-  const max = Math.max.apply(null, parsed.map(p=>p.v).concat([1]));
-  const items = parsed.map(p => '<div class="ch-row"><div class="ch-label">' + escapeHtml(p.label) + '</div><div class="ch-track"><div class="ch-fill" style="width:' + (p.v/max*100) + '%;background:' + s.accent + ';"></div></div><div class="ch-val">' + p.v + '</div></div>').join('');
-  return '<div class="blk chart">' + items + '</div>';
+  const accent = s.accent || '#7c5cff';
+  const parsed = lines.map(l => {
+    const parts = l.split('|');
+    return {label:(parts[0]||'').trim(), v: parseFloat(parts[1])||0, raw:(parts[1]||'').trim()};
+  });
+  const max = Math.max.apply(null, parsed.map(p => p.v).concat([1]));
+  // accent 기반 그라데이션 끝색 (밝게)
+  let toColor = accent;
+  if(/^#[0-9a-fA-F]{6}$/.test(accent)){
+    const r = parseInt(accent.slice(1,3),16), g = parseInt(accent.slice(3,5),16), b = parseInt(accent.slice(5,7),16);
+    const mix = (c) => Math.min(255, Math.round(c + (255 - c) * 0.35));
+    toColor = '#' + [mix(r),mix(g),mix(b)].map(x => x.toString(16).padStart(2,'0')).join('');
+  }
+  const items = parsed.map(p => {
+    const pct = Math.max(2, Math.round((p.v / max) * 100));
+    const isMax = p.v === max && max > 0;
+    const display = p.raw !== '' && isNaN(Number(p.raw)) === false ? p.raw : String(p.v);
+    return '<div class="ch-row' + (isMax ? ' ch-max' : '') + '">' +
+      '<div class="ch-label">' + escapeHtml(p.label) + '</div>' +
+      '<div class="ch-track"><div class="ch-fill" style="width:' + pct + '%;"></div></div>' +
+      '<div class="ch-val">' + escapeHtml(display) + '</div></div>';
+  }).join('');
+  return '<div class="blk chart" style="--ch-from:' + accent + ';--ch-to:' + toColor + ';">' + items + '</div>';
 }
 function renderQuote(s){
   const lines = parseLines(s.blockData);
