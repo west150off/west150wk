@@ -326,135 +326,415 @@
 <div class="toast" id="toast"></div>
 
 <script>
-let currentSize={w:1080,h:1350};
-let imgDataUrl=null;
-let fitMode='cover';
-const card=document.getElementById('card');
-const cardWrapper=document.getElementById('cardWrapper');
+let currentSize = {w:1080, h:1350};
+let imgDataUrl = null;
+let fitMode = 'cover';
+const card = document.getElementById('card');
+const cardWrapper = document.getElementById('cardWrapper');
 
-function showToast(msg,ms){
-  var t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
+function showToast(msg, ms){
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
   clearTimeout(showToast._t);
-  showToast._t=setTimeout(function(){t.classList.remove('show');},ms||3200);
+  showToast._t = setTimeout(function(){ t.classList.remove('show'); }, ms || 3200);
 }
 
 function parseTitle(raw){
   if(!raw) return '';
-  var lines=raw.split('\n');
+  var lines = raw.split('\n');
   return lines.map(function(line){
-    var html=line
-      .replace(/\*\*(.*?)\*\*/g,'<span class="t-bold">$1</span>')
-      .replace(/==(.*?)==/g,'<span class="t-accent">$1</span>')
-      .replace(/~~(.*?)~~/g,'<span class="t-small">$1</span>')
-      .replace(/\[\[(.*?)\]\]/g,'<span class="t-underline">$1</span>');
-    return '<div class="tline">'+(html||'&nbsp;')+'</div>';
+    var html = line
+      .replace(/\*\*(.*?)\*\*/g, '<span class="t-bold">$1</span>')
+      .replace(/==(.*?)==/g, '<span class="t-accent">$1</span>')
+      .replace(/~~(.*?)~~/g, '<span class="t-small">$1</span>')
+      .replace(/\[\[(.*?)\]\]/g, '<span class="t-underline">$1</span>');
+    return '<div class="tline">' + (html || '&nbsp;') + '</div>';
   }).join('');
 }
 
-function wrapSelection(textarea,openTok,closeTok){
-  var start=textarea.selectionStart,end=textarea.selectionEnd,val=textarea.value;
-  var selected=val.substring(start,end)||'텍스트';
-  var next=val.substring(0,start)+openTok+selected+closeTok+val.substring(end);
-  textarea.value=next;
+function wrapSelection(textarea, openTok, closeTok){
+  var start = textarea.selectionStart, end = textarea.selectionEnd, val = textarea.value;
+  var selected = val.substring(start, end) || '텍스트';
+  var next = val.substring(0, start) + openTok + selected + closeTok + val.substring(end);
+  textarea.value = next;
   textarea.focus();
-  textarea.setSelectionRange(start+openTok.length,start+openTok.length+selected.length);
-  textarea.dispatchEvent(new Event('input',{bubbles:true}));
+  textarea.setSelectionRange(start + openTok.length, start + openTok.length + selected.length);
+  textarea.dispatchEvent(new Event('input', {bubbles:true}));
 }
+
 document.querySelectorAll('.fmt-toolbar .fmt-btn').forEach(function(btn){
-  btn.addEventListener('click',function(e){
+  btn.addEventListener('click', function(e){
     e.preventDefault();
-    var ta=document.getElementById(this.closest('.fmt-toolbar').getAttribute('data-target'));
-    var w=this.getAttribute('data-wrap');
-    if(w==='**') wrapSelection(ta,'**','**');
-    else if(w==='==') wrapSelection(ta,'==','==');
-    else if(w==='~~') wrapSelection(ta,'~~','~~');
-    else if(w==='[[') wrapSelection(ta,'[[',']]');
+    var ta = document.getElementById(this.closest('.fmt-toolbar').getAttribute('data-target'));
+    var w = this.getAttribute('data-wrap');
+    if(w === '**') wrapSelection(ta, '**', '**');
+    else if(w === '==') wrapSelection(ta, '==', '==');
+    else if(w === '~~') wrapSelection(ta, '~~', '~~');
+    else if(w === '[[') wrapSelection(ta, '[[', ']]');
   });
 });
 
-function hexToRgba(hex,a){
-  hex=(hex||'#d4a017').replace('#','');
-  if(hex.length===3) hex=hex.split('').map(function(c){return c+c;}).join('');
-  var r=parseInt(hex.substring(0,2),16),g=parseInt(hex.substring(2,4),16),b=parseInt(hex.substring(4,6),16);
-  return 'rgba('+r+','+g+','+b+','+a+')';
+function hexToRgba(hex, a){
+  hex = (hex || '#d4a017').replace('#', '');
+  if(hex.length === 3) hex = hex.split('').map(function(c){ return c + c; }).join('');
+  var r = parseInt(hex.substring(0,2), 16), g = parseInt(hex.substring(2,4), 16), b = parseInt(hex.substring(4,6), 16);
+  return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
 }
 
-var ICONS={
-  threads:'<svg viewBox="0 0 24 24"><path d="M12.2 2C7 2 3.2 5.1 3.2 10.2c0 2.9 1.3 5.1 3.5 6.5-1 .3-1.8 1-1.8 2.2 0 1.7 1.6 2.9 4.2 2.9 4.6 0 7.7-3 7.7-7.6 0-1.6-.4-2.9-1.2-3.9.2-1.1-.1-2.1-.9-2.8-.7-.6-1.7-.8-2.7-.6.4-1.2.2-2.4-.6-3.2C10.7 2.9 9.6 2.6 8.4 3c.6-.6 1.3-1 2.1-1zm-.3 6.7c1.7 0 2.7 1 2.7 2.6 0 2.4-1.6 4.3-4 4.3-1.5 0-2.5-.8-2.5-2 0-1.5 1.4-2.3 3.2-2.3.4 0 .8 0 1.1.1-.1-1.7-.9-2.7-2.5-2.7z"/></svg>',
-  instagram:'<svg viewBox="0 0 24 24"><path d="M12 2.2c2.7 0 3 0 4.1.1 1.1.1 1.9.2 2.6.5.7.3 1.3.7 1.9 1.3.6.6 1 1.2 1.3 1.9.3.7.4 1.5.5 2.6.1 1.1.1 1.4.1 4.1s0 3-.1 4.1c-.1 1.1-.2 1.9-.5 2.6-.3.7-.7 1.3-1.3 1.9-.6.6-1.2 1-1.9 1.3-.7.3-1.5.4-2.6.5-1.1.1-1.4.1-4.1.1s-3 0-4.1-.1c-1.1-.1-1.9-.2-2.6-.5-.7-.3-1.3-.7-1.9-1.3-.6-.6-1-1.2-1.3-1.9-.3-.7-.4-1.5-.5-2.6C2 15 2 14.7 2 12s0-3 .1-4.1c.1-1.1.2-1.9.5-2.6.3-.7.7-1.3 1.3-1.9.6-.6 1.2-1 1.9-1.3.7-.3 1.5-.4 2.6-.5C9 2.2 9.3 2.2 12 2.2zm0 1.8c-2.6 0-2.9 0-4 .1-1 0-1.5.2-1.9.3-.5.2-.8.4-1.1.7-.3.3-.6.6-.7 1.1-.1.4-.3.9-.3 1.9-.1 1.1-.1 1.4-.1 4s0 2.9.1 4c0 1 .2 1.5.3 1.9.2.5.4.8.7 1.1.3.3.6.6 1.1.7.4.1.9.3 1.9.3 1.1.1 1.4.1 4 .1s2.9 0 4-.1c1 0 1.5-.2 1.9-.3.5-.2.8-.4 1.1-.7.3-.3.6-.6.7-1.1.1-.4.3-.9.3-1.9.1-1.1.1-1.4.1-4s0-2.9-.1-4c0-1-.2-1.5-.3-1.9-.2-.5-.4-.8-.7-1.1-.3-.3-.6-.6-1.1-.7-.4-.1-.9-.3-1.9-.3-1.1-.1-1.4-.1-4-.1zm0 4.3a5.7 5.7 0 110 11.4 5.7 5.7 0 010-11.4zm0 1.8a3.9 3.9 0 100 7.8 3.9 3.9 0 000-7.8zm5.9-2a1.3 1.3 0 110 2.6 1.3 1.3 0 010-2.6z"/></svg>',
-  x:'<svg viewBox="0 0 24 24"><path d="M18.2 3H21l-6.6 7.5L22.2 21h-6.2l-4.9-6.4L5.4 21H2.6l7-8-7.6-10h6.3l4.4 5.9L18.2 3zm-1.1 16.2h1.7L7 4.7H5.2l11.9 14.5z"/></svg>'
+var ICONS = {
+  threads: '<svg viewBox="0 0 24 24"><path d="M12.2 2C7 2 3.2 5.1 3.2 10.2c0 2.9 1.3 5.1 3.5 6.5-1 .3-1.8 1-1.8 2.2 0 1.7 1.6 2.9 4.2 2.9 4.6 0 7.7-3 7.7-7.6 0-1.6-.4-2.9-1.2-3.9.2-1.1-.1-2.1-.9-2.8-.7-.6-1.7-.8-2.7-.6.4-1.2.2-2.4-.6-3.2C10.7 2.9 9.6 2.6 8.4 3c.6-.6 1.3-1 2.1-1zm-.3 6.7c1.7 0 2.7 1 2.7 2.6 0 2.4-1.6 4.3-4 4.3-1.5 0-2.5-.8-2.5-2 0-1.5 1.4-2.3 3.2-2.3.4 0 .8 0 1.1.1-.1-1.7-.9-2.7-2.5-2.7z"/></svg>',
+  instagram: '<svg viewBox="0 0 24 24"><path d="M12 2.2c2.7 0 3 0 4.1.1 1.1.1 1.9.2 2.6.5.7.3 1.3.7 1.9 1.3.6.6 1 1.2 1.3 1.9.3.7.4 1.5.5 2.6.1 1.1.1 1.4.1 4.1s0 3-.1 4.1c-.1 1.1-.2 1.9-.5 2.6-.3.7-.7 1.3-1.3 1.9-.6.6-1.2 1-1.9 1.3-.7.3-1.5.4-2.6.5-1.1.1-1.4.1-4.1.1s-3 0-4.1-.1c-1.1-.1-1.9-.2-2.6-.5-.7-.3-1.3-.7-1.9-1.3-.6-.6-1-1.2-1.3-1.9-.3-.7-.4-1.5-.5-2.6C2 15 2 14.7 2 12s0-3 .1-4.1c.1-1.1.2-1.9.5-2.6.3-.7.7-1.3 1.3-1.9.6-.6 1.2-1 1.9-1.3.7-.3 1.5-.4 2.6-.5C9 2.2 9.3 2.2 12 2.2zm0 1.8c-2.6 0-2.9 0-4 .1-1 0-1.5.2-1.9.3-.5.2-.8.4-1.1.7-.3.3-.6.6-.7 1.1-.1.4-.3.9-.3 1.9-.1 1.1-.1 1.4-.1 4s0 2.9.1 4c0 1 .2 1.5.3 1.9.2.5.4.8.7 1.1.3.3.6.6 1.1.7.4.1.9.3 1.9.3 1.1.1 1.4.1 4 .1s2.9 0 4-.1c1 0 1.5-.2 1.9-.3.5-.2.8-.4 1.1-.7.3-.3.6-.6.7-1.1.1-.4.3-.9.3-1.9.1-1.1.1-1.4.1-4s0-2.9-.1-4c0-1-.2-1.5-.3-1.9-.2-.5-.4-.8-.7-1.1-.3-.3-.6-.6-1.1-.7-.4-.1-.9-.3-1.9-.3-1.1-.1-1.4-.1-4-.1zm0 4.3a5.7 5.7 0 110 11.4 5.7 5.7 0 010-11.4zm0 1.8a3.9 3.9 0 100 7.8 3.9 3.9 0 000-7.8zm5.9-2a1.3 1.3 0 110 2.6 1.3 1.3 0 010-2.6z"/></svg>',
+  x: '<svg viewBox="0 0 24 24"><path d="M18.2 3H21l-6.6 7.5L22.2 21h-6.2l-4.9-6.4L5.4 21H2.6l7-8-7.6-10h6.3l4.4 5.9L18.2 3zm-1.1 16.2h1.7L7 4.7H5.2l11.9 14.5z"/></svg>'
 };
 
 function renderSocial(){
-  var row=document.getElementById('socialRow');
-  var items=[];
+  var row = document.getElementById('socialRow');
+  var items = [];
   if(document.getElementById('showThreads').checked) items.push(ICONS.threads);
   if(document.getElementById('showInsta').checked) items.push(ICONS.instagram);
   if(document.getElementById('showX').checked) items.push(ICONS.x);
-  row.innerHTML=items.map(function(ic,i){
-    return (i>0?'<span class="social-sep"></span>':'')+ic;
+  row.innerHTML = items.map(function(ic, i){
+    return (i > 0 ? '<span class="social-sep"></span>' : '') + ic;
   }).join('');
-  row.style.display=items.length?'flex':'none';
+  row.style.display = items.length ? 'flex' : 'none';
 }
 
 function applyImage(){
-  var pl=document.getElementById('photoLayer');
+  var pl = document.getElementById('photoLayer');
   if(!imgDataUrl){
-    pl.innerHTML='<div class="no-photo-msg" id="noPhotoMsg">사진을 업로드하세요</div>';
+    pl.innerHTML = '<div class="no-photo-msg" id="noPhotoMsg">사진을 업로드하세요</div>';
     return;
   }
-  var zoom=parseFloat(document.getElementById('imgZoom').value);
-  var tx=parseFloat(document.getElementById('imgTx').value);
-  var ty=parseFloat(document.getElementById('imgTy').value);
-  var safeUrl=imgDataUrl.replace(/'/g,"%27");
+  var zoom = parseFloat(document.getElementById('imgZoom').value);
+  var tx = parseFloat(document.getElementById('imgTx').value);
+  var ty = parseFloat(document.getElementById('imgTy').value);
+  var safeUrl = imgDataUrl.replace(/'/g, "%27");
 
-  pl.innerHTML='';
+  pl.innerHTML = '';
 
-  if(fitMode==='blur'){
-    var blurDiv=document.createElement('div');
-    blurDiv.className='photo-bg';
-    blurDiv.style.backgroundImage="url('"+safeUrl+"')";
-    blurDiv.style.backgroundSize='cover';
-    blurDiv.style.filter='blur(18px) brightness(0.7)';
-    blurDiv.style.transform='scale(1.15)';
+  if(fitMode === 'blur'){
+    var blurDiv = document.createElement('div');
+    blurDiv.className = 'photo-bg';
+    blurDiv.style.backgroundImage = "url('" + safeUrl + "')";
+    blurDiv.style.backgroundSize = 'cover';
+    blurDiv.style.filter = 'blur(18px) brightness(0.7)';
+    blurDiv.style.transform = 'scale(1.15)';
     pl.appendChild(blurDiv);
 
-    var sharpDiv=document.createElement('div');
-    sharpDiv.className='photo-bg';
-    sharpDiv.style.backgroundImage="url('"+safeUrl+"')";
-    sharpDiv.style.backgroundSize='contain';
-    sharpDiv.style.backgroundRepeat='no-repeat';
-    sharpDiv.style.backgroundPosition='center';
-    sharpDiv.style.transform='scale('+zoom+') translate('+tx+'%,'+ty+'%)';
-    sharpDiv.style.transformOrigin='center center';
+    var sharpDiv = document.createElement('div');
+    sharpDiv.className = 'photo-bg';
+    sharpDiv.style.backgroundImage = "url('" + safeUrl + "')";
+    sharpDiv.style.backgroundSize = 'contain';
+    sharpDiv.style.backgroundRepeat = 'no-repeat';
+    sharpDiv.style.backgroundPosition = 'center';
+    sharpDiv.style.transform = 'scale(' + zoom + ') translate(' + tx + '%,' + ty + '%)';
+    sharpDiv.style.transformOrigin = 'center center';
     pl.appendChild(sharpDiv);
   }
-  else if(fitMode==='contain'){
-    var div=document.createElement('div');
-    div.className='photo-bg';
-    div.style.backgroundImage="url('"+safeUrl+"')";
-    div.style.backgroundSize='contain';
-    div.style.backgroundRepeat='no-repeat';
-    div.style.backgroundPosition='center';
-    div.style.transform='scale('+zoom+') translate('+tx+'%,'+ty+'%)';
-    div.style.transformOrigin='center center';
+  else if(fitMode === 'contain'){
+    var div = document.createElement('div');
+    div.className = 'photo-bg';
+    div.style.backgroundImage = "url('" + safeUrl + "')";
+    div.style.backgroundSize = 'contain';
+    div.style.backgroundRepeat = 'no-repeat';
+    div.style.backgroundPosition = 'center';
+    div.style.transform = 'scale(' + zoom + ') translate(' + tx + '%,' + ty + '%)';
+    div.style.transformOrigin = 'center center';
     pl.appendChild(div);
   }
   else {
-    var div=document.createElement('div');
-    div.className='photo-bg';
-    div.style.backgroundImage="url('"+safeUrl+"')";
-    div.style.backgroundSize='cover';
-    div.style.transform='scale('+zoom+') translate('+tx+'%,'+ty+'%)';
-    div.style.transformOrigin='center center';
+    var div = document.createElement('div');
+    div.className = 'photo-bg';
+    div.style.backgroundImage = "url('" + safeUrl + "')";
+    div.style.backgroundSize = 'cover';
+    div.style.transform = 'scale(' + zoom + ') translate(' + tx + '%,' + ty + '%)';
+    div.style.transformOrigin = 'center center';
     pl.appendChild(div);
   }
 }
 
+function updateScrim(){
+  var strength = parseFloat(document.getElementById('scrimStrength').value);
+  var dirBtn = document.querySelector('#scrimDir .btn.active');
+  var dir = dirBtn ? dirBtn.getAttribute('data-dir') : 'left';
+  var scrim = document.getElementById('scrim');
+  if(dir === 'left'){
+    scrim.style.background = 'linear-gradient(90deg, rgba(0,0,0,' + (strength * 0.95) + ') 0%, rgba(0,0,0,' + (strength * 0.4) + ') 55%, rgba(0,0,0,0) 100%)';
+  } else if(dir === 'bottom'){
+    scrim.style.background = 'linear-gradient(0deg, rgba(0,0,0,' + (strength * 0.95) + ') 0%, rgba(0,0,0,' + (strength * 0.5) + ') 40%, rgba(0,0,0,0) 100%)';
+  } else {
+    scrim.style.background = 'rgba(0,0,0,' + strength + ')';
+  }
+}
+
+function updateCard(){
+  // Title
+  var titleRaw = document.getElementById('titleInput').value;
+  document.getElementById('titleWrap').innerHTML = parseTitle(titleRaw);
+  var titleSize = document.getElementById('titleSize').value;
+  document.querySelectorAll('#titleWrap .tline').forEach(function(el){
+    el.style.fontSize = titleSize + 'px';
+  });
+
+  // Divider
+  var showDiv = document.getElementById('showDivider').checked;
+  document.getElementById('dividerEl').style.display = showDiv ? 'block' : 'none';
+
+  // Accent color
+  var accent = document.getElementById('accentColor').value;
+  document.documentElement.style.setProperty('--accent', accent);
+  document.querySelectorAll('.t-accent, .b150, .bd, .arrow, .globe-icon').forEach(function(el){
+    el.style.color = accent;
+  });
+  document.getElementById('dividerEl').style.background = accent;
+
+  // Brand
+  var showBrand = document.getElementById('showBrand').checked;
+  document.getElementById('brandBlock').style.display = showBrand ? 'flex' : 'none';
+  var logoSize = document.getElementById('logoSize').value;
+  var logoImg = document.getElementById('brandLogoImg');
+  if(logoImg) logoImg.style.height = logoSize + 'px';
+
+  document.getElementById('badgeTopEl').textContent = document.getElementById('badgeTop').value || 'W';
+  document.getElementById('badgeBottomEl').textContent = document.getElementById('badgeBottom').value || '150';
+  var brandMain = document.getElementById('brandMain').value || 'WEST150';
+  var brandSub = document.getElementById('brandSub').value || 'DAILY';
+  document.getElementById('brandTextEl').innerHTML = brandMain + '<span class="bd">' + brandSub + '</span>';
+
+  // Social
+  renderSocial();
+
+  // Swipe text
+  document.getElementById('swipeLabel').textContent = document.getElementById('swipeText').value || '밀어보기';
+  document.getElementById('arrowEl').style.display = document.getElementById('showArrow').checked ? 'inline' : 'none';
+
+  // Card number
+  var num = document.getElementById('cardNumber').value.trim();
+  var badge = document.getElementById('cardNumberBadge');
+  if(num){
+    badge.textContent = num;
+    badge.style.display = 'block';
+  } else {
+    badge.style.display = 'none';
+  }
+
+  // Photo credit
+  var credit = document.getElementById('photoCredit').value.trim();
+  var creditEl = document.getElementById('photoCreditEl');
+  if(credit){
+    creditEl.textContent = credit;
+    creditEl.style.display = 'block';
+  } else {
+    creditEl.style.display = 'none';
+  }
+
+  // Image + scrim
+  applyImage();
+  updateScrim();
+}
+
+function setSize(w, h){
+  currentSize = {w: w, h: h};
+  card.style.width = w + 'px';
+  card.style.height = h + 'px';
+  document.getElementById('sizeLabel').textContent = w + ' × ' + h;
+  scalePreview();
+}
+
+function scalePreview(){
+  var maxW = cardWrapper.parentElement.clientWidth - 48;
+  var maxH = window.innerHeight - 120;
+  var scale = Math.min(1, maxW / currentSize.w, maxH / currentSize.h);
+  cardWrapper.style.transform = 'scale(' + scale + ')';
+  cardWrapper.style.width = currentSize.w + 'px';
+  cardWrapper.style.height = currentSize.h + 'px';
+}
+
+// ========== Event Listeners ==========
+
+// Size buttons
+document.querySelectorAll('#sizeGroup .btn').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('#sizeGroup .btn').forEach(function(b){ b.classList.remove('active'); });
+    this.classList.add('active');
+    var size = this.getAttribute('data-size').split('x');
+    setSize(parseInt(size[0]), parseInt(size[1]));
+  });
+});
+
+// Image upload
+function bindImgInput(){
+  var input = document.getElementById('imgInput');
+  if(!input) return;
+  input.addEventListener('change', function(e){
+    var file = e.target.files[0];
+    if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(ev){
+      imgDataUrl = ev.target.result;
+      var zone = document.getElementById('imgZone');
+      zone.classList.add('has-img');
+      zone.innerHTML = '<img src="' + imgDataUrl + '"><p>클릭하여 변경</p><input type="file" id="imgInput" accept="image/*">';
+      bindImgInput();
+      document.getElementById('removeImg').style.display = 'block';
+      updateCard();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+document.getElementById('imgZone').addEventListener('click', function(e){
+  if(e.target.tagName === 'INPUT') return;
+  var input = document.getElementById('imgInput');
+  if(input) input.click();
+});
+bindImgInput();
+
+// Fit mode
+document.querySelectorAll('#fitModeGroup .btn').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('#fitModeGroup .btn').forEach(function(b){ b.classList.remove('active'); });
+    this.classList.add('active');
+    fitMode = this.getAttribute('data-fit');
+    updateCard();
+  });
+});
+
+// Image controls
+['imgZoom', 'imgTx', 'imgTy'].forEach(function(id){
+  document.getElementById(id).addEventListener('input', function(){
+    if(id === 'imgZoom') document.getElementById('zoomV').textContent = parseFloat(this.value).toFixed(2);
+    if(id === 'imgTx') document.getElementById('txV').textContent = this.value + '%';
+    if(id === 'imgTy') document.getElementById('tyV').textContent = this.value + '%';
+    applyImage();
+  });
+});
+document.getElementById('resetImgPos').addEventListener('click', function(){
+  document.getElementById('imgZoom').value = 1;
+  document.getElementById('imgTx').value = 0;
+  document.getElementById('imgTy').value = 0;
+  document.getElementById('zoomV').textContent = '1.00';
+  document.getElementById('txV').textContent = '0%';
+  document.getElementById('tyV').textContent = '0%';
+  applyImage();
+});
+document.getElementById('removeImg').addEventListener('click', function(){
+  imgDataUrl = null;
+  var zone = document.getElementById('imgZone');
+  zone.classList.remove('has-img');
+  zone.innerHTML = '<p>클릭하여 이미지 업로드</p><input type="file" id="imgInput" accept="image/*">';
+  bindImgInput();
+  this.style.display = 'none';
+  updateCard();
+});
+
+// Scrim
+document.getElementById('scrimStrength').addEventListener('input', function(){
+  document.getElementById('scrimV').textContent = parseFloat(this.value).toFixed(2);
+  updateScrim();
+});
+document.querySelectorAll('#scrimDir .btn').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('#scrimDir .btn').forEach(function(b){ b.classList.remove('active'); });
+    this.classList.add('active');
+    updateScrim();
+  });
+});
+
+// Title & size
+document.getElementById('titleInput').addEventListener('input', updateCard);
+document.getElementById('titleSize').addEventListener('input', function(){
+  document.getElementById('titleSizeV').textContent = this.value;
+  updateCard();
+});
+document.getElementById('showDivider').addEventListener('change', updateCard);
+
+// Accent
+document.getElementById('accentColor').addEventListener('input', updateCard);
+document.querySelectorAll('[data-preset]').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    document.getElementById('accentColor').value = this.getAttribute('data-preset');
+    updateCard();
+  });
+});
+
+// Brand
+['brandMain', 'brandSub', 'badgeTop', 'badgeBottom'].forEach(function(id){
+  document.getElementById(id).addEventListener('input', updateCard);
+});
+document.getElementById('logoSize').addEventListener('input', function(){
+  document.getElementById('logoSizeV').textContent = this.value;
+  updateCard();
+});
+document.getElementById('showBrand').addEventListener('change', updateCard);
+
+// Social toggles
+['showThreads', 'showInsta', 'showX'].forEach(function(id){
+  document.getElementById(id).addEventListener('change', updateCard);
+});
+
+// Swipe
+document.getElementById('swipeText').addEventListener('input', updateCard);
+document.getElementById('showArrow').addEventListener('change', updateCard);
+
+// Card number & credit
+document.getElementById('cardNumber').addEventListener('input', updateCard);
+document.getElementById('photoCredit').addEventListener('input', updateCard);
+
+// Save PNG
+document.getElementById('savePng').addEventListener('click', function(){
+  showToast('이미지 생성 중...');
+  var origTransform = cardWrapper.style.transform;
+  cardWrapper.style.transform = 'scale(1)';
+  html2canvas(card, {
+    scale: 1,
+    useCORS: true,
+    allowTaint: true,
+    backgroundColor: null,
+    width: currentSize.w,
+    height: currentSize.h
+  }).then(function(canvas){
+    cardWrapper.style.transform = origTransform;
+    var link = document.createElement('a');
+    link.download = 'WEST150_COVER_' + currentSize.w + 'x' + currentSize.h + '.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    showToast('PNG 저장 완료!');
+  }).catch(function(err){
+    cardWrapper.style.transform = origTransform;
+    showToast('저장 실패: ' + err.message);
+  });
+});
+
+// iPhone save
+document.getElementById('saveIphone').addEventListener('click', function(){
+  showToast('이미지 생성 중...');
+  var origTransform = cardWrapper.style.transform;
+  cardWrapper.style.transform = 'scale(1)';
+  html2canvas(card, {
+    scale: 1,
+    useCORS: true,
+    allowTaint: true,
+    backgroundColor: null,
+    width: currentSize.w,
+    height: currentSize.h
+  }).then(function(canvas){
+    cardWrapper.style.transform = origTransform;
+    document.getElementById('iphoneImg').src = canvas.toDataURL('image/png');
+    document.getElementById('iphoneModal').classList.add('show');
+  }).catch(function(err){
+    cardWrapper.style.transform = origTransform;
+    showToast('생성 실패: ' + err.message);
+  });
+});
+document.getElementById('closeModal').addEventListener('click', function(){
+  document.getElementById('iphoneModal').classList.remove('show');
+});
+
+// Init
 updateCard();
-setSize(1080,1350);
-window.addEventListener('resize',scalePreview);
+setSize(1080, 1350);
+window.addEventListener('resize', scalePreview);
 </script>
 </body>
 </html>
