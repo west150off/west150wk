@@ -405,8 +405,8 @@ function applyImage(){
   var div=document.createElement('div');
   div.className='photo-bg';
   div.style.backgroundImage="url('"+safeUrl+"')";
-  div.style.transform='scale('+zoom+') translate('+tx+'%,'+ty+'%)';
-  div.style.transformOrigin='center center';
+  div.style.backgroundSize = (zoom * 100) + '%';
+  div.style.backgroundPosition = 'calc(50% + ' + tx + '%) calc(50% + ' + ty + '%)';
   pl.innerHTML='';
   pl.appendChild(div);
 }
