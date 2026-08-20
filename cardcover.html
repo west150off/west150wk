@@ -398,7 +398,7 @@ function renderSocial(){
   row.style.display=items.length?'flex':'none';
 }
 
-function applyImage(){function applyImage(){
+function applyImage(){
   var pl=document.getElementById('photoLayer');
   if(!imgDataUrl){
     pl.innerHTML='<div class="no-photo-msg" id="noPhotoMsg">사진을 업로드하세요</div>';
@@ -412,7 +412,6 @@ function applyImage(){function applyImage(){
   pl.innerHTML='';
 
   if(fitMode==='blur'){
-    // 블러 배경 레이어
     var blurDiv=document.createElement('div');
     blurDiv.className='photo-bg';
     blurDiv.style.backgroundImage="url('"+safeUrl+"')";
@@ -421,7 +420,6 @@ function applyImage(){function applyImage(){
     blurDiv.style.transform='scale(1.15)';
     pl.appendChild(blurDiv);
 
-    // 원본 선명 레이어 (가운데)
     var sharpDiv=document.createElement('div');
     sharpDiv.className='photo-bg';
     sharpDiv.style.backgroundImage="url('"+safeUrl+"')";
@@ -444,7 +442,6 @@ function applyImage(){function applyImage(){
     pl.appendChild(div);
   }
   else {
-    // 꽉 채우기 (cover)
     var div=document.createElement('div');
     div.className='photo-bg';
     div.style.backgroundImage="url('"+safeUrl+"')";
@@ -454,227 +451,6 @@ function applyImage(){function applyImage(){
     pl.appendChild(div);
   }
 }
-
-function applyScrim(){
-  var s=document.getElementById('scrimStrength').value;
-  var dir=document.querySelector('#scrimDir .btn.active').getAttribute('data-dir');
-  var el=document.getElementById('scrim');
-  var base=parseFloat(s);
-  if(dir==='left'){
-    el.style.background='linear-gradient(100deg, rgba(0,0,0,'+(0.55+base*0.4)+') 0%, rgba(0,0,0,'+(0.25+base*0.3)+') 38%, rgba(0,0,0,'+(base*0.15)+') 62%, rgba(0,0,0,0) 82%), linear-gradient(to top, rgba(0,0,0,'+(0.6+base*0.3)+') 0%, rgba(0,0,0,0) 42%)';
-  } else if(dir==='bottom'){
-    el.style.background='linear-gradient(to top, rgba(0,0,0,'+(0.7+base*0.25)+') 0%, rgba(0,0,0,'+(0.2+base*0.2)+') 45%, rgba(0,0,0,0) 75%)';
-  } else {
-    el.style.background='rgba(0,0,0,'+(0.25+base*0.45)+')';
-  }
-}
-
-document.getElementById('resetImgPos').addEventListener('click',function(){
-  document.getElementById('imgZoom').value=1;
-  document.getElementById('imgTx').value=0;
-  document.getElementById('imgTy').value=0;
-  document.getElementById('zoomV').textContent='1.00';
-  document.getElementById('txV').textContent='0%';
-  document.getElementById('tyV').textContent='0%';
-  updateCard();
-});
-function updateCard(){
-  document.getElementById('titleWrap').innerHTML=parseTitle(document.getElementById('titleInput').value);
-  document.getElementById('titleWrap').style.fontSize=document.getElementById('titleSize').value+'px';
-  document.getElementById('dividerEl').style.display=document.getElementById('showDivider').checked?'block':'none';
-
-  document.getElementById('brandBlock').style.display=document.getElementById('showBrand').checked?'flex':'none';
-  document.getElementById('badgeTopEl').textContent=document.getElementById('badgeTop').value;
-  document.getElementById('badgeBottomEl').textContent=document.getElementById('badgeBottom').value;
-  var bm=document.getElementById('brandMain').value;
-  var bs=document.getElementById('brandSub').value;
-  document.getElementById('brandTextEl').innerHTML=bm+'<span class="bd">'+bs+'</span>';
-
-  renderSocial();
-
-  var swipeText=document.getElementById('swipeText').value;
-  document.getElementById('swipeLabel').textContent=swipeText;
-  document.getElementById('arrowEl').style.display=document.getElementById('showArrow').checked?'inline':'none';
-  document.getElementById('swipeTextEl').style.display=swipeText||document.getElementById('showArrow').checked?'flex':'none';
-
-  var num=document.getElementById('cardNumber').value;
-  var nb=document.getElementById('cardNumberBadge');
-  if(num){ nb.style.display='block'; nb.textContent=num; } else { nb.style.display='none'; }
-
-  var credit=document.getElementById('photoCredit').value;
-  var creditEl=document.getElementById('photoCreditEl');
-  if(credit){ creditEl.style.display='block'; creditEl.textContent=credit; } else { creditEl.style.display='none'; }
-
-  document.getElementById('brandLogoImg').style.height=document.getElementById('logoSize').value+'px';
-
-  applyImage();
-  applyScrim();
-  scalePreview();
-}
-
-function setAccent(color){
-  document.documentElement.style.setProperty('--accent',color);
-  document.getElementById('accentColor').value=color;
-}
-document.getElementById('accentColor').addEventListener('input',function(e){setAccent(e.target.value);});
-document.querySelectorAll('[data-preset]').forEach(function(btn){
-  btn.addEventListener('click',function(){setAccent(this.dataset.preset);});
-});
-
-document.querySelectorAll('#scrimDir .btn').forEach(function(btn){
-  btn.addEventListener('click',function(){
-    document.querySelectorAll('#scrimDir .btn').forEach(function(b){b.classList.remove('active');});
-    this.classList.add('active');
-    updateCard();
-  });
-});
-
-document.querySelectorAll('#fitModeGroup .btn').forEach(function(btn){
-  btn.addEventListener('click',function(){
-    document.querySelectorAll('#fitModeGroup .btn').forEach(function(b){b.classList.remove('active');});
-    this.classList.add('active');
-    fitMode=this.getAttribute('data-fit');
-    updateCard();
-  });
-});
-
-document.querySelectorAll('#sizeGroup .btn').forEach(function(btn){
-  btn.addEventListener('click',function(){
-    document.querySelectorAll('#sizeGroup .btn').forEach(function(b){b.classList.remove('active');});
-    this.classList.add('active');
-    var p=this.dataset.size.split('x');
-    setSize(+p[0],+p[1]);
-  });
-});
-function setSize(w,h){
-  currentSize={w:w,h:h};
-  card.style.width=w+'px'; card.style.height=h+'px';
-  document.getElementById('sizeLabel').textContent=w+' × '+h;
-  scalePreview();
-}
-function scalePreview(){
-  var maxW=window.innerWidth>900?window.innerWidth-440:window.innerWidth-48;
-  var maxH=Math.max(window.innerHeight-140,320);
-  var scale=Math.min(maxW/currentSize.w,maxH/currentSize.h,0.58);
-  if(scale<0.15) scale=0.15;
-  cardWrapper.style.transform='scale('+scale+')';
-  cardWrapper.style.marginBottom=((currentSize.h*(scale-1))+48)+'px';
-}
-
-var imgZone=document.getElementById('imgZone');
-var imgInput=document.getElementById('imgInput');
-imgZone.addEventListener('click',function(){imgInput.click();});
-imgInput.addEventListener('change',function(e){
-  var file=e.target.files[0];
-  if(!file) return;
-  var reader=new FileReader();
-  reader.onload=function(ev){
-    imgDataUrl=ev.target.result;
-    imgZone.classList.add('has-img');
-    imgZone.innerHTML='<img src="'+imgDataUrl+'" alt="preview"><p>클릭하여 변경</p>';
-    imgZone.appendChild(imgInput);
-    document.getElementById('removeImg').style.display='block';
-    updateCard();
-  };
-  reader.readAsDataURL(file);
-});
-document.getElementById('removeImg').addEventListener('click',function(){
-  imgDataUrl=null;
-  imgZone.classList.remove('has-img');
-  imgZone.innerHTML='<p>클릭하여 이미지 업로드</p>';
-  imgZone.appendChild(imgInput);
-  imgInput.value='';
-  document.getElementById('removeImg').style.display='none';
-  updateCard();
-});
-
-document.getElementById('imgZoom').addEventListener('input',function(e){
-  document.getElementById('zoomV').textContent=parseFloat(e.target.value).toFixed(2);
-  updateCard();
-});
-document.getElementById('imgTx').addEventListener('input',function(e){
-  document.getElementById('txV').textContent=e.target.value+'%';
-  updateCard();
-});
-document.getElementById('imgTy').addEventListener('input',function(e){
-  document.getElementById('tyV').textContent=e.target.value+'%';
-  updateCard();
-});
-document.getElementById('scrimStrength').addEventListener('input',function(e){
-  document.getElementById('scrimV').textContent=parseFloat(e.target.value).toFixed(2);
-  updateCard();
-});
-document.getElementById('titleSize').addEventListener('input',function(e){
-  document.getElementById('titleSizeV').textContent=e.target.value;
-  updateCard();
-});
-document.getElementById('logoSize').addEventListener('input',function(e){
-  document.getElementById('logoSizeV').textContent=e.target.value;
-  updateCard();
-});
-
-var liveInputs=['titleInput','showDivider','brandMain','brandSub','badgeTop','badgeBottom','showBrand',
-  'showThreads','showInsta','showX','swipeText','showArrow','cardNumber','photoCredit'];
-liveInputs.forEach(function(id){
-  var el=document.getElementById(id);
-  if(el){ el.addEventListener('input',updateCard); el.addEventListener('change',updateCard); }
-});
-
-async function waitForFonts(){
-  try{ if(document.fonts&&document.fonts.ready) await document.fonts.ready; }catch(e){}
-}
-function waitForImageDataUrl(dataUrl){
-  return new Promise(function(resolve,reject){
-    if(!dataUrl){ resolve(null); return; }
-    var img=new Image();
-    img.onload=function(){ resolve(img); };
-    img.onerror=function(){ reject(new Error('이미지를 불러오지 못했습니다.')); };
-    img.src=dataUrl;
-  });
-}
-async function generateCanvas(){
-  await waitForFonts();
-  if(imgDataUrl){
-    try{ await waitForImageDataUrl(imgDataUrl); }
-    catch(e){ throw e; }
-  }
-  var prev=cardWrapper.style.transform;
-  cardWrapper.style.transform='scale(1)';
-  var canvas;
-  try{
-    canvas=await html2canvas(card,{scale:2,useCORS:true,allowTaint:true,backgroundColor:'#0a0a0a',logging:false,width:currentSize.w,height:currentSize.h});
-  } finally { cardWrapper.style.transform=prev; }
-  return canvas;
-}
-function downloadCanvas(canvas,name){
-  var a=document.createElement('a');
-  a.download=name; a.href=canvas.toDataURL('image/png'); a.click();
-}
-document.getElementById('savePng').addEventListener('click',async function(){
-  var btn=this, orig=btn.textContent;
-  btn.textContent='생성 중...'; btn.disabled=true;
-  try{
-    var canvas=await generateCanvas();
-    downloadCanvas(canvas,'WEST150_COVER_CARD_'+Date.now()+'.png');
-  }catch(e){ showToast('저장 중 오류: '+(e&&e.message?e.message:e)); console.error(e); }
-  finally{ btn.textContent=orig; btn.disabled=false; }
-});
-document.getElementById('saveIphone').addEventListener('click',async function(){
-  var btn=this, orig=btn.textContent;
-  btn.textContent='생성 중...'; btn.disabled=true;
-  try{
-    var canvas=await generateCanvas();
-    document.getElementById('iphoneImg').src=canvas.toDataURL('image/png');
-    document.getElementById('iphoneModal').classList.add('show');
-  }catch(e){ showToast('생성 중 오류: '+(e&&e.message?e.message:e)); console.error(e); }
-  finally{ btn.textContent=orig; btn.disabled=false; }
-});
-document.getElementById('closeModal').addEventListener('click',function(){
-  document.getElementById('iphoneModal').classList.remove('show');
-});
-document.getElementById('iphoneModal').addEventListener('click',function(e){
-  if(e.target.id==='iphoneModal') document.getElementById('iphoneModal').classList.remove('show');
-});
 
 updateCard();
 setSize(1080,1350);
