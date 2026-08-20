@@ -189,6 +189,12 @@
   #card .frame.boldFrame{border:3px solid currentColor;border-radius:0;padding:30px 26px;}
 
   #card .blk{margin-top:14px;}
+  #card .blockStack{display:flex;flex-direction:column;gap:12px;width:100%;}
+  #card .blockStack > .blk{margin-top:0;}
+  #card .blockStack > .bodyFontWrap{width:100%;}
+  #card .blockStack > .bodyFontWrap .blk{margin-top:0;}
+  #card .blockStack > .subText{margin-top:0;}
+
   #card .timeline{position:relative;}
   #card .timeline .tl-item{display:flex;gap:12px;margin-bottom:14px;position:relative;}
   #card .timeline .tl-item:last-child{margin-bottom:0;}
@@ -1624,6 +1630,17 @@
       <div class="menuWrap" id="blockMenuWrap">
         <button class="btn ghost" id="blockMenuBtn">블록 · 도구 ▾</button>
         <div class="dropdown wide" id="blockMenu" style="max-height:72vh;overflow-y:auto;">
+          <div class="siteCat">스택 블록 (한 카드에 여러 개)</div>
+          <div id="blockStackList" style="padding:4px 6px 8px;display:flex;flex-direction:column;gap:4px;"></div>
+          <div style="display:flex;gap:4px;padding:0 6px 10px;">
+            <button type="button" class="btn small" id="blockStackAddBtn" style="flex:1;">+ 블록 추가</button>
+            <button type="button" class="btn small" id="blockStackUpBtn" style="flex:none;">↑</button>
+            <button type="button" class="btn small" id="blockStackDownBtn" style="flex:none;">↓</button>
+            <button type="button" class="btn small" id="blockStackDelBtn" style="flex:none;">삭제</button>
+          </div>
+          <div class="hint" style="margin:0 10px 8px;font-size:11px;">아래 종류를 고르면 <b>선택된 블록</b>의 타입이 바뀝니다. 여러 블록은 카드에 위에서 아래로 쌓입니다.</div>
+          <div style="border-top:1px solid var(--chrome-line);margin:4px 0 6px;"></div>
+          <div class="siteCat">블록 종류</div>
           <div class="ddItem" data-block="none"><span class="ic">Aa</span>텍스트 설명</div>
           <div class="ddItem" data-block="timeline"><span class="ic">⏱</span>타임라인</div>
           <div class="ddItem" data-block="list"><span class="ic">☰</span>번호 리스트</div>
@@ -2170,7 +2187,7 @@ const defaults = () => ({
   logo:null, logoPos:'br', logoSize:16, logoOpacity:70, logoBg:false,
   sizePreset:'4:5', cardWidth:400, cardHeight:500,
   font:'pretendard', titleFont:'', bodyFont:'', align:'left',
-  contentBlock:'none', blockData:'', sourceLayout:'list', qaLayout:'faq',
+  contentBlock:'none', blockData:'', blocks:null, activeBlock:0, sourceLayout:'list', qaLayout:'faq',
   titleFormat: {bold:false, italic:false, underline:false},
   freeElements: null,
   freeTexts: [],
@@ -2827,40 +2844,137 @@ function renderBanner(s){
 function subFallbackHtml(s){
   return subTextHtml(s);
 }
-function blockHtml(s){
+function ensureBlocks(s){
+  if(!s.blocks || !Array.isArray(s.blocks) || !s.blocks.length){
+    s.blocks = [{
+      id: 'b_' + Date.now().toString(36),
+      type: s.contentBlock || 'none',
+      data: (s.contentBlock === 'none' ? (s.blockData || s.sub || '') : (s.blockData || '')),
+      size: s.blockSize != null ? s.blockSize : undefined,
+      sourceLayout: s.sourceLayout || 'list',
+      qaLayout: s.qaLayout || 'faq'
+    }];
+  }
+  if(s.activeBlock == null || s.activeBlock < 0 || s.activeBlock >= s.blocks.length){
+    s.activeBlock = 0;
+  }
+  return s.blocks;
+}
+
+function syncLegacyFromActiveBlock(s){
+  ensureBlocks(s);
+  const b = s.blocks[s.activeBlock] || s.blocks[0];
+  if(!b) return;
+  s.contentBlock = b.type || 'none';
+  s.blockData = b.data || '';
+  if(b.size != null) s.blockSize = b.size;
+  if(b.sourceLayout) s.sourceLayout = b.sourceLayout;
+  if(b.qaLayout) s.qaLayout = b.qaLayout;
+  if(s.contentBlock === 'none') s.sub = s.blockData;
+}
+
+function writeActiveBlockFromLegacy(s){
+  ensureBlocks(s);
+  const b = s.blocks[s.activeBlock] || s.blocks[0];
+  if(!b) return;
+  b.type = s.contentBlock || 'none';
+  b.data = s.blockData || '';
+  if(s.blockSize != null) b.size = s.blockSize;
+  if(s.sourceLayout) b.sourceLayout = s.sourceLayout;
+  if(s.qaLayout) b.qaLayout = s.qaLayout;
+}
+
+function blockTypeLabel(type){
+  const map = {
+    none:'텍스트', timeline:'타임라인', list:'번호 리스트', bullet:'불릿 리스트',
+    stats:'통계', chart:'차트', quote:'인용', sources:'출처', qa:'Q&A',
+    compare:'원문·번역', summary:'핵심 요약', speaker:'발언자', factlist:'팩트 리스트',
+    beforeafter:'Before/After', quotesource:'인용+출처', imgcaption:'캡션', banner:'배너'
+  };
+  return map[type] || type || '텍스트';
+}
+
+function renderOneBlock(s, block){
   const ff = 'font-family:' + fontStack(resolveFontId(s, 'body')) + ';';
   const typo = bodyTypoCss(s);
   const col = bodyColorCss(s);
+  const proxy = Object.assign({}, s, {
+    contentBlock: block.type || 'none',
+    blockData: block.data || '',
+    blockSize: block.size != null ? block.size : s.blockSize,
+    sourceLayout: block.sourceLayout || s.sourceLayout || 'list',
+    qaLayout: block.qaLayout || s.qaLayout || 'faq'
+  });
   let html = '';
-  switch(s.contentBlock){
-    case 'timeline': html = renderTimeline(s); break;
-    case 'list': html = renderListBlock(s, 'list'); break;
-    case 'bullet': html = renderListBlock(s, 'bullet'); break;
-    case 'stats': html = renderStats(s); break;
-    case 'chart': html = renderChart(s); break;
-    case 'quote': html = renderQuote(s); break;
-    case 'sources': html = renderSourceList(s); break;
-    case 'qa': html = renderQA(s); break;
-    case 'compare': html = renderCompare(s); break;
-    case 'summary': html = renderSummary(s); break;
-    case 'speaker': html = renderSpeaker(s); break;
-    case 'factlist': html = renderFactList(s); break;
-    case 'beforeafter': html = renderBeforeAfter(s); break;
-    case 'quotesource': html = renderQuoteSource(s); break;
-    case 'imgcaption': html = renderImgCaption(s); break;
-    case 'banner': html = renderBanner(s); break;
-    default: html = s.blockData && s.blockData.trim()
-      ? '<div class="subText" style="font-size:' + s.subSize + 'px;' + ff + typo + col + '">' + parseTitleSyntax(s.blockData, s.accent) + '</div>'
-      : subFallbackHtml(s);
+  switch(proxy.contentBlock){
+    case 'timeline': html = renderTimeline(proxy); break;
+    case 'list': html = renderListBlock(proxy, 'list'); break;
+    case 'bullet': html = renderListBlock(proxy, 'bullet'); break;
+    case 'stats': html = renderStats(proxy); break;
+    case 'chart': html = renderChart(proxy); break;
+    case 'quote': html = renderQuote(proxy); break;
+    case 'sources': html = renderSourceList(proxy); break;
+    case 'qa': html = renderQA(proxy); break;
+    case 'compare': html = renderCompare(proxy); break;
+    case 'summary': html = renderSummary(proxy); break;
+    case 'speaker': html = renderSpeaker(proxy); break;
+    case 'factlist': html = renderFactList(proxy); break;
+    case 'beforeafter': html = renderBeforeAfter(proxy); break;
+    case 'quotesource': html = renderQuoteSource(proxy); break;
+    case 'imgcaption': html = renderImgCaption(proxy); break;
+    case 'banner': html = renderBanner(proxy); break;
+    default:
+      html = proxy.blockData && proxy.blockData.trim()
+        ? '<div class="subText" style="font-size:' + (s.subSize || 14) + 'px;' + ff + typo + col + '">' + parseTitleSyntax(proxy.blockData, s.accent) + '</div>'
+        : '';
   }
   if(!html) return '';
-  // 본문 글꼴·자간·행간·색을 블록 전체에 적용
-    if(s.contentBlock && s.contentBlock !== 'none'){
-    const bs = (s.blockSize != null ? s.blockSize : (s.subSize || 14));
+  if(proxy.contentBlock && proxy.contentBlock !== 'none'){
+    const bs = (proxy.blockSize != null ? proxy.blockSize : (s.subSize || 14));
     const sz = 'font-size:' + bs + 'px;';
     return '<div class="bodyFontWrap" style="' + sz + ff + typo + col + '">' + html + '</div>';
   }
   return html;
+}
+
+function blockHtml(s){
+  const blocks = ensureBlocks(s);
+  // 단일 none + 빈 데이터면 기존 sub 폴백
+  if(blocks.length === 1 && (blocks[0].type === 'none' || !blocks[0].type)){
+    const only = blocks[0];
+    if(!(only.data || '').trim()){
+      return subFallbackHtml(s);
+    }
+  }
+  const parts = blocks.map(b => renderOneBlock(s, b)).filter(Boolean);
+  if(!parts.length) return subFallbackHtml(s);
+  if(parts.length === 1) return parts[0];
+  return '<div class="blockStack">' + parts.join('') + '</div>';
+}
+
+function refreshBlockStackList(){
+  const wrap = $('blockStackList');
+  if(!wrap) return;
+  const s = slides[active];
+  if(!s) return;
+  const blocks = ensureBlocks(s);
+  wrap.innerHTML = '';
+  blocks.forEach((b, i) => {
+    const row = document.createElement('div');
+    row.className = 'ddItem';
+    row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:6px;' + (i === s.activeBlock ? 'background:var(--accent-soft);color:var(--accent);' : '');
+    row.innerHTML = '<span style="font-size:12px;font-weight:600;">' + (i+1) + '. ' + blockTypeLabel(b.type) + '</span>';
+    row.addEventListener('click', e => {
+      e.stopPropagation();
+      writeActiveBlockFromLegacy(s);
+      s.activeBlock = i;
+      syncLegacyFromActiveBlock(s);
+      syncForm();
+      renderMainCard(); renderList();
+      refreshBlockStackList();
+    });
+    wrap.appendChild(row);
+  });
 }
 
 function styleClass(s){
@@ -3112,8 +3226,11 @@ function syncForm(){
   $('arrowText').value = s.arrowText || '>>>>';
   $('arrowOffsetX').value = s.arrowOffsetX || 0;
   $('arrowOffsetXVal').textContent = s.arrowOffsetX || 0;
+  ensureBlocks(s);
+  syncLegacyFromActiveBlock(s);
   $('contentBlockSelect').value = s.contentBlock;
   $('blockDataText').value = s.contentBlock === 'none' ? (s.blockData || s.sub || '') : s.blockData;
+  if(typeof refreshBlockStackList === 'function') refreshBlockStackList();
   if($('sourceLayoutField')) $('sourceLayoutField').style.display = s.contentBlock === 'sources' ? '' : 'none';
   if($('sourceLayoutSelect')) $('sourceLayoutSelect').value = s.sourceLayout || 'list';
   if($('qaLayoutField')) $('qaLayoutField').style.display = s.contentBlock === 'qa' ? '' : 'none';
@@ -3317,7 +3434,10 @@ $('blockDataText').addEventListener('input', e => {
   const s = slides[active];
   s.blockData = e.target.value;
   if(s.contentBlock === 'none') s.sub = e.target.value;
+  ensureBlocks(s);
+  writeActiveBlockFromLegacy(s);
   renderMainCard(); renderList();
+  refreshBlockStackList();
 });
 
 $('titleSize').addEventListener('input', e => {
@@ -3334,6 +3454,8 @@ if($('blockSize')){
   $('blockSize').addEventListener('input', e => {
     slides[active].blockSize = +e.target.value;
     if($('blockSizeVal')) $('blockSizeVal').textContent = e.target.value;
+    ensureBlocks(slides[active]);
+    writeActiveBlockFromLegacy(slides[active]);
     renderMainCard(); renderList();
   });
 }
@@ -3410,6 +3532,8 @@ function saveCurrentBlockTemplate(){
   const name = (($('blockTplName') && $('blockTplName').value) || '').trim();
   if(!name){ alert('템플릿 이름을 입력하세요.'); return; }
   const list = loadBlockTemplates();
+  ensureBlocks(s);
+  writeActiveBlockFromLegacy(s);
   const item = {
     name: name,
     contentBlock: s.contentBlock || 'none',
@@ -3417,7 +3541,9 @@ function saveCurrentBlockTemplate(){
     blockSize: s.blockSize != null ? s.blockSize : (s.subSize || 14),
     accent: s.accent,
     sourceLayout: s.sourceLayout || 'list',
-    qaLayout: s.qaLayout || 'faq'
+    qaLayout: s.qaLayout || 'faq',
+    blocks: JSON.parse(JSON.stringify(s.blocks)),
+    activeBlock: s.activeBlock || 0
   };
   const idx = list.findIndex(t => t.name === name);
   if(idx >= 0) list[idx] = item;
@@ -3439,8 +3565,16 @@ function applyBlockTemplate(){
   const t = list[+sel.value];
   if(!t) return;
   const s = slides[active];
-  s.contentBlock = t.contentBlock || 'none';
-  s.blockData = t.blockData || '';
+  if(t.blocks && t.blocks.length){
+    s.blocks = JSON.parse(JSON.stringify(t.blocks));
+    s.activeBlock = t.activeBlock || 0;
+    syncLegacyFromActiveBlock(s);
+  } else {
+    s.contentBlock = t.contentBlock || 'none';
+    s.blockData = t.blockData || '';
+    s.blocks = null;
+    ensureBlocks(s);
+  }
   if(t.blockSize != null) s.blockSize = t.blockSize;
   if(t.accent) s.accent = t.accent;
   if(t.sourceLayout) s.sourceLayout = t.sourceLayout;
@@ -3928,20 +4062,88 @@ $('fmtUnderline').addEventListener('click', () => {
 
 function setContentBlock(type){
   const s = slides[active];
+  ensureBlocks(s);
   s.contentBlock = type;
-  if(type !== 'none' && !s.blockData.trim()){
+  if(type !== 'none' && !(s.blockData || '').trim()){
     s.blockData = sampleData[type] || '';
   }
+  if(type === 'none' && !(s.blockData || '').trim()){
+    s.blockData = s.sub || '';
+  }
+  writeActiveBlockFromLegacy(s);
   syncForm(); renderMainCard(); renderList();
+  refreshBlockStackList();
 }
 $('contentBlockSelect').addEventListener('change', e => setContentBlock(e.target.value));
 if($('sourceLayoutSelect')) $('sourceLayoutSelect').addEventListener('change', e => {
   slides[active].sourceLayout = e.target.value;
+  ensureBlocks(slides[active]);
+  writeActiveBlockFromLegacy(slides[active]);
   renderMainCard(); renderList();
 });
 if($('qaLayoutSelect')) $('qaLayoutSelect').addEventListener('change', e => {
   slides[active].qaLayout = e.target.value;
+  ensureBlocks(slides[active]);
+  writeActiveBlockFromLegacy(slides[active]);
   renderMainCard(); renderList();
+});
+
+if($('blockStackAddBtn')) $('blockStackAddBtn').addEventListener('click', e => {
+  e.stopPropagation();
+  const s = slides[active];
+  ensureBlocks(s);
+  writeActiveBlockFromLegacy(s);
+  s.blocks.push({
+    id: 'b_' + Date.now().toString(36),
+    type: 'summary',
+    data: sampleData.summary || '',
+    size: s.blockSize != null ? s.blockSize : 14
+  });
+  s.activeBlock = s.blocks.length - 1;
+  syncLegacyFromActiveBlock(s);
+  syncForm(); renderMainCard(); renderList();
+  refreshBlockStackList();
+});
+if($('blockStackUpBtn')) $('blockStackUpBtn').addEventListener('click', e => {
+  e.stopPropagation();
+  const s = slides[active];
+  ensureBlocks(s);
+  writeActiveBlockFromLegacy(s);
+  const i = s.activeBlock;
+  if(i <= 0) return;
+  const t = s.blocks[i]; s.blocks[i] = s.blocks[i-1]; s.blocks[i-1] = t;
+  s.activeBlock = i - 1;
+  syncLegacyFromActiveBlock(s);
+  syncForm(); renderMainCard(); renderList();
+  refreshBlockStackList();
+});
+if($('blockStackDownBtn')) $('blockStackDownBtn').addEventListener('click', e => {
+  e.stopPropagation();
+  const s = slides[active];
+  ensureBlocks(s);
+  writeActiveBlockFromLegacy(s);
+  const i = s.activeBlock;
+  if(i >= s.blocks.length - 1) return;
+  const t = s.blocks[i]; s.blocks[i] = s.blocks[i+1]; s.blocks[i+1] = t;
+  s.activeBlock = i + 1;
+  syncLegacyFromActiveBlock(s);
+  syncForm(); renderMainCard(); renderList();
+  refreshBlockStackList();
+});
+if($('blockStackDelBtn')) $('blockStackDelBtn').addEventListener('click', e => {
+  e.stopPropagation();
+  const s = slides[active];
+  ensureBlocks(s);
+  if(s.blocks.length <= 1){
+    s.blocks[0] = { id: s.blocks[0].id, type: 'none', data: '', size: s.blockSize };
+    s.activeBlock = 0;
+  } else {
+    s.blocks.splice(s.activeBlock, 1);
+    if(s.activeBlock >= s.blocks.length) s.activeBlock = s.blocks.length - 1;
+  }
+  syncLegacyFromActiveBlock(s);
+  syncForm(); renderMainCard(); renderList();
+  refreshBlockStackList();
 });
 
 function setStyle(styleVal){
