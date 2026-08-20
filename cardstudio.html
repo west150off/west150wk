@@ -298,6 +298,54 @@
   #card .cmp-text .t-bold{font-weight:900;}
   #card .cmp-text .t-accent{font-weight:900;}
 
+  /* ===== New content blocks ===== */
+  /* Key summary box */
+  #card .blk.summaryBox{border-radius:12px;padding:14px 16px;border:1.5px solid;background:rgba(0,0,0,.035);}
+  #card .sum-label{font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;opacity:.7;margin-bottom:8px;}
+  #card .sum-body{font-size:inherit;line-height:1.55;word-break:keep-all;white-space:pre-wrap;font-weight:600;}
+
+  /* Speaker profile */
+  #card .blk.speaker{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;background:rgba(0,0,0,.04);border:1px solid rgba(0,0,0,.06);}
+  #card .spk-avatar{width:48px;height:48px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:16px;letter-spacing:-.02em;overflow:hidden;background:#888;}
+  #card .spk-avatar img{width:100%;height:100%;object-fit:cover;display:block;}
+  #card .spk-meta{flex:1;min-width:0;}
+  #card .spk-name{font-size:inherit;font-weight:900;line-height:1.25;word-break:keep-all;}
+  #card .spk-role{font-size:0.85em;opacity:.65;margin-top:3px;line-height:1.35;word-break:keep-all;}
+  #card .spk-org{font-size:0.8em;opacity:.5;margin-top:2px;}
+
+  /* Fact / check list */
+  #card .blk.factlist .fc-item{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;}
+  #card .blk.factlist .fc-item:last-child{margin-bottom:0;}
+  #card .fc-mark{flex:none;width:22px;height:22px;border-radius:6px;color:#fff;font-size:12px;font-weight:900;display:flex;align-items:center;justify-content:center;line-height:1;}
+  #card .fc-text{flex:1;min-width:0;font-size:inherit;line-height:1.5;padding-top:2px;word-break:keep-all;}
+
+  /* Before / After */
+  #card .blk.beforeafter{display:flex;flex-direction:column;gap:10px;}
+  #card .ba-row{display:flex;gap:10px;}
+  #card .ba-box{flex:1;min-width:0;border-radius:12px;padding:12px 14px;border:1px solid rgba(0,0,0,.07);background:rgba(0,0,0,.035);}
+  #card .ba-box.after{border-width:1.5px;}
+  #card .ba-label{font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;opacity:.6;margin-bottom:6px;}
+  #card .ba-text{font-size:inherit;line-height:1.5;word-break:keep-all;white-space:pre-wrap;font-weight:600;}
+
+  /* Quote + source set */
+  #card .blk.quotesource{padding:4px 0 0;}
+  #card .qs-mark{font-size:28px;font-weight:900;line-height:1;opacity:.9;}
+  #card .qs-text{font-size:inherit;font-weight:700;line-height:1.5;margin-top:2px;word-break:keep-all;white-space:pre-wrap;}
+  #card .qs-meta{margin-top:10px;font-size:0.85em;opacity:.65;line-height:1.4;word-break:keep-all;}
+  #card .qs-meta .qs-src{font-weight:700;}
+
+  /* Image caption */
+  #card .blk.imgcaption{padding:8px 10px;border-radius:10px;background:rgba(0,0,0,.04);border-left:3px solid;}
+  #card .ic-caption{font-size:inherit;line-height:1.45;word-break:keep-all;font-weight:600;}
+  #card .ic-credit{font-size:0.8em;opacity:.55;margin-top:4px;word-break:keep-all;}
+
+  /* Warning / notice banner */
+  #card .blk.banner{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-radius:10px;border:1.5px solid;}
+  #card .bn-icon{flex:none;font-size:16px;font-weight:900;line-height:1.2;margin-top:1px;}
+  #card .bn-body{flex:1;min-width:0;}
+  #card .bn-title{font-size:inherit;font-weight:900;line-height:1.3;word-break:keep-all;}
+  #card .bn-desc{font-size:0.9em;opacity:.8;margin-top:4px;line-height:1.45;word-break:keep-all;white-space:pre-wrap;}
+
   /* Logo / Watermark */
   #card .logoMark{position:absolute;z-index:10;pointer-events:none;max-width:26%;max-height:14%;object-fit:contain;}
   #card .logoMark.pos-tl{top:54px;left:14px;}
@@ -1586,6 +1634,13 @@
           <div class="ddItem" data-block="sources"><span class="ic">🔗</span>출처 링크 모음</div>
           <div class="ddItem" data-block="qa"><span class="ic">Q</span>Q&A</div>
           <div class="ddItem" data-block="compare"><span class="ic">⇄</span>원문·번역 대조</div>
+          <div class="ddItem" data-block="summary"><span class="ic">▣</span>핵심 요약 박스</div>
+          <div class="ddItem" data-block="speaker"><span class="ic">👤</span>발언자 프로필</div>
+          <div class="ddItem" data-block="factlist"><span class="ic">✓</span>체크 · 팩트 리스트</div>
+          <div class="ddItem" data-block="beforeafter"><span class="ic">⇔</span>Before → After 대비</div>
+          <div class="ddItem" data-block="quotesource"><span class="ic">❝</span>인용 + 출처 세트</div>
+          <div class="ddItem" data-block="imgcaption"><span class="ic">🖼</span>이미지 캡션</div>
+          <div class="ddItem" data-block="banner"><span class="ic">!</span>경고 · 주의 배너</div>
           <div class="ddItem" data-action="addFreeText"><span class="ic">＋</span>자유 텍스트 박스 추가</div>
           <div class="ddItem" data-action="addSticky"><span class="ic">🗒</span>자유 포스트잇 추가</div>
 
@@ -1801,6 +1856,13 @@
             <option value="sources">출처 링크 모음</option>
             <option value="qa">Q&A</option>
             <option value="compare">원문·번역 대조</option>
+            <option value="summary">핵심 요약 박스</option>
+            <option value="speaker">발언자 프로필</option>
+            <option value="factlist">체크 · 팩트 리스트</option>
+            <option value="beforeafter">Before → After 대비</option>
+            <option value="quotesource">인용 + 출처 세트</option>
+            <option value="imgcaption">이미지 캡션</option>
+            <option value="banner">경고 · 주의 배너</option>
           </select>
         </div>
         <div class="field" id="sourceLayoutField" style="display:none;">
@@ -2015,7 +2077,14 @@ const sampleData = {
   quote: '이 자리에 인용할 문장을 입력하세요.\n작성자 이름',
   sources: '**미 국무부** 여행경보 | travel.state.gov 공식 안내 | https://travel.state.gov | 공식\n스페인 정부 보도자료 | 현장 병력·경찰 배치 관련 | https:// | 공식\n주요 외신 보도 | 경보 상향 배경 설명 | https:// | 언론',
   qa: '이번 결정의 배경은 무엇인가요? | 여러 요인을 종합적으로 검토한 결과입니다.\n향후 계획은 어떻게 되나요? | 단계적으로 추진할 예정입니다.',
-  compare: 'This is the original sentence to translate.\n===\n**번역**된 문장이 여기 들어갑니다.'
+  compare: 'This is the original sentence to translate.\n===\n**번역**된 문장이 여기 들어갑니다.',
+  summary: '한 줄로 오늘의 핵심 결론을 적으세요.\n필요하면 둘째 줄에 보조 설명을 추가합니다.',
+  speaker: 'JD 밴스 | 미국 부통령 | 공화당',
+  factlist: '사실 | 공식 발표와 수치가 일치합니다.\n부분 | 일부 맥락이 빠져 있습니다.\n거짓 | 확인된 사실과 다릅니다.\n미확인 | 추가 검증이 필요합니다.',
+  beforeafter: 'BEFORE | 기존 정책·수치·상황을 적습니다.\nAFTER | 바뀐 결과·수치·상황을 적습니다.',
+  quotesource: '인용할 발언을 여기에 입력하세요.\n발언자 이름 | 언론사·날짜 | 출처 메모',
+  imgcaption: '사진에 대한 짧은 설명\n사진=연합뉴스',
+  banner: '속보 | 속보성 내용을 한 줄로 적습니다.\n미확인 | 확인되지 않은 정보입니다. 신중히 보세요.\n정정 | 이전 보도 내용이 수정되었습니다.\n주의 | 민감 정보가 포함되어 있을 수 있습니다.'
 };
 
 const blockLabels = {
@@ -2028,7 +2097,14 @@ const blockLabels = {
   quote: {label:'인용구', hint:'첫 줄은 인용 문장, 둘째 줄은 작성자(선택)입니다.', ph:'인용할 문장\n작성자 이름'},
   sources: {label:'출처 항목', hint:'"제목 | 설명 | URL | 유형" 형식으로 한 줄에 하나씩. 제목엔 **강조** 가능. 유형: 공식/언론/통계/법령/기타', ph:'**미 국무부** 여행경보 | travel.state.gov 공식 안내 | https://travel.state.gov | 공식'},
   qa: {label:'Q&A 항목', hint:'"질문 | 답변" 형식으로 한 줄에 하나씩 입력하세요. **강조** 가능.', ph:'이번 결정의 배경은 무엇인가요? | 여러 요인을 종합적으로 검토했습니다.'},
-  compare: {label:'원문 · 번역', hint:'첫 부분은 원문, "===" 구분선 아래는 번역문입니다. **강조** 가능.', ph:'This is the original text.\n===\n**번역**된 문장'}
+  compare: {label:'원문 · 번역', hint:'첫 부분은 원문, "===" 구분선 아래는 번역문입니다. **강조** 가능.', ph:'This is the original text.\n===\n**번역**된 문장'},
+  summary: {label:'핵심 요약', hint:'첫 줄(또는 여러 줄)이 요약 본문입니다. **강조** · ==포인트색== 가능.', ph:'한 줄 핵심 결론\n보조 설명(선택)'},
+  speaker: {label:'발언자 프로필', hint:'"이름 | 직함 | 소속(선택)" 한 줄. 카드 이미지와 별개로 이니셜 아바타가 표시됩니다.', ph:'홍길동 | 외교부 장관 | 대한민국'},
+  factlist: {label:'체크 · 팩트', hint:'"판정 | 내용" 한 줄씩. 판정: 사실/참/true/check, 부분/half, 거짓/fake/false, 미확인/unknown/?  (또는 ✅⚠️❌❓ 이모지)', ph:'사실 | 공식 수치와 일치\n부분 | 맥락 일부 누락\n거짓 | 확인 사실과 다름'},
+  beforeafter: {label:'Before → After', hint:'"BEFORE | 내용" / "AFTER | 내용" 두 줄(또는 여러 줄). 라벨 없이 === 로 나눠도 됩니다.', ph:'BEFORE | 변경 전 상황\nAFTER | 변경 후 결과'},
+  quotesource: {label:'인용 + 출처', hint:'첫 줄=인용문, 둘째 줄="발언자 | 출처 | 메모"( | 구분, 선택).', ph:'인용할 발언\n발언자 | 언론사 2026.01.01 | 메모'},
+  imgcaption: {label:'이미지 캡션', hint:'첫 줄=캡션, 둘째 줄=출처/크레딧(선택).', ph:'장면 설명\n사진=연합뉴스'},
+  banner: {label:'경고 · 주의 배너', hint:'"유형 | 제목" 또는 "유형 | 제목 | 설명". 유형: 속보/미확인/정정/주의/경고 (한 줄만 써도 됨).', ph:'속보 | 속보 제목\n미확인 | 제목 | 부가 설명'}
 };
 
 const defaults = () => ({
@@ -2566,6 +2642,142 @@ function renderCompare(s){
   return '<div class="blk compare">' + origHtml + transHtml + '</div>';
 }
 
+function renderSummary(s){
+  const raw = (s.blockData || '').trim();
+  if(!raw) return '';
+  const body = parseTitleSyntax(raw, s.accent);
+  return '<div class="blk summaryBox" style="border-color:' + s.accent + ';background:' + s.accent + '12;">' +
+    '<div class="sum-label" style="color:' + s.accent + ';">핵심 요약</div>' +
+    '<div class="sum-body">' + body + '</div></div>';
+}
+
+function renderSpeaker(s){
+  const line = parseLines(s.blockData)[0] || '';
+  if(!line.trim()) return '';
+  const parts = line.split('|').map(p => p.trim());
+  const name = parts[0] || '';
+  const role = parts[1] || '';
+  const org = parts[2] || '';
+  const initial = name ? name.replace(/\s/g,'').slice(0,2) : '?';
+  return '<div class="blk speaker">' +
+    '<div class="spk-avatar" style="background:' + s.accent + ';">' + escapeHtml(initial) + '</div>' +
+    '<div class="spk-meta">' +
+      '<div class="spk-name">' + parseTitleSyntax(name, s.accent).replace(/<br>/g,' ') + '</div>' +
+      (role ? '<div class="spk-role">' + escapeHtml(role) + '</div>' : '') +
+      (org ? '<div class="spk-org">' + escapeHtml(org) + '</div>' : '') +
+    '</div></div>';
+}
+
+function renderFactList(s){
+  const lines = parseLines(s.blockData);
+  if(!lines.length) return '';
+  const map = {
+    '사실':{icon:'✓', bg:'#2e7d32'}, '참':{icon:'✓', bg:'#2e7d32'}, 'true':{icon:'✓', bg:'#2e7d32'}, 'check':{icon:'✓', bg:'#2e7d32'}, '✅':{icon:'✓', bg:'#2e7d32'},
+    '부분':{icon:'~', bg:'#ef6c00'}, 'half':{icon:'~', bg:'#ef6c00'}, '⚠️':{icon:'~', bg:'#ef6c00'}, '주의':{icon:'~', bg:'#ef6c00'},
+    '거짓':{icon:'✕', bg:'#c62828'}, 'fake':{icon:'✕', bg:'#c62828'}, 'false':{icon:'✕', bg:'#c62828'}, '❌':{icon:'✕', bg:'#c62828'},
+    '미확인':{icon:'?', bg:'#546e7a'}, 'unknown':{icon:'?', bg:'#546e7a'}, '?':{icon:'?', bg:'#546e7a'}, '❓':{icon:'?', bg:'#546e7a'}
+  };
+  const items = lines.map(l => {
+    let verdict = '', body = l;
+    if(l.indexOf('|') !== -1){
+      const parts = l.split('|');
+      verdict = (parts[0]||'').trim();
+      body = parts.slice(1).join('|').trim() || l;
+    }
+    const key = verdict.toLowerCase();
+    let conf = map[verdict] || map[key];
+    if(!conf) conf = {icon:'•', bg: s.accent || '#7c5cff'};
+    return '<div class="fc-item"><div class="fc-mark" style="background:' + conf.bg + ';">' + conf.icon + '</div>' +
+      '<div class="fc-text">' + parseTitleSyntax(body, s.accent).replace(/<br>/g,' ') + '</div></div>';
+  }).join('');
+  return '<div class="blk factlist">' + items + '</div>';
+}
+
+function renderBeforeAfter(s){
+  const raw = (s.blockData || '').trim();
+  if(!raw) return '';
+  let before = '', after = '';
+  if(/\n?===\n?/.test(raw)){
+    const parts = raw.split(/\n?===\n?/);
+    before = (parts[0]||'').trim();
+    after = (parts[1]||'').trim();
+  } else {
+    const lines = parseLines(raw);
+    lines.forEach(l => {
+      const m = l.match(/^(BEFORE|AFTER|이전|이후|전|후)\s*[|:：]\s*(.*)$/i);
+      if(m){
+        const tag = m[1].toUpperCase();
+        const val = m[2].trim();
+        if(tag === 'BEFORE' || tag === '이전' || tag === '전') before = before ? before + '\n' + val : val;
+        else after = after ? after + '\n' + val : val;
+      } else if(!before) before = l;
+      else after = after ? after + '\n' + l : l;
+    });
+  }
+  const accent = s.accent;
+  const bHtml = before ? '<div class="ba-box"><div class="ba-label">BEFORE</div><div class="ba-text">' + parseTitleSyntax(before, accent) + '</div></div>' : '';
+  const aHtml = after ? '<div class="ba-box after" style="border-color:' + accent + ';background:' + accent + '12;"><div class="ba-label" style="color:' + accent + ';">AFTER</div><div class="ba-text">' + parseTitleSyntax(after, accent) + '</div></div>' : '';
+  return '<div class="blk beforeafter"><div class="ba-row">' + bHtml + aHtml + '</div></div>';
+}
+
+function renderQuoteSource(s){
+  const lines = parseLines(s.blockData);
+  if(!lines.length) return '';
+  const quote = lines[0] || '';
+  const metaLine = lines[1] || '';
+  const mp = metaLine.split('|').map(p => p.trim());
+  const who = mp[0] || '';
+  const src = mp[1] || '';
+  const note = mp[2] || '';
+  let meta = '';
+  if(who || src || note){
+    const bits = [];
+    if(who) bits.push('<span class="qs-src">' + escapeHtml(who) + '</span>');
+    if(src) bits.push(escapeHtml(src));
+    if(note) bits.push(escapeHtml(note));
+    meta = '<div class="qs-meta">— ' + bits.join(' · ') + '</div>';
+  }
+  return '<div class="blk quotesource">' +
+    '<div class="qs-mark" style="color:' + s.accent + ';">&ldquo;</div>' +
+    '<div class="qs-text">' + parseTitleSyntax(quote, s.accent) + '</div>' +
+    meta + '</div>';
+}
+
+function renderImgCaption(s){
+  const lines = parseLines(s.blockData);
+  if(!lines.length) return '';
+  const cap = lines[0] || '';
+  const credit = lines[1] || '';
+  return '<div class="blk imgcaption" style="border-left-color:' + s.accent + ';">' +
+    '<div class="ic-caption">' + parseTitleSyntax(cap, s.accent).replace(/<br>/g,' ') + '</div>' +
+    (credit ? '<div class="ic-credit">' + escapeHtml(credit) + '</div>' : '') +
+    '</div>';
+}
+
+function renderBanner(s){
+  const line = parseLines(s.blockData)[0] || (s.blockData || '').trim();
+  if(!line) return '';
+  const parts = line.split('|').map(p => p.trim());
+  let type = '주의', title = line, desc = '';
+  if(parts.length >= 2){
+    type = parts[0]; title = parts[1]; desc = parts.slice(2).join(' | ');
+  }
+  const presets = {
+    '속보': {icon:'⚡', color:'#c62828', bg:'#c6282814'},
+    '미확인': {icon:'?', color:'#ef6c00', bg:'#ef6c0014'},
+    '정정': {icon:'✎', color:'#1565c0', bg:'#1565c014'},
+    '주의': {icon:'!', color:'#ef6c00', bg:'#ef6c0014'},
+    '경고': {icon:'!', color:'#c62828', bg:'#c6282814'}
+  };
+  const conf = presets[type] || {icon:'!', color: s.accent, bg: s.accent + '14'};
+  return '<div class="blk banner" style="border-color:' + conf.color + ';background:' + conf.bg + ';">' +
+    '<div class="bn-icon" style="color:' + conf.color + ';">' + conf.icon + '</div>' +
+    '<div class="bn-body">' +
+      '<div class="bn-title" style="color:' + conf.color + ';">' + escapeHtml(type) + (title && title !== type ? ' · ' + parseTitleSyntax(title, s.accent).replace(/<br>/g,' ') : '') + '</div>' +
+      (desc ? '<div class="bn-desc">' + parseTitleSyntax(desc, s.accent) + '</div>' : '') +
+    '</div></div>';
+}
+
 function subFallbackHtml(s){
   return subTextHtml(s);
 }
@@ -2584,6 +2796,13 @@ function blockHtml(s){
     case 'sources': html = renderSourceList(s); break;
     case 'qa': html = renderQA(s); break;
     case 'compare': html = renderCompare(s); break;
+    case 'summary': html = renderSummary(s); break;
+    case 'speaker': html = renderSpeaker(s); break;
+    case 'factlist': html = renderFactList(s); break;
+    case 'beforeafter': html = renderBeforeAfter(s); break;
+    case 'quotesource': html = renderQuoteSource(s); break;
+    case 'imgcaption': html = renderImgCaption(s); break;
+    case 'banner': html = renderBanner(s); break;
     default: html = s.blockData && s.blockData.trim()
       ? '<div class="subText" style="font-size:' + s.subSize + 'px;' + ff + typo + col + '">' + parseTitleSyntax(s.blockData, s.accent) + '</div>'
       : subFallbackHtml(s);
