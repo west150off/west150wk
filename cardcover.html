@@ -144,10 +144,15 @@
         <p>클릭하여 이미지 업로드</p>
         <input type="file" id="imgInput" accept="image/*">
       </div>
+      <div class="btn-group" id="fitModeGroup" style="margin-bottom:12px">
+      <button class="btn active" data-fit="cover">꽉 채우기</button>
+      <button class="btn" data-fit="contain">원본 보기</button>
+      <button class="btn" data-fit="blur">블러 배경</button>
+      </div>
       <div style="margin-top:10px">
         <div class="slider-row">
           <label>줌</label>
-          <input type="range" id="imgZoom" min="0.5" max="3" step="0.01" value="1">
+          <input type="range" id="imgZoom" min="1" max="3" step="0.01" value="1">
           <span class="slider-value" id="zoomV">1.00</span>
         </div>
         <div class="slider-row">
@@ -323,6 +328,7 @@
 <script>
 let currentSize={w:1080,h:1350};
 let imgDataUrl=null;
+let fitMode='cover';
 const card=document.getElementById('card');
 const cardWrapper=document.getElementById('cardWrapper');
 
@@ -392,7 +398,7 @@ function renderSocial(){
   row.style.display=items.length?'flex':'none';
 }
 
-function applyImage(){
+function applyImage(){function applyImage(){
   var pl=document.getElementById('photoLayer');
   if(!imgDataUrl){
     pl.innerHTML='<div class="no-photo-msg" id="noPhotoMsg">사진을 업로드하세요</div>';
@@ -402,13 +408,51 @@ function applyImage(){
   var tx=parseFloat(document.getElementById('imgTx').value);
   var ty=parseFloat(document.getElementById('imgTy').value);
   var safeUrl=imgDataUrl.replace(/'/g,"%27");
-  var div=document.createElement('div');
-  div.className='photo-bg';
-  div.style.backgroundImage="url('"+safeUrl+"')";
-  div.style.backgroundSize = (zoom * 100) + '%';
-  div.style.backgroundPosition = 'calc(50% + ' + tx + '%) calc(50% + ' + ty + '%)';
+
   pl.innerHTML='';
-  pl.appendChild(div);
+
+  if(fitMode==='blur'){
+    // 블러 배경 레이어
+    var blurDiv=document.createElement('div');
+    blurDiv.className='photo-bg';
+    blurDiv.style.backgroundImage="url('"+safeUrl+"')";
+    blurDiv.style.backgroundSize='cover';
+    blurDiv.style.filter='blur(18px) brightness(0.7)';
+    blurDiv.style.transform='scale(1.15)';
+    pl.appendChild(blurDiv);
+
+    // 원본 선명 레이어 (가운데)
+    var sharpDiv=document.createElement('div');
+    sharpDiv.className='photo-bg';
+    sharpDiv.style.backgroundImage="url('"+safeUrl+"')";
+    sharpDiv.style.backgroundSize='contain';
+    sharpDiv.style.backgroundRepeat='no-repeat';
+    sharpDiv.style.backgroundPosition='center';
+    sharpDiv.style.transform='scale('+zoom+') translate('+tx+'%,'+ty+'%)';
+    sharpDiv.style.transformOrigin='center center';
+    pl.appendChild(sharpDiv);
+  }
+  else if(fitMode==='contain'){
+    var div=document.createElement('div');
+    div.className='photo-bg';
+    div.style.backgroundImage="url('"+safeUrl+"')";
+    div.style.backgroundSize='contain';
+    div.style.backgroundRepeat='no-repeat';
+    div.style.backgroundPosition='center';
+    div.style.transform='scale('+zoom+') translate('+tx+'%,'+ty+'%)';
+    div.style.transformOrigin='center center';
+    pl.appendChild(div);
+  }
+  else {
+    // 꽉 채우기 (cover)
+    var div=document.createElement('div');
+    div.className='photo-bg';
+    div.style.backgroundImage="url('"+safeUrl+"')";
+    div.style.backgroundSize='cover';
+    div.style.transform='scale('+zoom+') translate('+tx+'%,'+ty+'%)';
+    div.style.transformOrigin='center center';
+    pl.appendChild(div);
+  }
 }
 
 function applyScrim(){
@@ -481,6 +525,15 @@ document.querySelectorAll('#scrimDir .btn').forEach(function(btn){
   btn.addEventListener('click',function(){
     document.querySelectorAll('#scrimDir .btn').forEach(function(b){b.classList.remove('active');});
     this.classList.add('active');
+    updateCard();
+  });
+});
+
+document.querySelectorAll('#fitModeGroup .btn').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    document.querySelectorAll('#fitModeGroup .btn').forEach(function(b){b.classList.remove('active');});
+    this.classList.add('active');
+    fitMode=this.getAttribute('data-fit');
     updateCard();
   });
 });
