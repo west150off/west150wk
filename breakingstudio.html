@@ -36,7 +36,7 @@ h2{font-size:13px;margin:0 0 10px}.row{display:flex;gap:7px;flex-wrap:wrap}.row>
 .update .content{justify-content:flex-start;padding-top:15%}.update .badge{background:var(--red)}.update .title{font-family:"Playfair Display",Georgia,serif;font-weight:600}.timeline{margin-top:25px;border-left:1px solid #555;padding-left:18px}.tl{position:relative;margin:0 0 17px}.tl:before{content:"";position:absolute;left:-23px;top:3px;width:7px;height:7px;border:2px solid var(--red);border-radius:50%;background:#111}.tl b{font:800 10px Inter;color:#fff}.tl span{display:block;font-size:11px;color:#bbb;margin-top:3px;line-height:1.35}
 .clean{background:var(--paper);color:#111}.clean .content{justify-content:flex-end}.clean .badge{background:transparent;color:#111;border-top:1px solid #111;border-bottom:1px solid #111;width:100%;padding:8px 0}.clean .title{font-family:"Playfair Display",Georgia,serif;font-weight:600}.clean .body{color:#333}.clean .brand,.clean .metaRight,.clean .source{color:#444}
 .live .content{justify-content:flex-end}.live .badge{background:#fff;color:#111}.live .badge:before{content:"● ";color:var(--red)}.live .title{font-family:Inter;font-weight:900}.live .metaRight{color:#fff}
-.cards{display:flex;flex-direction:column;gap:9px;overflow:auto;padding:4px 2px 6px;margin-top:8px;max-height:calc(100vh - 300px)}.thumb{width:100%;min-width:0;height:auto;aspect-ratio:4/5;background:#222;border:1px solid #444;border-radius:8px;overflow:hidden;position:relative;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.18);transition:transform .14s ease,border-color .14s ease,box-shadow .14s ease}.thumb:hover{border-color:#c8c8c2;transform:translateY(-3px) scale(1.015);box-shadow:0 12px 28px rgba(0,0,0,.34);filter:brightness(1.06)}.thumb.active{border:2px solid var(--red);box-shadow:0 0 0 2px rgba(201,21,32,.18);transform:none}.thumb canvas{display:block;width:100%;height:100%;object-fit:cover}.thumb span{position:absolute;top:5px;left:5px;bottom:auto;font:800 8px Inter;background:#000b;padding:3px 5px;border-radius:4px;letter-spacing:.04em}.leftSlidesPanel{padding-bottom:10px}.cardSlidesSection{border-bottom:0!important;margin-bottom:0!important}
+.cards{display:flex;flex-direction:column;gap:9px;overflow:auto;padding:4px 2px 6px;margin-top:8px;max-height:calc(100vh - 300px)}.thumb{width:100%;min-width:0;height:auto;aspect-ratio:4/5;background:#222;border:1px solid #444;border-radius:8px;overflow:hidden;position:relative;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.18)}.thumb.active{border:2px solid var(--red);box-shadow:0 0 0 2px rgba(201,21,32,.18)}.thumb canvas{display:block;width:100%;height:100%;object-fit:cover}.thumb span{position:absolute;top:5px;left:5px;bottom:auto;font:800 8px Inter;background:#000b;padding:3px 5px;border-radius:4px;letter-spacing:.04em}.leftSlidesPanel{padding-bottom:10px}.cardSlidesSection{border-bottom:0!important;margin-bottom:0!important}
 .bottom{display:none!important}.bottom button{flex:1}.green{background:#16844a}.red{background:var(--red)}
 .note{font-size:10px;line-height:1.45;color:#777}
 body.safeOn #card:after{content:"SAFE AREA";position:absolute;inset:6%;border:1px dashed rgba(255,255,255,.45);z-index:20;pointer-events:none;font:700 9px Inter;color:#fff;padding:5px}
@@ -134,16 +134,6 @@ body.safeOn #card:after{content:"SAFE AREA";position:absolute;inset:6%;border:1p
 .live .brand{color:#e9eef6}
 </style>
 <style>
-
-.field-input{width:100%;background:#0d0d0d;border:1px solid #383838;color:#fff;border-radius:9px;padding:10px;outline:0;font-size:11px}
-.accentSwatch{width:100%;aspect-ratio:1;border-radius:7px;border:1px solid #4a4a4a;padding:0;min-width:0}
-.accentSwatch.active{outline:2px solid #fff;outline-offset:2px}
-#brandVisibleContent.on{background:#fff;color:#111;border-color:#fff}
-#card{--accent-color:var(--red)}
-#card .badge{border-color:var(--accent-color)!important;background:var(--accent-color)}
-#card .brand{color:var(--accent-color)!important}
-#card .metaTop{color:var(--accent-color)!important}
-#card .source{border-color:var(--accent-color)}
 /* WEST150 DAILY — FINAL ART DIRECTION / VISUAL-ONLY OVERRIDES */
 :root{
   --red:#b91522;
@@ -253,19 +243,7 @@ body.safeOn #card:after{content:"SAFE AREA";position:absolute;inset:6%;border:1p
 
 /* CARD STUDIO-STYLE TOP MENU */
 .topNav{position:sticky;top:0;z-index:1000;display:flex;align-items:center;gap:6px;overflow:visible;padding:7px 14px;background:rgba(8,8,8,.97);border-bottom:1px solid #292929;backdrop-filter:blur(14px)}
-.csMenuWrap{position:relative;flex:none}.csMenuBtn,.csTopBtn{border:1px solid #303030;background:#121212;color:#bdbdbd;border-radius:7px;padding:8px 11px;font:700 11px Inter,"Noto Sans KR",Arial;white-space:nowrap}.csMenuBtn:hover,.csTopBtn:hover{background:#1b1b1b;color:#fff;border-color:#444}.csTopBtn{font-weight:800}.csTopBtn.primary{background:var(--red);border-color:var(--red);color:#fff}.csTopBtn.ghost{background:transparent}.csTopSpacer{flex:1}.csDropdown{position:absolute;left:0;top:calc(100% + 7px);width:260px;max-height:68vh;overflow:auto;padding:7px;background:rgba(20,20,20,.99);border:1px solid #3a3a3a;border-radius:10px;box-shadow:0 18px 48px rgba(0,0,0,.52);display:none}.csDropdown.open{display:block}.csDropdown>button{display:block;width:100%;text-align:left;background:transparent;border:0;color:#ddd;padding:9px 10px;border-radius:6px;font:700 12px Inter,"Noto Sans KR",Arial}.csDropdown>button:hover,.csDropdown .menuTpl.active{background:#fff;color:#111}.csLabel{font-size:10px;color:#777;padding:8px 10px 5px;letter-spacing:.08em}.csSep{border-top:1px solid #2f2f2f;margin:6px 0}.menuTpl{display:flex;align-items:center;justify-content:space-between;width:100%;gap:8px;padding:8px 10px;background:transparent;border:0;color:#ddd;border-radius:6px;text-align:left;font:700 11px Inter,"Noto Sans KR",Arial}.menuTpl small{color:#777;font-weight:600}.menuTpl.active small{color:#666}.menuTpl:hover,.menuTpl.hovered{background:#242424!important;color:#fff!important}.menuTpl.hovered small{color:#bdbdbd}.csDropdown #menuTemplateList{display:none!important}.csDropdown .csLabel{display:none!important}@media(max-width:850px){.topNav{flex-wrap:wrap}.csTopSpacer{display:none}.csTopBtn{padding:7px 9px;font-size:10px}}
-
-</style>
-
-<style id="west150-text-final-fix">
-/* Final text rendering fix: template rules use !important, so live values must also be !important. */
-#card .content{z-index:30 !important; display:flex !important; opacity:1 !important; visibility:visible !important;}
-#card #ptitle{display:block !important; visibility:visible !important; opacity:1 !important; color:inherit !important; position:relative !important; z-index:40 !important;}
-#card #pbody{display:block !important; visibility:visible !important; opacity:1 !important; color:inherit !important; position:relative !important; z-index:40 !important;}
-#card #badge{position:relative !important; z-index:41 !important;}
-#card #psource{position:relative !important; z-index:41 !important;}
-#card #ptitle{font-size:var(--title-size-live,68px) !important; line-height:var(--title-line-live,1.02) !important; font-weight:var(--title-weight-live,900) !important; letter-spacing:var(--title-letter-live,-0.04em) !important;}
-#card #pbody{font-size:var(--body-size-live,28px) !important; line-height:var(--body-line-live,1.5) !important; letter-spacing:var(--body-letter-live,0em) !important;}
+.csMenuWrap{position:relative;flex:none}.csMenuBtn,.csTopBtn{border:1px solid #303030;background:#121212;color:#bdbdbd;border-radius:7px;padding:8px 11px;font:700 11px Inter,"Noto Sans KR",Arial;white-space:nowrap}.csMenuBtn:hover,.csTopBtn:hover{background:#1b1b1b;color:#fff;border-color:#444}.csTopBtn{font-weight:800}.csTopBtn.primary{background:var(--red);border-color:var(--red);color:#fff}.csTopBtn.ghost{background:transparent}.csTopSpacer{flex:1}.csDropdown{position:absolute;left:0;top:calc(100% + 7px);width:260px;max-height:68vh;overflow:auto;padding:7px;background:rgba(20,20,20,.99);border:1px solid #3a3a3a;border-radius:10px;box-shadow:0 18px 48px rgba(0,0,0,.52);display:none}.csDropdown.open{display:block}.csDropdown>button{display:block;width:100%;text-align:left;background:transparent;border:0;color:#ddd;padding:9px 10px;border-radius:6px;font:700 12px Inter,"Noto Sans KR",Arial}.csDropdown>button:hover,.csDropdown .menuTpl.active{background:#fff;color:#111}.csLabel{font-size:10px;color:#777;padding:8px 10px 5px;letter-spacing:.08em}.csSep{border-top:1px solid #2f2f2f;margin:6px 0}.menuTpl{display:flex;align-items:center;justify-content:space-between;width:100%;gap:8px;padding:8px 10px;background:transparent;border:0;color:#ddd;border-radius:6px;text-align:left;font:700 11px Inter,"Noto Sans KR",Arial}.menuTpl small{color:#777;font-weight:600}.menuTpl.active small{color:#666}@media(max-width:850px){.topNav{flex-wrap:wrap}.csTopSpacer{display:none}.csTopBtn{padding:7px 9px;font-size:10px}}
 </style>
 </head>
 <body>
@@ -281,10 +259,10 @@ body.safeOn #card:after{content:"SAFE AREA";position:absolute;inset:6%;border:1p
       <button data-action="newCard">＋ 새 카드</button>
       <button data-action="duplicate">⧉ 현재 카드 복제</button>
       <button data-action="deleteCard">삭제</button>
+      <div class="csSep"></div>
+      <div class="csLabel">디자인 템플릿</div>
+      <div id="menuTemplateList"></div>
     </div>
-  </div>
-  <div class="csMenuWrap">
-    <button class="csMenuBtn" data-panel="contentPanel">콘텐츠 ▾</button>
   </div>
   <div class="csMenuWrap">
     <button class="csMenuBtn" data-panel="typePanel">글꼴 ▾</button>
@@ -319,7 +297,7 @@ body.safeOn #card:after{content:"SAFE AREA";position:absolute;inset:6%;border:1p
 </nav><main>
 <section class="panel leftSlidesPanel">
   <div class="section menuSection" data-panel="designPanel">
-    <h2>LEGACY CONTENT</h2><p class="note">글 작성은 상단 <b>콘텐츠</b> 메뉴의 오른쪽 패널에서 합니다.</p>
+    <h2>NEWS</h2>
     <div class="field"><label>배지 문구 <span style="cursor:pointer;color:#c91520" onclick="resetBadge()">기본값으로</span></label><input id="badgeText" placeholder="예: BREAKING NEWS (비워두면 템플릿 기본값)"></div>
     <div class="field"><label>제목 <span id="tc">0자</span></label><textarea id="title" placeholder="속보 제목"></textarea></div>
     <div class="field"><label>본문 / 요약 <span id="bc">0자</span></label><textarea id="body" placeholder="핵심 내용을 입력하세요"></textarea></div>
@@ -329,29 +307,6 @@ body.safeOn #card:after{content:"SAFE AREA";position:absolute;inset:6%;border:1p
     <div class="row"><button onclick="nowTime()">현재 시간</button><button onclick="clearTime()">시간 삭제</button></div>
   </div>
 
-
-  <div class="section menuSection" data-panel="contentPanel">
-    <h2>CONTENT · 글 작성</h2>
-    <div class="field"><label>카테고리</label><input id="badgeTextContent" placeholder="예: BREAKING NEWS"></div>
-    <div class="field"><label>헤드라인 <span id="tcContent">0자</span></label><textarea id="titleContent" placeholder="속보 제목"></textarea></div>
-    <div class="field"><label>본문 / 요약 <span id="bcContent">0자</span></label><textarea id="bodyContent" placeholder="핵심 내용을 입력하세요"></textarea></div>
-    <div class="field"><label>출처</label><input id="sourceContent" placeholder="Reuters / AP / 공식 발표 등"></div>
-    <div class="field"><label>시간</label><input id="timeContent" placeholder="AUG 21, 2026 · 05:14 KST"></div>
-    <div class="field"><label>시간대</label><select id="timeZoneContent"><option value="Asia/Seoul">한국시간 (KST)</option><option value="America/New_York">미국 동부시간 (ET)</option><option value="America/Los_Angeles">미국 서부시간 (PT)</option><option value="both">한국 + 미국 동부</option></select></div>
-    <div class="row"><button onclick="nowTime()">현재 시간</button><button onclick="clearTime()">시간 삭제</button></div>
-    <div class="section" style="border-top:1px solid #292929;padding-top:14px;margin-top:14px;border-bottom:0;margin-bottom:0">
-      <h3 style="font-size:10px;letter-spacing:.12em;margin:0 0 10px">BRAND · 워터마크</h3>
-      <div class="field"><label>메인 브랜드</label><input class="field-input" id="brandMainContent" value="WEST150" placeholder="WEST150"></div>
-      <div class="field"><label>서브 브랜드</label><input class="field-input" id="brandSubContent" value="DAILY" placeholder="DAILY"></div>
-      <div class="row"><button id="brandVisibleContent" type="button">워터마크 표시</button><button id="brandResetContent" type="button">기본값</button></div>
-    </div>
-    <div class="section" style="border-bottom:0;margin:14px 0 0;padding-bottom:0">
-      <h3 style="font-size:10px;letter-spacing:.12em;margin:0 0 10px">ACCENT · 강조 색상</h3>
-      <div id="accentPaletteContent" style="display:grid;grid-template-columns:repeat(6,1fr);gap:7px"></div>
-      <div class="field"><label>직접 색상</label><input class="field-input" id="accentColorContent" type="text" value="#b91522" placeholder="#b91522"></div>
-    </div>
-    <p class="note">입력한 내용과 브랜드·강조색은 가운데 카드에 즉시 반영됩니다.</p>
-  </div>
 
   <div class="section menuSection" data-panel="typePanel">
     <h2>TYPOGRAPHY · 글꼴 편집</h2>
@@ -441,7 +396,7 @@ body.safeOn #card:after{content:"SAFE AREA";position:absolute;inset:6%;border:1p
 
   <div class="section menuSection" data-panel="templatePanel">
     <h2>카드 템플릿</h2>
-    <p class="note">마우스를 올려 미리 보고, 클릭해서 현재 카드에 적용합니다.</p>
+    <p class="note">현재 8종 뉴스 디자인을 카드 템플릿으로 사용합니다.</p>
     <div id="rightTemplateList" class="templateGrid"></div>
   </div>
 
@@ -459,12 +414,12 @@ body.safeOn #card:after{content:"SAFE AREA";position:absolute;inset:6%;border:1p
     <div id="card" class="card editorial">
       <img id="img" class="photo">
       <div id="overlay" class="overlay"></div>
-      <div class="metaTop" id="metaTop">WEST150 DAILY</div>
+      <div class="metaTop">WEST150 DAILY</div>
       <div class="metaRight" id="metaRight"></div>
       <div class="content">
         <div class="badge" id="badge">BREAKING NEWS</div>
-        <div class="title" id="ptitle">속보 제목을 입력하세요</div>
-        <div class="body" id="pbody">핵심 내용을 입력하면 이곳에 표시됩니다.</div>
+        <div class="title" id="ptitle"></div>
+        <div class="body" id="pbody"></div>
         <div class="timeline" id="timeline"></div>
         <div class="source" id="psource"></div>
       </div>
@@ -495,7 +450,7 @@ const defs=[
 ];
 let cards=[blank()],idx=0,undos=[],redos=[],drag=null,activePointers=new Map(),pinchStart=null;
 
-function blank(){return{template:"editorial",title:"",body:"",source:"",time:"",photo:null,zoom:100,x:0,y:0,shade:55,updates:[],titleSize:68,bodySize:28,metaSize:18,letter:-4,line:1.02,weight:900,align:"left",bright:100,contrast:100,sat:100,mono:false,rotate:0,imageFit:"cover",blur:16,timeZone:"Asia/Seoul",contentY:0,pad:7,logo:null,logoSize:100,showLogo:true,designLock:false,titleFont:"default",bodyFont:"default",badgeText:"",brandMain:"WEST150",brandSub:"DAILY",accent:"#b91522",showBrand:true}}
+function blank(){return{template:"editorial",title:"",body:"",source:"",time:"",photo:null,zoom:100,x:0,y:0,shade:55,updates:[],titleSize:68,bodySize:28,metaSize:18,letter:-4,line:1.02,weight:900,align:"left",bright:100,contrast:100,sat:100,mono:false,rotate:0,imageFit:"cover",blur:16,timeZone:"Asia/Seoul",contentY:0,pad:7,logo:null,logoSize:100,showLogo:true,designLock:false,titleFont:"default",bodyFont:"default",badgeText:""}}
 const FONTS=[
  {id:"default",label:"템플릿 기본값",css:""},
   {id:"pretendard",label:"Pretendard (프리텐다드)",css:'"Pretendard Variable",Pretendard,sans-serif'},
@@ -531,21 +486,13 @@ function c(){return cards[idx]}
 function cp(v){return JSON.parse(JSON.stringify(v))}
 function snap(){undos.push(cp(cards));if(undos.length>25)undos.shift();redos=[]}
 function renderTemplates(){
- const el=$("templates");
- if(!el) return;
- el.innerHTML="";
- defs.forEach(d=>{let b=document.createElement("button");b.className="tpl "+(c().template===d[0]?"active":"");b.innerHTML=`<b>${d[1]}</b><span>${d[2]}</span>`;b.onclick=()=>{if(c().designLock)return;snap();c().template=d[0];render()};el.appendChild(b)})
+ $("templates").innerHTML="";
+ defs.forEach(d=>{let b=document.createElement("button");b.className="tpl "+(c().template===d[0]?"active":"");b.innerHTML=`<b>${d[1]}</b><span>${d[2]}</span>`;b.onclick=()=>{if(c().designLock)return;snap();c().template=d[0];render()};$("templates").appendChild(b)})
 }
 function render(){
  let a=c(); if(!Array.isArray(a.updates)) a.updates=[];
 
- if($("title")){ $("title").value=a.title; } if($("body")){ $("body").value=a.body; } if($("source")){ $("source").value=a.source; } if($("time")){ $("time").value=a.time; }
- if($("badgeTextContent")) $("badgeTextContent").value=a.badgeText||"";
- if($("titleContent")) $("titleContent").value=a.title||"";
- if($("bodyContent")) $("bodyContent").value=a.body||"";
- if($("sourceContent")) $("sourceContent").value=a.source||"";
- if($("timeContent")) $("timeContent").value=a.time||"";
- if($("timeZoneContent")) $("timeZoneContent").value=a.timeZone||"Asia/Seoul";if($("brandMainContent")) $("brandMainContent").value=a.brandMain||"WEST150";if($("brandSubContent")) $("brandSubContent").value=a.brandSub||"DAILY";if($("accentColorContent")) $("accentColorContent").value=a.accent||"#b91522";if($("brandVisibleContent")){ $("brandVisibleContent").classList.toggle("on",a.showBrand!==false); $("brandVisibleContent").textContent=a.showBrand===false?"워터마크 숨김":"워터마크 표시";}if($("accentPaletteContent")){document.querySelectorAll("#accentPaletteContent .accentSwatch").forEach(b=>b.classList.toggle("active",b.dataset.c===(a.accent||"#b91522")));}
+ $("title").value=a.title;$("body").value=a.body;$("source").value=a.source;$("time").value=a.time;
  $("zoom").value=a.zoom;$("px").value=a.x;$("py").value=a.y;$("shade").value=a.shade;$("blur").value=a.blur??16;$("timeZone").value=a.timeZone||"Asia/Seoul";
  $("titleSize").value=a.titleSize;$("bodySize").value=a.bodySize;$("metaSize").value=a.metaSize;$("letter").value=a.letter;$("line").value=a.line;$("weight").value=a.weight;
  $("bright").value=a.bright;$("contrast").value=a.contrast;$("sat").value=a.sat;$("rotate").value=a.rotate;$("contentY").value=a.contentY;$("pad").value=a.pad;$("logoSize").value=a.logoSize;$("designLock").checked=!!a.designLock;
@@ -555,18 +502,18 @@ function render(){
  $("titleSizeVal").textContent=a.titleSize+"px";$("bodySizeVal").textContent=a.bodySize+"px";$("metaSizeVal").textContent=a.metaSize+"px";$("letterVal").textContent=a.letter+"%";$("lineVal").textContent=a.line;$("brightVal").textContent=a.bright+"%";$("contrastVal").textContent=a.contrast+"%";$("satVal").textContent=a.sat+"%";$("rotateVal").textContent=a.rotate+"°";$("contentYVal").textContent=a.contentY+"%";$("padVal").textContent=a.pad+"%";$("logoSizeVal").textContent=a.logoSize+"%";
  $("tc").textContent=a.title.length+"자";$("bc").textContent=a.body.length+"자";
  $("zv").textContent=a.zoom+"%";$("xv").textContent=a.x+"%";$("yv").textContent=a.y+"%";$("sv").textContent=a.shade+"%";$("blurVal").textContent=(a.blur??16)+"px";
- let card=$("card");card.style.setProperty("--title-size-live",`${a.titleSize}px`);card.style.setProperty("--title-weight-live",`${a.weight}`);card.style.setProperty("--title-letter-live",`${a.letter/100}em`);card.style.setProperty("--title-line-live",`${a.line}`);card.style.setProperty("--body-size-live",`${a.bodySize}px`);card.style.setProperty("--body-line-live",`1.5`);card.style.setProperty("--body-letter-live","0em");card.className="card "+a.template+(a.photo?" hasImage":"")+(a.photo&&a.imageFit==="contain"&&((a.blur??16)>0)?" image-contain-blur":"");card.style.setProperty("--accent-color",a.accent||"#b91522");if(a.photo&&a.imageFit==="contain"){card.style.setProperty("--blur-bg",`url("${a.photo}")`);card.style.setProperty("--blur-amount",`${a.blur??16}px`)}else{card.style.removeProperty("--blur-bg");card.style.removeProperty("--blur-amount")};$("img").style.objectFit=a.imageFit==="contain"?"contain":"cover";$("img").style.inset=a.imageFit==="contain"?"0":"-10%";$("img").style.width=a.imageFit==="contain"?"100%":"120%";$("img").style.height=a.imageFit==="contain"?"100%":"120%";$("img").style.background=a.imageFit==="contain"?(a.template==="clean"||a.template==="statement"?"#f1efe9":"#0b0b0b"):"";card.style.background="";
+ let card=$("card");card.className="card "+a.template+(a.photo?" hasImage":"")+(a.photo&&a.imageFit==="contain"&&((a.blur??16)>0)?" image-contain-blur":"");if(a.photo&&a.imageFit==="contain"){card.style.setProperty("--blur-bg",`url("${a.photo}")`);card.style.setProperty("--blur-amount",`${a.blur??16}px`)}else{card.style.removeProperty("--blur-bg");card.style.removeProperty("--blur-amount")};$("img").style.objectFit=a.imageFit==="contain"?"contain":"cover";$("img").style.inset=a.imageFit==="contain"?"0":"-10%";$("img").style.width=a.imageFit==="contain"?"100%":"120%";$("img").style.height=a.imageFit==="contain"?"100%":"120%";$("img").style.background=a.imageFit==="contain"?(a.template==="clean"||a.template==="statement"?"#f1efe9":"#0b0b0b"):"";card.style.background="";
  $("img").src=a.photo||"";
  $("img").style.transform=`translate(${a.x/2}%,${a.y/2}%) scale(${a.zoom/100}) rotate(${a.rotate}deg)`;
  $("img").style.filter=`brightness(${a.bright}%) contrast(${a.contrast}%) saturate(${a.sat}%) grayscale(${a.mono?100:0}%)`;
  let darkness=a.shade/100;
  $("overlay").style.background=a.photo?`linear-gradient(90deg,rgba(0,0,0,${darkness}),rgba(0,0,0,${Math.max(.04,darkness-.32)}))`:"";
- $("metaTop").textContent=a.showBrand===false?"":(a.brandMain||"WEST150");$("brandView").textContent=a.showBrand===false?"":((a.brandMain||"WEST150")+((a.brandSub||"")?" "+a.brandSub:""));$("brandView").style.opacity=a.showBrand===false?"0":"1";$("ptitle").textContent=a.title||"속보 제목을 입력하세요";
- $("ptitle").style.fontSize=`${a.titleSize}px`;$("ptitle").style.fontWeight=a.weight;$("ptitle").style.letterSpacing=`${a.letter/100}em`;$("ptitle").style.lineHeight=a.line;$("ptitle").style.textAlign=a.align;
+ $("ptitle").textContent=a.title||"속보 제목을 입력하세요";
+ $("ptitle").style.fontSize=`${Math.max(20,a.titleSize*.63)}px`;$("ptitle").style.fontWeight=a.weight;$("ptitle").style.letterSpacing=`${a.letter/100}em`;$("ptitle").style.lineHeight=a.line;$("ptitle").style.textAlign=a.align;
  $("ptitle").style.fontFamily=(a.titleFont&&a.titleFont!=="default")?fontCss(a.titleFont):templateTitleFont(a.template);
- $("pbody").style.fontSize=`${a.bodySize}px`;$("pbody").style.textAlign=a.align;
+ $("pbody").style.fontSize=`${Math.max(13,a.bodySize*.55)}px`;$("pbody").style.textAlign=a.align;
  $("pbody").style.fontFamily=(a.bodyFont&&a.bodyFont!=="default")?fontCss(a.bodyFont):DEFAULT_BODY_FONT;
- $("metaRight").style.fontSize=`${a.metaSize}px`;$("psource").style.fontSize=`${a.metaSize}px`;
+ $("metaRight").style.fontSize=`${Math.max(8,a.metaSize*.5)}px`;$("psource").style.fontSize=`${Math.max(7,a.metaSize*.5)}px`;
  $("card").style.paddingLeft=`${a.pad}%`;$("card").style.paddingRight=`${a.pad}%`;
  $("pbody").textContent=a.body||"핵심 내용을 입력하면 이곳에 미리보기가 표시됩니다.";
  $("psource").textContent=a.source?"SOURCE · "+a.source:"";
@@ -705,21 +652,7 @@ $("designLock").addEventListener("change",()=>{c().designLock=$("designLock").ch
   c().titleFont=$("titleFont").value;c().bodyFont=$("bodyFont").value;render()
 }));
 $("badgeText").addEventListener("input",()=>{snap();c().badgeText=$("badgeText").value;render()});
-["title","body","source","time"].forEach(id=>{const el=$(id);if(el)el.addEventListener("input",()=>{snap();c()[id]=el.value;render()})});
-function bindContentField(id,prop){const el=$(id);if(!el)return;el.addEventListener("input",()=>{snap();c()[prop]=el.value;render()})}
-bindContentField("badgeTextContent","badgeText");
-bindContentField("titleContent","title");
-bindContentField("bodyContent","body");
-bindContentField("sourceContent","source");
-bindContentField("timeContent","time");
-$("brandMainContent")&&$("brandMainContent").addEventListener("input",()=>{snap();c().brandMain=$("brandMainContent").value;render()});
-$("brandSubContent")&&$("brandSubContent").addEventListener("input",()=>{snap();c().brandSub=$("brandSubContent").value;render()});
-$("brandVisibleContent")&&$("brandVisibleContent").addEventListener("click",()=>{snap();c().showBrand=c().showBrand===false;render()});
-$("brandResetContent")&&$("brandResetContent").addEventListener("click",()=>{snap();c().brandMain="WEST150";c().brandSub="DAILY";c().showBrand=true;render()});
-const CONTENT_ACCENTS=["#b91522","#8c2f39","#1f4b5d","#6b4f2a","#6b5a3c","#3e4a43","#5b365e","#2d2d2d","#b08a42","#7a5137","#4f6173","#c1a35b"];
-if($("accentPaletteContent")&&!( $("accentPaletteContent").children.length )){$("accentPaletteContent").innerHTML=CONTENT_ACCENTS.map(c=>`<button type="button" class="accentSwatch" data-c="${c}" style="background:${c}" aria-label="강조색 ${c}"></button>`).join("");document.querySelectorAll("#accentPaletteContent .accentSwatch").forEach(b=>b.addEventListener("click",()=>{snap();c().accent=b.dataset.c;render()}));}
-$("accentColorContent")&&$("accentColorContent").addEventListener("change",()=>{let v=$("accentColorContent").value.trim();if(/^#[0-9a-fA-F]{6}$/.test(v)){snap();c().accent=v;render()}else{toast&&toast("색상은 #RRGGBB 형식으로 입력하세요")}});
-$("timeZoneContent")&&$("timeZoneContent").addEventListener("change",()=>{snap();c().timeZone=$("timeZoneContent").value;c().time=formatNow(c().timeZone);render()});
+["title","body","source","time"].forEach(id=>$(id).addEventListener("input",()=>{snap();c()[id]=$(id).value;render()}));
 ["zoom","px","py","shade","blur"].forEach(id=>$(id).addEventListener("input",()=>{c().zoom=+$("zoom").value;c().x=+$("px").value;c().y=+$("py").value;c().shade=+$("shade").value;c().blur=+$("blur").value;render()}));
 $("timeZone").addEventListener("change",()=>{snap();c().timeZone=$("timeZone").value;c().time=formatNow(c().timeZone);render()});
 $("photoInput").addEventListener("change",e=>{let f=e.target.files[0];if(!f)return;snap();let r=new FileReader();r.onload=()=>{c().photo=r.result;render()};r.readAsDataURL(f)});
@@ -864,32 +797,12 @@ render();
    if(a==='newCard') newCard(); else if(a==='duplicate') duplicate(); else if(a==='deleteCard') del();
  }));
  const mt=document.getElementById('menuTemplateList');
- const rt=document.getElementById('rightTemplateList');
- function applyTemplateFromMenu(key){
-   if(c().designLock)return;
-   snap();
-   c().template=key;
-   render();
-   activate('templatePanel');
- }
- if(mt){ mt.innerHTML=''; }
- if(rt){
-   rt.innerHTML='';
-   defs.forEach(d=>{
-     const b=document.createElement('button');
-     b.className='menuTpl'+(c().template===d[0]?' active':'');
-     b.innerHTML=`<span>${d[1]}</span><small>${d[2]}</small>`;
-     b.addEventListener('mouseenter',()=>{
-       document.querySelectorAll('#rightTemplateList .menuTpl').forEach(x=>x.classList.remove('hovered'));
-       b.classList.add('hovered');
-     });
-     b.addEventListener('mouseleave',()=>b.classList.remove('hovered'));
-     b.onclick=()=>applyTemplateFromMenu(d[0]);
-     rt.appendChild(b);
-   });
+ if(mt){
+   mt.innerHTML='';
+   defs.forEach(d=>{const b=document.createElement('button');b.className='menuTpl'+(c().template===d[0]?' active':'');b.innerHTML=`<span>${d[1]}</span><small>${d[2]}</small>`;b.onclick=()=>{if(c().designLock)return;snap();c().template=d[0];render();closeMenus();};mt.appendChild(b)});
  }
  ['undo','redo','previewAll','saveCurrent','saveAll'].forEach(a=>document.querySelectorAll(`[data-action="${a}"]`).forEach(b=>b.addEventListener('click',()=>window[a]())));
- activate('contentPanel');
+ activate('designPanel');
 })();
 </script></body>
 </html>
@@ -912,103 +825,4 @@ render();
   .cards{grid-template-columns:repeat(2,1fr);max-height:none}
   body{overflow:auto}
 }
-</style>
-<style>
-/* ===== WEST150 DAILY SIGNATURE EDITION — FINAL ART DIRECTION ===== */
-:root{--sig-ink:#0a0b0c;--sig-warm:#f3efe7;--sig-silver:#c9c7c0;--sig-red:#b90f1d;--sig-gold:#b69a68}
-.card{border-radius:0!important;box-shadow:0 30px 90px rgba(0,0,0,.42)!important;isolation:isolate}
-.card:before{content:"";position:absolute;inset:5.5%;border:1px solid rgba(255,255,255,.12);z-index:2;pointer-events:none}
-.card .content{z-index:10!important}
-.card .badge{font-weight:900!important;text-transform:uppercase}
-.card .title{font-kerning:normal;text-rendering:geometricPrecision}
-.card .source{letter-spacing:.05em;text-transform:uppercase}
-
-/* editorial — luxury magazine cover */
-.card.editorial{background:linear-gradient(135deg,#121416,#08090b 62%,#1b1c1e)!important}
-.card.editorial:after{content:"";position:absolute;left:8%;right:8%;top:16%;height:34%;border-top:1px solid rgba(255,255,255,.16);border-bottom:1px solid rgba(255,255,255,.08);z-index:2;pointer-events:none}
-.card.editorial .content{padding:0 8.5% 8.5%!important;background:linear-gradient(180deg,transparent 16%,rgba(5,6,8,.2) 36%,rgba(5,6,8,.96) 100%)!important}
-.card.editorial .badge{font-size:10px!important;letter-spacing:.28em!important;color:#f2eee6!important;border-left:1px solid rgba(255,255,255,.7)!important;background:none!important;padding:4px 0 4px 12px!important}
-.card.editorial .title{font-size:1.14em!important;font-weight:500!important;line-height:1.01!important;letter-spacing:-.04em!important;font-family:"Playfair Display","RIDIBatang","Noto Serif KR",serif!important;text-shadow:0 14px 40px rgba(0,0,0,.55)!important;max-width:90%!important}
-.card.editorial .body{font-size:.88em!important;color:#d4d1cb!important;max-width:70%!important;line-height:1.6!important}
-.card.editorial .brand{font-size:7px!important;letter-spacing:.22em!important;color:#e8e2d6!important}
-
-/* newsroom — Swiss / financial desk */
-.card.newsroom{background:#0d0f10!important}
-.card.newsroom:after{content:"";position:absolute;left:8%;right:8%;top:12%;bottom:14%;border-top:1px solid rgba(255,255,255,.1);border-bottom:1px solid rgba(255,255,255,.1);z-index:2}
-.card.newsroom .content{padding:16% 8.5% 8%!important}
-.card.newsroom .badge{border:0!important;border-top:1px solid rgba(255,255,255,.55)!important;border-bottom:1px solid rgba(255,255,255,.18)!important;padding:7px 0 6px!important;letter-spacing:.24em!important;font-size:9px!important}
-.card.newsroom .title{font-family:"Pretendard",Inter,"Noto Sans KR",sans-serif!important;font-size:1.08em!important;font-weight:800!important;line-height:.96!important;letter-spacing:-.055em!important;max-width:91%!important}
-.card.newsroom .body{max-width:78%!important;color:#b8b9b8!important}
-.card.newsroom .source{margin-top:auto;padding-top:12px;border-top:1px solid rgba(255,255,255,.12)!important;color:#8d8f8e!important}
-
-/* breaking — controlled broadcast luxury */
-.card.breaking{background:radial-gradient(circle at 82% 16%,rgba(190,18,32,.3),transparent 28%),linear-gradient(150deg,#100305,#24070b 50%,#090b0e)!important}
-.card.breaking:before{border-color:rgba(255,255,255,.08)!important}
-.card.breaking .content{padding:14% 9% 8%!important}
-.card.breaking .badge{font-size:10px!important;letter-spacing:.28em!important;background:#b90f1d!important;padding:7px 11px!important;box-shadow:0 10px 30px rgba(185,15,29,.3)!important}
-.card.breaking .title{font-family:"Pretendard",Inter,"Noto Sans KR",sans-serif!important;font-size:1.18em!important;font-weight:900!important;line-height:.92!important;letter-spacing:-.065em!important;max-width:94%!important}
-.card.breaking .body{max-width:80%!important;color:#e8dddd!important}
-.card.breaking .brand{background:#090b0c!important;border:1px solid rgba(255,255,255,.12)!important;padding:8px 11px!important}
-
-/* photo focus — full bleed luxury photojournalism */
-.card.photoFocus{background:#080909!important}
-.card.photoFocus:before{inset:4.8%;border-color:rgba(255,255,255,.18)!important}
-.card.photoFocus .content{padding:0 7.5% 8%!important;background:linear-gradient(180deg,transparent 24%,rgba(0,0,0,.06) 38%,rgba(0,0,0,.94) 100%)!important}
-.card.photoFocus .badge{font-size:9px!important;letter-spacing:.25em!important;background:rgba(248,246,241,.97)!important;color:#111!important;padding:5px 9px!important}
-.card.photoFocus .title{font-family:"Pretendard",Inter,"Noto Sans KR",sans-serif!important;font-size:1.18em!important;font-weight:900!important;line-height:.93!important;letter-spacing:-.065em!important;max-width:93%!important;text-shadow:0 9px 32px rgba(0,0,0,.72)!important}
-.card.photoFocus .body{max-width:76%!important;color:#e3e2df!important}
-
-/* statement — art-book / opinion page */
-.card.statement{background:linear-gradient(180deg,#faf7f0,#ebe6dc)!important;color:#171614!important}
-.card.statement:before{border-color:rgba(20,20,20,.14)!important}
-.card.statement .content{padding:15% 9% 8%!important}
-.card.statement .badge{font-size:9px!important;letter-spacing:.22em!important;border-left:2px solid var(--sig-red)!important;color:#171614!important;padding:4px 0 4px 10px!important}
-.card.statement .title{font-family:"RIDIBatang","Playfair Display","Noto Serif KR",serif!important;font-size:1.17em!important;font-weight:400!important;line-height:1.02!important;letter-spacing:-.038em!important;max-width:91%!important}
-.card.statement .body{max-width:72%!important;color:#4d4841!important;line-height:1.6!important}
-.card.statement:after{content:"";position:absolute;right:9%;top:10%;width:23%;height:25%;border-top:1px solid rgba(20,20,20,.2);border-right:1px solid rgba(20,20,20,.2);z-index:4}
-
-/* update — executive briefing */
-.card.update{background:linear-gradient(145deg,#0f1317,#090b0e 70%)!important}
-.card.update .content{padding:14% 8.5% 8%!important}
-.card.update .badge{font-size:9px!important;letter-spacing:.24em!important;border-left:2px solid var(--sig-red)!important;background:none!important;padding:3px 0 3px 10px!important}
-.card.update .title{font-family:"RIDIBatang","Noto Serif KR",serif!important;font-size:1.06em!important;font-weight:400!important;line-height:1.02!important;letter-spacing:-.03em!important}
-.card.update .timeline{margin-top:20px!important;border-left:1px solid rgba(255,255,255,.16)!important;padding-left:16px!important}
-.card.update .tl{margin-bottom:12px!important;padding:8px 10px!important;background:linear-gradient(90deg,rgba(255,255,255,.055),rgba(255,255,255,.012))!important;border:1px solid rgba(255,255,255,.08)!important}
-.card.update .tl b{font-size:8px!important;letter-spacing:.16em!important}
-.card.update .tl span{color:#c9cbcb!important;line-height:1.46!important}
-
-/* clean — Swiss luxury */
-.card.clean{background:#f5f3ee!important;color:#111!important}
-.card.clean:before{border-color:rgba(0,0,0,.14)!important}
-.card.clean .content{padding:0 8% 8.5%!important}
-.card.clean .badge{font-size:9px!important;letter-spacing:.2em!important;border-top:1px solid #121212!important;border-bottom:1px solid #121212!important;padding:7px 0!important;color:#111!important;background:none!important}
-.card.clean .title{font-family:"RIDIBatang","Playfair Display","Noto Serif KR",serif!important;font-size:1.14em!important;font-weight:400!important;line-height:1.02!important;letter-spacing:-.035em!important}
-.card.clean .body{color:#45413b!important;max-width:74%!important;line-height:1.6!important}
-.card.clean .brand,.card.clean .metaRight,.card.clean .source{color:#4a4741!important}
-
-/* live — digital newsroom / status board */
-.card.live{background:linear-gradient(150deg,#0b1218,#101923 60%,#0a0f15)!important}
-.card.live:before{border-color:rgba(255,255,255,.11)!important}
-.card.live .content{padding:0 8% 8.5%!important}
-.card.live .badge{font-size:9px!important;letter-spacing:.2em!important;background:#f6f7f4!important;color:#101318!important;padding:6px 9px!important;box-shadow:0 8px 24px rgba(0,0,0,.22)!important}
-.card.live .title{font-family:"Pretendard",Inter,"Noto Sans KR",sans-serif!important;font-size:1.14em!important;font-weight:900!important;line-height:.93!important;letter-spacing:-.06em!important}
-.card.live .body{max-width:76%!important;color:#d0d8e1!important;line-height:1.52!important}
-.card.live .metaRight,.card.live .brand{color:#edf1f5!important}
-
-/* shared photo polish */
-.card.hasImage .photo{filter:saturate(.92) contrast(1.035)!important}
-.card.photoFocus.hasImage .photo{filter:saturate(.86) contrast(1.07)!important}
-.card.editorial.hasImage .photo{filter:saturate(.86) contrast(1.04)!important}
-.card.statement.hasImage .photo{filter:saturate(.72) contrast(1.04)!important;mix-blend-mode:multiply}
-.card.clean.hasImage .photo{filter:saturate(.78) contrast(1.02)!important}
-</style>
-<style>
-/* ===== TEXT VISIBILITY + TYPOGRAPHY FIX ===== */
-#card .content{z-index:40 !important;visibility:visible !important;opacity:1 !important;}
-#card .content .badge,#card .content .title,#card .content .body,#card .content .timeline,#card .content .source{visibility:visible !important;opacity:1 !important;}
-#card .content .title{position:relative !important;display:block !important;z-index:60 !important;font-size:var(--title-size-live,68px) !important;color:var(--title-color-live,#fff) !important;}
-#card .content .body{position:relative !important;display:block !important;z-index:60 !important;font-size:var(--body-size-live,28px) !important;color:var(--body-color-live,#ddd) !important;}
-#card .content .badge,#card .content .source{position:relative !important;z-index:61 !important;}
-.card.statement .content .title,.card.clean .content .title{--title-color-live:#111;}
-.card.statement .content .body,.card.clean .content .body{--body-color-live:#3f3c37;}
 </style>
