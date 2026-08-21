@@ -134,6 +134,16 @@ body.safeOn #card:after{content:"SAFE AREA";position:absolute;inset:6%;border:1p
 .live .brand{color:#e9eef6}
 </style>
 <style>
+
+.field-input{width:100%;background:#0d0d0d;border:1px solid #383838;color:#fff;border-radius:9px;padding:10px;outline:0;font-size:11px}
+.accentSwatch{width:100%;aspect-ratio:1;border-radius:7px;border:1px solid #4a4a4a;padding:0;min-width:0}
+.accentSwatch.active{outline:2px solid #fff;outline-offset:2px}
+#brandVisibleContent.on{background:#fff;color:#111;border-color:#fff}
+#card{--accent-color:var(--red)}
+#card .badge{border-color:var(--accent-color)!important;background:var(--accent-color)}
+#card .brand{color:var(--accent-color)!important}
+#card .metaTop{color:var(--accent-color)!important}
+#card .source{border-color:var(--accent-color)}
 /* WEST150 DAILY — FINAL ART DIRECTION / VISUAL-ONLY OVERRIDES */
 :root{
   --red:#b91522;
@@ -244,6 +254,9 @@ body.safeOn #card:after{content:"SAFE AREA";position:absolute;inset:6%;border:1p
 /* CARD STUDIO-STYLE TOP MENU */
 .topNav{position:sticky;top:0;z-index:1000;display:flex;align-items:center;gap:6px;overflow:visible;padding:7px 14px;background:rgba(8,8,8,.97);border-bottom:1px solid #292929;backdrop-filter:blur(14px)}
 .csMenuWrap{position:relative;flex:none}.csMenuBtn,.csTopBtn{border:1px solid #303030;background:#121212;color:#bdbdbd;border-radius:7px;padding:8px 11px;font:700 11px Inter,"Noto Sans KR",Arial;white-space:nowrap}.csMenuBtn:hover,.csTopBtn:hover{background:#1b1b1b;color:#fff;border-color:#444}.csTopBtn{font-weight:800}.csTopBtn.primary{background:var(--red);border-color:var(--red);color:#fff}.csTopBtn.ghost{background:transparent}.csTopSpacer{flex:1}.csDropdown{position:absolute;left:0;top:calc(100% + 7px);width:260px;max-height:68vh;overflow:auto;padding:7px;background:rgba(20,20,20,.99);border:1px solid #3a3a3a;border-radius:10px;box-shadow:0 18px 48px rgba(0,0,0,.52);display:none}.csDropdown.open{display:block}.csDropdown>button{display:block;width:100%;text-align:left;background:transparent;border:0;color:#ddd;padding:9px 10px;border-radius:6px;font:700 12px Inter,"Noto Sans KR",Arial}.csDropdown>button:hover,.csDropdown .menuTpl.active{background:#fff;color:#111}.csLabel{font-size:10px;color:#777;padding:8px 10px 5px;letter-spacing:.08em}.csSep{border-top:1px solid #2f2f2f;margin:6px 0}.menuTpl{display:flex;align-items:center;justify-content:space-between;width:100%;gap:8px;padding:8px 10px;background:transparent;border:0;color:#ddd;border-radius:6px;text-align:left;font:700 11px Inter,"Noto Sans KR",Arial}.menuTpl small{color:#777;font-weight:600}.menuTpl.active small{color:#666}.menuTpl:hover,.menuTpl.hovered{background:#242424!important;color:#fff!important}.menuTpl.hovered small{color:#bdbdbd}.csDropdown #menuTemplateList{display:none!important}.csDropdown .csLabel{display:none!important}@media(max-width:850px){.topNav{flex-wrap:wrap}.csTopSpacer{display:none}.csTopBtn{padding:7px 9px;font-size:10px}}
+
+/* FONT SIZE FIX: slider values apply 1:1 to live card. */
+#card .title,#card .body{font-size:inherit;}
 </style>
 </head>
 <body>
@@ -317,7 +330,18 @@ body.safeOn #card:after{content:"SAFE AREA";position:absolute;inset:6%;border:1p
     <div class="field"><label>시간</label><input id="timeContent" placeholder="AUG 21, 2026 · 05:14 KST"></div>
     <div class="field"><label>시간대</label><select id="timeZoneContent"><option value="Asia/Seoul">한국시간 (KST)</option><option value="America/New_York">미국 동부시간 (ET)</option><option value="America/Los_Angeles">미국 서부시간 (PT)</option><option value="both">한국 + 미국 동부</option></select></div>
     <div class="row"><button onclick="nowTime()">현재 시간</button><button onclick="clearTime()">시간 삭제</button></div>
-    <p class="note">입력한 내용은 가운데 카드에 즉시 반영됩니다.</p>
+    <div class="section" style="border-top:1px solid #292929;padding-top:14px;margin-top:14px;border-bottom:0;margin-bottom:0">
+      <h3 style="font-size:10px;letter-spacing:.12em;margin:0 0 10px">BRAND · 워터마크</h3>
+      <div class="field"><label>메인 브랜드</label><input class="field-input" id="brandMainContent" value="WEST150" placeholder="WEST150"></div>
+      <div class="field"><label>서브 브랜드</label><input class="field-input" id="brandSubContent" value="DAILY" placeholder="DAILY"></div>
+      <div class="row"><button id="brandVisibleContent" type="button">워터마크 표시</button><button id="brandResetContent" type="button">기본값</button></div>
+    </div>
+    <div class="section" style="border-bottom:0;margin:14px 0 0;padding-bottom:0">
+      <h3 style="font-size:10px;letter-spacing:.12em;margin:0 0 10px">ACCENT · 강조 색상</h3>
+      <div id="accentPaletteContent" style="display:grid;grid-template-columns:repeat(6,1fr);gap:7px"></div>
+      <div class="field"><label>직접 색상</label><input class="field-input" id="accentColorContent" type="text" value="#b91522" placeholder="#b91522"></div>
+    </div>
+    <p class="note">입력한 내용과 브랜드·강조색은 가운데 카드에 즉시 반영됩니다.</p>
   </div>
 
   <div class="section menuSection" data-panel="typePanel">
@@ -462,7 +486,7 @@ const defs=[
 ];
 let cards=[blank()],idx=0,undos=[],redos=[],drag=null,activePointers=new Map(),pinchStart=null;
 
-function blank(){return{template:"editorial",title:"",body:"",source:"",time:"",photo:null,zoom:100,x:0,y:0,shade:55,updates:[],titleSize:68,bodySize:28,metaSize:18,letter:-4,line:1.02,weight:900,align:"left",bright:100,contrast:100,sat:100,mono:false,rotate:0,imageFit:"cover",blur:16,timeZone:"Asia/Seoul",contentY:0,pad:7,logo:null,logoSize:100,showLogo:true,designLock:false,titleFont:"default",bodyFont:"default",badgeText:""}}
+function blank(){return{template:"editorial",title:"",body:"",source:"",time:"",photo:null,zoom:100,x:0,y:0,shade:55,updates:[],titleSize:68,bodySize:28,metaSize:18,letter:-4,line:1.02,weight:900,align:"left",bright:100,contrast:100,sat:100,mono:false,rotate:0,imageFit:"cover",blur:16,timeZone:"Asia/Seoul",contentY:0,pad:7,logo:null,logoSize:100,showLogo:true,designLock:false,titleFont:"default",bodyFont:"default",badgeText:"",brandMain:"WEST150",brandSub:"DAILY",accent:"#b91522",showBrand:true}}
 const FONTS=[
  {id:"default",label:"템플릿 기본값",css:""},
   {id:"pretendard",label:"Pretendard (프리텐다드)",css:'"Pretendard Variable",Pretendard,sans-serif'},
@@ -510,7 +534,7 @@ function render(){
  if($("bodyContent")) $("bodyContent").value=a.body||"";
  if($("sourceContent")) $("sourceContent").value=a.source||"";
  if($("timeContent")) $("timeContent").value=a.time||"";
- if($("timeZoneContent")) $("timeZoneContent").value=a.timeZone||"Asia/Seoul";
+ if($("timeZoneContent")) $("timeZoneContent").value=a.timeZone||"Asia/Seoul";if($("brandMainContent")) $("brandMainContent").value=a.brandMain||"WEST150";if($("brandSubContent")) $("brandSubContent").value=a.brandSub||"DAILY";if($("accentColorContent")) $("accentColorContent").value=a.accent||"#b91522";if($("brandVisibleContent")){ $("brandVisibleContent").classList.toggle("on",a.showBrand!==false); $("brandVisibleContent").textContent=a.showBrand===false?"워터마크 숨김":"워터마크 표시";}if($("accentPaletteContent")){document.querySelectorAll("#accentPaletteContent .accentSwatch").forEach(b=>b.classList.toggle("active",b.dataset.c===(a.accent||"#b91522")));}
  $("zoom").value=a.zoom;$("px").value=a.x;$("py").value=a.y;$("shade").value=a.shade;$("blur").value=a.blur??16;$("timeZone").value=a.timeZone||"Asia/Seoul";
  $("titleSize").value=a.titleSize;$("bodySize").value=a.bodySize;$("metaSize").value=a.metaSize;$("letter").value=a.letter;$("line").value=a.line;$("weight").value=a.weight;
  $("bright").value=a.bright;$("contrast").value=a.contrast;$("sat").value=a.sat;$("rotate").value=a.rotate;$("contentY").value=a.contentY;$("pad").value=a.pad;$("logoSize").value=a.logoSize;$("designLock").checked=!!a.designLock;
@@ -520,18 +544,18 @@ function render(){
  $("titleSizeVal").textContent=a.titleSize+"px";$("bodySizeVal").textContent=a.bodySize+"px";$("metaSizeVal").textContent=a.metaSize+"px";$("letterVal").textContent=a.letter+"%";$("lineVal").textContent=a.line;$("brightVal").textContent=a.bright+"%";$("contrastVal").textContent=a.contrast+"%";$("satVal").textContent=a.sat+"%";$("rotateVal").textContent=a.rotate+"°";$("contentYVal").textContent=a.contentY+"%";$("padVal").textContent=a.pad+"%";$("logoSizeVal").textContent=a.logoSize+"%";
  $("tc").textContent=a.title.length+"자";$("bc").textContent=a.body.length+"자";
  $("zv").textContent=a.zoom+"%";$("xv").textContent=a.x+"%";$("yv").textContent=a.y+"%";$("sv").textContent=a.shade+"%";$("blurVal").textContent=(a.blur??16)+"px";
- let card=$("card");card.className="card "+a.template+(a.photo?" hasImage":"")+(a.photo&&a.imageFit==="contain"&&((a.blur??16)>0)?" image-contain-blur":"");if(a.photo&&a.imageFit==="contain"){card.style.setProperty("--blur-bg",`url("${a.photo}")`);card.style.setProperty("--blur-amount",`${a.blur??16}px`)}else{card.style.removeProperty("--blur-bg");card.style.removeProperty("--blur-amount")};$("img").style.objectFit=a.imageFit==="contain"?"contain":"cover";$("img").style.inset=a.imageFit==="contain"?"0":"-10%";$("img").style.width=a.imageFit==="contain"?"100%":"120%";$("img").style.height=a.imageFit==="contain"?"100%":"120%";$("img").style.background=a.imageFit==="contain"?(a.template==="clean"||a.template==="statement"?"#f1efe9":"#0b0b0b"):"";card.style.background="";
+ let card=$("card");card.className="card "+a.template+(a.photo?" hasImage":"")+(a.photo&&a.imageFit==="contain"&&((a.blur??16)>0)?" image-contain-blur":"");card.style.setProperty("--accent-color",a.accent||"#b91522");if(a.photo&&a.imageFit==="contain"){card.style.setProperty("--blur-bg",`url("${a.photo}")`);card.style.setProperty("--blur-amount",`${a.blur??16}px`)}else{card.style.removeProperty("--blur-bg");card.style.removeProperty("--blur-amount")};$("img").style.objectFit=a.imageFit==="contain"?"contain":"cover";$("img").style.inset=a.imageFit==="contain"?"0":"-10%";$("img").style.width=a.imageFit==="contain"?"100%":"120%";$("img").style.height=a.imageFit==="contain"?"100%":"120%";$("img").style.background=a.imageFit==="contain"?(a.template==="clean"||a.template==="statement"?"#f1efe9":"#0b0b0b"):"";card.style.background="";
  $("img").src=a.photo||"";
  $("img").style.transform=`translate(${a.x/2}%,${a.y/2}%) scale(${a.zoom/100}) rotate(${a.rotate}deg)`;
  $("img").style.filter=`brightness(${a.bright}%) contrast(${a.contrast}%) saturate(${a.sat}%) grayscale(${a.mono?100:0}%)`;
  let darkness=a.shade/100;
  $("overlay").style.background=a.photo?`linear-gradient(90deg,rgba(0,0,0,${darkness}),rgba(0,0,0,${Math.max(.04,darkness-.32)}))`:"";
- $("ptitle").textContent=a.title||"속보 제목을 입력하세요";
- $("ptitle").style.fontSize=`${Math.max(20,a.titleSize*.63)}px`;$("ptitle").style.fontWeight=a.weight;$("ptitle").style.letterSpacing=`${a.letter/100}em`;$("ptitle").style.lineHeight=a.line;$("ptitle").style.textAlign=a.align;
+ $("metaTop").textContent=a.showBrand===false?"":(a.brandMain||"WEST150");$("brandView").textContent=a.showBrand===false?"":((a.brandMain||"WEST150")+((a.brandSub||"")?" "+a.brandSub:""));$("brandView").style.opacity=a.showBrand===false?"0":"1";$("ptitle").textContent=a.title||"속보 제목을 입력하세요";
+ $("ptitle").style.fontSize=`${a.titleSize}px`;$("ptitle").style.fontWeight=a.weight;$("ptitle").style.letterSpacing=`${a.letter/100}em`;$("ptitle").style.lineHeight=a.line;$("ptitle").style.textAlign=a.align;
  $("ptitle").style.fontFamily=(a.titleFont&&a.titleFont!=="default")?fontCss(a.titleFont):templateTitleFont(a.template);
- $("pbody").style.fontSize=`${Math.max(13,a.bodySize*.55)}px`;$("pbody").style.textAlign=a.align;
+ $("pbody").style.fontSize=`${a.bodySize}px`;$("pbody").style.textAlign=a.align;
  $("pbody").style.fontFamily=(a.bodyFont&&a.bodyFont!=="default")?fontCss(a.bodyFont):DEFAULT_BODY_FONT;
- $("metaRight").style.fontSize=`${Math.max(8,a.metaSize*.5)}px`;$("psource").style.fontSize=`${Math.max(7,a.metaSize*.5)}px`;
+ $("metaRight").style.fontSize=`${a.metaSize}px`;$("psource").style.fontSize=`${a.metaSize}px`;
  $("card").style.paddingLeft=`${a.pad}%`;$("card").style.paddingRight=`${a.pad}%`;
  $("pbody").textContent=a.body||"핵심 내용을 입력하면 이곳에 미리보기가 표시됩니다.";
  $("psource").textContent=a.source?"SOURCE · "+a.source:"";
@@ -677,6 +701,13 @@ bindContentField("titleContent","title");
 bindContentField("bodyContent","body");
 bindContentField("sourceContent","source");
 bindContentField("timeContent","time");
+$("brandMainContent")&&$("brandMainContent").addEventListener("input",()=>{snap();c().brandMain=$("brandMainContent").value;render()});
+$("brandSubContent")&&$("brandSubContent").addEventListener("input",()=>{snap();c().brandSub=$("brandSubContent").value;render()});
+$("brandVisibleContent")&&$("brandVisibleContent").addEventListener("click",()=>{snap();c().showBrand=c().showBrand===false;render()});
+$("brandResetContent")&&$("brandResetContent").addEventListener("click",()=>{snap();c().brandMain="WEST150";c().brandSub="DAILY";c().showBrand=true;render()});
+const CONTENT_ACCENTS=["#b91522","#8c2f39","#1f4b5d","#6b4f2a","#6b5a3c","#3e4a43","#5b365e","#2d2d2d","#b08a42","#7a5137","#4f6173","#c1a35b"];
+if($("accentPaletteContent")&&!( $("accentPaletteContent").children.length )){$("accentPaletteContent").innerHTML=CONTENT_ACCENTS.map(c=>`<button type="button" class="accentSwatch" data-c="${c}" style="background:${c}" aria-label="강조색 ${c}"></button>`).join("");document.querySelectorAll("#accentPaletteContent .accentSwatch").forEach(b=>b.addEventListener("click",()=>{snap();c().accent=b.dataset.c;render()}));}
+$("accentColorContent")&&$("accentColorContent").addEventListener("change",()=>{let v=$("accentColorContent").value.trim();if(/^#[0-9a-fA-F]{6}$/.test(v)){snap();c().accent=v;render()}else{toast&&toast("색상은 #RRGGBB 형식으로 입력하세요")}});
 $("timeZoneContent")&&$("timeZoneContent").addEventListener("change",()=>{snap();c().timeZone=$("timeZoneContent").value;c().time=formatNow(c().timeZone);render()});
 ["zoom","px","py","shade","blur"].forEach(id=>$(id).addEventListener("input",()=>{c().zoom=+$("zoom").value;c().x=+$("px").value;c().y=+$("py").value;c().shade=+$("shade").value;c().blur=+$("blur").value;render()}));
 $("timeZone").addEventListener("change",()=>{snap();c().timeZone=$("timeZone").value;c().time=formatNow(c().timeZone);render()});
