@@ -3,32 +3,119 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>WEST150 EDITORIAL STUDIO</title>
+<meta name="theme-color" content="#f3efe6">
+<title>WEST150 EDITORIAL STUDIO — PREMIUM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+KR:wght@400;500;700;900&family=Noto+Serif+KR:wght@400;600;700;900&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box}html,body{margin:0;background:#e9e5dc;color:#171717;font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR","Helvetica Neue",Arial,sans-serif}
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
+@font-face{
+  font-family:"RIDIBatang";
+  src:url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_twelve@1.0/RIDIBatang.woff") format("woff");
+  font-weight:400;
+  font-style:normal;
+  font-display:swap;
+}
+:root{
+  --paper:#f3efe6;
+  --paper-2:#ebe6db;
+  --ink:#141210;
+  --muted:#6e6a62;
+  --line:#c9c2b4;
+  --line-soft:#d9d2c4;
+  --panel:#f7f4ec;
+  --accent:#9a1f24;
+  --accent-soft:rgba(154,31,36,.12);
+  --shadow:0 22px 70px rgba(20,18,12,.14);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--paper);color:var(--ink);font-family:"Pretendard",Inter,"Noto Sans KR",-apple-system,sans-serif}
 button,input,textarea,select{font:inherit}button{cursor:pointer}
-header{height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;background:#f2efe8;border-bottom:1px solid #cfc9bd;position:sticky;top:0;z-index:100}
-.logo{font-size:13px;font-weight:900;letter-spacing:.12em}.edition{font:700 9px Inter;letter-spacing:.15em;color:#777}
-nav{position:sticky;top:58px;z-index:99;display:flex;gap:5px;overflow:auto;padding:8px;background:rgba(242,239,232,.96);border-bottom:1px solid #cfc9bd;backdrop-filter:blur(12px)}
-nav::-webkit-scrollbar{display:none}nav button{white-space:nowrap;border:1px solid #bbb4a8;background:#ece8df;color:#5d584f;border-radius:7px;padding:9px 12px;font-size:10px;font-weight:800}
-nav button.active{background:#181818;color:#f5f1e9;border-color:#181818}
-main{display:grid;grid-template-columns:400px minmax(0,1fr);gap:20px;padding:16px;min-height:calc(100vh - 107px)}
-.panel{display:none}.panel.active{display:block}.box{background:#f3f0e9;border:1px solid #cfc9bd;border-radius:10px;padding:13px;margin-bottom:10px}
-h2{font:900 10px Inter;letter-spacing:.13em;margin:0 0 10px}
-.note{font-size:10px;line-height:1.6;color:#777}.field{margin:10px 0}label{display:flex;justify-content:space-between;font-size:9px;color:#777;margin-bottom:5px}
-input[type=text],input[type=file],textarea,select{width:100%;background:#e9e5dc;color:#171717;border:1px solid #c2bbaf;border-radius:6px;padding:9px;font-size:11px}
-textarea{min-height:90px;resize:vertical}input[type=range]{width:100%}
-.row{display:flex;gap:6px;flex-wrap:wrap}.row button{background:#e7e2d9;border:1px solid #bbb4a8;border-radius:6px;padding:8px 10px;font-size:10px;color:#333}.row .primary{background:#171717;color:#fff;border-color:#171717}.row button.active{background:#171717;color:#fff;border-color:#171717}
-.layouts{display:grid;grid-template-columns:1fr 1fr;gap:7px}.layoutBtn{background:#ece8df;border:1px solid #c4bdb1;text-align:left;border-radius:7px;padding:10px;min-height:60px}.layoutBtn.active{background:#171717;color:#fff;border-color:#171717}.layoutBtn b{display:block;font:900 9px Inter}.layoutBtn small{display:block;font-size:8px;color:#888;margin-top:4px}
-.preview{display:flex;justify-content:center;align-items:flex-start}.stage{position:sticky;top:124px;text-align:center}.canvasWrap{width:min(68vw,620px);aspect-ratio:4/5;background:#fff;box-shadow:0 18px 60px rgba(0,0,0,.16);overflow:hidden}canvas{display:block;width:100%;height:100%}.status{font-size:9px;color:#777;margin-top:8px}
-.chips{display:flex;gap:6px;overflow:auto;padding-bottom:4px}.chip{white-space:nowrap;border:1px solid #c2bbaf;border-radius:999px;padding:7px 9px;font-size:9px;color:#666;cursor:pointer}.chip.active{background:#171717;color:#f5f1e9;border-color:#171717}
-hr{border:0;border-top:1px solid #d0c9bd;margin:12px 0}
-@media(max-width:850px){main{grid-template-columns:1fr;padding:9px}.preview{order:-1}.stage{position:relative;top:auto}.canvasWrap{width:min(92vw,540px)}}
+header{
+  height:58px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 18px;background:rgba(247,244,236,.94);border-bottom:1px solid var(--line);
+  position:sticky;top:0;z-index:100;backdrop-filter:blur(14px);
+}
+.logo{font:800 12px Inter,sans-serif;letter-spacing:.18em}
+.logo span{display:block;font:600 8px Inter;letter-spacing:.22em;color:var(--muted);margin-top:3px}
+.edition{font:700 9px Inter;letter-spacing:.16em;color:var(--muted)}
+nav{
+  position:sticky;top:58px;z-index:99;display:flex;gap:5px;overflow:auto;
+  padding:8px 12px;background:rgba(247,244,236,.92);border-bottom:1px solid var(--line);
+  backdrop-filter:blur(12px);
+}
+nav::-webkit-scrollbar{display:none}
+nav button{
+  white-space:nowrap;border:1px solid var(--line);background:var(--paper-2);
+  color:var(--muted);border-radius:6px;padding:9px 12px;font:800 10px Inter;letter-spacing:.06em;
+}
+nav button.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+main{display:grid;grid-template-columns:min(420px,38vw) minmax(0,1fr);gap:22px;padding:18px;min-height:calc(100vh - 107px)}
+.panel{display:none}.panel.active{display:block}
+.box{
+  background:var(--panel);border:1px solid var(--line-soft);border-radius:8px;
+  padding:14px;margin-bottom:11px;box-shadow:0 1px 0 rgba(255,255,255,.5) inset;
+}
+h2{font:800 10px Inter;letter-spacing:.16em;margin:0 0 12px;color:var(--ink)}
+.note{font-size:10px;line-height:1.65;color:var(--muted);margin:10px 0 0}
+.field{margin:11px 0}
+label{display:flex;justify-content:space-between;font:600 9px Inter;letter-spacing:.08em;color:var(--muted);margin-bottom:6px}
+input[type=text],input[type=file],textarea,select{
+  width:100%;background:var(--paper);color:var(--ink);border:1px solid var(--line);
+  border-radius:6px;padding:10px 11px;font-size:12px;outline:0;
+}
+input[type=text]:focus,textarea:focus,select:focus{border-color:#8a8376;box-shadow:0 0 0 3px rgba(20,18,12,.06)}
+textarea{min-height:96px;resize:vertical;line-height:1.5}
+input[type=range]{width:100%;accent-color:var(--ink)}
+.row{display:flex;gap:6px;flex-wrap:wrap}
+.row button{
+  background:var(--paper-2);border:1px solid var(--line);border-radius:6px;
+  padding:8px 11px;font:700 10px Inter;color:#3a3630;
+}
+.row .primary{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.row button.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.layouts{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.layoutBtn{
+  background:var(--paper);border:1px solid var(--line);text-align:left;border-radius:7px;
+  padding:11px 12px;min-height:64px;transition:border-color .15s,background .15s;
+}
+.layoutBtn:hover{border-color:#9a9284}
+.layoutBtn.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.layoutBtn b{display:block;font:800 9px Inter;letter-spacing:.1em}
+.layoutBtn small{display:block;font:500 9px "Noto Sans KR",sans-serif;opacity:.55;margin-top:5px;letter-spacing:0}
+.layoutBtn.active small{opacity:.65;color:inherit}
+.preview{display:flex;justify-content:center;align-items:flex-start}
+.stage{position:sticky;top:124px;text-align:center}
+.canvasWrap{
+  width:min(64vw,600px);aspect-ratio:4/5;background:#fff;
+  box-shadow:var(--shadow);overflow:hidden;border:1px solid rgba(20,18,12,.06);
+}
+canvas{display:block;width:100%;height:100%}
+.status{font:600 9px Inter;letter-spacing:.1em;color:var(--muted);margin-top:12px}
+.chips{display:flex;gap:6px;overflow:auto;padding-bottom:4px}
+.chip{
+  white-space:nowrap;border:1px solid var(--line);border-radius:999px;
+  padding:7px 11px;font:700 9px Inter;letter-spacing:.06em;color:var(--muted);cursor:pointer;
+}
+.chip.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+hr{border:0;border-top:1px solid var(--line-soft);margin:14px 0}
+.premium-tag{
+  display:inline-flex;align-items:center;gap:6px;font:700 8px Inter;letter-spacing:.14em;
+  color:var(--accent);border:1px solid var(--accent-soft);background:var(--accent-soft);
+  padding:5px 8px;border-radius:4px;margin-bottom:10px;
+}
+@media(max-width:900px){
+  main{grid-template-columns:1fr;padding:10px}
+  .preview{order:-1}
+  .stage{position:relative;top:auto}
+  .canvasWrap{width:min(92vw,520px)}
+}
 </style>
 </head>
 <body>
 <header>
-  <div class="logo">WEST150 EDITORIAL STUDIO</div>
+  <div class="logo">WEST150 EDITORIAL<span>PREMIUM STUDIO · 1080×1350</span></div>
   <div class="edition">INDEPENDENT EDITORIAL SYSTEM</div>
 </header>
 <nav>
@@ -45,35 +132,56 @@ hr{border:0;border-top:1px solid #d0c9bd;margin:12px 0}
 <section>
   <div class="panel active" id="design">
     <div class="box">
-      <h2>EDITORIAL SYSTEM</h2>
+      <div class="premium-tag">PREMIUM EDITORIAL</div>
+      <h2>LAYOUT SYSTEM</h2>
       <div class="layouts">
         <button class="layoutBtn active" data-layout="cover"><b>MAGAZINE COVER</b><small>매거진 표지</small></button>
         <button class="layoutBtn" data-layout="photo"><b>PHOTO ESSAY</b><small>사진 중심</small></button>
         <button class="layoutBtn" data-layout="type"><b>BIG TYPE</b><small>대형 타이포</small></button>
         <button class="layoutBtn" data-layout="article"><b>2-COLUMN</b><small>기사형</small></button>
         <button class="layoutBtn" data-layout="quote"><b>QUOTE</b><small>인용문</small></button>
-        <button class="layoutBtn" data-layout="interview"><b>INTERVIEW</b><small>Q&A</small></button>
+        <button class="layoutBtn" data-layout="interview"><b>INTERVIEW</b><small>Q&amp;A</small></button>
         <button class="layoutBtn" data-layout="timeline"><b>TIMELINE</b><small>연표</small></button>
         <button class="layoutBtn" data-layout="data"><b>DATA</b><small>숫자·통계</small></button>
         <button class="layoutBtn" data-layout="compare"><b>COMPARE</b><small>비교</small></button>
         <button class="layoutBtn" data-layout="conclusion"><b>CONCLUSION</b><small>핵심 정리</small></button>
       </div>
+      <p class="note">매거진 아트 디렉션 기준으로 여백·타이포·사진 비율을 맞춘 10종 레이아웃입니다.</p>
     </div>
   </div>
 
   <div class="panel" id="type">
     <div class="box">
       <h2>TYPOGRAPHY</h2>
-      <div class="field"><label>제목 크기 <span id="tv">78</span></label><input id="titleSize" type="range" min="34" max="110" value="78"></div>
+      <div class="field"><label>제목 크기 <span id="tv">78</span></label><input id="titleSize" type="range" min="34" max="120" value="78"></div>
       <div class="field"><label>본문 크기 <span id="bv">22</span></label><input id="bodySize" type="range" min="14" max="38" value="22"></div>
       <div class="field"><label>자간 <span id="kv">-2</span></label><input id="tracking" type="range" min="-8" max="8" value="-2"></div>
       <div class="field"><label>줄간격 <span id="lhv">1.05</span></label><input id="lineHeight" type="range" min=".85" max="1.4" value="1.05" step=".01"></div>
       <div class="field"><label>굵기</label>
         <select id="weight">
           <option value="500">Medium</option>
+          <option value="600">SemiBold</option>
           <option value="700">Bold</option>
           <option value="800">ExtraBold</option>
           <option value="900" selected>Black</option>
+        </select>
+      </div>
+      <div class="field"><label>제목 서체</label>
+        <select id="titleFont">
+          <option value="serif" selected>Editorial Serif (Cormorant)</option>
+          <option value="ridi">RIDI Batang (리디바탕)</option>
+          <option value="pretendard">Pretendard (프리텐다드)</option>
+          <option value="display">Display Sans (Inter)</option>
+          <option value="kr-serif">Noto Serif KR</option>
+          <option value="kr-sans">Noto Sans KR</option>
+        </select>
+      </div>
+      <div class="field"><label>본문 서체</label>
+        <select id="bodyFont">
+          <option value="sans" selected>Inter / Noto Sans</option>
+          <option value="pretendard">Pretendard (프리텐다드)</option>
+          <option value="ridi">RIDI Batang (리디바탕)</option>
+          <option value="kr-serif">Noto Serif KR</option>
         </select>
       </div>
       <div class="row" id="alignRow">
@@ -86,7 +194,7 @@ hr{border:0;border-top:1px solid #d0c9bd;margin:12px 0}
 
   <div class="panel" id="photo">
     <div class="box">
-      <h2>PHOTO ESSAY</h2>
+      <h2>PHOTO</h2>
       <div class="field"><label>사진 업로드</label><input id="photoFile" type="file" accept="image/*"></div>
       <div class="field"><label>확대 <span id="zv">100%</span></label><input id="zoom" type="range" min="70" max="180" value="100"></div>
       <div class="field"><label>밝기 <span id="brv">100%</span></label><input id="bright" type="range" min="60" max="150" value="100"></div>
@@ -96,14 +204,14 @@ hr{border:0;border-top:1px solid #d0c9bd;margin:12px 0}
         <button id="monoBtn">흑백</button>
         <button id="resetPhotoBtn">초기화</button>
       </div>
-      <p class="note">사진을 강하게 보여주고 텍스트를 절제하는 방향으로 설계했습니다.</p>
+      <p class="note">사진은 cover 크롭·그라데이션 오버레이로 처리됩니다. 흑백은 에디토리얼 포트폴리오 톤에 맞습니다.</p>
     </div>
   </div>
 
   <div class="panel" id="grid">
     <div class="box">
       <h2>EDITORIAL GRID</h2>
-      <div class="field"><label>여백 <span id="pv">7%</span></label><input id="pad" type="range" min="4" max="15" value="7"></div>
+      <div class="field"><label>여백 <span id="pv">7%</span></label><input id="pad" type="range" min="4" max="14" value="7"></div>
       <div class="field"><label>컬럼</label>
         <select id="columns">
           <option value="12">12 COLUMN</option>
@@ -115,13 +223,13 @@ hr{border:0;border-top:1px solid #d0c9bd;margin:12px 0}
         <button id="gridBtn">GRID ON/OFF</button>
         <button id="safeBtn">SAFE AREA</button>
       </div>
-      <p class="note">여백·컬럼·사진 비율을 중심으로 편집합니다.</p>
+      <p class="note">인쇄·SNS 세이프 영역을 기준으로 여백을 잡습니다.</p>
     </div>
   </div>
 
   <div class="panel" id="brand">
     <div class="box">
-      <h2>BRAND & CAPTION</h2>
+      <h2>BRAND &amp; CAPTION</h2>
       <div class="field"><label>브랜드</label><input id="brand" type="text" value="WEST150"></div>
       <div class="field"><label>섹션</label><input id="section" type="text" value="EDITORIAL"></div>
       <div class="field"><label>작성/저자</label><input id="author" type="text" value=""></div>
@@ -132,7 +240,23 @@ hr{border:0;border-top:1px solid #d0c9bd;margin:12px 0}
         <button id="brandTextBtn" class="active">브랜드 텍스트</button>
         <button id="darkBtn">DARK MODE</button>
       </div>
-      <p class="note">브랜드 텍스트와 로고 이미지는 각각 켜고 끌 수 있습니다.</p>
+      <hr>
+      <h2>WATERMARK</h2>
+      <div class="field"><label>워터마크 문구</label><input id="watermark" type="text" value="" placeholder="예: WEST150 · CONFIDENTIAL"></div>
+      <div class="field"><label>불투명도 <span id="wmv">18%</span></label><input id="wmOpacity" type="range" min="4" max="40" value="18"></div>
+      <div class="field"><label>크기 <span id="wms">28</span></label><input id="wmSize" type="range" min="14" max="56" value="28"></div>
+      <div class="field"><label>위치</label>
+        <select id="wmPos">
+          <option value="diagonal">대각선 (기본)</option>
+          <option value="center">중앙</option>
+          <option value="bottom">하단</option>
+          <option value="top">상단</option>
+        </select>
+      </div>
+      <div class="row">
+        <button id="wmBtn" class="active">워터마크 표시</button>
+      </div>
+      <p class="note">비우면 그려지지 않습니다. 문구 입력 후 표시를 켜 주세요.</p>
     </div>
   </div>
 
@@ -150,13 +274,13 @@ hr{border:0;border-top:1px solid #d0c9bd;margin:12px 0}
       </div>
       <hr>
       <div class="chips" id="chips"></div>
-      <p class="note">하나의 완성된 STORY를 카드 단위로 구성합니다.</p>
+      <p class="note">한 편의 스토리를 카드 시퀀스로 구성합니다.</p>
     </div>
   </div>
 
   <div class="panel" id="save">
     <div class="box">
-      <h2>SAVE</h2>
+      <h2>EXPORT</h2>
       <div class="row">
         <button class="primary" id="savePngBtn">현재 카드 PNG</button>
         <button id="saveAllBtn">전체 카드 PNG</button>
@@ -164,7 +288,7 @@ hr{border:0;border-top:1px solid #d0c9bd;margin:12px 0}
         <button id="loadProjectBtn">프로젝트 불러오기</button>
       </div>
       <hr>
-      <p class="note">1080 × 1350 · 세로 규격<br>사진이 많으면 자동저장이 실패할 수 있습니다. 중요 작업은 프로젝트 저장을 권장합니다.</p>
+      <p class="note">1080 × 1350 · 세로 규격<br>미리보기와 저장이 동일한 Canvas 파이프라인이라 결과가 일치합니다.</p>
     </div>
   </div>
 </section>
@@ -182,7 +306,14 @@ hr{border:0;border-top:1px solid #d0c9bd;margin:12px 0}
 <script>
 (() => {
   const $ = id => document.getElementById(id);
-  const KEY = "west150_editorial_independent_v3";
+  const KEY = "west150_editorial_premium_v1";
+
+  const SERIF = '"Cormorant Garamond","Noto Serif KR",Georgia,serif';
+  const SANS = 'Inter,"Noto Sans KR","Pretendard",Arial,sans-serif';
+  const KR_SERIF = '"Noto Serif KR",Georgia,serif';
+  const KR_SANS = '"Noto Sans KR",Inter,sans-serif';
+  const PRETENDARD = '"Pretendard","Pretendard Variable",Inter,"Noto Sans KR",sans-serif';
+  const RIDI = '"RIDIBatang","Noto Serif KR",Georgia,serif';
 
   const defaults = {
     layout: "cover",
@@ -198,6 +329,11 @@ hr{border:0;border-top:1px solid #d0c9bd;margin:12px 0}
     logoOn: true,
     brandTextOn: true,
     dark: false,
+    watermark: "",
+    wmOn: true,
+    wmOpacity: 18,
+    wmSize: 28,
+    wmPos: "diagonal",
     mono: false,
     zoom: 100,
     bright: 100,
@@ -212,7 +348,9 @@ hr{border:0;border-top:1px solid #d0c9bd;margin:12px 0}
     bodySize: 22,
     tracking: -2,
     lineHeight: 1.05,
-    weight: 900
+    weight: 900,
+    titleFont: "serif",
+    bodyFont: "sans"
   };
 
   let S = { ...defaults };
@@ -220,31 +358,39 @@ hr{border:0;border-top:1px solid #d0c9bd;margin:12px 0}
   let idx = 0;
   let drawToken = 0;
 
-  function clone(o) {
-    return JSON.parse(JSON.stringify(o));
-  }
-
-  function fmt(n) {
-    return String(n).padStart(2, "0");
-  }
+  function clone(o) { return JSON.parse(JSON.stringify(o)); }
+  function fmt(n) { return String(n).padStart(2, "0"); }
 
   function persist() {
     try {
-      localStorage.setItem(KEY, JSON.stringify({ version: 3, cards, idx }));
+      localStorage.setItem(KEY, JSON.stringify({ version: 1, cards, idx }));
       return true;
     } catch (e) {
-      console.warn("localStorage 저장 실패:", e);
       return false;
     }
   }
 
   function sync() {
     cards[idx] = clone(S);
-    const ok = persist();
-    return ok;
+    return persist();
   }
 
-  // —— UI bindings ——
+  function titleFamily() {
+    if (S.titleFont === "display") return SANS;
+    if (S.titleFont === "pretendard") return PRETENDARD;
+    if (S.titleFont === "ridi") return RIDI;
+    if (S.titleFont === "kr-serif") return KR_SERIF;
+    if (S.titleFont === "kr-sans") return KR_SANS;
+    return SERIF;
+  }
+  function bodyFamily() {
+    if (S.bodyFont === "pretendard") return PRETENDARD;
+    if (S.bodyFont === "ridi") return RIDI;
+    if (S.bodyFont === "kr-serif") return KR_SERIF;
+    return SANS;
+  }
+
+  // —— UI ——
   document.querySelectorAll(".tab").forEach(btn => {
     btn.addEventListener("click", () => {
       document.querySelectorAll(".tab").forEach(x => x.classList.remove("active"));
@@ -258,8 +404,7 @@ hr{border:0;border-top:1px solid #d0c9bd;margin:12px 0}
     btn.addEventListener("click", () => {
       S.layout = btn.dataset.layout;
       document.querySelectorAll(".layoutBtn").forEach(x => x.classList.toggle("active", x === btn));
-      sync();
-      draw();
+      sync(); draw();
     });
   });
 
@@ -267,38 +412,39 @@ hr{border:0;border-top:1px solid #d0c9bd;margin:12px 0}
     btn.addEventListener("click", () => {
       S.align = btn.dataset.align;
       document.querySelectorAll("#alignRow button").forEach(x => x.classList.toggle("active", x === btn));
-      sync();
-      draw();
+      sync(); draw();
     });
   });
 
   function bindText(id, key) {
     const el = $(id);
     if (!el) return;
-    el.addEventListener("input", () => {
-      S[key] = el.value;
-      sync();
-      draw();
-    });
+    el.addEventListener("input", () => { S[key] = el.value; sync(); draw(); });
   }
-
   function bindNum(id, key) {
     const el = $(id);
     if (!el) return;
-    el.addEventListener("input", () => {
-      S[key] = Number(el.value);
-      sync();
-      draw();
-    });
+    el.addEventListener("input", () => { S[key] = Number(el.value); sync(); draw(); });
   }
 
-  ["title", "body", "page", "brand", "section", "author", "source"].forEach(k => bindText(k, k));
-  ["titleSize", "bodySize", "tracking", "lineHeight", "weight", "zoom", "bright", "contrast", "sat", "pad"].forEach(k => bindNum(k, k));
+  ["title", "body", "page", "brand", "section", "author", "source", "watermark"].forEach(k => bindText(k, k));
+  ["titleSize", "bodySize", "tracking", "lineHeight", "weight", "zoom", "bright", "contrast", "sat", "pad", "wmOpacity", "wmSize"].forEach(k => bindNum(k, k));
 
   $("columns").addEventListener("change", () => {
     S.columns = Number($("columns").value) || 12;
-    sync();
-    draw();
+    sync(); draw();
+  });
+  $("titleFont").addEventListener("change", () => {
+    S.titleFont = $("titleFont").value;
+    sync(); draw();
+  });
+  $("bodyFont").addEventListener("change", () => {
+    S.bodyFont = $("bodyFont").value;
+    sync(); draw();
+  });
+  $("wmPos").addEventListener("change", () => {
+    S.wmPos = $("wmPos").value;
+    sync(); draw();
   });
 
   function toggle(btnId, key) {
@@ -306,31 +452,22 @@ hr{border:0;border-top:1px solid #d0c9bd;margin:12px 0}
     btn.addEventListener("click", () => {
       S[key] = !S[key];
       btn.classList.toggle("active", S[key]);
-      sync();
-      draw();
+      sync(); draw();
     });
   }
-
   toggle("monoBtn", "mono");
   toggle("gridBtn", "showGrid");
   toggle("safeBtn", "safe");
   toggle("logoBtn", "logoOn");
   toggle("brandTextBtn", "brandTextOn");
   toggle("darkBtn", "dark");
+  toggle("wmBtn", "wmOn");
 
   $("resetPhotoBtn").addEventListener("click", () => {
-    S.zoom = 100;
-    S.bright = 100;
-    S.contrast = 100;
-    S.sat = 100;
-    S.mono = false;
-    $("zoom").value = 100;
-    $("bright").value = 100;
-    $("contrast").value = 100;
-    $("sat").value = 100;
+    Object.assign(S, { zoom: 100, bright: 100, contrast: 100, sat: 100, mono: false });
+    ["zoom", "bright", "contrast", "sat"].forEach(k => $(k).value = 100);
     $("monoBtn").classList.remove("active");
-    sync();
-    draw();
+    sync(); draw();
   });
 
   function readFile(file, cb) {
@@ -339,21 +476,11 @@ hr{border:0;border-top:1px solid #d0c9bd;margin:12px 0}
     r.onload = () => cb(r.result);
     r.readAsDataURL(file);
   }
-
   $("photoFile").addEventListener("change", e => {
-    readFile(e.target.files[0], v => {
-      S.photo = v;
-      sync();
-      draw();
-    });
+    readFile(e.target.files[0], v => { S.photo = v; sync(); draw(); });
   });
-
   $("logoFile").addEventListener("change", e => {
-    readFile(e.target.files[0], v => {
-      S.logo = v;
-      sync();
-      draw();
-    });
+    readFile(e.target.files[0], v => { S.logo = v; sync(); draw(); });
   });
 
   $("addCardBtn").addEventListener("click", () => {
@@ -363,11 +490,7 @@ hr{border:0;border-top:1px solid #d0c9bd;margin:12px 0}
     cards[idx].page = `${fmt(idx + 1)} / ${fmt(Math.max(cards.length, 8))}`;
     loadState(cards[idx]);
   });
-
-  $("dupCardBtn").addEventListener("click", () => {
-    $("addCardBtn").click();
-  });
-
+  $("dupCardBtn").addEventListener("click", () => $("addCardBtn").click());
   $("prevCardBtn").addEventListener("click", () => moveCard(-1));
   $("nextCardBtn").addEventListener("click", () => moveCard(1));
 
@@ -394,16 +517,16 @@ hr{border:0;border-top:1px solid #d0c9bd;margin:12px 0}
 
   function loadState(o) {
     S = { ...defaults, ...clone(o) };
-    if (S.brandTextOn === undefined) S.brandTextOn = true;
-    if (S.columns === undefined) S.columns = 12;
-
-    ["title", "body", "page", "brand", "section", "author", "source"].forEach(k => {
+    ["title", "body", "page", "brand", "section", "author", "source", "watermark"].forEach(k => {
       if ($(k)) $(k).value = S[k] ?? "";
     });
-    ["titleSize", "bodySize", "tracking", "lineHeight", "weight", "zoom", "bright", "contrast", "sat", "pad"].forEach(k => {
+    ["titleSize", "bodySize", "tracking", "lineHeight", "weight", "zoom", "bright", "contrast", "sat", "pad", "wmOpacity", "wmSize"].forEach(k => {
       if ($(k)) $(k).value = S[k];
     });
     $("columns").value = String(S.columns || 12);
+    if ($("titleFont")) $("titleFont").value = S.titleFont || "serif";
+    if ($("bodyFont")) $("bodyFont").value = S.bodyFont || "sans";
+    if ($("wmPos")) $("wmPos").value = S.wmPos || "diagonal";
 
     document.querySelectorAll(".layoutBtn").forEach(b => b.classList.toggle("active", b.dataset.layout === S.layout));
     document.querySelectorAll("#alignRow button").forEach(b => b.classList.toggle("active", b.dataset.align === S.align));
@@ -413,12 +536,13 @@ hr{border:0;border-top:1px solid #d0c9bd;margin:12px 0}
     $("logoBtn").classList.toggle("active", !!S.logoOn);
     $("brandTextBtn").classList.toggle("active", !!S.brandTextOn);
     $("darkBtn").classList.toggle("active", !!S.dark);
+    if ($("wmBtn")) $("wmBtn").classList.toggle("active", S.wmOn !== false);
 
     chips();
     draw();
   }
 
-  // —— Canvas helpers ——
+  // —— Canvas ——
   function loadImage(src) {
     return new Promise(resolve => {
       if (!src) return resolve(null);
@@ -427,6 +551,19 @@ hr{border:0;border-top:1px solid #d0c9bd;margin:12px 0}
       i.onerror = () => resolve(null);
       i.src = src;
     });
+  }
+
+  async function ensureFonts() {
+    try {
+      await document.fonts.load(`600 48px ${SERIF}`);
+      await document.fonts.load(`900 48px ${SANS}`);
+      await document.fonts.load(`700 32px ${KR_SERIF}`);
+      await document.fonts.load(`400 22px ${KR_SANS}`);
+      await document.fonts.load(`700 48px ${PRETENDARD}`);
+      await document.fonts.load(`400 48px ${RIDI}`);
+      await document.fonts.load(`700 48px ${RIDI}`);
+      await document.fonts.ready;
+    } catch (_) {}
   }
 
   function drawImageCover(ctx, img, x, y, w, h) {
@@ -443,38 +580,34 @@ hr{border:0;border-top:1px solid #d0c9bd;margin:12px 0}
     ctx.restore();
   }
 
-  function setLetterSpacing(ctx, px) {
+  function setTracking(ctx, emPx) {
     try {
-      if ("letterSpacing" in ctx) ctx.letterSpacing = px + "px";
+      if ("letterSpacing" in ctx) ctx.letterSpacing = emPx + "px";
     } catch (_) {}
   }
 
   function wrapText(ctx, text, x, y, maxWidth, lineHeight, limit = 8, align = "left") {
     const raw = String(text || "");
     const lines = [];
-    // 공백 기준 우선, 없으면 글자 단위
-    const parts = raw.includes(" ") ? raw.split(/\s+/) : [...raw];
+    const hasSpace = /\s/.test(raw);
+    const parts = hasSpace ? raw.split(/\s+/) : [...raw];
     let cur = "";
-
     for (const part of parts) {
-      const next = cur ? (raw.includes(" ") ? cur + " " + part : cur + part) : part;
+      const next = cur ? (hasSpace ? cur + " " + part : cur + part) : part;
       if (ctx.measureText(next).width > maxWidth && cur) {
         lines.push(cur);
         cur = part;
         if (lines.length >= limit) break;
-      } else {
-        cur = next;
-      }
+      } else cur = next;
     }
     if (cur && lines.length < limit) lines.push(cur);
-
     ctx.textAlign = align;
     lines.forEach((line, i) => ctx.fillText(line, x, y + i * lineHeight));
     ctx.textAlign = "left";
     return y + lines.length * lineHeight;
   }
 
-  function strokeLine(ctx, x1, y1, x2, y2, color, width = 1) {
+  function line(ctx, x1, y1, x2, y2, color, width = 1) {
     ctx.save();
     ctx.strokeStyle = color;
     ctx.lineWidth = width;
@@ -485,41 +618,49 @@ hr{border:0;border-top:1px solid #d0c9bd;margin:12px 0}
     ctx.restore();
   }
 
+  function hairframe(ctx, inset, color) {
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1;
+    ctx.strokeRect(inset, inset, 1080 - inset * 2, 1350 - inset * 2);
+    ctx.restore();
+  }
+
+  function metaLabel(ctx, text, x, y, color) {
+    ctx.fillStyle = color;
+    ctx.font = `700 13px ${SANS}`;
+    setTracking(ctx, 2.4);
+    ctx.fillText(String(text || "").toUpperCase(), x, y);
+    setTracking(ctx, 0);
+  }
+
   async function draw() {
     const token = ++drawToken;
+    await ensureFonts();
+    if (token !== drawToken) return;
+
     const canvas = $("canvas");
     const ctx = canvas.getContext("2d");
-    const W = 1080;
-    const H = 1350;
+    const W = 1080, H = 1350;
     const p = W * (S.pad / 100);
     const ww = W - p * 2;
 
     const dark = !!S.dark;
-    const bg = dark ? "#111111" : "#f5f1e8";
-    const fg = dark ? "#f5f1e8" : "#171717";
-    const muted = dark ? "#aaaaaa" : "#777777";
-    const accent = dark ? "#e4ddd1" : "#9b1c20";
+    const bg = dark ? "#0e0e0f" : "#f5f1e8";
+    const fg = dark ? "#f4f0e7" : "#141210";
+    const muted = dark ? "#a8a49c" : "#6e6a62";
+    const hair = dark ? "rgba(244,240,231,.14)" : "rgba(20,18,16,.14)";
+    const accent = dark ? "#d4c7b4" : "#9a1f24";
+    const paperSoft = dark ? "#161617" : "#efeae0";
 
     const photo = await loadImage(S.photo);
     const logo = await loadImage(S.logo);
-    if (token !== drawToken) return; // 최신 draw만 적용
+    if (token !== drawToken) return;
 
     ctx.clearRect(0, 0, W, H);
     ctx.fillStyle = bg;
     ctx.fillRect(0, 0, W, H);
-    setLetterSpacing(ctx, S.tracking);
-
-    const drawHeader = (color = accent, pageColor = muted) => {
-      ctx.fillStyle = color;
-      ctx.font = "900 16px Arial";
-      ctx.textAlign = "left";
-      ctx.fillText((S.section || "EDITORIAL").toUpperCase(), p, 55);
-      ctx.fillStyle = pageColor;
-      ctx.font = "700 11px Arial";
-      ctx.textAlign = "right";
-      ctx.fillText(S.page || "01 / 01", W - p, 55);
-      ctx.textAlign = "left";
-    };
+    setTracking(ctx, S.tracking * 0.35);
 
     const titleAlign = () => {
       const a = S.align === "center" ? "center" : S.align === "right" ? "right" : "left";
@@ -527,287 +668,444 @@ hr{border:0;border-top:1px solid #d0c9bd;margin:12px 0}
       return { a, x };
     };
 
-    const drawTitle = (y, maxW = ww, limit = 5, color = fg) => {
-      const { a, x } = titleAlign();
-      ctx.fillStyle = color;
-      ctx.font = `${S.weight} ${S.titleSize}px Arial`;
-      return wrapText(ctx, S.title, x, y, maxW, S.titleSize * S.lineHeight, limit, a);
+    const drawHeader = (c1 = accent, c2 = muted) => {
+      metaLabel(ctx, S.section || "EDITORIAL", p, 52, c1);
+      ctx.fillStyle = c2;
+      ctx.font = `600 12px ${SANS}`;
+      setTracking(ctx, 1.5);
+      ctx.textAlign = "right";
+      ctx.fillText(S.page || "01 / 01", W - p, 52);
+      ctx.textAlign = "left";
+      setTracking(ctx, 0);
+      line(ctx, p, 72, W - p, 72, hair, 1);
     };
 
-    const drawBody = (x, y, maxW, limit = 7, align = "left", color = muted) => {
+    const drawTitle = (y, maxW = ww, limit = 5, color = fg, size = S.titleSize) => {
+      const { a, x } = titleAlign();
       ctx.fillStyle = color;
-      ctx.font = `400 ${S.bodySize}px Arial`;
-      return wrapText(ctx, S.body, x, y, maxW, S.bodySize * 1.55, limit, align);
+      ctx.font = `${S.weight} ${size}px ${titleFamily()}`;
+      setTracking(ctx, S.tracking * 0.45);
+      const end = wrapText(ctx, S.title, x, y, maxW, size * S.lineHeight, limit, a);
+      setTracking(ctx, 0);
+      return end;
+    };
+
+    const drawBody = (x, y, maxW, limit = 7, align = "left", color = muted, size = S.bodySize) => {
+      ctx.fillStyle = color;
+      ctx.font = `400 ${size}px ${bodyFamily()}`;
+      setTracking(ctx, 0.2);
+      const end = wrapText(ctx, S.body, x, y, maxW, size * 1.55, limit, align);
+      setTracking(ctx, 0);
+      return end;
     };
 
     // —— Layouts ——
     if (S.layout === "cover") {
+      const ph = 720;
       if (photo) {
-        drawImageCover(ctx, photo, 0, 0, W, 760);
-        ctx.fillStyle = "rgba(0,0,0,0.30)";
-        ctx.fillRect(0, 0, W, 760);
+        drawImageCover(ctx, photo, 0, 0, W, ph);
+        const g = ctx.createLinearGradient(0, ph * 0.35, 0, ph);
+        g.addColorStop(0, "rgba(0,0,0,0)");
+        g.addColorStop(1, "rgba(0,0,0,.45)");
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, W, ph);
       } else {
-        ctx.fillStyle = "#272521";
-        ctx.fillRect(0, 0, W, 760);
+        ctx.fillStyle = dark ? "#1a1a1c" : "#2a2824";
+        ctx.fillRect(0, 0, W, ph);
+        // subtle grain blocks
+        ctx.fillStyle = "rgba(255,255,255,.03)";
+        for (let i = 0; i < 12; i++) {
+          ctx.fillRect(40 + i * 85, 80 + (i % 3) * 160, 60, 2);
+        }
       }
-      ctx.fillStyle = "#ffffff";
-      ctx.font = "900 16px Arial";
-      ctx.fillText((S.section || "EDITORIAL").toUpperCase(), p, 55);
+
+      metaLabel(ctx, S.section || "EDITORIAL", p, 52, "#fff");
+      ctx.fillStyle = "rgba(255,255,255,.72)";
+      ctx.font = `600 12px ${SANS}`;
       ctx.textAlign = "right";
-      ctx.fillText(S.page || "01 / 01", W - p, 55);
+      ctx.fillText(S.page || "01 / 01", W - p, 52);
       ctx.textAlign = "left";
+
+      // paper band
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, ph, W, H - ph);
+      line(ctx, p, ph + 1, W - p, ph + 1, hair, 1);
 
       const { a, x } = titleAlign();
       ctx.fillStyle = fg;
-      ctx.font = `${S.weight} ${S.titleSize}px Arial`;
-      const ty = wrapText(ctx, S.title, x, 865, ww, S.titleSize * S.lineHeight, 5, a);
-      drawBody(x, Math.min(1190, ty + 30), ww, 5, a);
+      ctx.font = `${S.weight} ${S.titleSize}px ${titleFamily()}`;
+      setTracking(ctx, S.tracking * 0.5);
+      const ty = wrapText(ctx, S.title, x, ph + 110, ww, S.titleSize * S.lineHeight, 4, a);
+      setTracking(ctx, 0);
+      line(ctx, a === "center" ? W / 2 - 40 : a === "right" ? W - p - 80 : p, ty + 28, a === "center" ? W / 2 + 40 : a === "right" ? W - p : p + 80, ty + 28, accent, 2);
+      drawBody(x, Math.min(H - 120, ty + 58), ww * 0.92, 4, a, muted);
+      hairframe(ctx, 28, hair);
     }
 
     else if (S.layout === "photo") {
       if (photo) drawImageCover(ctx, photo, 0, 0, W, H);
       else {
-        ctx.fillStyle = "#292825";
+        ctx.fillStyle = "#1c1b19";
         ctx.fillRect(0, 0, W, H);
       }
-      const g = ctx.createLinearGradient(0, 780, 0, H);
+      const g = ctx.createLinearGradient(0, H * 0.42, 0, H);
       g.addColorStop(0, "rgba(0,0,0,0)");
-      g.addColorStop(1, "rgba(0,0,0,0.9)");
+      g.addColorStop(0.45, "rgba(0,0,0,.25)");
+      g.addColorStop(1, "rgba(0,0,0,.88)");
       ctx.fillStyle = g;
       ctx.fillRect(0, 0, W, H);
 
-      ctx.fillStyle = "#ffffff";
-      ctx.font = "900 16px Arial";
-      ctx.fillText((S.section || "PHOTO ESSAY").toUpperCase(), p, 55);
+      metaLabel(ctx, S.section || "PHOTO ESSAY", p, 52, "#fff");
+      ctx.fillStyle = "rgba(255,255,255,.7)";
+      ctx.font = `600 12px ${SANS}`;
       ctx.textAlign = "right";
-      ctx.fillText(S.page || "01 / 01", W - p, 55);
+      ctx.fillText(S.page || "01 / 01", W - p, 52);
       ctx.textAlign = "left";
 
-      const a = S.align === "center" ? "center" : "left";
-      const x = a === "center" ? W / 2 : p;
-      ctx.fillStyle = "#ffffff";
-      ctx.font = `${S.weight} ${S.titleSize}px Arial`;
-      const ty = wrapText(ctx, S.title, x, 1050, ww, S.titleSize * S.lineHeight, 4, a);
-      ctx.fillStyle = "#dddddd";
-      ctx.font = `400 ${S.bodySize}px Arial`;
-      wrapText(ctx, S.body, x, ty + 38, ww, S.bodySize * 1.5, 4, a);
+      const a = S.align === "center" ? "center" : S.align === "right" ? "right" : "left";
+      const x = a === "center" ? W / 2 : a === "right" ? W - p : p;
+      ctx.fillStyle = "#fff";
+      ctx.font = `${S.weight} ${S.titleSize}px ${titleFamily()}`;
+      setTracking(ctx, S.tracking * 0.5);
+      const ty = wrapText(ctx, S.title, x, 980, ww, S.titleSize * S.lineHeight, 4, a);
+      setTracking(ctx, 0);
+      ctx.fillStyle = "rgba(255,255,255,.78)";
+      ctx.font = `400 ${S.bodySize}px ${bodyFamily()}`;
+      wrapText(ctx, S.body, x, ty + 36, ww * 0.9, S.bodySize * 1.5, 3, a);
+      hairframe(ctx, 28, "rgba(255,255,255,.12)");
     }
 
     else if (S.layout === "type") {
       drawHeader();
+      // accent rail
       ctx.fillStyle = accent;
-      ctx.fillRect(0, 0, 22, H);
+      ctx.fillRect(0, 0, 14, H);
+
       ctx.fillStyle = muted;
-      ctx.font = "700 13px Arial";
-      ctx.fillText("BIG TYPE / EDITORIAL", p, 210);
+      ctx.font = `700 12px ${SANS}`;
+      setTracking(ctx, 2);
+      ctx.fillText("BIG TYPE  /  EDITORIAL STATEMENT", p + 18, 160);
+      setTracking(ctx, 0);
+
+      const ts = Math.max(S.titleSize, 96);
       ctx.fillStyle = fg;
-      const ts = Math.max(S.titleSize, 120);
-      ctx.font = `${S.weight} ${ts}px Arial`;
-      const ty = wrapText(ctx, S.title, p, 360, ww, ts * 0.9, 6, "left");
-      strokeLine(ctx, p, ty + 45, W - p, ty + 45, accent, 5);
-      drawBody(p, ty + 105, ww * 0.78, 6);
+      ctx.font = `${S.weight} ${ts}px ${titleFamily()}`;
+      setTracking(ctx, S.tracking * 0.55);
+      const ty = wrapText(ctx, S.title, p + 18, 280, ww - 18, ts * 0.92, 6, "left");
+      setTracking(ctx, 0);
+
+      line(ctx, p + 18, ty + 42, W - p, ty + 42, accent, 3);
+      drawBody(p + 18, ty + 88, ww * 0.72, 7, "left", muted);
+      hairframe(ctx, 28, hair);
     }
 
     else if (S.layout === "article") {
       drawHeader();
       ctx.fillStyle = fg;
-      ctx.font = `${S.weight} ${Math.min(S.titleSize, 88)}px Georgia`;
-      const ty = wrapText(ctx, S.title, p, 250, ww, Math.min(S.titleSize, 88) * 1.02, 4, "left");
-      strokeLine(ctx, p, ty + 40, W - p, ty + 40, fg, 2);
+      const ts = Math.min(S.titleSize, 72);
+      ctx.font = `600 ${ts}px ${titleFamily()}`;
+      setTracking(ctx, S.tracking * 0.4);
+      const ty = wrapText(ctx, S.title, p, 170, ww, ts * 1.08, 4, "left");
+      setTracking(ctx, 0);
+      line(ctx, p, ty + 28, W - p, ty + 28, fg, 1.5);
 
-      const col = (ww - 34) / 2;
+      if (photo) {
+        drawImageCover(ctx, photo, p, ty + 52, ww, 280);
+        line(ctx, p, ty + 52 + 280 + 28, W - p, ty + 52 + 280 + 28, hair, 1);
+      }
+
+      const top = photo ? ty + 52 + 280 + 56 : ty + 72;
+      const col = (ww - 40) / 2;
       const words = String(S.body || "").split(/\s+/);
       const mid = Math.ceil(words.length / 2);
       const leftText = words.slice(0, mid).join(" ");
       const rightText = words.slice(mid).join(" ");
 
       ctx.fillStyle = muted;
-      ctx.font = `400 ${S.bodySize}px Arial`;
-      wrapText(ctx, leftText, p, ty + 100, col, S.bodySize * 1.55, 12, "left");
-      wrapText(ctx, rightText, p + col + 34, ty + 100, col, S.bodySize * 1.55, 12, "left");
+      ctx.font = `400 ${S.bodySize}px ${bodyFamily()}`;
+      wrapText(ctx, leftText || S.body, p, top, col, S.bodySize * 1.6, 14, "left");
+      wrapText(ctx, rightText || "", p + col + 40, top, col, S.bodySize * 1.6, 14, "left");
+      hairframe(ctx, 28, hair);
     }
 
     else if (S.layout === "quote") {
       drawHeader();
       if (photo) {
-        drawImageCover(ctx, photo, 0, 0, W, 620);
-        ctx.fillStyle = "rgba(0,0,0,0.42)";
-        ctx.fillRect(0, 0, W, 620);
+        drawImageCover(ctx, photo, 0, 90, W, 520);
+        ctx.fillStyle = "rgba(0,0,0,.38)";
+        ctx.fillRect(0, 90, W, 520);
+      } else {
+        ctx.fillStyle = paperSoft;
+        ctx.fillRect(0, 90, W, 320);
       }
+
       ctx.fillStyle = accent;
-      ctx.font = "900 190px Georgia";
-      ctx.fillText("“", p, 780);
+      ctx.font = `500 200px ${SERIF}`;
+      ctx.fillText("“", p - 8, photo ? 740 : 520);
+
+      const qs = Math.min(S.titleSize, 68);
       ctx.fillStyle = fg;
-      ctx.font = `500 ${Math.min(S.titleSize, 82)}px Georgia`;
-      const ty = wrapText(ctx, S.title, p + 15, 850, ww - 30, Math.min(S.titleSize, 82) * 1.15, 5, "left");
+      ctx.font = `500 ${qs}px ${titleFamily()}`;
+      setTracking(ctx, S.tracking * 0.3);
+      const qy = photo ? 780 : 560;
+      const ty = wrapText(ctx, S.title, p + 12, qy, ww - 24, qs * 1.18, 5, "left");
+      setTracking(ctx, 0);
+
+      line(ctx, p + 12, ty + 36, p + 72, ty + 36, accent, 2);
       ctx.fillStyle = muted;
-      ctx.font = "700 16px Arial";
-      ctx.fillText(S.author || S.brand || "WEST150 EDITORIAL", p + 15, ty + 55);
+      ctx.font = `700 14px ${SANS}`;
+      setTracking(ctx, 1.5);
+      ctx.fillText((S.author || S.brand || "WEST150 EDITORIAL").toUpperCase(), p + 12, ty + 68);
+      setTracking(ctx, 0);
+      hairframe(ctx, 28, hair);
     }
 
     else if (S.layout === "interview") {
       drawHeader();
-      if (photo) drawImageCover(ctx, photo, W * 0.56, 95, W * 0.44, H - 190);
+      if (photo) {
+        drawImageCover(ctx, photo, W * 0.52, 100, W * 0.48 - p, H - 200);
+        // frame
+        ctx.strokeStyle = hair;
+        ctx.lineWidth = 1;
+        ctx.strokeRect(W * 0.52, 100, W * 0.48 - p, H - 200);
+      }
+
       ctx.fillStyle = accent;
-      ctx.font = "900 18px Arial";
-      ctx.fillText("Q&A", p, 220);
+      ctx.font = `800 14px ${SANS}`;
+      setTracking(ctx, 2);
+      ctx.fillText("INTERVIEW", p, 160);
+      setTracking(ctx, 0);
+
+      const ts = Math.min(S.titleSize, 64);
       ctx.fillStyle = fg;
-      ctx.font = `700 ${Math.min(S.titleSize, 76)}px Georgia`;
-      const ty = wrapText(ctx, S.title, p, 320, W * 0.48, Math.min(S.titleSize, 76) * 1.08, 5, "left");
+      ctx.font = `600 ${ts}px ${titleFamily()}`;
+      const ty = wrapText(ctx, S.title, p, 240, W * 0.44, ts * 1.1, 5, "left");
+
       ctx.fillStyle = accent;
-      ctx.font = "900 14px Arial";
-      ctx.fillText("ANSWER", p, ty + 90);
-      drawBody(p, ty + 140, W * 0.48, 9);
+      ctx.font = `800 12px ${SANS}`;
+      setTracking(ctx, 1.8);
+      ctx.fillText("ANSWER", p, ty + 70);
+      setTracking(ctx, 0);
+      line(ctx, p, ty + 86, p + 48, ty + 86, accent, 2);
+      drawBody(p, ty + 120, W * 0.44, 10, "left", muted);
+      hairframe(ctx, 28, hair);
     }
 
     else if (S.layout === "timeline") {
       drawHeader();
+      const ts = Math.min(S.titleSize, 64);
       ctx.fillStyle = fg;
-      ctx.font = `900 ${Math.min(S.titleSize, 82)}px Arial`;
-      wrapText(ctx, S.title, p, 180, ww, Math.min(S.titleSize, 82), 3, "left");
-      const ys = [420, 620, 820, 1020];
-      strokeLine(ctx, p + 10, 350, p + 10, 1120, accent, 5);
-      ys.forEach((y, i) => {
-        ctx.fillStyle = accent;
+      ctx.font = `700 ${ts}px ${titleFamily()}`;
+      wrapText(ctx, S.title, p, 150, ww, ts * 1.05, 3, "left");
+
+      const items = 4;
+      const startY = 320;
+      const gap = 200;
+      line(ctx, p + 12, startY - 30, p + 12, startY + gap * (items - 1) + 40, accent, 2);
+
+      for (let i = 0; i < items; i++) {
+        const y = startY + i * gap;
+        ctx.fillStyle = bg;
         ctx.beginPath();
-        ctx.arc(p + 10, y, 14, 0, Math.PI * 2);
+        ctx.arc(p + 12, y, 9, 0, Math.PI * 2);
         ctx.fill();
+        ctx.strokeStyle = accent;
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+
         ctx.fillStyle = fg;
-        ctx.font = "900 22px Arial";
-        ctx.fillText(fmt(i + 1), p + 55, y + 8);
+        ctx.font = `800 18px ${SANS}`;
+        setTracking(ctx, 1);
+        ctx.fillText(fmt(i + 1), p + 42, y + 6);
+        setTracking(ctx, 0);
+
         ctx.fillStyle = muted;
-        ctx.font = `400 ${S.bodySize}px Arial`;
-        wrapText(ctx, S.body, p + 160, y, ww - 160, S.bodySize * 1.45, 2, "left");
-      });
+        ctx.font = `400 ${S.bodySize}px ${bodyFamily()}`;
+        wrapText(ctx, S.body, p + 110, y + 6, ww - 110, S.bodySize * 1.45, 2, "left");
+      }
+      hairframe(ctx, 28, hair);
     }
 
     else if (S.layout === "data") {
       drawHeader();
+      const ts = Math.min(S.titleSize, 58);
       ctx.fillStyle = fg;
-      ctx.font = `900 ${Math.min(S.titleSize, 80)}px Arial`;
-      wrapText(ctx, S.title, p, 190, ww, Math.min(S.titleSize, 80), 3, "left");
+      ctx.font = `700 ${ts}px ${titleFamily()}`;
+      wrapText(ctx, S.title, p, 160, ww, ts * 1.08, 3, "left");
+
       ctx.fillStyle = accent;
-      ctx.font = "900 240px Arial";
-      ctx.fillText("47%", p, 570);
+      ctx.font = `600 220px ${SERIF}`;
+      setTracking(ctx, -4);
+      ctx.fillText("47%", p - 6, 520);
+      setTracking(ctx, 0);
+
       ctx.fillStyle = muted;
-      ctx.font = "700 18px Arial";
-      ctx.fillText("KEY FIGURE", p, 615);
-      ctx.fillStyle = dark ? "#333" : "#d8d2c8";
-      ctx.fillRect(p, 700, ww, 24);
+      ctx.font = `700 13px ${SANS}`;
+      setTracking(ctx, 2);
+      ctx.fillText("KEY FIGURE", p, 560);
+      setTracking(ctx, 0);
+
+      // bar
+      ctx.fillStyle = dark ? "#2a2a2c" : "#e2dcd2";
+      ctx.fillRect(p, 620, ww, 18);
       ctx.fillStyle = accent;
-      ctx.fillRect(p, 700, ww * 0.47, 24);
-      drawBody(p, 800, ww * 0.72, 6);
+      ctx.fillRect(p, 620, ww * 0.47, 18);
+
+      drawBody(p, 700, ww * 0.75, 6, "left", muted);
+      hairframe(ctx, 28, hair);
     }
 
     else if (S.layout === "compare") {
       drawHeader();
+      const ts = Math.min(S.titleSize, 58);
       ctx.fillStyle = fg;
-      ctx.font = `900 ${Math.min(S.titleSize, 76)}px Arial`;
-      wrapText(ctx, S.title, p, 180, ww, Math.min(S.titleSize, 76), 3, "left");
-      strokeLine(ctx, W / 2, 350, W / 2, 1120, muted, 2);
+      ctx.font = `700 ${ts}px ${titleFamily()}`;
+      wrapText(ctx, S.title, p, 150, ww, ts * 1.05, 3, "left");
+
+      line(ctx, W / 2, 300, W / 2, 1180, hair, 1);
+
       ["A", "B"].forEach((label, i) => {
-        const x = i ? W / 2 + 35 : p;
+        const x = i ? W / 2 + 36 : p;
         ctx.fillStyle = accent;
-        ctx.font = "900 18px Arial";
-        ctx.fillText(label, x, 420);
+        ctx.font = `800 14px ${SANS}`;
+        setTracking(ctx, 2);
+        ctx.fillText("OPTION " + label, x, 360);
+        setTracking(ctx, 0);
+
         ctx.fillStyle = fg;
-        ctx.font = "900 50px Arial";
-        ctx.fillText(i ? "OPTION B" : "OPTION A", x, 500);
-        drawBody(x, 570, ww / 2 - 55, 10, "left");
+        ctx.font = `600 42px ${titleFamily()}`;
+        ctx.fillText(i ? "After" : "Before", x, 430);
+
+        ctx.fillStyle = muted;
+        ctx.font = `400 ${S.bodySize}px ${bodyFamily()}`;
+        wrapText(ctx, S.body, x, 500, ww / 2 - 50, S.bodySize * 1.55, 10, "left");
       });
+      hairframe(ctx, 28, hair);
     }
 
     else if (S.layout === "conclusion") {
       drawHeader();
       ctx.fillStyle = accent;
-      ctx.font = "900 15px Arial";
-      ctx.fillText("THE TAKEAWAY", p, 240);
-      strokeLine(ctx, p, 285, W - p, 285, fg, 2);
+      ctx.font = `800 13px ${SANS}`;
+      setTracking(ctx, 2.2);
+      ctx.fillText("THE TAKEAWAY", p, 180);
+      setTracking(ctx, 0);
+      line(ctx, p, 210, W - p, 210, fg, 1.5);
+
+      const ts = Math.min(S.titleSize, 78);
       ctx.fillStyle = fg;
-      ctx.font = `700 ${Math.min(S.titleSize, 92)}px Georgia`;
-      const ty = wrapText(ctx, S.title, p, 410, ww, Math.min(S.titleSize, 92) * 1.05, 4, "left");
-      strokeLine(ctx, p, ty + 40, W - p, ty + 40, accent, 5);
-      drawBody(p, ty + 110, ww * 0.78, 7, "left");
+      ctx.font = `600 ${ts}px ${titleFamily()}`;
+      setTracking(ctx, S.tracking * 0.35);
+      const ty = wrapText(ctx, S.title, p, 300, ww, ts * 1.08, 4, "left");
+      setTracking(ctx, 0);
+
+      line(ctx, p, ty + 36, p + 96, ty + 36, accent, 3);
+      drawBody(p, ty + 80, ww * 0.8, 8, "left", muted);
+      hairframe(ctx, 28, hair);
     }
 
-    // Grid
+    // Grid overlay
     if (S.showGrid) {
       const cols = S.columns || 12;
-      ctx.strokeStyle = "rgba(120,110,100,0.18)";
-      ctx.lineWidth = 1;
       for (let i = 1; i < cols; i++) {
         const x = (W / cols) * i;
-        strokeLine(ctx, x, 0, x, H, "rgba(120,110,100,0.18)", 1);
+        line(ctx, x, 0, x, H, "rgba(120,110,100,0.16)", 1);
       }
     }
 
-    // Safe area
     if (S.safe) {
       ctx.save();
-      ctx.strokeStyle = "rgba(155,28,32,0.35)";
+      ctx.strokeStyle = "rgba(154,31,36,0.4)";
       ctx.lineWidth = 1;
-      ctx.setLineDash([6, 4]);
+      ctx.setLineDash([7, 5]);
       ctx.strokeRect(p, p, W - p * 2, H - p * 2);
       ctx.restore();
     }
 
-    // Footer: author / source / brand / logo
-    const footerY = H - 42;
-
+    // Footer
+    const footerY = H - 40;
     if (S.author) {
       ctx.fillStyle = muted;
-      ctx.font = "400 12px Arial";
+      ctx.font = `400 12px ${SANS}`;
       ctx.textAlign = "left";
       ctx.fillText(S.author, p, footerY);
     }
-
     if (S.source) {
       ctx.fillStyle = muted;
-      ctx.font = "400 12px Arial";
+      ctx.font = `400 12px ${SANS}`;
       ctx.textAlign = "center";
       ctx.fillText("SOURCE · " + S.source, W / 2, footerY);
       ctx.textAlign = "left";
     }
-
-    // 브랜드 텍스트 (항상 별도 제어)
     if (S.brandTextOn) {
       ctx.fillStyle = fg;
-      ctx.font = "900 18px Arial";
+      ctx.font = `800 15px ${SANS}`;
+      setTracking(ctx, 2);
       ctx.textAlign = "right";
-      ctx.fillText(S.brand || "WEST150", W - p, footerY);
+      ctx.fillText((S.brand || "WEST150").toUpperCase(), W - p, footerY);
       ctx.textAlign = "left";
+      setTracking(ctx, 0);
     }
-
-    // 로고 이미지 (브랜드 텍스트 위쪽)
     if (S.logoOn && logo) {
-      const lh = 32;
+      const lh = 28;
       const lw = (logo.width / logo.height) * lh;
-      const lx = W - p - lw;
-      const ly = footerY - 48;
-      ctx.drawImage(logo, lx, ly, lw, lh);
+      ctx.drawImage(logo, W - p - lw, footerY - 44, lw, lh);
     }
 
-    // Status + live labels
-    const saved = persist();
-    $("status").textContent = `CARD ${fmt(idx + 1)} · ${S.layout.toUpperCase()} · ${saved ? "AUTO-SAVED" : "SAVE FAILED (storage)"}`;
+    // Watermark
+    const wmText = (S.watermark || "").trim();
+    if (S.wmOn !== false && wmText) {
+      const op = Math.max(0.04, Math.min(0.45, (S.wmOpacity || 18) / 100));
+      const size = S.wmSize || 28;
+      const pos = S.wmPos || "diagonal";
+      ctx.save();
+      ctx.fillStyle = dark ? `rgba(244,240,231,${op})` : `rgba(20,18,16,${op})`;
+      ctx.font = `700 ${size}px ${SANS}`;
+      setTracking(ctx, 3);
+      if (pos === "diagonal") {
+        ctx.translate(W / 2, H / 2);
+        ctx.rotate(-Math.PI / 6);
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        // repeat lightly for premium feel
+        const gap = size * 5.5;
+        for (let row = -2; row <= 2; row++) {
+          for (let col = -2; col <= 2; col++) {
+            ctx.globalAlpha = op * (row === 0 && col === 0 ? 1 : 0.55);
+            ctx.fillText(wmText.toUpperCase(), col * gap * 1.6, row * gap);
+          }
+        }
+      } else if (pos === "center") {
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.globalAlpha = op;
+        ctx.fillText(wmText.toUpperCase(), W / 2, H / 2);
+      } else if (pos === "top") {
+        ctx.textAlign = "center";
+        ctx.textBaseline = "top";
+        ctx.globalAlpha = op;
+        ctx.fillText(wmText.toUpperCase(), W / 2, p + 24);
+      } else {
+        ctx.textAlign = "center";
+        ctx.textBaseline = "bottom";
+        ctx.globalAlpha = op;
+        ctx.fillText(wmText.toUpperCase(), W / 2, H - p - 56);
+      }
+      ctx.restore();
+      setTracking(ctx, 0);
+    }
 
-    const labels = [
-      ["tv", S.titleSize],
-      ["bv", S.bodySize],
-      ["kv", S.tracking],
-      ["lhv", S.lineHeight],
-      ["zv", S.zoom + "%"],
-      ["brv", S.bright + "%"],
-      ["cov", S.contrast + "%"],
-      ["sv", S.sat + "%"],
-      ["pv", S.pad + "%"]
-    ];
-    labels.forEach(([id, v]) => {
-      if ($(id)) $(id).textContent = v;
-    });
+    const saved = persist();
+    $("status").textContent = `CARD ${fmt(idx + 1)} · ${S.layout.toUpperCase()} · ${saved ? "AUTO-SAVED" : "STORAGE FULL"}`;
+    [
+      ["tv", S.titleSize], ["bv", S.bodySize], ["kv", S.tracking], ["lhv", S.lineHeight],
+      ["zv", S.zoom + "%"], ["brv", S.bright + "%"], ["cov", S.contrast + "%"],
+      ["sv", S.sat + "%"], ["pv", S.pad + "%"],
+      ["wmv", (S.wmOpacity || 18) + "%"], ["wms", S.wmSize || 28]
+    ].forEach(([id, v]) => { if ($(id)) $(id).textContent = v; });
   }
 
-  // —— Export ——
+  // —— Export (same canvas = WYSIWYG) ——
   function canvasBlob() {
     return new Promise(resolve => $("canvas").toBlob(resolve, "image/png"));
   }
@@ -826,11 +1124,8 @@ hr{border:0;border-top:1px solid #d0c9bd;margin:12px 0}
     } catch (_) {}
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = url;
-    a.download = file.name;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
+    a.href = url; a.download = file.name;
+    document.body.appendChild(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 2000);
   }
 
@@ -839,7 +1134,6 @@ hr{border:0;border-top:1px solid #d0c9bd;margin:12px 0}
     const original = clone(S);
     const originalIdx = idx;
     const files = [];
-
     for (let i = 0; i < cards.length; i++) {
       idx = i;
       Object.assign(S, clone(cards[i]));
@@ -847,11 +1141,9 @@ hr{border:0;border-top:1px solid #d0c9bd;margin:12px 0}
       const b = await canvasBlob();
       if (b) files.push(new File([b], `WEST150_EDITORIAL_${fmt(i + 1)}.png`, { type: "image/png" }));
     }
-
     idx = originalIdx;
     Object.assign(S, original);
     await draw();
-
     try {
       if (navigator.share && navigator.canShare && navigator.canShare({ files })) {
         await navigator.share({ title: "WEST150 EDITORIAL", files });
@@ -863,12 +1155,10 @@ hr{border:0;border-top:1px solid #d0c9bd;margin:12px 0}
 
   function saveProject() {
     sync();
-    const blob = new Blob([JSON.stringify({ version: 3, cards, idx }, null, 2)], { type: "application/json" });
+    const blob = new Blob([JSON.stringify({ version: 1, cards, idx }, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = url;
-    a.download = "WEST150_EDITORIAL_PROJECT.json";
-    a.click();
+    a.href = url; a.download = "WEST150_EDITORIAL_PREMIUM.json"; a.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
@@ -903,7 +1193,6 @@ hr{border:0;border-top:1px solid #d0c9bd;margin:12px 0}
   $("saveProjectBtn").addEventListener("click", saveProject);
   $("loadProjectBtn").addEventListener("click", loadProject);
 
-  // Init
   try {
     const saved = JSON.parse(localStorage.getItem(KEY) || "null");
     if (saved && Array.isArray(saved.cards) && saved.cards.length) {
