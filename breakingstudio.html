@@ -36,12 +36,12 @@ h2{font-size:13px;margin:0 0 10px}.row{display:flex;gap:7px;flex-wrap:wrap}.row>
 .update .content{justify-content:flex-start;padding-top:15%}.update .badge{background:var(--red)}.update .title{font-family:"Playfair Display",Georgia,serif;font-weight:600}.timeline{margin-top:25px;border-left:1px solid #555;padding-left:18px}.tl{position:relative;margin:0 0 17px}.tl:before{content:"";position:absolute;left:-23px;top:3px;width:7px;height:7px;border:2px solid var(--red);border-radius:50%;background:#111}.tl b{font:800 10px Inter;color:#fff}.tl span{display:block;font-size:11px;color:#bbb;margin-top:3px;line-height:1.35}
 .clean{background:var(--paper);color:#111}.clean .content{justify-content:flex-end}.clean .badge{background:transparent;color:#111;border-top:1px solid #111;border-bottom:1px solid #111;width:100%;padding:8px 0}.clean .title{font-family:"Playfair Display",Georgia,serif;font-weight:600}.clean .body{color:#333}.clean .brand,.clean .metaRight,.clean .source{color:#444}
 .live .content{justify-content:flex-end}.live .badge{background:#fff;color:#111}.live .badge:before{content:"● ";color:var(--red)}.live .title{font-family:Inter;font-weight:900}.live .metaRight{color:#fff}
-.cards{display:grid;grid-template-columns:1fr;gap:7px;overflow:auto;padding:4px 0;margin-top:8px;max-height:34vh}.thumb{width:100%;min-width:0;height:88px;background:#222;border:1px solid #444;border-radius:8px;overflow:hidden;position:relative}.thumb.active{border:2px solid var(--red)}.thumb canvas{width:100%;height:100%}.thumb span{position:absolute;bottom:3px;left:3px;font:800 8px Inter;background:#000b;padding:2px 4px;border-radius:3px}
-.bottom{position:fixed;z-index:60;left:0;right:0;bottom:0;background:#151515ee;border-top:1px solid #333;padding:7px 9px calc(7px + env(safe-area-inset-bottom));display:flex;gap:7px;backdrop-filter:blur(14px)}.bottom button{flex:1}.green{background:#16844a}.red{background:var(--red)}
+.cards{display:flex;flex-direction:column;gap:9px;overflow:auto;padding:4px 2px 6px;margin-top:8px;max-height:calc(100vh - 300px)}.thumb{width:100%;min-width:0;height:auto;aspect-ratio:4/5;background:#222;border:1px solid #444;border-radius:8px;overflow:hidden;position:relative;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.18)}.thumb.active{border:2px solid var(--red);box-shadow:0 0 0 2px rgba(201,21,32,.18)}.thumb canvas{display:block;width:100%;height:100%;object-fit:cover}.thumb span{position:absolute;top:5px;left:5px;bottom:auto;font:800 8px Inter;background:#000b;padding:3px 5px;border-radius:4px;letter-spacing:.04em}.leftSlidesPanel{padding-bottom:10px}.cardSlidesSection{border-bottom:0!important;margin-bottom:0!important}
+.bottom{display:none!important}.bottom button{flex:1}.green{background:#16844a}.red{background:var(--red)}
 .note{font-size:10px;line-height:1.45;color:#777}
 body.safeOn #card:after{content:"SAFE AREA";position:absolute;inset:6%;border:1px dashed rgba(255,255,255,.45);z-index:20;pointer-events:none;font:700 9px Inter;color:#fff;padding:5px}
 @media(min-width:851px){.rightControlPanel{min-width:0;max-height:calc(100vh - 126px);overflow:auto;position:sticky;top:0;align-self:start}.rightControlPanel .menuSection{display:none}.rightControlPanel .menuSection.activePanelSection{display:block}.rightPanelHint{font-size:10px;color:#777;line-height:1.5;margin:-2px 0 12px}}
-@media(max-width:850px){main{grid-template-columns:1fr}.rightControlPanel{order:3}.previewPanel{order:-1}.card{width:min(90vw,520px)}header{position:relative}.rightControlPanel .menuSection{display:none}.rightControlPanel .menuSection.activePanelSection{display:block}}
+@media(max-width:850px){main{grid-template-columns:1fr}.leftSlidesPanel{order:2}.previewPanel{order:1}.rightControlPanel{order:3}.card{width:min(90vw,520px)}header{position:relative}.rightControlPanel .menuSection{display:none}.rightControlPanel .menuSection.activePanelSection{display:block}.cards{display:grid;grid-template-columns:repeat(2,1fr);max-height:46vh}}
 @font-face{font-family:"RIDIBatang";src:url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_twelve@1.0/RIDIBatang.woff") format("woff");font-weight:400;font-style:normal;font-display:swap;}
 </style>
 <style>
@@ -241,20 +241,9 @@ body.safeOn #card:after{content:"SAFE AREA";position:absolute;inset:6%;border:1p
   .card .body{max-width:86%}
 }
 
-/* COLLAPSED TOOL MENU — compact top navigation */
-.topNav{position:sticky;top:0;z-index:1000;display:flex;align-items:center;gap:8px;overflow:visible;padding:8px 16px;background:rgba(8,8,8,.97);border-bottom:1px solid #292929;backdrop-filter:blur(14px)}
-.topNav::-webkit-scrollbar{display:none}
-.toolMenuWrap{position:relative;flex:none}
-.toolMenuBtn{min-width:92px;justify-content:center;background:#151515!important;color:#fff!important;border-color:#3a3a3a!important}
-.toolMenuBtn[aria-expanded="true"]{background:#fff!important;color:#090909!important;border-color:#fff!important}
-.toolMenu{position:absolute;left:0;top:calc(100% + 8px);width:250px;padding:7px;background:rgba(20,20,20,.98);border:1px solid #3a3a3a;border-radius:14px;box-shadow:0 18px 50px rgba(0,0,0,.5);display:none;backdrop-filter:blur(18px)}
-.toolMenu.open{display:flex;flex-direction:column;gap:4px}
-.toolItem{width:100%;display:grid;grid-template-columns:26px 1fr auto;align-items:center;gap:7px;padding:11px 12px;background:transparent;border:1px solid transparent;border-radius:10px;text-align:left;color:#ddd;font:800 12px Inter,Arial}
-.toolItem:hover,.toolItem.active{background:#fff;color:#111;border-color:#fff}
-.toolItem small{grid-column:2 / 4;font-size:9px;font-weight:500;color:#8f8f8f;margin-top:2px}
-.toolItem.active small,.toolItem:hover small{color:#666}
-.navCurrent{font:800 11px Inter,Arial;letter-spacing:.08em;color:#8f8f8f;padding:0 4px}
-@media(max-width:850px){.topNav{padding:7px 8px}.toolMenu{width:min(250px,calc(100vw - 16px))}.navCurrent{font-size:10px}}
+/* CARD STUDIO-STYLE TOP MENU */
+.topNav{position:sticky;top:0;z-index:1000;display:flex;align-items:center;gap:6px;overflow:visible;padding:7px 14px;background:rgba(8,8,8,.97);border-bottom:1px solid #292929;backdrop-filter:blur(14px)}
+.csMenuWrap{position:relative;flex:none}.csMenuBtn,.csTopBtn{border:1px solid #303030;background:#121212;color:#bdbdbd;border-radius:7px;padding:8px 11px;font:700 11px Inter,"Noto Sans KR",Arial;white-space:nowrap}.csMenuBtn:hover,.csTopBtn:hover{background:#1b1b1b;color:#fff;border-color:#444}.csTopBtn{font-weight:800}.csTopBtn.primary{background:var(--red);border-color:var(--red);color:#fff}.csTopBtn.ghost{background:transparent}.csTopSpacer{flex:1}.csDropdown{position:absolute;left:0;top:calc(100% + 7px);width:260px;max-height:68vh;overflow:auto;padding:7px;background:rgba(20,20,20,.99);border:1px solid #3a3a3a;border-radius:10px;box-shadow:0 18px 48px rgba(0,0,0,.52);display:none}.csDropdown.open{display:block}.csDropdown>button{display:block;width:100%;text-align:left;background:transparent;border:0;color:#ddd;padding:9px 10px;border-radius:6px;font:700 12px Inter,"Noto Sans KR",Arial}.csDropdown>button:hover,.csDropdown .menuTpl.active{background:#fff;color:#111}.csLabel{font-size:10px;color:#777;padding:8px 10px 5px;letter-spacing:.08em}.csSep{border-top:1px solid #2f2f2f;margin:6px 0}.menuTpl{display:flex;align-items:center;justify-content:space-between;width:100%;gap:8px;padding:8px 10px;background:transparent;border:0;color:#ddd;border-radius:6px;text-align:left;font:700 11px Inter,"Noto Sans KR",Arial}.menuTpl small{color:#777;font-weight:600}.menuTpl.active small{color:#666}@media(max-width:850px){.topNav{flex-wrap:wrap}.csTopSpacer{display:none}.csTopBtn{padding:7px 9px;font-size:10px}}
 </style>
 </head>
 <body>
@@ -264,26 +253,49 @@ body.safeOn #card:after{content:"SAFE AREA";position:absolute;inset:6%;border:1p
 </header>
 
 <nav class="topNav" id="topNav">
-  <div class="toolMenuWrap">
-    <button class="navTab toolMenuBtn" id="toolMenuBtn" type="button" aria-expanded="false">☰ 기능</button>
-    <div class="toolMenu" id="toolMenu">
-      <button class="toolItem active" data-panel="designPanel">🎨 <span>디자인</span><small>템플릿 · 뉴스</small></button>
-      <button class="toolItem" data-panel="typePanel">Aa <span>글꼴</span><small>타이포그래피</small></button>
-      <button class="toolItem" data-panel="photoPanel">📷 <span>사진</span><small>이미지 보정</small></button>
-      <button class="toolItem" data-panel="layoutPanel">▦ <span>레이아웃</span><small>배치 · 안전영역</small></button>
-      <button class="toolItem" data-panel="updatePanel">⚡ <span>업데이트</span><small>실시간 속보</small></button>
-      <button class="toolItem" data-panel="brandPanel">W <span>브랜드</span><small>로고 · 잠금</small></button>
-      <button class="toolItem" data-panel="savePanel">💾 <span>저장</span><small>내보내기 · 프로젝트</small></button>
+  <div class="csMenuWrap">
+    <button class="csMenuBtn" data-csmenu="cardMenu">카드 ▾</button>
+    <div class="csDropdown" id="cardMenu">
+      <button data-action="newCard">＋ 새 카드</button>
+      <button data-action="duplicate">⧉ 현재 카드 복제</button>
+      <button data-action="deleteCard">삭제</button>
+      <div class="csSep"></div>
+      <div class="csLabel">디자인 템플릿</div>
+      <div id="menuTemplateList"></div>
     </div>
   </div>
-  <div class="navCurrent" id="navCurrent">디자인</div>
-</nav><main>
-<section class="panel">
-  <div class="section">
-    <h2>DESIGN · 8 TEMPLATES</h2>
-    <div class="templateGrid" id="templates"></div>
+  <div class="csMenuWrap">
+    <button class="csMenuBtn" data-panel="typePanel">글꼴 ▾</button>
   </div>
-
+  <div class="csMenuWrap">
+    <button class="csMenuBtn" data-panel="photoPanel">이미지 ▾</button>
+  </div>
+  <div class="csMenuWrap">
+    <button class="csMenuBtn" data-panel="layoutPanel">레이아웃 ▾</button>
+  </div>
+  <div class="csMenuWrap">
+    <button class="csMenuBtn" data-panel="updatePanel">업데이트 ▾</button>
+  </div>
+  <div class="csMenuWrap">
+    <button class="csMenuBtn" data-panel="editPanel">편집 ▾</button>
+  </div>
+  <div class="csMenuWrap">
+    <button class="csMenuBtn" data-panel="brandPanel">브랜드 ▾</button>
+  </div>
+  <div class="csMenuWrap">
+    <button class="csMenuBtn" data-panel="templatePanel">카드 템플릿 ▾</button>
+  </div>
+  <div class="csMenuWrap">
+    <button class="csMenuBtn" data-panel="savePanel">저장 ▾</button>
+  </div>
+  <div class="csTopSpacer"></div>
+  <button class="csTopBtn" data-action="undo">↶</button>
+  <button class="csTopBtn" data-action="redo">↷</button>
+  <button class="csTopBtn" data-action="previewAll">전체 미리보기</button>
+  <button class="csTopBtn ghost" data-action="saveCurrent">현재 카드 저장</button>
+  <button class="csTopBtn primary" data-action="saveAll">전체 저장</button>
+</nav><main>
+<section class="panel leftSlidesPanel">
   <div class="section menuSection" data-panel="designPanel">
     <h2>NEWS</h2>
     <div class="field"><label>배지 문구 <span style="cursor:pointer;color:#c91520" onclick="resetBadge()">기본값으로</span></label><input id="badgeText" placeholder="예: BREAKING NEWS (비워두면 템플릿 기본값)"></div>
@@ -365,11 +377,27 @@ body.safeOn #card:after{content:"SAFE AREA";position:absolute;inset:6%;border:1p
     <p class="note">사진 위에서 한 손가락 드래그, 두 손가락 핀치 확대/축소가 가능합니다.</p>
   </div>
 
-  <div class="section">
-    <h2>CARDS</h2>
-    <div class="row"><button onclick="duplicate()">⧉ 복제</button><button onclick="move(-1)">←</button><button onclick="move(1)">→</button><button onclick="del()">삭제</button></div>
-    <div id="cards" class="cards"></div>
-    <div class="row"><button onclick="undo()">↶ 실행취소</button><button onclick="redo()">↷ 다시실행</button></div>
+  <div class="section cardSlidesSection">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px">
+      <h2 style="margin:0">CARDS · 슬라이드</h2>
+      <button class="csTopBtn" style="padding:6px 9px;font-size:10px" onclick="newCard()">＋ 카드</button>
+    </div>
+    <div class="row" style="margin-bottom:8px"><button onclick="move(-1)">←</button><button onclick="move(1)">→</button><button onclick="del()">삭제</button></div>
+    <div class="cards" id="cards"></div>
+    
+  </div>
+
+  <div class="section menuSection" data-panel="editPanel">
+    <h2>편집</h2>
+    <div class="row"><button onclick="setAlign('left')">왼쪽 정렬</button><button onclick="setAlign('center')">가운데 정렬</button><button onclick="setAlign('right')">오른쪽 정렬</button></div>
+    <div class="field"><label>디자인 잠금</label><label class="check" style="display:flex;gap:8px;align-items:center;font-size:12px;color:#bbb"><input type="checkbox" id="designLockEditMirror"> 제목·본문·사진만 편집</label></div>
+    <p class="note">기본 편집 작업은 오른쪽 패널에서 현재 카드에 바로 적용됩니다.</p>
+  </div>
+
+  <div class="section menuSection" data-panel="templatePanel">
+    <h2>카드 템플릿</h2>
+    <p class="note">현재 8종 뉴스 디자인을 카드 템플릿으로 사용합니다.</p>
+    <div id="rightTemplateList" class="templateGrid"></div>
   </div>
 
   <div class="section menuSection" data-panel="savePanel">
@@ -406,7 +434,6 @@ body.safeOn #card:after{content:"SAFE AREA";position:absolute;inset:6%;border:1p
 </aside>
 </main>
 
-<div class="bottom"><button onclick="previewAll()">전체 미리보기</button><button class="red" onclick="saveCurrent()">📲 저장 / 공유</button></div>
 
 <script>
 const $=id=>document.getElementById(id);
@@ -499,7 +526,16 @@ function render(){
  if(a.logo&&a.showLogo){$("brandView").innerHTML=`<img src="${a.logo}" style="max-width:${Math.min(180,a.logoSize)}%;max-height:42px;object-fit:contain;display:block">`}else{$("brandView").textContent="WEST150 DAILY";}
  $("brandView").style.opacity=a.showLogo?"1":"0";
  $("cards").innerHTML="";
- cards.forEach((v,i)=>{let d=document.createElement("div");d.className="thumb "+(i===idx?"active":"");let cv=document.createElement("canvas");cv.width=140;cv.height=175;let x=cv.getContext("2d");x.fillStyle=v.template==="clean"||v.template==="statement"?"#eee":v.template==="breaking"?"#c91520":"#111";x.fillRect(0,0,140,175);x.fillStyle=v.template==="clean"||v.template==="statement"?"#111":"#fff";x.font="900 9px Arial";x.fillText(defs.find(z=>z[0]===v.template)[1].split(" · ")[1],8,18);x.font="900 13px Arial";x.fillText((v.title||"새 카드").slice(0,18),8,48);d.appendChild(cv);let s=document.createElement("span");s.textContent="CARD "+(i+1);d.appendChild(s);d.onclick=()=>{idx=i;render()};$("cards").appendChild(d)});
+ cards.forEach((v,i)=>{
+  let d=document.createElement("div");
+  d.className="thumb "+(i===idx?"active":"");
+  d.title="CARD "+(i+1)+" · "+(defs.find(z=>z[0]===v.template)?.[1]||"");
+  let cv=document.createElement("canvas");cv.width=216;cv.height=270;d.appendChild(cv);
+  let lab=document.createElement("span");lab.textContent="CARD "+(i+1);d.appendChild(lab);
+  d.onclick=()=>{idx=i;render()};
+  $("cards").appendChild(d);
+  makeCanvas(v).then(full=>{const ctx=cv.getContext("2d");ctx.clearRect(0,0,cv.width,cv.height);ctx.drawImage(full,0,0,cv.width,cv.height)}).catch(()=>{});
+ });
  renderTemplates();
  renderUpdateManager();
  try{localStorage.setItem(KEY,JSON.stringify(cards))}catch(e){}
@@ -736,28 +772,37 @@ render();
 </script>
 <script>
 (function(){
- const menuBtn=document.getElementById("toolMenuBtn");
- const menu=document.getElementById("toolMenu");
- const items=[...document.querySelectorAll(".toolItem")];
+ const top=document.getElementById("topNav");
  const sections=[...document.querySelectorAll(".menuSection")];
  const right=document.getElementById("rightControlPanel");
  const title=document.getElementById("rightPanelTitle");
  const hint=right?.querySelector(".rightPanelHint");
- const current=document.getElementById("navCurrent");
- const labels={designPanel:"디자인",typePanel:"글꼴",photoPanel:"사진",layoutPanel:"레이아웃",updatePanel:"업데이트",brandPanel:"브랜드",savePanel:"저장"};
  if(right){sections.forEach(s=>right.appendChild(s));}
- function activate(panel, close=true){
-   items.forEach(t=>t.classList.toggle("active",t.dataset.panel===panel));
-   sections.forEach(s=>s.classList.toggle("activePanelSection",s.dataset.panel===panel));
-   if(title) title.textContent=(labels[panel]||"편집")+" 패널";
-   if(hint) hint.style.display="none";
-   if(current) current.textContent=labels[panel]||"기능";
-   if(close){menu.classList.remove("open");menuBtn.setAttribute("aria-expanded","false");}
+ const labels={typePanel:"글꼴",photoPanel:"이미지",layoutPanel:"레이아웃",updatePanel:"업데이트",editPanel:"편집",brandPanel:"브랜드",templatePanel:"카드 템플릿",savePanel:"저장",designPanel:"뉴스"};
+ const closeMenus=()=>document.querySelectorAll('.csDropdown.open').forEach(m=>m.classList.remove('open'));
+ function activate(panel){
+   sections.forEach(s=>s.classList.toggle('activePanelSection',s.dataset.panel===panel));
+   if(title) title.textContent=(labels[panel]||'편집')+' 패널';
+   if(hint) hint.style.display='none';
+   closeMenus();
  }
- menuBtn.addEventListener("click",e=>{e.stopPropagation();const open=menu.classList.toggle("open");menuBtn.setAttribute("aria-expanded",String(open));});
- items.forEach(item=>item.addEventListener("click",()=>activate(item.dataset.panel,true)));
- document.addEventListener("click",e=>{if(!menu.contains(e.target)&&e.target!==menuBtn){menu.classList.remove("open");menuBtn.setAttribute("aria-expanded","false");}});
- activate("designPanel",false);
+ document.querySelectorAll('.csMenuBtn[data-panel]').forEach(b=>b.addEventListener('click',()=>activate(b.dataset.panel)));
+ const cardMenuBtn=document.querySelector('.csMenuBtn[data-csmenu="cardMenu"]');
+ const cardMenu=document.getElementById('cardMenu');
+ cardMenuBtn?.addEventListener('click',e=>{e.stopPropagation(); closeMenus(); cardMenu.classList.toggle('open')});
+ document.addEventListener('click',e=>{if(!e.target.closest('.csMenuWrap')) closeMenus();});
+ // card dropdown actions
+ cardMenu?.querySelectorAll('[data-action]').forEach(b=>b.addEventListener('click',()=>{
+   const a=b.dataset.action; closeMenus();
+   if(a==='newCard') newCard(); else if(a==='duplicate') duplicate(); else if(a==='deleteCard') del();
+ }));
+ const mt=document.getElementById('menuTemplateList');
+ if(mt){
+   mt.innerHTML='';
+   defs.forEach(d=>{const b=document.createElement('button');b.className='menuTpl'+(c().template===d[0]?' active':'');b.innerHTML=`<span>${d[1]}</span><small>${d[2]}</small>`;b.onclick=()=>{if(c().designLock)return;snap();c().template=d[0];render();closeMenus();};mt.appendChild(b)});
+ }
+ ['undo','redo','previewAll','saveCurrent','saveAll'].forEach(a=>document.querySelectorAll(`[data-action="${a}"]`).forEach(b=>b.addEventListener('click',()=>window[a]())));
+ activate('designPanel');
 })();
 </script></body>
 </html>
@@ -766,10 +811,11 @@ render();
 @media(min-width:851px){
   body{overflow:hidden}
   header{height:56px;padding:0 18px}
-  .topNav{height:46px;border-bottom:1px solid #292929}
-  main{height:calc(100vh - 102px);padding:14px 16px 82px}
+  .topNav{min-height:46px;border-bottom:1px solid #292929}
+  main{height:calc(100vh - 102px);padding:14px 16px}
   main>.panel:first-child{overflow:auto}
   .previewPanel{padding:16px 18px}
+  .previewPanel .previewWrap{transform:translateY(46px)}
   .rightControlPanel{background:#111;border-radius:8px}
   .rightControlPanel h2{font-size:12px;letter-spacing:.08em}
 }
