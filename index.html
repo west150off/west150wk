@@ -1,414 +1,724 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>WEST150 Work</title>
-  <meta name="description" content="WEST150 Work · 생성기 모음">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg: #f5f5f7;
-      --card: #ffffff;
-      --text: #1d1d1f;
-      --text-secondary: #6e6e73;
-      --border: rgba(0, 0, 0, 0.06);
-      --accent: #0071e3;
-      --accent-hover: #0077ed;
-      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
-      --shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
-      --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.1);
-      --radius: 18px;
-      --radius-sm: 12px;
-      --header-h: 52px;
-    }
-    [data-theme="dark"] {
-      --bg: #000000;
-      --card: #1c1c1e;
-      --text: #f5f5f7;
-      --text-secondary: #98989d;
-      --border: rgba(255, 255, 255, 0.08);
-      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
-      --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
-      --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.55);
-    }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html {
-      scroll-behavior: smooth;
-      -webkit-text-size-adjust: 100%;
-    }
-    body {
-      font-family: 'Pretendard', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.5;
-      transition: background 0.35s ease, color 0.35s ease;
-      min-height: 100vh;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      height: var(--header-h);
-      background: rgba(245, 245, 247, 0.72);
-      backdrop-filter: saturate(180%) blur(20px);
-      -webkit-backdrop-filter: saturate(180%) blur(20px);
-      border-bottom: 1px solid var(--border);
-      transition: background 0.35s ease;
-    }
-    [data-theme="dark"] header {
-      background: rgba(0, 0, 0, 0.72);
-    }
-    .header-inner {
-      max-width: 1080px;
-      margin: 0 auto;
-      padding: 0 28px;
-      height: 100%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .logo {
-      font-size: 1.05rem;
-      font-weight: 600;
-      letter-spacing: -0.03em;
-      color: var(--text);
-      text-decoration: none;
-      transition: opacity 0.2s;
-    }
-    .logo:hover { opacity: 0.7; }
-    .nav {
-      display: flex;
-      gap: 4px;
-      align-items: center;
-    }
-    .nav a {
-      color: var(--text-secondary);
-      text-decoration: none;
-      font-size: 0.875rem;
-      font-weight: 500;
-      padding: 6px 12px;
-      border-radius: 980px;
-      transition: all 0.2s ease;
-    }
-    .nav a:hover {
-      color: var(--text);
-      background: rgba(0, 0, 0, 0.04);
-    }
-    [data-theme="dark"] .nav a:hover {
-      background: rgba(255, 255, 255, 0.08);
-    }
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-left: 8px;
-    }
-    .icon-btn {
-      width: 34px;
-      height: 34px;
-      border: none;
-      background: transparent;
-      border-radius: 50%;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1rem;
-      color: var(--text-secondary);
-      transition: all 0.2s ease;
-    }
-    .icon-btn:hover {
-      background: rgba(0, 0, 0, 0.05);
-      color: var(--text);
-    }
-    [data-theme="dark"] .icon-btn:hover {
-      background: rgba(255, 255, 255, 0.1);
-    }
-    .color-picker-wrap {
-      position: relative;
-      width: 34px;
-      height: 34px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .color-picker-wrap input[type="color"] {
-      position: absolute;
-      opacity: 0;
-      width: 34px;
-      height: 34px;
-      cursor: pointer;
-      top: 0;
-      left: 0;
-    }
-    .color-swatch {
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      background: var(--accent);
-      border: 2px solid rgba(255,255,255,0.85);
-      box-shadow: 0 0 0 1px rgba(0,0,0,0.12);
-      pointer-events: none;
-    }
-    main {
-      max-width: 1080px;
-      margin: 0 auto;
-      padding: 56px 28px 100px;
-    }
-    .hero {
-      text-align: center;
-      padding: 48px 0 72px;
-    }
-    .hero h1 {
-      font-size: clamp(2rem, 4.5vw, 2.75rem);
-      font-weight: 700;
-      letter-spacing: -0.035em;
-      margin-bottom: 12px;
-      line-height: 1.15;
-      color: var(--text);
-    }
-    .hero p {
-      font-size: 1.05rem;
-      color: var(--text-secondary);
-      font-weight: 400;
-      letter-spacing: -0.01em;
-      max-width: 360px;
-      margin: 0 auto;
-    }
-    section { margin-bottom: 80px; }
-    .section-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 24px;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-    .section-title {
-      font-size: 1.35rem;
-      font-weight: 650;
-      letter-spacing: -0.025em;
-    }
-    .section-desc {
-      font-size: 0.875rem;
-      color: var(--text-secondary);
-      font-weight: 400;
-    }
-    .generators-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 16px;
-    }
-    .generator-card {
-      background: var(--card);
-      border-radius: var(--radius);
-      padding: 26px 24px 24px;
-      box-shadow: var(--shadow);
-      border: 1px solid var(--border);
-      transition: transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1),
-                  box-shadow 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
-      text-decoration: none;
-      color: inherit;
-      display: block;
-      position: relative;
-      overflow: hidden;
-    }
-    .generator-card:hover {
-      transform: translateY(-3px);
-      box-shadow: var(--shadow-lg);
-    }
-    .generator-card .icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      background: var(--accent);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.25rem;
-      margin-bottom: 16px;
-      color: white;
-      transition: background 0.25s ease;
-    }
-    .generator-card h3 {
-      font-size: 1.05rem;
-      font-weight: 600;
-      margin-bottom: 6px;
-      letter-spacing: -0.02em;
-    }
-    .generator-card p {
-      font-size: 0.84rem;
-      color: var(--text-secondary);
-      line-height: 1.45;
-      letter-spacing: -0.01em;
-    }
-    .generator-card .arrow {
-      position: absolute;
-      top: 22px;
-      right: 22px;
-      opacity: 0;
-      transform: translateX(-4px);
-      transition: all 0.25s ease;
-      color: var(--accent);
-      font-size: 1rem;
-      font-weight: 500;
-    }
-    .generator-card:hover .arrow {
-      opacity: 1;
-      transform: translateX(0);
-    }
-    footer {
-      text-align: center;
-      padding: 36px 24px 48px;
-      color: var(--text-secondary);
-      font-size: 0.8rem;
-      letter-spacing: -0.01em;
-    }
-    /* Responsive */
-    @media (max-width: 1024px) {
-      .header-inner { padding: 0 24px; }
-      main { padding: 48px 24px 80px; }
-      .hero { padding: 40px 0 56px; }
-      section { margin-bottom: 64px; }
-      .generators-grid { gap: 14px; }
-    }
-    @media (max-width: 640px) {
-      :root { --header-h: 48px; }
-      .header-inner { padding: 0 16px; }
-      .logo { font-size: 0.95rem; }
-      .nav a { display: none; }
-      main { padding: 32px 16px 72px; }
-      .hero { padding: 28px 0 40px; }
-      .hero h1 { font-size: 1.75rem; }
-      .hero p { font-size: 0.95rem; }
-      section { margin-bottom: 52px; }
-      .section-header { margin-bottom: 18px; }
-      .section-title { font-size: 1.2rem; }
-      .generators-grid {
-        grid-template-columns: 1fr;
-        gap: 12px;
-      }
-      .generator-card { padding: 22px 20px; }
-    }
-    @media (max-width: 380px) {
-      .hero h1 { font-size: 1.55rem; }
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>WEST150 INTERVIEW STUDIO</title>
+<style>
+:root{
+  --bg:#090a0b;--panel:#0e1113;--line:#272b2e;--text:#eeeae2;--muted:#8f9597;
+  --accent:#b63a2d;--paper:#eee9df;--ink:#151515;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Noto Sans KR",Arial,sans-serif}
+button,input,textarea,select{font:inherit}button{cursor:pointer}
+.app{min-height:100vh;display:grid;grid-template-rows:64px 1fr 64px}
+.top{display:flex;align-items:center;padding:0 18px;border-bottom:1px solid var(--line);gap:18px;background:#090c0e}
+.brand{font-size:22px;font-weight:900;white-space:nowrap}
+.brand span{font-size:13px;font-weight:500;letter-spacing:.14em;color:#c5c5c1;margin-left:8px}
+.menu{display:flex;height:100%;gap:18px;margin-left:10px;overflow-x:auto;scrollbar-width:none}
+.menu::-webkit-scrollbar{display:none}
+.menu button{background:transparent;border:0;border-bottom:2px solid transparent;color:#999;font-size:10px;letter-spacing:.08em;white-space:nowrap}
+.menu button.active{color:#fff;border-color:var(--accent)}
+.topRight{margin-left:auto;display:flex;gap:8px}
+.topRight button{background:#101416;border:1px solid var(--line);color:#ddd;border-radius:6px;padding:10px 12px;font-size:10px}
+.export{font-weight:900!important;border-color:var(--accent)!important}
+
+.workspace{display:grid;grid-template-columns:270px minmax(0,1fr) 300px;min-height:0}
+.left,.right{background:#0b0e10;padding:16px;overflow:auto}
+.left{border-right:1px solid var(--line)}
+.right{border-left:1px solid var(--line)}
+.center{padding:22px 16px;background:#090c0e;overflow:auto}
+.sideTitle{font-size:10px;font-weight:900;letter-spacing:.12em;margin:2px 4px 14px}
+
+.template{display:grid;grid-template-columns:110px 1fr;gap:10px;padding:5px;margin-bottom:6px;background:transparent;color:#ddd;border:1px solid transparent;border-radius:6px;text-align:left;width:100%}
+.template.active{background:#111518;border-color:#d1d0ca}
+.template:hover{background:#111518}
+.thumb{height:66px;background:#171b1d;border:1px solid #303538;position:relative;overflow:hidden}
+.thumb.portrait{background:linear-gradient(120deg,#393c3c,#111 62%)}
+.thumb.portrait:after{content:"Q&A";position:absolute;left:10px;bottom:8px;font:500 22px Georgia;color:#eee}
+.thumb.quote:after{content:"“";font:900 54px Georgia;position:absolute;left:12px;top:-6px;color:var(--accent)}
+.thumb.split{background:linear-gradient(90deg,#303536 49%,#e9e3d9 50%)}
+.thumb.split:after{content:"A / B";position:absolute;inset:22px;text-align:center;color:#c9362c;font-size:13px;font-weight:900}
+.thumb.profile:after{content:"01\A NAME";white-space:pre;position:absolute;left:10px;top:10px;font-size:9px;line-height:1.5}
+.thumb.statement:after{content:"KEY\A STATEMENT";white-space:pre;position:absolute;left:10px;top:12px;font:500 16px Georgia}
+.thumb.timeline:after{content:"01 — 02 — 03";position:absolute;left:9px;bottom:16px;font-size:8px}
+.tmeta{display:flex;flex-direction:column;justify-content:center}
+.tmeta span{font-size:9px;color:#888}
+.tmeta b{font-size:10px;letter-spacing:.04em;margin-top:5px}
+.tmeta small{font-size:8px;color:#777;margin-top:3px}
+
+.canvasShell{width:min(100%,820px);margin:auto}
+.card{
+  width:100%;aspect-ratio:4/5;position:relative;overflow:hidden;
+  background:var(--paper);color:var(--ink);box-shadow:0 25px 80px #0008;
+  display:flex;flex-direction:column;padding:5%;
+}
+.card.dark{background:#151515;color:#f2eee6}
+.card.dark .role,.card.dark .answer,.card.dark .quoteBy,.card.dark .footer,.card.dark .metaLabel{color:#aaa}
+.card.dark .bottomMeta{border-color:#333}
+.card.dark .bottomMeta div{border-color:#333}
+
+.cardHeader{display:flex;justify-content:space-between;font-size:10px;font-weight:900;letter-spacing:.08em;margin-bottom:18px}
+.kicker{color:var(--accent);font-size:10px;font-weight:900;letter-spacing:.14em;margin-bottom:14px}
+.name{font:500 clamp(42px,7vw,96px)/.9 Georgia,"Noto Serif KR",serif;letter-spacing:-.06em}
+.role{font-size:13px;line-height:1.5;color:#666;margin-top:12px;max-width:90%}
+.rule{width:110px;height:4px;background:var(--accent);margin:18px 0}
+.question{font:500 clamp(24px,3.8vw,48px)/1.1 Georgia,"Noto Serif KR",serif}
+.answer{font-size:14px;line-height:1.65;color:#555;margin-top:14px;max-width:92%}
+.quoteMark{font:900 90px/0.6 Georgia;color:var(--accent);margin:8px 0 10px}
+.bigQuote{font:500 clamp(28px,4vw,56px)/1.1 Georgia,"Noto Serif KR",serif}
+.quoteBy{font-size:12px;color:#666;margin-top:20px;font-weight:800}
+.photoBlock{
+  background:linear-gradient(140deg,#8a8a85,#303332 55%,#111);
+  overflow:hidden;position:relative;min-height:160px;
+}
+.photoBlock img{width:100%;height:100%;object-fit:cover;filter:grayscale(100%);display:none}
+.photoBlock img.show{display:block}
+.photoBlock:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(0,0,0,.4));pointer-events:none}
+
+.layout-cover .body{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;flex:1;min-height:0}
+.layout-cover .photoBlock{height:100%;min-height:220px}
+.layout-cover .textCol{display:flex;flex-direction:column}
+
+.layout-quote .body{flex:1;display:flex;flex-direction:column;justify-content:center}
+.layout-quote.center .bigQuote,.layout-quote.center .quoteBy,.layout-quote.center .kicker{text-align:center}
+.layout-quote.center .quoteMark{text-align:center}
+
+.layout-qa .body{flex:1;display:flex;flex-direction:column}
+.layout-profile .body{display:grid;grid-template-columns:1fr 1fr;gap:18px;flex:1}
+.layout-profile .photoBlock{min-height:100%}
+.layout-split .body{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#c9c2b8;flex:1;min-height:240px}
+.layout-split .splitPane{background:var(--paper);padding:18px;display:flex;flex-direction:column}
+.card.dark .layout-split .splitPane{background:#1c1c1c}
+.layout-timeline .body{flex:1;display:flex;flex-direction:column;gap:14px}
+.timelineItem{display:grid;grid-template-columns:48px 1fr;gap:12px;align-items:start;padding-bottom:12px;border-bottom:1px solid #d0c9bd}
+.card.dark .timelineItem{border-color:#333}
+.timelineItem b{font:900 20px Georgia;color:var(--accent)}
+
+.bottomMeta{margin-top:auto;border-top:1px solid #c9c2b8;display:grid;grid-template-columns:repeat(3,1fr);padding-top:14px;gap:8px}
+.bottomMeta strong{display:block;font-size:15px;color:var(--accent)}
+.metaLabel{font-size:8px;color:#666}
+.footer{display:flex;justify-content:space-between;font-size:9px;color:#686661;margin-top:12px}
+.hide-photo .photoBlock{display:none!important}
+.hide-photo.layout-cover .body,.hide-photo.layout-profile .body{grid-template-columns:1fr}
+.hide-meta .bottomMeta{display:none!important}
+
+.control{margin-bottom:20px}
+.control h3{font-size:10px;letter-spacing:.12em;margin:0 0 10px}
+.label{font-size:9px;color:#909799;margin:8px 0 4px;display:block}
+.input,.textarea{width:100%;border:1px solid #2c3336;background:#101416;color:#e3e3df;border-radius:5px;padding:10px;font-size:11px}
+.textarea{min-height:78px;resize:vertical}
+.choiceGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
+.choice{padding:10px 8px;background:#0f1315;border:1px solid #303639;color:#aaa;font-size:9px}
+.choice.active{border-color:var(--accent);color:#fff}
+.photoUpload{border:1px dashed #4a5153;padding:12px;text-align:center;font-size:10px;color:#999;background:#101416;display:block;cursor:pointer}
+.toggle{display:flex;justify-content:space-between;align-items:center;font-size:10px;color:#aaa;padding:8px 0}
+.switch{width:35px;height:19px;border-radius:20px;background:#34393b;position:relative;border:0;padding:0}
+.switch:after{content:"";position:absolute;width:17px;height:17px;border-radius:50%;background:#eee;left:1px;top:1px;transition:left .15s}
+.switch.on{background:var(--accent)}
+.switch.on:after{left:17px}
+.status{font-size:9px;color:#7e8587;margin-top:8px}
+
+.bottom{display:flex;align-items:center;gap:10px;padding:7px 14px;border-top:1px solid var(--line);background:#0a0d0f;overflow:auto}
+.add{height:46px;min-width:78px;border:1px solid #343a3d;background:#101416;color:#aaa;font-size:10px}
+.film{display:flex;gap:8px}
+.mini{min-width:72px;height:46px;border:1px solid #303638;background:#15191b;color:#aaa;font-size:8px;padding:0 8px}
+.mini.active{outline:2px solid var(--accent);color:#fff}
+.zoom{margin-left:auto;color:#999;font-size:10px;white-space:nowrap}
+
+@media(max-width:1100px){
+  .workspace{grid-template-columns:1fr}
+  .left,.right{border:0;max-height:280px}
+  .template{grid-template-columns:1fr}
+  .tmeta{display:none}
+}
+@media(max-width:700px){
+  .app{grid-template-rows:56px 1fr 56px}
+  .top{padding:0 10px}
+  .brand{font-size:16px}
+  .brand span{display:none}
+  .menu{gap:12px}
+  .menu button{font-size:8px}
+  .topRight button:not(.export){display:none}
+  .center{padding:10px}
+  .layout-cover .body,.layout-profile .body,.layout-split .body{grid-template-columns:1fr}
+}
+</style>
 </head>
 <body>
-  <header>
-    <div class="header-inner">
-      <a href="archive.html" class="logo">WEST150DAILY STUDIO</a>
-      <nav class="nav">
-        <a href="#generators">생성기</a>
-        <div class="header-actions">
-          <div class="color-picker-wrap" title="포인트 컬러">
-            <input type="color" id="accentPicker" value="#0071e3" aria-label="포인트 컬러 선택">
-            <div class="color-swatch" id="colorSwatch"></div>
-          </div>
-          <button class="icon-btn" id="themeToggle" aria-label="테마 전환">🌙</button>
-        </div>
-      </nav>
+<div class="app">
+  <header class="top">
+    <div class="brand">WEST150 <span>INTERVIEW STUDIO</span></div>
+    <nav class="menu">
+      <button class="active" data-panel="template">TEMPLATE</button>
+      <button data-panel="person">PERSON</button>
+      <button data-panel="qa">Q&A</button>
+      <button data-panel="quote">QUOTE</button>
+      <button data-panel="style">STYLE</button>
+      <button data-panel="cards">CARDS</button>
+    </nav>
+    <div class="topRight">
+      <button type="button" id="saveJsonBtn">SAVE JSON</button>
+      <button type="button" id="loadJsonBtn">LOAD JSON</button>
+      <button type="button" class="export" id="exportBtn">⇩ EXPORT PNG</button>
+      <input id="jsonFile" type="file" accept="application/json" hidden>
     </div>
   </header>
-  <main>
-    <section class="hero">
-      <h1>WEST150DAILY CARD STUDIO</h1>
-      <p>편집기 모음</p>
-    </section>
-    <section id="generators">
-      <div class="section-header">
-        <h2 class="section-title">생성기</h2>
-        <span class="section-desc">클릭하면 바로 사용할 수 있습니다</span>
+
+  <div class="workspace">
+    <aside class="left" id="leftAside">
+      <div class="sideTitle">◉ &nbsp; INTERVIEW LAYOUTS</div>
+      <div id="templates">
+        <button class="template active" data-layout="cover"><div class="thumb portrait"></div><div class="tmeta"><span>01</span><b>INTERVIEW COVER</b><small>인물 중심</small></div></button>
+        <button class="template" data-layout="quote"><div class="thumb quote"></div><div class="tmeta"><span>02</span><b>BIG QUOTE</b><small>발언 강조</small></div></button>
+        <button class="template" data-layout="qa"><div class="thumb statement"></div><div class="tmeta"><span>03</span><b>Q & A</b><small>질문과 답변</small></div></button>
+        <button class="template" data-layout="profile"><div class="thumb profile"></div><div class="tmeta"><span>04</span><b>PROFILE</b><small>인물 소개</small></div></button>
+        <button class="template" data-layout="split"><div class="thumb split"></div><div class="tmeta"><span>05</span><b>DOUBLE VOICE</b><small>두 인물 비교</small></div></button>
+        <button class="template" data-layout="timeline"><div class="thumb timeline"></div><div class="tmeta"><span>06</span><b>INTERVIEW STORY</b><small>흐름 정리</small></div></button>
       </div>
-      <div class="generators-grid">
-         <a href="cardcover.html" class="generator-card">
-          <div class="icon">📋</div>
-          <h3>카드 커버 제작 편집기</h3>
-          <p>커버 제작</p>
-          <span class="arrow">→</span>
-         </a>
-        <a href="cardstudio.html" class="generator-card">
-          <div class="icon">📰</div>
-          <h3>카드 스튜디오</h3>
-          <p>맥북용</p>
-          <span class="arrow">→</span>
-        </a>
-        <a href="breakingstudio.html" class="generator-card">
-          <div class="icon">🚨</div>
-          <h3>속보 전용 카드 스튜디오</h3>
-          <p>맥북,아이폰 공용</p>
-          <span class="arrow">→</span>
-        </a>
-        <a href="ed.html" class="generator-card">
-          <div class="icon">📰</div>
-          <h3>에디토리얼 전용 카드 스튜디오</h3>
-          <p>맥북,아이폰 공용</p>
-          <span class="arrow">→</span>
-        </a>
-        <a href="inter.html" class="generator-card">
-          <div class="icon">📰</div>
-          <h3>인터뷰 전용 카드 스튜디오</h3>
-          <p>맥북,아이폰 공용</p>
-          <span class="arrow">→</span>
-        </a>
-        <a href="theology.html" class="generator-card">
-          <div class="icon">📰</div>
-          <h3>신학 전용 카드 스튜디오</h3>
-          <p>맥북,아이폰 공용</p>
-          <span class="arrow">→</span>
-        </a>
-        <a href="iphone.html" class="generator-card">
-          <div class="icon">📋</div>
-          <h3>카드 스튜디오 서브</h3>
-          <p>아이폰용</p>
-          <span class="arrow">→</span>
-        </a>
+    </aside>
+
+    <main class="center">
+      <div class="canvasShell">
+        <article class="card" id="card"></article>
       </div>
-    </section>
-  </main>
-  <footer>
-    <p>© 2026 · WEST150DAILY CARD STUDIO</p>
+    </main>
+
+    <aside class="right" id="rightAside">
+      <div class="control" id="personControl">
+        <h3>PERSON</h3>
+        <label class="label">NAME</label>
+        <input class="input" id="nameInput">
+        <label class="label">ROLE / TITLE</label>
+        <input class="input" id="roleInput">
+        <label class="label">SECTION</label>
+        <input class="input" id="sectionInput">
+        <label class="label">CREDIT</label>
+        <input class="input" id="creditInput">
+        <label class="label">PHOTO</label>
+        <label class="photoUpload">＋ UPLOAD PORTRAIT<input id="photoInput" type="file" accept="image/*" hidden></label>
+        <button type="button" class="choice" id="clearPhoto" style="width:100%;margin-top:8px">사진 제거</button>
+      </div>
+
+      <div class="control" id="qaControl">
+        <h3>Q & A</h3>
+        <label class="label">QUESTION</label>
+        <textarea class="textarea" id="questionInput"></textarea>
+        <label class="label">ANSWER / DESCRIPTION</label>
+        <textarea class="textarea" id="answerInput"></textarea>
+        <label class="label">PAGE</label>
+        <input class="input" id="pageInput">
+        <label class="label">META 1 / 2 / 3 (쉼표)</label>
+        <input class="input" id="metaInput" placeholder="01,58 MIN,2026">
+      </div>
+
+      <div class="control" id="quoteControl">
+        <h3>QUOTE STYLE</h3>
+        <div class="choiceGrid" id="quoteStyle">
+          <button type="button" class="choice active" data-q="editorial">EDITORIAL</button>
+          <button type="button" class="choice" data-q="minimal">MINIMAL</button>
+          <button type="button" class="choice" data-q="statement">STATEMENT</button>
+          <button type="button" class="choice" data-q="center">CENTER</button>
+        </div>
+        <label class="label">SECOND NAME (SPLIT)</label>
+        <input class="input" id="name2Input">
+        <label class="label">SECOND ROLE (SPLIT)</label>
+        <input class="input" id="role2Input">
+        <label class="label">SECOND QUOTE (SPLIT)</label>
+        <textarea class="textarea" id="quote2Input"></textarea>
+      </div>
+
+      <div class="control" id="styleControl">
+        <h3>STYLE</h3>
+        <label class="label">BACKGROUND</label>
+        <div class="choiceGrid" id="bgStyle">
+          <button type="button" class="choice active" data-bg="paper">PAPER</button>
+          <button type="button" class="choice" data-bg="dark">DARK</button>
+        </div>
+        <label class="label">ACCENT</label>
+        <input id="accent" type="color" value="#b63a2d" style="width:100%;height:38px;background:#101416;border:1px solid #303639">
+        <div class="toggle"><span>SHOW PHOTO</span><button type="button" class="switch on" id="photoToggle"></button></div>
+        <div class="toggle"><span>SHOW METADATA</span><button type="button" class="switch on" id="metaToggle"></button></div>
+        <div class="status" id="status">자동 저장 활성화</div>
+      </div>
+    </aside>
+  </div>
+
+  <footer class="bottom" id="bottomBar">
+    <button type="button" class="add" id="addCard">＋ ADD</button>
+    <button type="button" class="add" id="dupCard">복제</button>
+    <div class="film" id="film"></div>
+    <span class="zoom" id="zoomLabel">CARD 01</span>
   </footer>
-  <script>
-    const themeToggle = document.getElementById('themeToggle');
-    const html = document.documentElement;
-    const savedTheme = localStorage.getItem('theme') ||
-      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    if (savedTheme === 'dark') {
-      html.setAttribute('data-theme', 'dark');
-      themeToggle.textContent = '☀️';
+</div>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const KEY = "west150_interview_studio_v1";
+
+  const defaults = {
+    layout: "cover",
+    name: "JAMES ANDERSON",
+    role: "CEO & Founder / New York, United States",
+    section: "CONVERSATION",
+    question: "“WHAT NEEDS TO CHANGE NOW?”",
+    answer: "A conversation about leadership, change, and the decisions shaping what comes next.",
+    page: "01 / 08",
+    credit: "PHOTO / WEST150",
+    meta: "01,58 MIN,2026",
+    name2: "ALEX RIVERA",
+    role2: "Editor-at-Large",
+    quote2: "The story is never finished until both sides are heard.",
+    quoteStyle: "editorial",
+    bg: "paper",
+    accent: "#b63a2d",
+    showPhoto: true,
+    showMeta: true,
+    photo: null
+  };
+
+  let state = { ...defaults };
+  let cards = [{ ...defaults }];
+  let idx = 0;
+
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, m => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"
+  })[m]);
+
+  const nameHTML = v => esc(v).replace(/\s+/g, "<br>");
+  const roleHTML = v => esc(v).replace(/\s*\/\s*/g, "<br>");
+
+  function save() {
+    try {
+      localStorage.setItem(KEY, JSON.stringify({ cards, idx }));
+      $("status").textContent = "자동 저장됨 · " + new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    } catch (e) {
+      $("status").textContent = "자동 저장 실패 (용량 초과 가능)";
     }
-    themeToggle.addEventListener('click', () => {
-      const isDark = html.getAttribute('data-theme') === 'dark';
-      if (isDark) {
-        html.removeAttribute('data-theme');
-        themeToggle.textContent = '🌙';
-        localStorage.setItem('theme', 'light');
-      } else {
-        html.setAttribute('data-theme', 'dark');
-        themeToggle.textContent = '☀️';
-        localStorage.setItem('theme', 'dark');
+  }
+
+  function syncCard() {
+    cards[idx] = { ...state };
+    save();
+  }
+
+  function metaParts() {
+    const p = String(state.meta || "").split(",").map(x => x.trim());
+    return [p[0] || "01", p[1] || "—", p[2] || "2026"];
+  }
+
+  function render() {
+    document.documentElement.style.setProperty("--accent", state.accent);
+    const card = $("card");
+    card.className = "card layout-" + state.layout
+      + (state.bg === "dark" ? " dark" : "")
+      + (state.showPhoto ? "" : " hide-photo")
+      + (state.showMeta ? "" : " hide-meta")
+      + (state.layout === "quote" && state.quoteStyle === "center" ? " center" : "");
+
+    const [m1, m2, m3] = metaParts();
+    const photo = state.photo
+      ? `<div class="photoBlock"><img class="show" src="${state.photo}" alt=""></div>`
+      : `<div class="photoBlock"></div>`;
+
+    const header = `<div class="cardHeader"><span>WEST150 INTERVIEW</span><span>${esc(state.page)}</span></div>`;
+    const footer = `<div class="footer"><span>${esc(state.credit)}</span><span>@WEST150OFFICIAL</span></div>`;
+    const meta = `<div class="bottomMeta">
+      <div><strong>${esc(m1)}</strong><span class="metaLabel">INTERVIEW</span></div>
+      <div><strong>${esc(m2)}</strong><span class="metaLabel">CONVERSATION</span></div>
+      <div><strong>${esc(m3)}</strong><span class="metaLabel">WEST150</span></div>
+    </div>`;
+
+    let body = "";
+
+    if (state.layout === "cover") {
+      body = `<div class="body">
+        <div class="textCol">
+          <div class="kicker">${esc(state.section)}</div>
+          <div class="name">${nameHTML(state.name)}</div>
+          <div class="role">${roleHTML(state.role)}</div>
+          <div class="rule"></div>
+          <div class="question">${esc(state.question)}</div>
+          <div class="answer">${esc(state.answer)}</div>
+          ${meta}
+        </div>
+        ${photo}
+      </div>`;
+    } else if (state.layout === "quote") {
+      const qClass = state.quoteStyle === "minimal" ? "bigQuote" : "bigQuote";
+      body = `<div class="body">
+        <div class="kicker">${esc(state.section || "BIG QUOTE")}</div>
+        <div class="quoteMark">“</div>
+        <div class="${qClass}">${esc(state.question.replace(/^["“]|["”]$/g, ""))}</div>
+        <div class="quoteBy">— ${esc(state.name)}${state.role ? " · " + esc(state.role.split("/")[0].trim()) : ""}</div>
+        ${meta}
+      </div>`;
+    } else if (state.layout === "qa") {
+      body = `<div class="body">
+        <div class="kicker">${esc(state.section || "QUESTION & ANSWER")}</div>
+        <div class="name" style="font-size:clamp(28px,4vw,48px);margin-bottom:8px">${nameHTML(state.name)}</div>
+        <div class="rule"></div>
+        <div class="question">${esc(state.question)}</div>
+        <div class="answer">${esc(state.answer)}</div>
+        ${photo}
+        ${meta}
+      </div>`;
+    } else if (state.layout === "profile") {
+      body = `<div class="body">
+        ${photo}
+        <div>
+          <div class="kicker">${esc(state.section || "PROFILE")}</div>
+          <div class="name">${nameHTML(state.name)}</div>
+          <div class="role">${roleHTML(state.role)}</div>
+          <div class="rule"></div>
+          <div class="answer">${esc(state.answer)}</div>
+          ${meta}
+        </div>
+      </div>`;
+    } else if (state.layout === "split") {
+      body = `<div class="body">
+        <div class="splitPane">
+          <div class="kicker">VOICE A</div>
+          <div class="name" style="font-size:clamp(28px,4vw,42px)">${nameHTML(state.name)}</div>
+          <div class="role">${roleHTML(state.role)}</div>
+          <div class="rule"></div>
+          <div class="answer">${esc(state.question)}</div>
+        </div>
+        <div class="splitPane">
+          <div class="kicker">VOICE B</div>
+          <div class="name" style="font-size:clamp(28px,4vw,42px)">${nameHTML(state.name2)}</div>
+          <div class="role">${roleHTML(state.role2)}</div>
+          <div class="rule"></div>
+          <div class="answer">${esc(state.quote2)}</div>
+        </div>
+      </div>${meta}`;
+    } else if (state.layout === "timeline") {
+      const steps = [
+        state.question,
+        state.answer,
+        state.quote2 || "Final takeaway from the conversation."
+      ];
+      body = `<div class="body">
+        <div class="kicker">${esc(state.section || "INTERVIEW STORY")}</div>
+        <div class="name" style="font-size:clamp(32px,5vw,56px);margin-bottom:8px">${nameHTML(state.name)}</div>
+        ${steps.map((t, i) => `<div class="timelineItem"><b>0${i + 1}</b><div class="answer" style="margin:0">${esc(t)}</div></div>`).join("")}
+        ${meta}
+      </div>`;
+    }
+
+    card.innerHTML = header + body + footer;
+
+    // template active
+    document.querySelectorAll(".template").forEach(b => {
+      b.classList.toggle("active", b.dataset.layout === state.layout);
+    });
+    document.querySelectorAll("#bgStyle .choice").forEach(b => {
+      b.classList.toggle("active", b.dataset.bg === state.bg);
+    });
+    document.querySelectorAll("#quoteStyle .choice").forEach(b => {
+      b.classList.toggle("active", b.dataset.q === state.quoteStyle);
+    });
+    $("photoToggle").classList.toggle("on", state.showPhoto);
+    $("metaToggle").classList.toggle("on", state.showMeta);
+    $("accent").value = state.accent;
+
+    renderFilm();
+    $("zoomLabel").textContent = `CARD ${String(idx + 1).padStart(2, "0")} · ${state.layout.toUpperCase()}`;
+  }
+
+  function renderFilm() {
+    $("film").innerHTML = cards.map((c, i) =>
+      `<button type="button" class="mini ${i === idx ? "active" : ""}" data-i="${i}">${String(i + 1).padStart(2, "0")}<br>${(c.layout || "").toUpperCase()}</button>`
+    ).join("");
+    $("film").querySelectorAll(".mini").forEach(btn => {
+      btn.onclick = () => {
+        syncCard();
+        idx = Number(btn.dataset.i);
+        state = { ...defaults, ...cards[idx] };
+        fillInputs();
+        render();
+        save();
+      };
+    });
+  }
+
+  function fillInputs() {
+    $("nameInput").value = state.name;
+    $("roleInput").value = state.role;
+    $("sectionInput").value = state.section;
+    $("creditInput").value = state.credit;
+    $("questionInput").value = state.question;
+    $("answerInput").value = state.answer;
+    $("pageInput").value = state.page;
+    $("metaInput").value = state.meta;
+    $("name2Input").value = state.name2;
+    $("role2Input").value = state.role2;
+    $("quote2Input").value = state.quote2;
+  }
+
+  function bind(id, key) {
+    $(id).addEventListener("input", e => {
+      state[key] = e.target.value;
+      syncCard();
+      render();
+    });
+  }
+
+  ["nameInput","name"], ["roleInput","role"], ["sectionInput","section"],
+  ["creditInput","credit"], ["questionInput","question"], ["answerInput","answer"],
+  ["pageInput","page"], ["metaInput","meta"], ["name2Input","name2"],
+  ["role2Input","role2"], ["quote2Input","quote2"]
+  .forEach(([id, key]) => bind(id, key));
+
+  document.querySelectorAll(".template").forEach(btn => {
+    btn.addEventListener("click", () => {
+      state.layout = btn.dataset.layout;
+      // 레이아웃별 기본 섹션 힌트
+      const hints = {
+        cover: "CONVERSATION",
+        quote: "BIG QUOTE",
+        qa: "QUESTION & ANSWER",
+        profile: "PROFILE",
+        split: "DOUBLE VOICE",
+        timeline: "INTERVIEW STORY"
+      };
+      if (!state.section || Object.values(hints).includes(state.section)) {
+        state.section = hints[state.layout] || state.section;
+        $("sectionInput").value = state.section;
       }
+      syncCard();
+      render();
     });
-    const accentPicker = document.getElementById('accentPicker');
-    const colorSwatch = document.getElementById('colorSwatch');
-    const savedAccent = localStorage.getItem('accent') || '#0071e3';
-    accentPicker.value = savedAccent;
-    document.documentElement.style.setProperty('--accent', savedAccent);
-    colorSwatch.style.background = savedAccent;
-    accentPicker.addEventListener('input', (e) => {
-      const color = e.target.value;
-      document.documentElement.style.setProperty('--accent', color);
-      colorSwatch.style.background = color;
-      localStorage.setItem('accent', color);
+  });
+
+  document.querySelectorAll("#bgStyle .choice").forEach(btn => {
+    btn.addEventListener("click", () => {
+      state.bg = btn.dataset.bg;
+      syncCard();
+      render();
     });
-  </script>
+  });
+
+  document.querySelectorAll("#quoteStyle .choice").forEach(btn => {
+    btn.addEventListener("click", () => {
+      state.quoteStyle = btn.dataset.q;
+      syncCard();
+      render();
+    });
+  });
+
+  $("accent").addEventListener("input", e => {
+    state.accent = e.target.value;
+    syncCard();
+    render();
+  });
+
+  $("photoToggle").addEventListener("click", () => {
+    state.showPhoto = !state.showPhoto;
+    syncCard();
+    render();
+  });
+
+  $("metaToggle").addEventListener("click", () => {
+    state.showMeta = !state.showMeta;
+    syncCard();
+    render();
+  });
+
+  $("photoInput").addEventListener("change", e => {
+    const f = e.target.files && e.target.files[0];
+    if (!f) return;
+    const r = new FileReader();
+    r.onload = () => {
+      state.photo = r.result;
+      syncCard();
+      render();
+    };
+    r.readAsDataURL(f);
+  });
+
+  $("clearPhoto").addEventListener("click", () => {
+    state.photo = null;
+    $("photoInput").value = "";
+    syncCard();
+    render();
+  });
+
+  $("addCard").addEventListener("click", () => {
+    syncCard();
+    const neu = { ...state, page: `${String(cards.length + 1).padStart(2, "0")} / ${String(Math.max(cards.length + 1, 8)).padStart(2, "0")}` };
+    cards.splice(idx + 1, 0, neu);
+    idx++;
+    state = { ...neu };
+    fillInputs();
+    render();
+    save();
+  });
+
+  $("dupCard").addEventListener("click", () => {
+    $("addCard").click();
+  });
+
+  // 상단 메뉴 (모바일에서 패널 포커스)
+  const wide = window.matchMedia("(min-width:1101px)");
+  function applyPanel(panel) {
+    if (wide.matches) {
+      $("leftAside").style.display = "";
+      $("rightAside").style.display = "";
+      ["personControl","qaControl","quoteControl","styleControl"].forEach(id => $(id).style.display = "");
+      return;
+    }
+    $("leftAside").style.display = panel === "template" ? "block" : "none";
+    const showRight = ["person","qa","quote","style"].includes(panel);
+    $("rightAside").style.display = showRight ? "block" : "none";
+    $("personControl").style.display = panel === "person" ? "block" : "none";
+    $("qaControl").style.display = panel === "qa" ? "block" : "none";
+    $("quoteControl").style.display = panel === "quote" ? "block" : "none";
+    $("styleControl").style.display = panel === "style" ? "block" : "none";
+  }
+
+  document.querySelectorAll(".menu button[data-panel]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".menu button").forEach(x => x.classList.remove("active"));
+      btn.classList.add("active");
+      const panel = btn.dataset.panel;
+      if (panel === "cards") {
+        $("bottomBar").scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+      applyPanel(panel);
+    });
+  });
+  wide.addEventListener("change", () => applyPanel(document.querySelector(".menu button.active")?.dataset.panel || "template"));
+  applyPanel("template");
+
+  // JSON
+  $("saveJsonBtn").addEventListener("click", () => {
+    syncCard();
+    const blob = new Blob([JSON.stringify({ version: 1, cards, idx }, null, 2)], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "west150-interview-project.json";
+    a.click();
+  });
+
+  $("loadJsonBtn").addEventListener("click", () => $("jsonFile").click());
+  $("jsonFile").addEventListener("change", e => {
+    const f = e.target.files && e.target.files[0];
+    if (!f) return;
+    const r = new FileReader();
+    r.onload = () => {
+      try {
+        const d = JSON.parse(r.result);
+        const list = Array.isArray(d) ? d : d.cards;
+        if (!Array.isArray(list) || !list.length) throw 0;
+        cards = list.map(c => ({ ...defaults, ...c }));
+        idx = Math.min(Number(d.idx) || 0, cards.length - 1);
+        state = { ...defaults, ...cards[idx] };
+        fillInputs();
+        render();
+        save();
+      } catch (_) {
+        alert("올바른 프로젝트 JSON이 아닙니다.");
+      }
+    };
+    r.readAsText(f);
+  });
+
+  // PNG export (단순 캔버스 렌더)
+  function exportPNG() {
+    syncCard();
+    const W = 1080, H = 1350;
+    const c = document.createElement("canvas");
+    c.width = W; c.height = H;
+    const x = c.getContext("2d");
+    const dark = state.bg === "dark";
+    const bg = dark ? "#151515" : "#eee9df";
+    const ink = dark ? "#f2eee6" : "#151515";
+    const muted = dark ? "#aaa" : "#666";
+    const pad = 54;
+
+    x.fillStyle = bg;
+    x.fillRect(0, 0, W, H);
+    x.fillStyle = ink;
+    x.font = "900 18px Arial";
+    x.fillText("WEST150 INTERVIEW", pad, 60);
+    x.textAlign = "right";
+    x.fillText(state.page || "01 / 08", W - pad, 60);
+    x.textAlign = "left";
+
+    x.fillStyle = state.accent;
+    x.font = "900 18px Arial";
+    x.fillText((state.section || "").toUpperCase(), pad, 130);
+
+    const wrap = (text, max, font, y, lh, color) => {
+      x.font = font;
+      x.fillStyle = color;
+      const words = String(text || "").split(/\s+/);
+      let line = "", yy = y;
+      for (const w of words) {
+        const t = line ? line + " " + w : w;
+        if (x.measureText(t).width > max && line) {
+          x.fillText(line, pad, yy);
+          yy += lh;
+          line = w;
+        } else line = t;
+      }
+      if (line) { x.fillText(line, pad, yy); yy += lh; }
+      return yy;
+    };
+
+    let y = 190;
+    if (state.layout === "quote") {
+      x.fillStyle = state.accent;
+      x.font = "900 140px Georgia";
+      x.fillText("“", pad, y + 40);
+      y = wrap(state.question.replace(/^["“]|["”]$/g, ""), W - pad * 2, "500 48px Georgia", y + 80, 58, ink);
+      x.fillStyle = muted;
+      x.font = "700 20px Arial";
+      x.fillText("— " + state.name, pad, y + 30);
+    } else {
+      y = wrap(state.name, W - pad * 2, "500 72px Georgia", y, 78, ink) + 10;
+      y = wrap(state.role, W - pad * 2, "400 22px Arial", y, 30, muted) + 20;
+      x.fillStyle = state.accent;
+      x.fillRect(pad, y, 110, 5);
+      y += 50;
+      y = wrap(state.question, W - pad * 2, "500 40px Georgia", y, 48, ink) + 16;
+      y = wrap(state.answer, W - pad * 2, "400 24px Arial", y, 34, muted);
+    }
+
+    x.fillStyle = muted;
+    x.font = "400 16px Arial";
+    x.fillText(state.credit || "PHOTO / WEST150", pad, H - 40);
+    x.textAlign = "right";
+    x.fillText("@WEST150OFFICIAL", W - pad, H - 40);
+
+    c.toBlob(blob => {
+      if (!blob) return;
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `WEST150_INTERVIEW_${String(idx + 1).padStart(2, "0")}.png`;
+      a.click();
+    }, "image/png");
+  }
+
+  $("exportBtn").addEventListener("click", exportPNG);
+
+  // init
+  try {
+    const saved = JSON.parse(localStorage.getItem(KEY) || "null");
+    if (saved && Array.isArray(saved.cards) && saved.cards.length) {
+      cards = saved.cards.map(c => ({ ...defaults, ...c }));
+      idx = Math.min(Number(saved.idx) || 0, cards.length - 1);
+      state = { ...defaults, ...cards[idx] };
+    }
+  } catch (_) {}
+
+  fillInputs();
+  render();
+  save();
+})();
+</script>
 </body>
 </html>
