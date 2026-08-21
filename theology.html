@@ -8,6 +8,9 @@
 :root{
 --bg:#0b0c0b;--panel:#101210;--line:#2a2c28;--text:#eeeae0;--muted:#92948d;
 --paper:#ebe5d8;--ink:#191a17;--accent:#9a7b43;--accent2:#7f342b;
+--scale-ref: 1;
+--scale-main: 1;
+--scale-body: 1;
 }
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Noto Sans KR",Arial,sans-serif}
@@ -35,10 +38,10 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
 .cardContent{position:absolute;left:4%;right:4%;top:13%;bottom:8%}
 .chapterNum{position:absolute;right:0;top:-25px;font:500 clamp(120px,19vw,250px)/1 Georgia;color:#d8d0c0;letter-spacing:-.1em;opacity:.55}.dark .chapterNum,.ink .chapterNum{color:#45473d;opacity:.8}
 .kicker{position:relative;color:var(--accent);font-size:10px;font-weight:900;letter-spacing:.18em;margin-bottom:26px}
-.ref{position:relative;font:500 clamp(40px,6.2vw,84px)/.92 Georgia;letter-spacing:-.06em;max-width:70%}
+.ref{position:relative;font-family:Georgia;font-weight:500;font-size:calc(clamp(40px,6.2vw,84px) * var(--scale-ref));line-height:.92;letter-spacing:-.06em;max-width:70%}
 .divider{position:relative;width:120px;height:3px;background:var(--accent);margin:25px 0}
-.verse{position:relative;font:500 clamp(27px,4vw,52px)/1.15 Georgia;max-width:80%}
-.body{position:relative;max-width:50%;font-size:13px;line-height:1.7;color:#65635d;margin-top:22px}.dark .body,.ink .body{color:#c4c0b5}
+.verse{position:relative;font-family:Georgia;font-weight:500;font-size:calc(clamp(27px,4vw,52px) * var(--scale-main));line-height:1.15;max-width:80%}
+.body{position:relative;max-width:50%;font-size:calc(13px * var(--scale-body));line-height:1.7;color:#65635d;margin-top:22px}
 .conceptBox{position:absolute;right:0;bottom:17%;width:37%;border-top:1px solid #bdb5a6;padding-top:14px}.conceptBox strong{font-size:10px;letter-spacing:.12em;color:var(--accent)}.conceptBox p{font:500 19px/1.25 Georgia;margin:10px 0 0}
 .bottomMeta{position:absolute;left:0;right:0;bottom:0;border-top:1px solid #c7c0b2;padding:16px 0;display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:12px}.dark .bottomMeta,.ink .bottomMeta{border-color:#55564e}
 .meta strong{display:block;font-size:13px;color:var(--accent)}.meta span{font-size:8px;color:#68655e}
@@ -105,7 +108,14 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
 <div id="styleControl">
 <div class="control"><h3>LAYOUT</h3>
 <div class="choiceGrid" id="textAlign"><button class="choice active" data-align="left">LEFT</button><button class="choice" data-align="center">CENTER</button></div>
-<label class="label">TEXT SCALE</label><input class="range" id="scale" type="range" min="70" max="130" value="100">
+<label class="label">TITLE SCALE (제목 크기)</label>
+<input class="range" id="scaleRef" type="range" min="50" max="150" value="100">
+
+<label class="label">MAIN TEXT SCALE (본문 크기)</label>
+<input class="range" id="scaleMain" type="range" min="50" max="150" value="100">
+
+<label class="label">BODY TEXT SCALE (설명 크기)</label>
+<input class="range" id="scaleBody" type="range" min="50" max="150" value="100">
 </div>
 <div class="control"><h3>STYLE</h3>
 <label class="label">ACCENT</label><div class="swatches" id="swatches"><button class="swatch active" data-color="#9a7b43"></button><button class="swatch" data-color="#7f342b"></button><button class="swatch" data-color="#394541"></button><button class="swatch" data-color="#c5b7a0"></button></div>
