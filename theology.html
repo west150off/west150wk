@@ -147,6 +147,138 @@
 /* 썸네일도 실제 템플릿과 같은 분위기 */
 .thumb{background-size:cover!important;background-position:center!important}
 .thumb.scripture{background:linear-gradient(135deg,#d8cfbd,#72695b)!important}.thumb.quote{background:linear-gradient(135deg,#10130f,#4c5246)!important}.thumb.concept{background:linear-gradient(135deg,#f2ede2,#cfc4aa)!important}.thumb.meditation{background:linear-gradient(135deg,#3d4039,#c2b89e)!important}.thumb.word{background:linear-gradient(135deg,#e8dfd0,#9c8c71)!important}.thumb.chapter{background:linear-gradient(135deg,#f4f0e7,#bfb7a7)!important}.thumb.editorial{background:linear-gradient(135deg,#10120f,#4b5147)!important}.thumb.timeline{background:linear-gradient(135deg,#eee5d5,#c6b390)!important}
+
+/* ===== EDITORIAL LUXE — VISUAL UPGRADE ONLY ===== */
+#card{--luxe-gold:#b99a63;--luxe-ink:#1b1a17;--luxe-paper:#f2eee5;--luxe-line:rgba(70,64,53,.22)}
+#card::before{content:"";position:absolute;inset:0;z-index:6;pointer-events:none;border:1px solid rgba(255,255,255,.16)}
+#card .cardHeader{font-family:'Noto Sans KR',sans-serif;font-size:8px;letter-spacing:.18em;opacity:.82}
+#card .kicker{font-family:'Noto Sans KR',sans-serif!important;font-size:9px!important;font-weight:800!important;letter-spacing:.24em!important;border-bottom:0!important;padding-bottom:0!important;text-transform:uppercase}
+#card .ref{font-weight:500;letter-spacing:-.035em}
+#card .verse{font-weight:500;letter-spacing:-.025em}
+#card .body{letter-spacing:-.01em}
+#card .divider{opacity:.72}
+#card .bottomMeta{background:linear-gradient(180deg,transparent,rgba(0,0,0,.025));}
+
+/* 01 — SCRIPTURE / sacred editorial */
+#card.layout-scripture{background:linear-gradient(135deg,#e9e2d4 0%,#d9cfbe 48%,#f4f0e8 100%)!important;color:#24211c!important}
+#card.layout-scripture::after{content:"";position:absolute;inset:5.5%;z-index:7;border:1px solid rgba(92,76,52,.18);pointer-events:none}
+#card.layout-scripture .photo{opacity:.24!important;mix-blend-mode:multiply;filter:sepia(.12) saturate(.78)!important}
+#card.layout-scripture .scrim{background:radial-gradient(circle at 78% 18%,rgba(255,252,240,.68),transparent 36%),linear-gradient(135deg,rgba(255,255,255,.16),transparent 55%)!important}
+#card.layout-scripture .cardContent{top:15%;left:10%;right:10%;bottom:10%}
+#card.layout-scripture .kicker{color:#7d6440!important}
+#card.layout-scripture .ref{font-family:'Nanum Myeongjo',serif!important;font-size:clamp(43px,6.4vw,82px)!important;line-height:.88;max-width:70%;text-shadow:0 1px 0 rgba(255,255,255,.4)}
+#card.layout-scripture .divider{width:88px;height:2px;background:#9b7844;margin:20px 0 22px}
+#card.layout-scripture .verse{font-family:'Nanum Myeongjo',serif!important;font-size:clamp(25px,3.55vw,46px)!important;max-width:74%;line-height:1.28}
+#card.layout-scripture .body{max-width:58%;color:#6a6255!important}
+#card.layout-scripture .conceptBox{right:0;bottom:15%;width:36%;background:rgba(247,243,235,.9);border:1px solid rgba(130,98,53,.2);border-left:3px solid #9b7844;border-radius:2px;box-shadow:0 16px 34px rgba(47,40,29,.09);padding:15px}
+
+/* 02 — QUOTE / dark journal */
+#card.layout-quote{background:radial-gradient(circle at 70% 20%,#34382f 0,#1b1e19 38%,#0e100e 100%)!important}
+#card.layout-quote::after{content:"";position:absolute;inset:6%;z-index:7;border:1px solid rgba(206,176,115,.2);pointer-events:none}
+#card.layout-quote .photo{opacity:.44!important;filter:contrast(1.08) saturate(.72)!important}
+#card.layout-quote .scrim{background:linear-gradient(180deg,rgba(0,0,0,.04),rgba(0,0,0,.72) 68%,rgba(0,0,0,.88))!important}
+#card.layout-quote .cardContent{top:15%;left:9%;right:9%;bottom:10%}
+#card.layout-quote .kicker{color:#d4b57a!important}
+#card.layout-quote .ref{font-family:'Nanum Myeongjo',serif!important;color:#d7c7ae!important;font-size:clamp(30px,4.5vw,57px)!important}
+#card.layout-quote .divider{width:52px;height:1px;background:#cbaa70;margin:22px 0}
+#card.layout-quote .verse{font-family:'Nanum Myeongjo',serif!important;font-size:clamp(29px,4.1vw,54px)!important;line-height:1.3;max-width:84%;color:#fff}
+#card.layout-quote .body{max-width:74%;color:#bfb6a7!important}
+#card.layout-quote .conceptBox{width:62%;border-top:1px solid rgba(211,174,104,.55)!important;padding-top:12px;margin-top:20px;background:transparent!important}
+
+/* 03 — CONCEPT / gallery poster */
+#card.layout-concept{background:#f3efe5!important;color:#24211d!important}
+#card.layout-concept::before{border-color:rgba(40,35,29,.08)}
+#card.layout-concept::after{content:"01";position:absolute;right:8%;top:8%;z-index:8;font:500 150px/1 'Nanum Myeongjo',serif;color:rgba(39,33,25,.055);pointer-events:none}
+#card.layout-concept .photo{opacity:.1!important;filter:grayscale(1) contrast(.9)!important}
+#card.layout-concept .scrim{background:linear-gradient(135deg,rgba(255,255,255,.36),transparent 52%)!important}
+#card.layout-concept .cardContent{top:13%;left:9%;right:9%;bottom:9%}
+#card.layout-concept .kicker{color:#7e6949!important}
+#card.layout-concept .ref{font-family:'Black Han Sans',sans-serif!important;font-size:clamp(50px,7vw,90px)!important;letter-spacing:-.07em!important;max-width:74%}
+#card.layout-concept .divider{width:62px;height:3px;background:#26231e;margin:20px 0}
+#card.layout-concept .verse{font-family:'Noto Sans KR',sans-serif!important;font-size:clamp(23px,3.3vw,42px)!important;line-height:1.28;max-width:78%;font-weight:700}
+#card.layout-concept .body{max-width:62%;color:#6f675b!important}
+#card.layout-concept .conceptBox{right:4%;bottom:10%;width:38%;background:#20221e;color:#f4efe3;border:0;border-radius:0;box-shadow:14px 14px 0 rgba(164,143,108,.28);padding:17px}
+#card.layout-concept .conceptBox strong{color:#d6b67a!important}
+
+/* 04 — MEDITATION / cinematic silence */
+#card.layout-meditation{background:#4f524b!important;color:#f7f2e8!important}
+#card.layout-meditation::after{content:"";position:absolute;left:10%;right:10%;top:11%;bottom:11%;z-index:7;border:1px solid rgba(239,228,200,.18);pointer-events:none}
+#card.layout-meditation .photo{opacity:.68!important;filter:saturate(.72) contrast(.96)!important}
+#card.layout-meditation .scrim{background:linear-gradient(180deg,rgba(31,33,29,.1),rgba(18,19,17,.72))!important}
+#card.layout-meditation .cardContent{top:22%;left:11%;right:11%;bottom:11%}
+#card.layout-meditation .kicker{color:#ead4a0!important}
+#card.layout-meditation .ref{font-family:'Gowun Batang',serif!important;font-size:clamp(41px,5.8vw,72px)!important;line-height:1.05}
+#card.layout-meditation .divider{width:28px;height:1px;background:#ead4a0;margin:24px auto}
+#card.layout-meditation .verse{font-family:'Gowun Batang',serif!important;font-size:clamp(25px,3.45vw,45px)!important;line-height:1.48;max-width:86%}
+#card.layout-meditation .body{max-width:70%;color:#ede4d1!important;font-family:'Gowun Batang',serif!important}
+#card.layout-meditation .conceptBox{width:auto;min-width:42%;padding:11px 18px 0;border-top:1px solid rgba(234,212,160,.62);background:transparent!important}
+
+/* 05 — WORD / archive & philology */
+#card.layout-word{background:linear-gradient(135deg,#e9dfcf,#d7c8ad 55%,#efe8da)!important;color:#302a22!important}
+#card.layout-word::after{content:"LEXICON / TEXT STUDY";position:absolute;right:7%;top:6%;z-index:8;font:700 7px/1 'Noto Sans KR',sans-serif;letter-spacing:.22em;color:#5f513f;opacity:.58;pointer-events:none}
+#card.layout-word .photo{opacity:.12!important;filter:grayscale(1) sepia(.25)!important}
+#card.layout-word .scrim{background:linear-gradient(135deg,rgba(255,255,255,.2),transparent 60%)!important}
+#card.layout-word .cardContent{top:11%;left:9%;right:9%;bottom:10%}
+#card.layout-word .kicker{color:#735c3d!important;font-family:monospace!important}
+#card.layout-word .ref{font-family:'Gowun Batang',serif!important;font-style:italic;font-size:clamp(45px,6.2vw,80px)!important;max-width:80%}
+#card.layout-word .divider{width:100%;height:1px;background:#735c3d42;margin:20px 0}
+#card.layout-word .verse{font-family:'Nanum Myeongjo',serif!important;font-size:clamp(22px,3.25vw,42px)!important;max-width:82%;line-height:1.38}
+#card.layout-word .body{max-width:70%;color:#665c4d!important;font-family:monospace!important;font-size:10px}
+#card.layout-word .conceptBox{right:3%;bottom:11%;width:40%;background:#faf5ea;border:1px solid #8c7658;border-radius:2px;box-shadow:7px 7px 0 rgba(128,102,66,.2);padding:15px}
+
+/* 06 — CHAPTER / theological journal */
+#card.layout-chapter{background:#f4f0e7!important;color:#25221d!important}
+#card.layout-chapter::before{border-color:rgba(50,46,39,.12)}
+#card.layout-chapter::after{content:"ROMANS 08";position:absolute;right:7%;top:5%;z-index:8;font:700 8px/1 'Noto Sans KR',sans-serif;letter-spacing:.2em;color:#6d6559;opacity:.6;pointer-events:none}
+#card.layout-chapter .photo{opacity:.07!important;filter:grayscale(1)!important}
+#card.layout-chapter .cardContent{top:10%;left:10%;right:10%;bottom:8%}
+#card.layout-chapter .kicker{color:#5e584e!important;font-family:monospace!important}
+#card.layout-chapter .ref{font-family:'Black Han Sans',sans-serif!important;font-size:clamp(50px,7.1vw,92px)!important;max-width:83%}
+#card.layout-chapter .divider{height:1px;width:100%;background:#26231e;margin:17px 0 22px}
+#card.layout-chapter .verse{font-family:'Noto Sans KR',sans-serif!important;font-size:clamp(23px,3.15vw,40px)!important;line-height:1.28;font-weight:800;max-width:88%}
+#card.layout-chapter .body{max-width:82%;color:#666057!important}
+#card.layout-chapter .conceptBox{left:0;bottom:16%;width:44%;border-top:1px solid #2e2b25!important;background:rgba(245,241,232,.82);padding-top:11px}
+#card.layout-chapter .bottomMeta{border-top:1px solid #2e2b25!important}
+
+/* 07 — EDITORIAL / luxury magazine */
+#card.layout-editorial{background:#11130f!important;color:#f2eee4!important}
+#card.layout-editorial::before{border-color:rgba(222,197,148,.15)}
+#card.layout-editorial::after{content:"WEST150 / THEOLOGY";position:absolute;right:7%;top:10%;z-index:8;font:700 7px/1 'Noto Sans KR',sans-serif;letter-spacing:.28em;color:#d4b77f;opacity:.5;pointer-events:none}
+#card.layout-editorial .photo{opacity:.55!important;filter:contrast(1.08) saturate(.72)!important}
+#card.layout-editorial .scrim{background:linear-gradient(90deg,rgba(9,10,9,.84) 0%,rgba(9,10,9,.48) 52%,rgba(9,10,9,.08) 100%)!important}
+#card.layout-editorial .cardContent{left:8%;right:8%;top:15%;bottom:8%}
+#card.layout-editorial .kicker{color:#d5b97f!important}
+#card.layout-editorial .ref{font-family:'Nanum Myeongjo',serif!important;font-size:clamp(45px,6.3vw,80px)!important;max-width:84%;line-height:.95}
+#card.layout-editorial .divider{width:100%;height:1px;background:rgba(214,181,120,.42);margin:22px 0}
+#card.layout-editorial .verse{font-family:'Noto Sans KR',sans-serif!important;font-size:clamp(24px,3.35vw,44px)!important;font-weight:700;max-width:88%;line-height:1.28}
+#card.layout-editorial .body{max-width:72%;color:#cec7b9!important;font-size:11px}
+#card.layout-editorial .conceptBox{right:0;bottom:14%;width:42%;background:rgba(18,20,16,.76);border:1px solid rgba(214,181,120,.24);border-top:1px solid #d4b77f;padding:13px;backdrop-filter:blur(3px)}
+#card.layout-editorial .conceptBox p{font-family:'Noto Sans KR',sans-serif!important;font-size:15px}
+
+/* 08 — TIMELINE / museum archive */
+#card.layout-timeline{background:#ebe3d5!important;color:#29251f!important}
+#card.layout-timeline::before{border-color:rgba(83,67,45,.13)}
+#card.layout-timeline::after{content:"CHRONOLOGY";position:absolute;right:7%;top:6%;z-index:8;font:700 7px/1 monospace;letter-spacing:.25em;color:#77634a;opacity:.58;pointer-events:none}
+#card.layout-timeline .photo{opacity:.09!important;filter:grayscale(1)!important}
+#card.layout-timeline .scrim{background:linear-gradient(180deg,rgba(255,255,255,.16),transparent 50%)!important}
+#card.layout-timeline .cardContent{left:9%;right:9%;top:11%;bottom:8%}
+#card.layout-timeline .kicker{color:#7e6847!important}
+#card.layout-timeline .ref{font-family:'Black Han Sans',sans-serif!important;font-size:clamp(41px,5.8vw,74px)!important;max-width:75%}
+#card.layout-timeline .divider{width:58px;height:3px;background:#8b6e43;margin:14px 0 18px}
+#card.layout-timeline .verse{font-family:'Noto Sans KR',sans-serif!important;font-size:clamp(21px,3vw,39px)!important;font-weight:900;max-width:82%;line-height:1.27}
+#card.layout-timeline .body{max-width:78%;color:#6b6256!important}
+#card.layout-timeline .block.timeline{background:rgba(249,245,237,.94)!important;border:1px solid rgba(112,89,56,.18)!important;border-radius:2px!important;box-shadow:0 12px 28px rgba(75,58,38,.08)!important;padding:8px 14px!important}
+#card.layout-timeline .block.timeline::before{background:#86683f!important;opacity:.35!important}
+#card.layout-timeline .block.timeline .date{background:#f5efe5!important;color:#785e3a!important}
+#card.layout-timeline .block.timeline .desc{background:#f5efe5!important;color:#2d2923!important}
+
+/* shared luxe polish */
+#card .conceptBox strong{letter-spacing:.18em}
+#card .bottomMeta{backdrop-filter:blur(1px)}
+#card .footer{font-family:'Noto Sans KR',sans-serif;letter-spacing:.08em;opacity:.78}
+#card.layout-quote .footer,#card.layout-editorial .footer,#card.layout-meditation .footer{color:#d7d0c2}
+#card.layout-concept .footer,#card.layout-chapter .footer,#card.layout-word .footer,#card.layout-timeline .footer{color:#5f584d}
+
 </style>
 </head>
 <body>
