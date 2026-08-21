@@ -342,6 +342,7 @@ body.safeOn #card:after{content:"SAFE AREA";position:absolute;inset:6%;border:1p
 
   <div class="section menuSection" data-panel="brandPanel">
     <h2>BRAND · 로고</h2>
+    <div class="field"><label>워터마크 문구 <span style="cursor:pointer;color:#c91520" onclick="resetBrandText()">기본값으로</span></label><input id="brandText" placeholder="WEST150 DAILY (비워두면 기본값)"></div>
     <div class="field"><label>로고 이미지</label><input id="logoInput" type="file" accept="image/png,image/webp,image/jpeg"></div>
     <div class="field"><label>로고 크기 <span id="logoSizeVal">100%</span></label><input id="logoSize" class="range" type="range" min="50" max="180" value="100"></div>
     <div class="row"><button onclick="removeLogo()">로고 삭제</button><button onclick="toggleLogo()">로고 표시/숨김</button></div>
@@ -417,7 +418,7 @@ body.safeOn #card:after{content:"SAFE AREA";position:absolute;inset:6%;border:1p
     <div id="card" class="card editorial">
       <img id="img" class="photo">
       <div id="overlay" class="overlay"></div>
-      <div class="metaTop">WEST150 DAILY</div>
+      <div class="metaTop" id="metaTop">WEST150 DAILY</div>
       <div class="metaRight" id="metaRight"></div>
       <div class="content">
         <div class="badge" id="badge">BREAKING NEWS</div>
@@ -453,7 +454,7 @@ const defs=[
 ];
 let cards=[blank()],idx=0,undos=[],redos=[],drag=null,activePointers=new Map(),pinchStart=null;
 
-function blank(){return{template:"editorial",title:"",body:"",source:"",time:"",photo:null,zoom:100,x:0,y:0,shade:55,updates:[],titleSize:68,bodySize:28,metaSize:18,letter:-4,line:1.02,weight:900,align:"left",bright:100,contrast:100,sat:100,mono:false,rotate:0,imageFit:"cover",blur:16,timeZone:"Asia/Seoul",contentY:0,pad:7,logo:null,logoSize:100,showLogo:true,designLock:false,titleFont:"default",bodyFont:"default",badgeText:""}}
+function blank(){return{template:"editorial",title:"",body:"",source:"",time:"",photo:null,zoom:100,x:0,y:0,shade:55,updates:[],titleSize:68,bodySize:28,metaSize:18,letter:-4,line:1.02,weight:900,align:"left",bright:100,contrast:100,sat:100,mono:false,rotate:0,imageFit:"cover",blur:16,timeZone:"Asia/Seoul",contentY:0,pad:7,logo:null,logoSize:100,showLogo:true,designLock:false,titleFont:"default",bodyFont:"default",badgeText:"",brandText:""}}
 const FONTS=[
  {id:"default",label:"템플릿 기본값",css:""},
   {id:"pretendard",label:"Pretendard (프리텐다드)",css:'"Pretendard Variable",Pretendard,sans-serif'},
@@ -503,6 +504,7 @@ function render(){
  $("bright").value=a.bright;$("contrast").value=a.contrast;$("sat").value=a.sat;$("rotate").value=a.rotate;$("contentY").value=a.contentY;$("pad").value=a.pad;$("logoSize").value=a.logoSize;$("designLock").checked=!!a.designLock;
  $("titleFont").value=a.titleFont||"default";$("bodyFont").value=a.bodyFont||"default";
  $("badgeText").value=a.badgeText||"";
+ $("brandText").value=a.brandText||"";
  ["titleSize","bodySize","metaSize","letter","line","weight","titleFont","bodyFont","bright","contrast","sat","rotate","contentY","pad","logoSize","logoInput","imageFit"].forEach(id=>{$(id).disabled=!!a.designLock});
  $("titleSizeVal").textContent=a.titleSize+"px";$("bodySizeVal").textContent=a.bodySize+"px";$("metaSizeVal").textContent=a.metaSize+"px";$("letterVal").textContent=a.letter+"%";$("lineVal").textContent=a.line;$("brightVal").textContent=a.bright+"%";$("contrastVal").textContent=a.contrast+"%";$("satVal").textContent=a.sat+"%";$("rotateVal").textContent=a.rotate+"°";$("contentYVal").textContent=a.contentY+"%";$("padVal").textContent=a.pad+"%";$("logoSizeVal").textContent=a.logoSize+"%";
  $("tc").textContent=a.title.length+"자";$("bc").textContent=a.body.length+"자";
@@ -528,8 +530,10 @@ function render(){
  $("timeline").style.display=a.template==="update"?"block":"none";
  if(a.template==="update") renderCardTimeline(a);
  $("psource").style.display=a.source?"block":"none";
- if(a.logo&&a.showLogo){$("brandView").innerHTML=`<img src="${a.logo}" style="max-width:${Math.min(180,a.logoSize)}%;max-height:42px;object-fit:contain;display:block">`}else{$("brandView").textContent="WEST150 DAILY";}
+ let brandTxt=(a.brandText&&a.brandText.trim())?a.brandText:"WEST150 DAILY";
+ if(a.logo&&a.showLogo){$("brandView").innerHTML=`<img src="${a.logo}" style="max-width:${Math.min(180,a.logoSize)}%;max-height:42px;object-fit:contain;display:block">`}else{$("brandView").textContent=brandTxt;}
  $("brandView").style.opacity=a.showLogo?"1":"0";
+ $("metaTop").textContent=brandTxt;
  $("cards").innerHTML="";
  cards.forEach((v,i)=>{
   let d=document.createElement("div");
@@ -657,6 +661,8 @@ $("designLock").addEventListener("change",()=>{c().designLock=$("designLock").ch
   c().titleFont=$("titleFont").value;c().bodyFont=$("bodyFont").value;render()
 }));
 $("badgeText").addEventListener("input",()=>{snap();c().badgeText=$("badgeText").value;render()});
+$("brandText").addEventListener("input",()=>{snap();c().brandText=$("brandText").value;render()});
+function resetBrandText(){snap();c().brandText="";render()}
 ["title","body","source","time"].forEach(id=>$(id).addEventListener("input",()=>{snap();c()[id]=$(id).value;render()}));
 ["zoom","px","py","shade","blur"].forEach(id=>$(id).addEventListener("input",()=>{c().zoom=+$("zoom").value;c().x=+$("px").value;c().y=+$("py").value;c().shade=+$("shade").value;c().blur=+$("blur").value;render()}));
 $("timeZone").addEventListener("change",()=>{snap();c().timeZone=$("timeZone").value;c().time=formatNow(c().timeZone);render()});
@@ -727,7 +733,7 @@ async function makeCanvas(a){
  y=drawWrap(x,a.title||"속보 제목을 입력하세요",70,y,900,a.template==="statement"?82:76,7);
  if(a.template==="update"){x.strokeStyle="#555";x.beginPath();x.moveTo(95,y+35);x.lineTo(95,900);x.stroke();let ts=(a.updates&&a.updates.length)?a.updates:[{time:"--:--",text:"UPDATE 매니저에서 업데이트를 추가하세요."}];ts.slice(0,5).forEach((t,i)=>{let yy=y+80+i*130;x.fillStyle=red;x.beginPath();x.arc(95,yy,8,0,Math.PI*2);x.fill();x.fillStyle=fg;x.font="900 22px Inter,Arial";x.fillText((t.time||"--:--")+" · UPDATE "+String(i+1).padStart(2,"0"),125,yy+7);x.font=`400 20px ${bodyFontFamily}`;x.fillStyle=muted;drawWrap(x,t.text||"업데이트 내용",125,yy+38,800,28,2)})}
  else {x.fillStyle=light?"#333":"#ddd";x.font=`400 ${a.bodySize}px ${bodyFontFamily}`;drawWrap(x,a.body||"핵심 내용을 입력하면 이곳에 표시됩니다.",70,Math.max(y+45,a.template==="photoFocus"?1000:760),900,38,6)}
- x.fillStyle=muted;x.font="16px Inter,Arial";if(a.source)x.fillText("SOURCE · "+a.source,70,1190);if(a.time)x.fillText(a.time,70,1230);if(a.logo&&a.showLogo){await new Promise(ok=>{let lm=new Image();lm.onload=()=>{let mw=170*(a.logoSize/100),mh=48,s=Math.min(mw/lm.width,mh/lm.height);x.drawImage(lm,900,1240,lm.width*s,lm.height*s);ok()};lm.onerror=()=>ok();lm.src=a.logo})}else{x.fillStyle=fg;x.font="900 18px Inter,Arial";x.fillText("WEST150 DAILY",900,1280)}
+ x.fillStyle=muted;x.font="16px Inter,Arial";if(a.source)x.fillText("SOURCE · "+a.source,70,1190);if(a.time)x.fillText(a.time,70,1230);if(a.logo&&a.showLogo){await new Promise(ok=>{let lm=new Image();lm.onload=()=>{let mw=170*(a.logoSize/100),mh=48,s=Math.min(mw/lm.width,mh/lm.height);x.drawImage(lm,900,1240,lm.width*s,lm.height*s);ok()};lm.onerror=()=>ok();lm.src=a.logo})}else{x.fillStyle=fg;x.font="900 18px Inter,Arial";x.fillText((a.brandText&&a.brandText.trim())?a.brandText:"WEST150 DAILY",900,1280)}
  return cv
 }
 async function fileFor(a,i){let cv=await makeCanvas(a);return await new Promise(ok=>cv.toBlob(b=>ok(new File([b],`west150-${String(i+1).padStart(2,"0")}.png`,{type:"image/png"})),"image/png"))}
