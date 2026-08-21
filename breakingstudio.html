@@ -265,6 +265,9 @@ body.safeOn #card:after{content:"SAFE AREA";position:absolute;inset:6%;border:1p
     </div>
   </div>
   <div class="csMenuWrap">
+    <button class="csMenuBtn" data-panel="designPanel">뉴스 ▾</button>
+  </div>
+  <div class="csMenuWrap">
     <button class="csMenuBtn" data-panel="typePanel">글꼴 ▾</button>
   </div>
   <div class="csMenuWrap">
@@ -435,7 +438,6 @@ body.safeOn #card:after{content:"SAFE AREA";position:absolute;inset:6%;border:1p
 </main>
 
 
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" crossorigin="anonymous"></script>
 <script>
 const $=id=>document.getElementById(id);
 const KEY="west150_editorial_final";
@@ -487,11 +489,12 @@ function c(){return cards[idx]}
 function cp(v){return JSON.parse(JSON.stringify(v))}
 function snap(){undos.push(cp(cards));if(undos.length>25)undos.shift();redos=[]}
 function renderTemplates(){
- $("templates").innerHTML="";
- defs.forEach(d=>{let b=document.createElement("button");b.className="tpl "+(c().template===d[0]?"active":"");b.innerHTML=`<b>${d[1]}</b><span>${d[2]}</span>`;b.onclick=()=>{if(c().designLock)return;snap();c().template=d[0];render()};$("templates").appendChild(b)})
+ let box=$("rightTemplateList");
+ if(!box)return;
+ box.innerHTML="";
+ defs.forEach(d=>{let b=document.createElement("button");b.className="tpl "+(c().template===d[0]?"active":"");b.innerHTML=`<b>${d[1]}</b><span>${d[2]}</span>`;b.onclick=()=>{if(c().designLock)return;snap();c().template=d[0];render()};box.appendChild(b)})
 }
-function render(opts){
- opts=opts||{};
+function render(){
  let a=c(); if(!Array.isArray(a.updates)) a.updates=[];
 
  $("title").value=a.title;$("body").value=a.body;$("source").value=a.source;$("time").value=a.time;
@@ -516,8 +519,7 @@ function render(opts){
  $("pbody").style.fontSize=`${Math.max(13,a.bodySize*.55)}px`;$("pbody").style.textAlign=a.align;
  $("pbody").style.fontFamily=(a.bodyFont&&a.bodyFont!=="default")?fontCss(a.bodyFont):DEFAULT_BODY_FONT;
  $("metaRight").style.fontSize=`${Math.max(8,a.metaSize*.5)}px`;$("psource").style.fontSize=`${Math.max(7,a.metaSize*.5)}px`;
- $("card").style.paddingLeft="0";$("card").style.paddingRight="0";
- const contentEl=$("card").querySelector(".content"); if(contentEl){ contentEl.style.transform=a.contentY?`translateY(${a.contentY}%)`:""; /* pad is template-driven via CSS %; user pad overrides */ contentEl.style.paddingLeft=`${a.pad}%`; contentEl.style.paddingRight=`${a.pad}%`; }
+ $("card").style.paddingLeft=`${a.pad}%`;$("card").style.paddingRight=`${a.pad}%`;
  $("pbody").textContent=a.body||"핵심 내용을 입력하면 이곳에 미리보기가 표시됩니다.";
  $("psource").textContent=a.source?"SOURCE · "+a.source:"";
  $("metaRight").textContent=a.time||formatNow(a.timeZone||"Asia/Seoul");
@@ -528,7 +530,6 @@ function render(opts){
  $("psource").style.display=a.source?"block":"none";
  if(a.logo&&a.showLogo){$("brandView").innerHTML=`<img src="${a.logo}" style="max-width:${Math.min(180,a.logoSize)}%;max-height:42px;object-fit:contain;display:block">`}else{$("brandView").textContent="WEST150 DAILY";}
  $("brandView").style.opacity=a.showLogo?"1":"0";
- if(!opts.skipThumbs){
  $("cards").innerHTML="";
  cards.forEach((v,i)=>{
   let d=document.createElement("div");
@@ -538,10 +539,8 @@ function render(opts){
   let lab=document.createElement("span");lab.textContent="CARD "+(i+1);d.appendChild(lab);
   d.onclick=()=>{idx=i;render()};
   $("cards").appendChild(d);
-  // 썸네일은 빠른 레거시 렌더 사용 (저장/미리보기와 별개)
-  makeCanvasLegacy(v).then(full=>{const ctx=cv.getContext("2d");ctx.clearRect(0,0,cv.width,cv.height);ctx.drawImage(full,0,0,cv.width,cv.height)}).catch(()=>{});
+  makeCanvas(v).then(full=>{const ctx=cv.getContext("2d");ctx.clearRect(0,0,cv.width,cv.height);ctx.drawImage(full,0,0,cv.width,cv.height)}).catch(()=>{});
  });
- }
  renderTemplates();
  renderUpdateManager();
  try{localStorage.setItem(KEY,JSON.stringify(cards))}catch(e){}
@@ -678,86 +677,7 @@ function redo(){if(!redos.length)return;undos.push(cp(cards));cards=redos.pop();
 function saveProject(){localStorage.setItem(KEY,JSON.stringify(cards));alert("프로젝트를 이 기기에 저장했습니다.")}
 function loadProject(){let v=localStorage.getItem(KEY);if(!v){alert("저장된 프로젝트가 없습니다.");return}try{cards=JSON.parse(v);idx=0;render()}catch(e){alert("프로젝트를 불러오지 못했습니다.")}}
 function drawWrap(ctx,text,x,y,w,lineH,max){let lines=[],line="";for(let ch of text){let t=line+ch;if(ctx.measureText(t).width>w&&line){lines.push(line);line=ch;if(lines.length>=max-1)break}else line=t}if(line&&lines.length<max)lines.push(line);lines.forEach((l,i)=>ctx.fillText(l,x,y+i*lineH));return y+lines.length*lineH}
-
-async function waitCardReady(){
-  try{ await document.fonts.ready; }catch(e){}
-  const im=$("img");
-  if(im && im.src && !im.complete){
-    await new Promise(res=>{ im.onload=()=>res(); im.onerror=()=>res(); setTimeout(res,1500); });
-  }
-  await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
-  await new Promise(r=>setTimeout(r,30));
-}
-
-async function captureLiveCard(){
-  const el=$("card");
-  if(!el) throw new Error("card missing");
-  await waitCardReady();
-  const w=el.offsetWidth, h=el.offsetHeight;
-  if(!w||!h) throw new Error("card not laid out");
-  const scale=1080/w;
-  const canvas=await html2canvas(el,{
-    scale:scale,
-    width:w,
-    height:h,
-    useCORS:true,
-    allowTaint:true,
-    backgroundColor:null,
-    logging:false,
-    imageTimeout:8000,
-    onclone:(doc,node)=>{
-      const c=node.id==="card"?node:node.querySelector?.("#card")||node.querySelector?.(".card");
-      if(c){
-        c.style.width=w+"px";
-        c.style.height=h+"px";
-        c.style.maxWidth="none";
-        c.style.transform="none";
-        c.style.boxShadow="none";
-      }
-    }
-  });
-  const out=document.createElement("canvas");
-  out.width=1080; out.height=1350;
-  const ctx=out.getContext("2d");
-  ctx.imageSmoothingEnabled=true;
-  ctx.imageSmoothingQuality="high";
-  ctx.drawImage(canvas,0,0,1080,1350);
-  return out;
-}
-
-/** 미리보기 DOM을 그대로 1080×1350으로 캡처 (WYSIWYG) */
 async function makeCanvas(a){
-  if(typeof html2canvas!=="function"){
-    return makeCanvasLegacy(a);
-  }
-  const wasIdx=idx;
-  const targetIdx=cards.indexOf(a);
-  try{
-    if(targetIdx>=0 && targetIdx!==idx){
-      idx=targetIdx;
-      render({skipThumbs:true});
-      await waitCardReady();
-    }else if(targetIdx<0){
-      const bak=cp(cards[idx]);
-      cards[idx]=cp(a);
-      render({skipThumbs:true});
-      await waitCardReady();
-      const cv=await captureLiveCard();
-      cards[idx]=bak;
-      render({skipThumbs:true});
-      return cv;
-    }
-    return await captureLiveCard();
-  }finally{
-    if(idx!==wasIdx){
-      idx=wasIdx;
-      render({skipThumbs:true});
-    }
-  }
-}
-
-async function makeCanvasLegacy(a){
-
  let cv=document.createElement("canvas");cv.width=1080;cv.height=1350;let x=cv.getContext("2d");
  let light=a.template==="clean"||a.template==="statement";x.fillStyle=light?"#f1efe9":a.template==="breaking"?"#c91520":"#0b0b0b";x.fillRect(0,0,1080,1350);
  let bt=(a.badgeText&&a.badgeText.trim())?a.badgeText:defaultBadgeText(a);
