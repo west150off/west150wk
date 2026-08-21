@@ -18,10 +18,10 @@ h2{font:900 10px Inter;letter-spacing:.13em;margin:0 0 10px}h3{font-size:11px;ma
 .note{font-size:10px;line-height:1.6;color:#777}.field{margin:10px 0}label{display:flex;justify-content:space-between;font-size:9px;color:#777;margin-bottom:5px}
 input[type=text],input[type=file],textarea,select{width:100%;background:#e9e5dc;color:#171717;border:1px solid #c2bbaf;border-radius:6px;padding:9px;font-size:11px}
 textarea{min-height:90px;resize:vertical}input[type=range]{width:100%}
-.row{display:flex;gap:6px;flex-wrap:wrap}.row button{background:#e7e2d9;border:1px solid #bbb4a8;border-radius:6px;padding:8px 10px;font-size:10px;color:#333}.row .primary{background:#171717;color:#fff;border-color:#171717}
+.row{display:flex;gap:6px;flex-wrap:wrap}.row button{background:#e7e2d9;border:1px solid #bbb4a8;border-radius:6px;padding:8px 10px;font-size:10px;color:#333}.row .primary{background:#171717;color:#fff;border-color:#171717}.row button.active{background:#171717;color:#fff;border-color:#171717}
 .layouts{display:grid;grid-template-columns:1fr 1fr;gap:7px}.layoutBtn{background:#ece8df;border:1px solid #c4bdb1;text-align:left;border-radius:7px;padding:10px;min-height:60px}.layoutBtn.active{background:#171717;color:#fff;border-color:#171717}.layoutBtn b{display:block;font:900 9px Inter}.layoutBtn small{display:block;font-size:8px;color:#888;margin-top:4px}
 .preview{display:flex;justify-content:center;align-items:flex-start}.stage{position:sticky;top:124px;text-align:center}.canvasWrap{width:min(68vw,620px);aspect-ratio:4/5;background:#fff;box-shadow:0 18px 60px rgba(0,0,0,.16);overflow:hidden}.canvasWrap.grid{outline:1px dashed #999;outline-offset:-5px}canvas{display:block;width:100%;height:100%}.status{font-size:9px;color:#777;margin-top:8px}
-.chips{display:flex;gap:6px;overflow:auto}.chip{white-space:nowrap;border:1px solid #c2bbaf;border-radius:999px;padding:7px 9px;font-size:9px;color:#666}
+.chips{display:flex;gap:6px;overflow:auto}.chip{white-space:nowrap;border:1px solid #c2bbaf;border-radius:999px;padding:7px 9px;font-size:9px;color:#666;cursor:pointer}.chip.active{background:#171717;color:#f5f1e9;border-color:#171717}
 hr{border:0;border-top:1px solid #d0c9bd;margin:12px 0}
 @media(max-width:850px){main{grid-template-columns:1fr;padding:9px}.preview{order:-1}.stage{position:relative;top:auto}.canvasWrap{width:min(92vw,540px)}}
 </style>
@@ -61,7 +61,11 @@ hr{border:0;border-top:1px solid #d0c9bd;margin:12px 0}
 <div class="field"><label>자간 <span id="kv">-2</span></label><input id="tracking" type="range" min="-8" max="8" value="-2"></div>
 <div class="field"><label>줄간격 <span id="lhv">1.05</span></label><input id="lineHeight" type="range" min=".85" max="1.4" value="1.05" step=".01"></div>
 <div class="field"><label>굵기</label><select id="weight"><option value="500">Medium</option><option value="700">Bold</option><option value="800">ExtraBold</option><option value="900" selected>Black</option></select></div>
-<div class="row"><button onclick="S.align='left';draw()">좌</button><button onclick="S.align='center';draw()">중앙</button><button onclick="S.align='right';draw()">우</button></div>
+<div class="row" id="alignRow">
+  <button data-align="left" class="active">좌</button>
+  <button data-align="center">중앙</button>
+  <button data-align="right">우</button>
+</div>
 </div></div>
 
 <div class="panel" id="photo"><div class="box"><h2>PHOTO ESSAY</h2>
@@ -70,14 +74,14 @@ hr{border:0;border-top:1px solid #d0c9bd;margin:12px 0}
 <div class="field"><label>밝기 <span id="brv">100%</span></label><input id="bright" type="range" min="60" max="150" value="100"></div>
 <div class="field"><label>대비 <span id="cov">100%</span></label><input id="contrast" type="range" min="60" max="160" value="100"></div>
 <div class="field"><label>채도 <span id="sv">100%</span></label><input id="sat" type="range" min="0" max="160" value="100"></div>
-<div class="row"><button onclick="S.mono=!S.mono;draw()">흑백</button><button onclick="resetPhoto()">초기화</button></div>
+<div class="row"><button id="monoBtn">흑백</button><button onclick="resetPhoto()">초기화</button></div>
 <p class="note">EDITORIAL은 사진을 강하게 보여주고 텍스트를 절제하는 방향으로 설계했습니다.</p>
 </div></div>
 
 <div class="panel" id="grid"><div class="box"><h2>EDITORIAL GRID</h2>
 <div class="field"><label>여백 <span id="pv">7%</span></label><input id="pad" type="range" min="4" max="15" value="7"></div>
 <div class="field"><label>컬럼</label><select id="columns"><option>12 COLUMN</option><option>6 COLUMN</option><option>2 COLUMN</option></select></div>
-<div class="row"><button onclick="S.showGrid=!S.showGrid;draw()">GRID ON/OFF</button><button onclick="S.safe=!S.safe;draw()">SAFE AREA</button></div>
+<div class="row"><button id="gridBtn">GRID ON/OFF</button><button id="safeBtn">SAFE AREA</button></div>
 <p class="note">속보용 UPDATE나 긴급 배지 대신, 여백·컬럼·사진 비율을 중심으로 편집합니다.</p>
 </div></div>
 
@@ -87,7 +91,7 @@ hr{border:0;border-top:1px solid #d0c9bd;margin:12px 0}
 <div class="field"><label>작성/저자</label><input id="author" value=""></div>
 <div class="field"><label>출처</label><input id="source" value=""></div>
 <div class="field"><label>로고</label><input id="logoFile" type="file" accept="image/*"></div>
-<div class="row"><button onclick="S.logoOn=!S.logoOn;draw()">로고 표시/숨김</button><button onclick="S.dark=!S.dark;draw()">DARK MODE</button></div>
+<div class="row"><button id="logoBtn">로고 표시/숨김</button><button id="darkBtn">DARK MODE</button></div>
 </div></div>
 
 <div class="panel" id="story"><div class="box"><h2>STORY</h2>
@@ -101,7 +105,7 @@ hr{border:0;border-top:1px solid #d0c9bd;margin:12px 0}
 
 <div class="panel" id="save"><div class="box"><h2>SAVE</h2>
 <div class="row"><button class="primary" onclick="savePNG()">현재 카드 PNG</button><button onclick="saveAll()">전체 카드 PNG</button><button onclick="saveProject()">프로젝트 저장</button><button onclick="loadProject()">프로젝트 불러오기</button></div>
-<hr><p class="note">1080 × 1350 · iPhone 사진 저장/공유에 맞춘 세로 규격</p>
+<hr><p class="note">1080 × 1350 · iPhone 사진 저장/공유에 맞춘 세로 규격<br>사진이 포함된 경우 localStorage 용량 제한으로 자동저장이 실패할 수 있습니다. 중요 작업은 프로젝트 저장을 권장합니다.</p>
 </div></div>
 </section>
 
@@ -109,81 +113,596 @@ hr{border:0;border-top:1px solid #d0c9bd;margin:12px 0}
 </main>
 
 <script>
-const $=id=>document.getElementById(id);
-const KEY="west150_editorial_independent_v2";
-const S={layout:"cover",title:"THE NEW WORLD ORDER",body:"A new chapter is taking shape. What happened, why it matters, and what comes next.",page:"01 / 08",brand:"WEST150",section:"EDITORIAL",author:"",source:"",photo:null,logo:null,logoOn:true,dark:false,mono:false,zoom:100,bright:100,contrast:100,sat:100,pad:7,align:"left",showGrid:false,safe:false,titleSize:78,bodySize:22,tracking:-2,lineHeight:1.05,weight:900};
-let cards=[{...S}],idx=0;
-const clone=o=>JSON.parse(JSON.stringify(o));
-function persist(){try{localStorage.setItem(KEY,JSON.stringify({cards,idx}))}catch(e){console.warn(e)}}
-function sync(){cards[idx]=clone(S);persist()}
-function fmt(n){return String(n).padStart(2,"0")}
+const $ = id => document.getElementById(id);
+const KEY = "west150_editorial_independent_v2";
 
-document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));document.querySelectorAll(".panel").forEach(x=>x.classList.remove("active"));b.classList.add("active");$(b.dataset.panel).classList.add("active")});
-document.querySelectorAll(".layoutBtn").forEach(b=>b.onclick=()=>{S.layout=b.dataset.layout;document.querySelectorAll(".layoutBtn").forEach(x=>x.classList.toggle("active",x===b));sync();draw()});
-function bind(id,key,num=false){$(id).addEventListener("input",()=>{S[key]=num?Number($(id).value):$(id).value;sync();draw()})}
-["title","body","page","brand","section","author","source"].forEach(id=>bind(id,id));
-["titleSize","bodySize","tracking","lineHeight","weight","zoom","bright","contrast","sat","pad"].forEach(id=>bind(id,id,true));
-$("photoFile").onchange=e=>readFile(e.target.files[0],v=>{S.photo=v;sync();draw()});
-$("logoFile").onchange=e=>readFile(e.target.files[0],v=>{S.logo=v;sync();draw()});
-function readFile(f,cb){if(!f)return;const r=new FileReader();r.onload=()=>cb(r.result);r.readAsDataURL(f)}
-function loadState(o){Object.assign(S,clone(o));["title","body","page","brand","section","author","source"].forEach(k=>{if($(k))$(k).value=S[k]??""});["titleSize","bodySize","tracking","lineHeight","weight","zoom","bright","contrast","sat","pad"].forEach(k=>{if($(k))$(k).value=S[k]});document.querySelectorAll(".layoutBtn").forEach(b=>b.classList.toggle("active",b.dataset.layout===S.layout));draw();chips()}
-function addCard(){sync();cards.splice(idx+1,0,clone(S));idx++;cards[idx].page=`${fmt(idx+1)} / ${fmt(Math.max(cards.length,8))}`;loadState(cards[idx]);persist()}
-function duplicateCard(){addCard()}
-function moveCard(d){sync();let n=idx+d;if(n>=0&&n<cards.length){idx=n;loadState(cards[idx]);persist()}}
-function chips(){$("chips").innerHTML=cards.map((_,i)=>`<span class="chip ${i===idx?'active':''}" onclick="idx=${i};loadState(cards[i]);persist()">CARD ${fmt(i+1)}</span>`).join("")}
-function resetPhoto(){Object.assign(S,{zoom:100,bright:100,contrast:100,sat:100,mono:false});sync();draw()}
-function img(src){return new Promise(r=>{let i=new Image();i.onload=()=>r(i);i.onerror=()=>r(null);i.src=src})}
-function drawImage(ctx,i,x,y,w,h){if(!i)return;let sc=Math.max(w/i.width,h/i.height)*(S.zoom/100),iw=i.width*sc,ih=i.height*sc;ctx.save();ctx.beginPath();ctx.rect(x,y,w,h);ctx.clip();ctx.filter=`brightness(${S.bright}%) contrast(${S.contrast}%) saturate(${S.sat}%) grayscale(${S.mono?100:0}%)`;ctx.drawImage(i,x+(w-iw)/2,y+(h-ih)/2,iw,ih);ctx.restore()}
-function wrap(ctx,t,x,y,max,line,limit=8,align="left"){let words=String(t||"").split(/\s+/),ls=[],cur="";for(const wd of words){let q=cur?cur+" "+wd:wd;if(ctx.measureText(q).width>max&&cur){ls.push(cur);cur=wd;if(ls.length>=limit)break}else cur=q}if(cur&&ls.length<limit)ls.push(cur);ctx.textAlign=align;ls.forEach((v,i)=>ctx.fillText(v,x,y+i*line));ctx.textAlign="left";return y+ls.length*line}
-function line(ctx,x1,y1,x2,y2,color,w=1){ctx.save();ctx.strokeStyle=color;ctx.lineWidth=w;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();ctx.restore()}
-async function draw(){
- const c=$("canvas"),ctx=c.getContext("2d"),W=1080,H=1350,p=W*S.pad/100,ww=W-p*2;
- const dark=S.dark,bg=dark?"#111":"#f5f1e8",fg=dark?"#f5f1e8":"#171717",muted=dark?"#aaa":"#777",accent=dark?"#e4ddd1":"#9b1c20";
- ctx.clearRect(0,0,W,H);ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);let im=S.photo?await img(S.photo):null;
- const header=()=>{ctx.fillStyle=accent;ctx.font="900 16px Arial";ctx.fillText((S.section||"EDITORIAL").toUpperCase(),p,55);ctx.fillStyle=muted;ctx.font="700 11px Arial";ctx.textAlign="right";ctx.fillText(S.page||"01 / 01",W-p,55);ctx.textAlign="left"};
- header();
- const title=()=>{ctx.fillStyle=fg;ctx.font=`${S.weight} ${S.titleSize}px Arial`;const a=S.align==="center"?"center":S.align==="right"?"right":"left",x=a==="center"?W/2:a==="right"?W-p:p;return {x,a,draw:(y,max=ww,limit=5)=>wrap(ctx,S.title,x,y,max,S.titleSize*S.lineHeight,limit,a)}};
- const body=(x,y,max,limit=7,a="left")=>{ctx.fillStyle=muted;ctx.font=`400 ${S.bodySize}px Arial`;return wrap(ctx,S.body,x,y,max,S.bodySize*1.55,limit,a)};
- if(S.layout==="cover"){
-   if(im){drawImage(ctx,im,0,0,W,760);ctx.fillStyle="rgba(0,0,0,.30)";ctx.fillRect(0,0,W,760)}else{ctx.fillStyle="#272521";ctx.fillRect(0,0,W,760)}
-   ctx.fillStyle="#fff";ctx.font="900 16px Arial";ctx.fillText((S.section||"EDITORIAL").toUpperCase(),p,55);ctx.textAlign="right";ctx.fillText(S.page||"01 / 01",W-p,55);ctx.textAlign="left";
-   const t=title();t.draw(865);body(t.x,Math.min(1190,865+S.titleSize*S.lineHeight*2.3),ww,5,t.a);
- } else if(S.layout==="photo"){
-   if(im)drawImage(ctx,im,0,0,W,H);else{ctx.fillStyle="#292825";ctx.fillRect(0,0,W,H)}
-   const g=ctx.createLinearGradient(0,780,0,H);g.addColorStop(0,"rgba(0,0,0,0)");g.addColorStop(1,"rgba(0,0,0,.9)");ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
-   ctx.fillStyle="#fff";ctx.font="900 16px Arial";ctx.fillText((S.section||"PHOTO ESSAY").toUpperCase(),p,55);ctx.textAlign="right";ctx.fillText(S.page||"01 / 01",W-p,55);ctx.textAlign="left";
-   ctx.fillStyle="#fff";ctx.font=`${S.weight} ${S.titleSize}px Arial`;let a=S.align==="center"?"center":"left",x=a==="center"?W/2:p;let yy=wrap(ctx,S.title,x,1050,ww,S.titleSize*S.lineHeight,4,a);ctx.fillStyle="#ddd";ctx.font=`400 ${S.bodySize}px Arial`;wrap(ctx,S.body,x,yy+38,ww,S.bodySize*1.5,4,a);
- } else if(S.layout==="type"){
-   ctx.fillStyle=accent;ctx.fillRect(0,0,22,H);ctx.fillStyle=muted;ctx.font="700 13px Arial";ctx.fillText("BIG TYPE / EDITORIAL",p,210);ctx.fillStyle=fg;ctx.font=`${Math.max(S.titleSize,120)}px Arial`;let yy=wrap(ctx,S.title,p,360,ww,Math.max(S.titleSize,120)*.9,6,"left");line(ctx,p,yy+45,W-p,yy+45,accent,5);body(p,yy+105,ww*.78,6);
- } else if(S.layout==="article"){
-   ctx.fillStyle=fg;ctx.font=`${S.weight} ${Math.min(S.titleSize,88)}px Georgia`;let yy=wrap(ctx,S.title,p,250,ww,Math.min(S.titleSize,88)*1.02,4,"left");line(ctx,p,yy+40,W-p,yy+40,fg,2);const col=(ww-34)/2;ctx.fillStyle=muted;ctx.font=`400 ${S.bodySize}px Arial`;wrap(ctx,S.body,p,yy+100,col,S.bodySize*1.55,12,"left");wrap(ctx,S.body,p+col+34,yy+100,col,S.bodySize*1.55,12,"left");
- } else if(S.layout==="quote"){
-   if(im){drawImage(ctx,im,0,0,W,620);ctx.fillStyle="rgba(0,0,0,.42)";ctx.fillRect(0,0,W,620)}
-   ctx.fillStyle=accent;ctx.font="900 190px Georgia";ctx.fillText("“",p,780);ctx.fillStyle=fg;ctx.font=`500 ${Math.min(S.titleSize,82)}px Georgia`;let yy=wrap(ctx,S.title,p+15,850,ww-30,Math.min(S.titleSize,82)*1.15,5,"left");ctx.fillStyle=muted;ctx.font="700 16px Arial";ctx.fillText(S.author||"WEST150 EDITORIAL",p+15,yy+55);
- } else if(S.layout==="interview"){
-   if(im)drawImage(ctx,im,W*.56,95,W*.44,H-95);ctx.fillStyle=accent;ctx.font="900 18px Arial";ctx.fillText("Q&A",p,220);ctx.fillStyle=fg;ctx.font=`700 ${Math.min(S.titleSize,76)}px Georgia`;let yy=wrap(ctx,S.title,p,320,W*.48,Math.min(S.titleSize,76)*1.08,5,"left");ctx.fillStyle=accent;ctx.font="900 14px Arial";ctx.fillText("ANSWER",p,yy+90);body(p,yy+140,W*.48,9);
- } else if(S.layout==="timeline"){
-   ctx.fillStyle=fg;ctx.font=`900 ${Math.min(S.titleSize,82)}px Arial`;wrap(ctx,S.title,p,180,ww,Math.min(S.titleSize,82),3,"left");const ys=[420,620,820,1020];line(ctx,p+10,350,p+10,1120,accent,5);ys.forEach((y,i)=>{ctx.fillStyle=accent;ctx.beginPath();ctx.arc(p+10,y,14,0,Math.PI*2);ctx.fill();ctx.fillStyle=fg;ctx.font="900 22px Arial";ctx.fillText(`0${i+1}`,p+55,y+8);ctx.fillStyle=muted;ctx.font=`400 ${S.bodySize}px Arial`;wrap(ctx,S.body,p+160,y,ww-160,S.bodySize*1.45,2,"left")});
- } else if(S.layout==="data"){
-   ctx.fillStyle=fg;ctx.font=`900 ${Math.min(S.titleSize,80)}px Arial`;wrap(ctx,S.title,p,190,ww,Math.min(S.titleSize,80),3,"left");ctx.fillStyle=accent;ctx.font="900 240px Arial";ctx.fillText("47%",p,570);ctx.fillStyle=muted;ctx.font="700 18px Arial";ctx.fillText("KEY FIGURE",p,615);ctx.fillStyle="#d8d2c8";ctx.fillRect(p,700,ww,24);ctx.fillStyle=accent;ctx.fillRect(p,700,ww*.47,24);body(p,800,ww*.72,6);
- } else if(S.layout==="compare"){
-   ctx.fillStyle=fg;ctx.font=`900 ${Math.min(S.titleSize,76)}px Arial`;wrap(ctx,S.title,p,180,ww,Math.min(S.titleSize,76),3,"left");line(ctx,W/2,350,W/2,1120,muted,2);["A","B"].forEach((v,i)=>{let x=i?W/2+35:p;ctx.fillStyle=accent;ctx.font="900 18px Arial";ctx.fillText(v,x,420);ctx.fillStyle=fg;ctx.font="900 50px Arial";ctx.fillText(i?"OPTION B":"OPTION A",x,500);body(x,570,ww/2-55,10,"left")});
- } else if(S.layout==="conclusion"){
-   ctx.fillStyle=accent;ctx.font="900 15px Arial";ctx.fillText("THE TAKEAWAY",p,240);line(ctx,p,285,W-p,285,fg,2);ctx.fillStyle=fg;ctx.font=`700 ${Math.min(S.titleSize,92)}px Georgia`;let yy=wrap(ctx,S.title,p,410,ww,Math.min(S.titleSize,92)*1.05,4,"left");line(ctx,p,yy+40,W-p,yy+40,accent,5);body(p,yy+110,ww*.78,7,"left");
- }
- if(S.showGrid){ctx.strokeStyle="rgba(120,110,100,.18)";ctx.lineWidth=1;for(let i=1;i<12;i++)line(ctx,i*W/12,0,i*W/12,H,ctx.strokeStyle,1)}
- if(S.logoOn){ctx.fillStyle=fg;ctx.font="900 18px Arial";ctx.textAlign="right";ctx.fillText(S.brand||"WEST150",W-p,H-42);ctx.textAlign="left"}
- ctx.fillStyle=muted;ctx.font="400 12px Arial";if(S.author)ctx.fillText(S.author,p,H-42);if(S.source)ctx.fillText("SOURCE · "+S.source,W/2,H-42);
- $("status").textContent=`CARD ${fmt(idx+1)} · ${S.layout.toUpperCase()} · AUTO-SAVED`;
- [["tv",S.titleSize],["bv",S.bodySize],["kv",S.tracking],["lhv",S.lineHeight],["zv",S.zoom+"%"],["brv",S.bright+"%"],["cov",S.contrast+"%"],["sv",S.sat+"%"],["pv",S.pad+"%"]].forEach(([id,v])=>{if($(id))$(id).textContent=v});
+const defaults = {
+  layout: "cover",
+  title: "THE NEW WORLD ORDER",
+  body: "A new chapter is taking shape. What happened, why it matters, and what comes next.",
+  page: "01 / 08",
+  brand: "WEST150",
+  section: "EDITORIAL",
+  author: "",
+  source: "",
+  photo: null,
+  logo: null,
+  logoOn: true,
+  dark: false,
+  mono: false,
+  zoom: 100,
+  bright: 100,
+  contrast: 100,
+  sat: 100,
+  pad: 7,
+  align: "left",
+  showGrid: false,
+  safe: false,
+  titleSize: 78,
+  bodySize: 22,
+  tracking: -2,
+  lineHeight: 1.05,
+  weight: 900
+};
+
+let S = { ...defaults };
+let cards = [{ ...S }];
+let idx = 0;
+
+const clone = o => JSON.parse(JSON.stringify(o));
+function persist() {
+  try {
+    localStorage.setItem(KEY, JSON.stringify({ cards, idx }));
+  } catch (e) {
+    console.warn("localStorage 저장 실패 (용량 초과 가능):", e);
+    $("status").textContent = `CARD ${fmt(idx + 1)} · ${S.layout.toUpperCase()} · 자동저장 실패 (용량)`;
+  }
 }
-function canvasBlob(){return new Promise(ok=>$("canvas").toBlob(ok,"image/png"))}
-async function savePNG(){sync();await draw();const blob=await canvasBlob();if(!blob)return;const file=new File([blob],`WEST150_EDITORIAL_${fmt(idx+1)}.png`,{type:"image/png"});try{if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({title:"WEST150 EDITORIAL",files:[file]});return}}catch(e){}const u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=file.name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),2000)}
-async function saveAll(){sync();const original=clone(S),originalIdx=idx;const files=[];for(let i=0;i<cards.length;i++){idx=i;Object.assign(S,clone(cards[i]));await draw();const b=await canvasBlob();files.push(new File([b],`WEST150_EDITORIAL_${fmt(i+1)}.png`,{type:"image/png"}))}idx=originalIdx;Object.assign(S,original);await draw();try{if(navigator.share&&navigator.canShare&&navigator.canShare({files})){await navigator.share({title:"WEST150 EDITORIAL",files});return}}catch(e){}alert("이 브라우저에서는 여러 PNG를 한 번에 공유할 수 없습니다. 현재 카드 PNG 저장을 사용하세요.")}
-function saveProject(){sync();const blob=new Blob([JSON.stringify({version:2,cards,idx},null,2)],{type:"application/json"}),u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download="WEST150_EDITORIAL_PROJECT.json";a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)}
-function loadProject(){let x=document.createElement("input");x.type="file";x.accept=".json,application/json";x.onchange=e=>{const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);cards=Array.isArray(d)?d:d.cards;if(!Array.isArray(cards)||!cards.length)throw 0;idx=Math.min(d.idx||0,cards.length-1);loadState(cards[idx]);persist()}catch(_){alert("프로젝트 파일을 읽을 수 없습니다.")}};r.readAsText(f)};x.click()}
-try{const saved=JSON.parse(localStorage.getItem(KEY)||"null");if(saved?.cards?.length){cards=saved.cards;idx=Math.min(saved.idx||0,cards.length-1)}}catch(e){}
-loadState(cards[idx]);chips();draw();
+function sync() {
+  cards[idx] = clone(S);
+  persist();
+}
+function fmt(n) {
+  return String(n).padStart(2, "0");
+}
+
+// Tabs
+document.querySelectorAll(".tab").forEach(b => {
+  b.onclick = () => {
+    document.querySelectorAll(".tab").forEach(x => x.classList.remove("active"));
+    document.querySelectorAll(".panel").forEach(x => x.classList.remove("active"));
+    b.classList.add("active");
+    $(b.dataset.panel).classList.add("active");
+  };
+});
+
+// Layout buttons
+document.querySelectorAll(".layoutBtn").forEach(b => {
+  b.onclick = () => {
+    S.layout = b.dataset.layout;
+    document.querySelectorAll(".layoutBtn").forEach(x => x.classList.toggle("active", x === b));
+    sync();
+    draw();
+  };
+});
+
+// Align buttons
+document.querySelectorAll("#alignRow button").forEach(b => {
+  b.onclick = () => {
+    S.align = b.dataset.align;
+    document.querySelectorAll("#alignRow button").forEach(x => x.classList.toggle("active", x === b));
+    sync();
+    draw();
+  };
+});
+
+// Toggle buttons
+$("monoBtn").onclick = () => { S.mono = !S.mono; $("monoBtn").classList.toggle("active", S.mono); sync(); draw(); };
+$("gridBtn").onclick = () => { S.showGrid = !S.showGrid; $("gridBtn").classList.toggle("active", S.showGrid); sync(); draw(); };
+$("safeBtn").onclick = () => { S.safe = !S.safe; $("safeBtn").classList.toggle("active", S.safe); sync(); draw(); };
+$("logoBtn").onclick = () => { S.logoOn = !S.logoOn; $("logoBtn").classList.toggle("active", S.logoOn); sync(); draw(); };
+$("darkBtn").onclick = () => { S.dark = !S.dark; $("darkBtn").classList.toggle("active", S.dark); sync(); draw(); };
+
+function bind(id, key, num = false) {
+  $(id).addEventListener("input", () => {
+    S[key] = num ? Number($(id).value) : $(id).value;
+    sync();
+    draw();
+  });
+}
+["title", "body", "page", "brand", "section", "author", "source"].forEach(id => bind(id, id));
+["titleSize", "bodySize", "tracking", "lineHeight", "weight", "zoom", "bright", "contrast", "sat", "pad"].forEach(id => bind(id, id, true));
+
+$("photoFile").onchange = e => readFile(e.target.files[0], v => { S.photo = v; sync(); draw(); });
+$("logoFile").onchange = e => readFile(e.target.files[0], v => { S.logo = v; sync(); draw(); });
+
+function readFile(f, cb) {
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = () => cb(r.result);
+  r.readAsDataURL(f);
+}
+
+function loadState(o) {
+  Object.assign(S, defaults, clone(o));
+  ["title", "body", "page", "brand", "section", "author", "source"].forEach(k => {
+    if ($(k)) $(k).value = S[k] ?? "";
+  });
+  ["titleSize", "bodySize", "tracking", "lineHeight", "weight", "zoom", "bright", "contrast", "sat", "pad"].forEach(k => {
+    if ($(k)) $(k).value = S[k];
+  });
+  document.querySelectorAll(".layoutBtn").forEach(b => b.classList.toggle("active", b.dataset.layout === S.layout));
+  document.querySelectorAll("#alignRow button").forEach(b => b.classList.toggle("active", b.dataset.align === S.align));
+  $("monoBtn").classList.toggle("active", S.mono);
+  $("gridBtn").classList.toggle("active", S.showGrid);
+  $("safeBtn").classList.toggle("active", S.safe);
+  $("logoBtn").classList.toggle("active", S.logoOn);
+  $("darkBtn").classList.toggle("active", S.dark);
+  draw();
+  chips();
+}
+
+function addCard() {
+  sync();
+  cards.splice(idx + 1, 0, clone(S));
+  idx++;
+  cards[idx].page = `${fmt(idx + 1)} / ${fmt(Math.max(cards.length, 8))}`;
+  loadState(cards[idx]);
+  persist();
+}
+function duplicateCard() {
+  addCard();
+}
+function moveCard(d) {
+  sync();
+  const n = idx + d;
+  if (n >= 0 && n < cards.length) {
+    idx = n;
+    loadState(cards[idx]);
+    persist();
+  }
+}
+function chips() {
+  $("chips").innerHTML = cards.map((_, i) =>
+    `<span class="chip ${i === idx ? "active" : ""}" onclick="idx=${i};loadState(cards[${i}]);persist()">CARD ${fmt(i + 1)}</span>`
+  ).join("");
+}
+function resetPhoto() {
+  Object.assign(S, { zoom: 100, bright: 100, contrast: 100, sat: 100, mono: false });
+  $("zoom").value = 100;
+  $("bright").value = 100;
+  $("contrast").value = 100;
+  $("sat").value = 100;
+  $("monoBtn").classList.remove("active");
+  sync();
+  draw();
+}
+
+function img(src) {
+  return new Promise(r => {
+    if (!src) return r(null);
+    const i = new Image();
+    i.onload = () => r(i);
+    i.onerror = () => r(null);
+    i.src = src;
+  });
+}
+
+function drawImage(ctx, i, x, y, w, h) {
+  if (!i) return;
+  const sc = Math.max(w / i.width, h / i.height) * (S.zoom / 100);
+  const iw = i.width * sc;
+  const ih = i.height * sc;
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(x, y, w, h);
+  ctx.clip();
+  ctx.filter = `brightness(${S.bright}%) contrast(${S.contrast}%) saturate(${S.sat}%) grayscale(${S.mono ? 100 : 0}%)`;
+  ctx.drawImage(i, x + (w - iw) / 2, y + (h - ih) / 2, iw, ih);
+  ctx.restore();
+}
+
+function wrap(ctx, t, x, y, max, line, limit = 8, align = "left") {
+  const words = String(t || "").split(/\s+/);
+  const ls = [];
+  let cur = "";
+  for (const wd of words) {
+    const q = cur ? cur + " " + wd : wd;
+    if (ctx.measureText(q).width > max && cur) {
+      ls.push(cur);
+      cur = wd;
+      if (ls.length >= limit) break;
+    } else {
+      cur = q;
+    }
+  }
+  if (cur && ls.length < limit) ls.push(cur);
+  ctx.textAlign = align;
+  ls.forEach((v, i) => ctx.fillText(v, x, y + i * line));
+  ctx.textAlign = "left";
+  return y + ls.length * line;
+}
+
+function line(ctx, x1, y1, x2, y2, color, w = 1) {
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = w;
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x2, y2);
+  ctx.stroke();
+  ctx.restore();
+}
+
+async function draw() {
+  const c = $("canvas");
+  const ctx = c.getContext("2d");
+  const W = 1080, H = 1350;
+  const p = W * S.pad / 100;
+  const ww = W - p * 2;
+  const dark = S.dark;
+  const bg = dark ? "#111" : "#f5f1e8";
+  const fg = dark ? "#f5f1e8" : "#171717";
+  const muted = dark ? "#aaa" : "#777";
+  const accent = dark ? "#e4ddd1" : "#9b1c20";
+
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+
+  // letterSpacing 지원 (모던 브라우저)
+  if (ctx.letterSpacing !== undefined) {
+    ctx.letterSpacing = S.tracking + "px";
+  }
+
+  const im = S.photo ? await img(S.photo) : null;
+  const logoImg = S.logo ? await img(S.logo) : null;
+
+  const header = () => {
+    ctx.fillStyle = accent;
+    ctx.font = "900 16px Arial";
+    ctx.fillText((S.section || "EDITORIAL").toUpperCase(), p, 55);
+    ctx.fillStyle = muted;
+    ctx.font = "700 11px Arial";
+    ctx.textAlign = "right";
+    ctx.fillText(S.page || "01 / 01", W - p, 55);
+    ctx.textAlign = "left";
+  };
+
+  const title = () => {
+    ctx.fillStyle = fg;
+    ctx.font = `${S.weight} ${S.titleSize}px Arial`;
+    const a = S.align === "center" ? "center" : S.align === "right" ? "right" : "left";
+    const x = a === "center" ? W / 2 : a === "right" ? W - p : p;
+    return {
+      x, a,
+      draw: (y, max = ww, limit = 5) => wrap(ctx, S.title, x, y, max, S.titleSize * S.lineHeight, limit, a)
+    };
+  };
+
+  const body = (x, y, max, limit = 7, a = "left") => {
+    ctx.fillStyle = muted;
+    ctx.font = `400 ${S.bodySize}px Arial`;
+    return wrap(ctx, S.body, x, y, max, S.bodySize * 1.55, limit, a);
+  };
+
+  if (S.layout === "cover") {
+    if (im) {
+      drawImage(ctx, im, 0, 0, W, 760);
+      ctx.fillStyle = "rgba(0,0,0,.30)";
+      ctx.fillRect(0, 0, W, 760);
+    } else {
+      ctx.fillStyle = "#272521";
+      ctx.fillRect(0, 0, W, 760);
+    }
+    ctx.fillStyle = "#fff";
+    ctx.font = "900 16px Arial";
+    ctx.fillText((S.section || "EDITORIAL").toUpperCase(), p, 55);
+    ctx.textAlign = "right";
+    ctx.fillText(S.page || "01 / 01", W - p, 55);
+    ctx.textAlign = "left";
+    const t = title();
+    t.draw(865);
+    body(t.x, Math.min(1190, 865 + S.titleSize * S.lineHeight * 2.3), ww, 5, t.a);
+  } else if (S.layout === "photo") {
+    if (im) drawImage(ctx, im, 0, 0, W, H);
+    else { ctx.fillStyle = "#292825"; ctx.fillRect(0, 0, W, H); }
+    const g = ctx.createLinearGradient(0, 780, 0, H);
+    g.addColorStop(0, "rgba(0,0,0,0)");
+    g.addColorStop(1, "rgba(0,0,0,.9)");
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = "#fff";
+    ctx.font = "900 16px Arial";
+    ctx.fillText((S.section || "PHOTO ESSAY").toUpperCase(), p, 55);
+    ctx.textAlign = "right";
+    ctx.fillText(S.page || "01 / 01", W - p, 55);
+    ctx.textAlign = "left";
+    ctx.fillStyle = "#fff";
+    ctx.font = `${S.weight} ${S.titleSize}px Arial`;
+    const a = S.align === "center" ? "center" : "left";
+    const x = a === "center" ? W / 2 : p;
+    let yy = wrap(ctx, S.title, x, 1050, ww, S.titleSize * S.lineHeight, 4, a);
+    ctx.fillStyle = "#ddd";
+    ctx.font = `400 ${S.bodySize}px Arial`;
+    wrap(ctx, S.body, x, yy + 38, ww, S.bodySize * 1.5, 4, a);
+  } else if (S.layout === "type") {
+    header();
+    ctx.fillStyle = accent;
+    ctx.fillRect(0, 0, 22, H);
+    ctx.fillStyle = muted;
+    ctx.font = "700 13px Arial";
+    ctx.fillText("BIG TYPE / EDITORIAL", p, 210);
+    ctx.fillStyle = fg;
+    ctx.font = `${Math.max(S.titleSize, 120)}px Arial`;
+    let yy = wrap(ctx, S.title, p, 360, ww, Math.max(S.titleSize, 120) * 0.9, 6, "left");
+    line(ctx, p, yy + 45, W - p, yy + 45, accent, 5);
+    body(p, yy + 105, ww * 0.78, 6);
+  } else if (S.layout === "article") {
+    header();
+    ctx.fillStyle = fg;
+    ctx.font = `${S.weight} ${Math.min(S.titleSize, 88)}px Georgia`;
+    let yy = wrap(ctx, S.title, p, 250, ww, Math.min(S.titleSize, 88) * 1.02, 4, "left");
+    line(ctx, p, yy + 40, W - p, yy + 40, fg, 2);
+    const col = (ww - 34) / 2;
+    const words = String(S.body || "").split(/\s+/);
+    const mid = Math.ceil(words.length / 2);
+    const leftText = words.slice(0, mid).join(" ");
+    const rightText = words.slice(mid).join(" ");
+    ctx.fillStyle = muted;
+    ctx.font = `400 ${S.bodySize}px Arial`;
+    wrap(ctx, leftText, p, yy + 100, col, S.bodySize * 1.55, 12, "left");
+    wrap(ctx, rightText, p + col + 34, yy + 100, col, S.bodySize * 1.55, 12, "left");
+  } else if (S.layout === "quote") {
+    header();
+    if (im) {
+      drawImage(ctx, im, 0, 0, W, 620);
+      ctx.fillStyle = "rgba(0,0,0,.42)";
+      ctx.fillRect(0, 0, W, 620);
+    }
+    ctx.fillStyle = accent;
+    ctx.font = "900 190px Georgia";
+    ctx.fillText("“", p, 780);
+    ctx.fillStyle = fg;
+    ctx.font = `500 ${Math.min(S.titleSize, 82)}px Georgia`;
+    let yy = wrap(ctx, S.title, p + 15, 850, ww - 30, Math.min(S.titleSize, 82) * 1.15, 5, "left");
+    ctx.fillStyle = muted;
+    ctx.font = "700 16px Arial";
+    ctx.fillText(S.author || "WEST150 EDITORIAL", p + 15, yy + 55);
+  } else if (S.layout === "interview") {
+    header();
+    if (im) drawImage(ctx, im, W * 0.56, 95, W * 0.44, H - 95);
+    ctx.fillStyle = accent;
+    ctx.font = "900 18px Arial";
+    ctx.fillText("Q&A", p, 220);
+    ctx.fillStyle = fg;
+    ctx.font = `700 ${Math.min(S.titleSize, 76)}px Georgia`;
+    let yy = wrap(ctx, S.title, p, 320, W * 0.48, Math.min(S.titleSize, 76) * 1.08, 5, "left");
+    ctx.fillStyle = accent;
+    ctx.font = "900 14px Arial";
+    ctx.fillText("ANSWER", p, yy + 90);
+    body(p, yy + 140, W * 0.48, 9);
+  } else if (S.layout === "timeline") {
+    header();
+    ctx.fillStyle = fg;
+    ctx.font = `900 ${Math.min(S.titleSize, 82)}px Arial`;
+    wrap(ctx, S.title, p, 180, ww, Math.min(S.titleSize, 82), 3, "left");
+    const ys = [420, 620, 820, 1020];
+    line(ctx, p + 10, 350, p + 10, 1120, accent, 5);
+    ys.forEach((y, i) => {
+      ctx.fillStyle = accent;
+      ctx.beginPath();
+      ctx.arc(p + 10, y, 14, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = fg;
+      ctx.font = "900 22px Arial";
+      ctx.fillText(`0${i + 1}`, p + 55, y + 8);
+      ctx.fillStyle = muted;
+      ctx.font = `400 ${S.bodySize}px Arial`;
+      wrap(ctx, S.body, p + 160, y, ww - 160, S.bodySize * 1.45, 2, "left");
+    });
+  } else if (S.layout === "data") {
+    header();
+    ctx.fillStyle = fg;
+    ctx.font = `900 ${Math.min(S.titleSize, 80)}px Arial`;
+    wrap(ctx, S.title, p, 190, ww, Math.min(S.titleSize, 80), 3, "left");
+    ctx.fillStyle = accent;
+    ctx.font = "900 240px Arial";
+    ctx.fillText("47%", p, 570);
+    ctx.fillStyle = muted;
+    ctx.font = "700 18px Arial";
+    ctx.fillText("KEY FIGURE", p, 615);
+    ctx.fillStyle = "#d8d2c8";
+    ctx.fillRect(p, 700, ww, 24);
+    ctx.fillStyle = accent;
+    ctx.fillRect(p, 700, ww * 0.47, 24);
+    body(p, 800, ww * 0.72, 6);
+  } else if (S.layout === "compare") {
+    header();
+    ctx.fillStyle = fg;
+    ctx.font = `900 ${Math.min(S.titleSize, 76)}px Arial`;
+    wrap(ctx, S.title, p, 180, ww, Math.min(S.titleSize, 76), 3, "left");
+    line(ctx, W / 2, 350, W / 2, 1120, muted, 2);
+    ["A", "B"].forEach((v, i) => {
+      const x = i ? W / 2 + 35 : p;
+      ctx.fillStyle = accent;
+      ctx.font = "900 18px Arial";
+      ctx.fillText(v, x, 420);
+      ctx.fillStyle = fg;
+      ctx.font = "900 50px Arial";
+      ctx.fillText(i ? "OPTION B" : "OPTION A", x, 500);
+      body(x, 570, ww / 2 - 55, 10, "left");
+    });
+  } else if (S.layout === "conclusion") {
+    header();
+    ctx.fillStyle = accent;
+    ctx.font = "900 15px Arial";
+    ctx.fillText("THE TAKEAWAY", p, 240);
+    line(ctx, p, 285, W - p, 285, fg, 2);
+    ctx.fillStyle = fg;
+    ctx.font = `700 ${Math.min(S.titleSize, 92)}px Georgia`;
+    let yy = wrap(ctx, S.title, p, 410, ww, Math.min(S.titleSize, 92) * 1.05, 4, "left");
+    line(ctx, p, yy + 40, W - p, yy + 40, accent, 5);
+    body(p, yy + 110, ww * 0.78, 7, "left");
+  }
+
+  // Grid overlay
+  if (S.showGrid) {
+    ctx.strokeStyle = "rgba(120,110,100,.18)";
+    ctx.lineWidth = 1;
+    for (let i = 1; i < 12; i++) {
+      line(ctx, i * W / 12, 0, i * W / 12, H, "rgba(120,110,100,.18)", 1);
+    }
+  }
+
+  // Safe area
+  if (S.safe) {
+    ctx.strokeStyle = "rgba(155,28,32,.35)";
+    ctx.lineWidth = 1;
+    ctx.setLineDash([6, 4]);
+    ctx.strokeRect(p, p, W - p * 2, H - p * 2);
+    ctx.setLineDash([]);
+  }
+
+  // Logo
+  if (S.logoOn) {
+    if (logoImg) {
+      const lh = 36;
+      const lw = (logoImg.width / logoImg.height) * lh;
+      ctx.drawImage(logoImg, W - p - lw, H - 55, lw, lh);
+    } else {
+      ctx.fillStyle = fg;
+      ctx.font = "900 18px Arial";
+      ctx.textAlign = "right";
+      ctx.fillText(S.brand || "WEST150", W - p, H - 42);
+      ctx.textAlign = "left";
+    }
+  }
+
+  // Author / Source
+  ctx.fillStyle = muted;
+  ctx.font = "400 12px Arial";
+  if (S.author) ctx.fillText(S.author, p, H - 42);
+  if (S.source) {
+    ctx.textAlign = "center";
+    ctx.fillText("SOURCE · " + S.source, W / 2, H - 42);
+    ctx.textAlign = "left";
+  }
+
+  // Status & value displays
+  $("status").textContent = `CARD ${fmt(idx + 1)} · ${S.layout.toUpperCase()} · AUTO-SAVED`;
+  [
+    ["tv", S.titleSize],
+    ["bv", S.bodySize],
+    ["kv", S.tracking],
+    ["lhv", S.lineHeight],
+    ["zv", S.zoom + "%"],
+    ["brv", S.bright + "%"],
+    ["cov", S.contrast + "%"],
+    ["sv", S.sat + "%"],
+    ["pv", S.pad + "%"]
+  ].forEach(([id, v]) => {
+    if ($(id)) $(id).textContent = v;
+  });
+}
+
+function canvasBlob() {
+  return new Promise(ok => $("canvas").toBlob(ok, "image/png"));
+}
+
+async function savePNG() {
+  sync();
+  await draw();
+  const blob = await canvasBlob();
+  if (!blob) return;
+  const file = new File([blob], `WEST150_EDITORIAL_${fmt(idx + 1)}.png`, { type: "image/png" });
+  try {
+    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({ title: "WEST150 EDITORIAL", files: [file] });
+      return;
+    }
+  } catch (e) {}
+  const u = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = u;
+  a.download = file.name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(u), 2000);
+}
+
+async function saveAll() {
+  sync();
+  const original = clone(S);
+  const originalIdx = idx;
+  const files = [];
+  for (let i = 0; i < cards.length; i++) {
+    idx = i;
+    Object.assign(S, clone(cards[i]));
+    await draw();
+    const b = await canvasBlob();
+    files.push(new File([b], `WEST150_EDITORIAL_${fmt(i + 1)}.png`, { type: "image/png" }));
+  }
+  idx = originalIdx;
+  Object.assign(S, original);
+  await draw();
+  try {
+    if (navigator.share && navigator.canShare && navigator.canShare({ files })) {
+      await navigator.share({ title: "WEST150 EDITORIAL", files });
+      return;
+    }
+  } catch (e) {}
+  alert("이 브라우저에서는 여러 PNG를 한 번에 공유할 수 없습니다. 현재 카드 PNG 저장을 사용하세요.");
+}
+
+function saveProject() {
+  sync();
+  const blob = new Blob([JSON.stringify({ version: 2, cards, idx }, null, 2)], { type: "application/json" });
+  const u = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = u;
+  a.download = "WEST150_EDITORIAL_PROJECT.json";
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(u), 1000);
+}
+
+function loadProject() {
+  const x = document.createElement("input");
+  x.type = "file";
+  x.accept = ".json,application/json";
+  x.onchange = e => {
+    const f = e.target.files?.[0];
+    if (!f) return;
+    const r = new FileReader();
+    r.onload = () => {
+      try {
+        const d = JSON.parse(r.result);
+        cards = Array.isArray(d) ? d : d.cards;
+        if (!Array.isArray(cards) || !cards.length) throw 0;
+        idx = Math.min(d.idx || 0, cards.length - 1);
+        loadState(cards[idx]);
+        persist();
+      } catch (_) {
+        alert("프로젝트 파일을 읽을 수 없습니다.");
+      }
+    };
+    r.readAsText(f);
+  };
+  x.click();
+}
+
+// Init
+try {
+  const saved = JSON.parse(localStorage.getItem(KEY) || "null");
+  if (saved?.cards?.length) {
+    cards = saved.cards;
+    idx = Math.min(saved.idx || 0, cards.length - 1);
+  }
+} catch (e) {}
+loadState(cards[idx]);
+chips();
+draw();
 </script>
 </body>
 </html>
