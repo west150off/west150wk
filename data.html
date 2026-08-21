@@ -72,70 +72,371 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
 </div>
 
 <script>
-const KEY='west150_data_studio_fixed_v1';
-const defaults={template:'big',kicker:'DATA REPORT',headline:'THE NUMBER BEHIND THE STORY',description:'A clear editorial view of the numbers, trends and changes shaping the story.',value:'72',unit:'%',series:'32,48,56,44,68,72',labels:'JAN,FEB,MAR,APR,MAY,JUN',bg:'paper',accent:'#c9362c'};
-let state={...defaults};
-try{state={...defaults,...JSON.parse(localStorage.getItem(KEY)||'{}')}}catch(e){}
+const KEY = 'west150_data_studio_fixed_v1';
+const defaults = {
+  template: 'big',
+  kicker: 'DATA REPORT',
+  headline: 'THE NUMBER BEHIND THE STORY',
+  description: 'A clear editorial view of the numbers, trends and changes shaping the story.',
+  value: '72',
+  unit: '%',
+  series: '32,48,56,44,68,72',
+  labels: 'JAN,FEB,MAR,APR,MAY,JUN',
+  bg: 'paper',
+  accent: '#c9362c'
+};
+let state = { ...defaults };
+try {
+  state = { ...defaults, ...JSON.parse(localStorage.getItem(KEY) || '{}') };
+} catch (e) {}
 
-const $=id=>document.getElementById(id);
-const esc=s=>String(s).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
-const nums=()=>state.series.split(',').map(x=>Math.max(0,Number(x.trim())||0)).slice(0,6);
-const labs=()=>state.labels.split(',').map(x=>x.trim()).slice(0,6);
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[m]));
+const nums = () => {
+  const arr = state.series.split(',').map(x => Math.max(0, Number(x.trim()) || 0)).slice(0, 6);
+  while (arr.length < 6) arr.push(0);
+  return arr;
+};
+const labs = () => {
+  const arr = state.labels.split(',').map(x => x.trim()).filter(Boolean).slice(0, 6);
+  while (arr.length < 6) arr.push('ITEM ' + (arr.length + 1));
+  return arr;
+};
 
-function save(){localStorage.setItem(KEY,JSON.stringify(state));$('status').textContent='자동 저장됨 · '+new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});}
-function header(){return `<div class="cardHeader"><span>WEST150 DATA</span><span>${state.template.toUpperCase()} / 01</span></div>`}
-function common(){return `<div class="kicker">${esc(state.kicker)}</div><div class="headline">${esc(state.headline)}</div><div class="dek">${esc(state.description)}</div>`}
-function bars(){let n=nums(),m=Math.max(...n,1);return `<div class="chart bars">${n.map(v=>`<div class="bar" style="--h:${Math.max(5,v/m*100)}%"></div>`).join('')}</div>`}
-function line(){let n=nums(),m=Math.max(...n,1),w=100,h=80;let pts=n.map((v,i)=>`${i*(w/(Math.max(1,n.length-1)))},${h-(v/m*h*.88)-4}`).join(' ');return `<div class="lineChart"><svg viewBox="0 0 100 80" preserveAspectRatio="none"><path d="M ${pts.replace(' ', ' L ')}"></path>${pts.split(' ').map(p=>{let[a,b]=p.split(',');return `<circle cx="${a}" cy="${b}" r="1.8"></circle>`}).join('')}</svg></div>`}
-function ranking(){let n=nums(),l=labs();return `<div class="ranking">${n.map((v,i)=>`<div class="rank"><b>0${i+1}</b><span>${esc(l[i]||'ITEM '+(i+1))}</span><em>${v}${esc(state.unit)}</em></div>`).join('')}</div>`}
-function render(){
- document.documentElement.style.setProperty('--accent',state.accent);
- const card=$('card'); card.className='card '+(state.bg==='dark'?'dark':'');
- const metric=`<div><div class="metric">${esc(state.value)}<small style="font-size:.32em;letter-spacing:0">${esc(state.unit)}</small></div><div class="metricLabel">LATEST VALUE</div></div>`;
- let html=header();
- if(state.template==='big') html+=common()+metric+bars();
- if(state.template==='photo') html+=`<div class="photoData"><div class="photoBox"></div><div class="dataStack">${metric}${bars()}</div></div>`+common();
- if(state.template==='compare'){let n=nums();html+=`<div class="kicker">${esc(state.kicker)}</div><div class="headline">${esc(state.headline)}</div><div class="compare"><div><strong>${n[0]||0}${esc(state.unit)}</strong><span>${esc(labs()[0]||'OPTION A')}</span></div><div><strong>${n[1]||0}${esc(state.unit)}</strong><span>${esc(labs()[1]||'OPTION B')}</span></div></div><div class="dek">${esc(state.description)}</div>`;}
- if(state.template==='bar') html+=common()+metric+bars();
- if(state.template==='line') html+=common()+metric+line();
- if(state.template==='ranking') html+=`<div class="kicker">${esc(state.kicker)}</div><div class="headline">${esc(state.headline)}</div>${ranking()}<div class="dek">${esc(state.description)}</div>`;
- html+=`<div class="footer"><span>WEST150 DATA STUDIO</span><span>2026</span></div>`;
- card.innerHTML=html;
- document.querySelectorAll('.template').forEach(b=>b.classList.toggle('active',b.dataset.template===state.template));
- document.querySelectorAll('#background .choice').forEach(b=>b.classList.toggle('active',b.dataset.bg===state.bg));
- document.querySelectorAll('#colors .color').forEach(b=>b.classList.toggle('active',b.dataset.color===state.accent));
+function save() {
+  localStorage.setItem(KEY, JSON.stringify(state));
+  $('status').textContent = '자동 저장됨 · ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 
-['kicker','headline','description','value','unit','series','labels'].forEach(id=>{
- const el=$(id);el.value=state[id];el.addEventListener('input',()=>{state[id]=el.value;render();save();});
+function header() {
+  return `<div class="cardHeader"><span>WEST150 DATA</span><span>${state.template.toUpperCase()} / 01</span></div>`;
+}
+
+function common() {
+  return `<div class="kicker">${esc(state.kicker)}</div><div class="headline">${esc(state.headline)}</div><div class="dek">${esc(state.description)}</div>`;
+}
+
+function bars() {
+  const n = nums();
+  const m = Math.max(...n, 1);
+  return `<div class="chart bars">${n.map(v => `<div class="bar" style="--h:${Math.max(5, (v / m) * 100)}%"></div>`).join('')}</div>`;
+}
+
+function line() {
+  const n = nums();
+  const m = Math.max(...n, 1);
+  const w = 100, h = 80;
+  const pts = n.map((v, i) => {
+    const x = i * (w / Math.max(1, n.length - 1));
+    const y = h - (v / m * h * 0.88) - 4;
+    return `${x},${y}`;
+  });
+  const pathD = 'M ' + pts.join(' L ');
+  const circles = pts.map(p => {
+    const [a, b] = p.split(',');
+    return `<circle cx="${a}" cy="${b}" r="1.8"></circle>`;
+  }).join('');
+  return `<div class="lineChart"><svg viewBox="0 0 100 80" preserveAspectRatio="none"><path d="${pathD}"></path>${circles}</svg></div>`;
+}
+
+function ranking() {
+  const n = nums();
+  const l = labs();
+  return `<div class="ranking">${n.map((v, i) => {
+    const rank = String(i + 1).padStart(2, '0');
+    return `<div class="rank"><b>${rank}</b><span>${esc(l[i] || 'ITEM ' + (i + 1))}</span><em>${v}${esc(state.unit)}</em></div>`;
+  }).join('')}</div>`;
+}
+
+function render() {
+  document.documentElement.style.setProperty('--accent', state.accent);
+  const card = $('card');
+  card.className = 'card ' + (state.bg === 'dark' ? 'dark' : '');
+
+  const metric = `<div><div class="metric">${esc(state.value)}<small style="font-size:.32em;letter-spacing:0">${esc(state.unit)}</small></div><div class="metricLabel">LATEST VALUE</div></div>`;
+
+  let html = header();
+
+  if (state.template === 'big') {
+    html += common() + metric + bars();
+  } else if (state.template === 'photo') {
+    html += `<div class="photoData"><div class="photoBox"></div><div class="dataStack">${metric}${bars()}</div></div>` + common();
+  } else if (state.template === 'compare') {
+    const n = nums();
+    const l = labs();
+    html += `<div class="kicker">${esc(state.kicker)}</div>
+             <div class="headline">${esc(state.headline)}</div>
+             <div class="compare">
+               <div><strong>${n[0] || 0}${esc(state.unit)}</strong><span>${esc(l[0] || 'OPTION A')}</span></div>
+               <div><strong>${n[1] || 0}${esc(state.unit)}</strong><span>${esc(l[1] || 'OPTION B')}</span></div>
+             </div>
+             <div class="dek">${esc(state.description)}</div>`;
+  } else if (state.template === 'bar') {
+    html += common() + metric + bars();
+  } else if (state.template === 'line') {
+    html += common() + metric + line();
+  } else if (state.template === 'ranking') {
+    html += `<div class="kicker">${esc(state.kicker)}</div>
+             <div class="headline">${esc(state.headline)}</div>
+             ${ranking()}
+             <div class="dek">${esc(state.description)}</div>`;
+  }
+
+  html += `<div class="footer"><span>WEST150 DATA STUDIO</span><span>2026</span></div>`;
+  card.innerHTML = html;
+
+  document.querySelectorAll('.template').forEach(b => b.classList.toggle('active', b.dataset.template === state.template));
+  document.querySelectorAll('#background .choice').forEach(b => b.classList.toggle('active', b.dataset.bg === state.bg));
+  document.querySelectorAll('#colors .color').forEach(b => b.classList.toggle('active', b.dataset.color === state.accent));
+}
+
+['kicker', 'headline', 'description', 'value', 'unit', 'series', 'labels'].forEach(id => {
+  const el = $(id);
+  el.value = state[id];
+  el.addEventListener('input', () => {
+    state[id] = el.value;
+    render();
+    save();
+  });
 });
-document.querySelectorAll('.template').forEach(b=>b.addEventListener('click',()=>{state.template=b.dataset.template;render();save()}));
-document.querySelectorAll('#background .choice').forEach(b=>b.addEventListener('click',()=>{state.bg=b.dataset.bg;render();save()}));
-document.querySelectorAll('#colors .color').forEach(b=>b.addEventListener('click',()=>{state.accent=b.dataset.color;render();save()}));
 
-function download(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000)}
-$('saveJson').onclick=()=>download(new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),'west150-data-project.json');
-$('loadJson').onclick=()=>$('jsonFile').click();
-$('jsonFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{state={...defaults,...JSON.parse(r.result)};['kicker','headline','description','value','unit','series','labels'].forEach(id=>$(id).value=state[id]);render();save()}catch(err){alert('올바른 프로젝트 JSON 파일이 아닙니다.')}};r.readAsText(f)};
+document.querySelectorAll('.template').forEach(b => {
+  b.addEventListener('click', () => {
+    state.template = b.dataset.template;
+    render();
+    save();
+  });
+});
 
-function exportCanvas(){
- const W=1200,H=1500,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
- const dark=state.bg==='dark',bg=dark?'#181b1b':'#f1ede4',ink=dark?'#f1eee6':'#171816',muted=dark?'#b9b7b0':'#686a66';
- x.fillStyle=bg;x.fillRect(0,0,W,H);x.fillStyle=ink;x.font='900 24px Arial';x.fillText('WEST150 DATA',65,65);x.textAlign='right';x.fillText(state.template.toUpperCase()+' / 01',1135,65);x.textAlign='left';
- x.fillStyle=state.accent;x.font='900 20px Arial';x.fillText(state.kicker,65,150);
- const wrap=(text,max,font,y,line,color)=>{x.font=font;x.fillStyle=color;x.textBaseline='top';let words=String(text).split(/\s+/),row='',yy=y;for(const w of words){let t=row?row+' '+w:w;if(x.measureText(t).width>max&&row){x.fillText(row,65,yy);yy+=line;row=w}else row=t}if(row){x.fillText(row,65,yy);yy+=line}return yy}
- let y=190;y=wrap(state.headline,1050,'70px Georgia',y,76,ink)+25;
- x.font='28px Arial';x.fillStyle=muted;y=wrap(state.description,850,'28px Arial',y,40,muted)+30;
- const n=nums(),m=Math.max(...n,1);
- if(state.template==='compare'){for(let i=0;i<2;i++){x.fillStyle=i?'#e4ded2':'#d6cfc2';if(dark)x.fillStyle=i?'#262b2b':'#222626';x.fillRect(65+i*535,y,525,500);x.fillStyle=ink;x.font='120px Georgia';x.fillText((n[i]||0)+state.unit,95+i*535,y+330);x.font='20px Arial';x.fillText((labs()[i]||'OPTION '+(i+1)).toUpperCase(),95+i*535,y+380)}} 
- else if(state.template==='ranking'){n.forEach((v,i)=>{x.strokeStyle=dark?'#555':'#c8c0b5';x.beginPath();x.moveTo(65,y+i*105);x.lineTo(1135,y+i*105);x.stroke();x.fillStyle=state.accent;x.font='42px Georgia';x.fillText('0'+(i+1),65,y+65+i*105);x.fillStyle=ink;x.font='28px Arial';x.fillText(labs()[i]||'ITEM '+(i+1),150,y+62+i*105);x.textAlign='right';x.fillText(v+state.unit,1135,y+62+i*105);x.textAlign='left'})}
- else if(state.template==='line'){x.strokeStyle=state.accent;x.lineWidth=8;x.beginPath();n.forEach((v,i)=>{let px=65+i*(1070/Math.max(1,n.length-1)),py=y+430-(v/m*350);i?x.lineTo(px,py):x.moveTo(px,py)});x.stroke()}
- else {x.font='180px Georgia';x.fillStyle=ink;x.fillText(state.value+state.unit,65,y+170);let base=y+500;let bw=140;n.forEach((v,i)=>{let h=v/m*380;x.fillStyle=state.accent;x.fillRect(65+i*(bw+35),base-h,bw,h)})}
- x.fillStyle=muted;x.font='18px Arial';x.fillText('WEST150 DATA STUDIO',65,1440);
- return c;
+document.querySelectorAll('#background .choice').forEach(b => {
+  b.addEventListener('click', () => {
+    state.bg = b.dataset.bg;
+    render();
+    save();
+  });
+});
+
+document.querySelectorAll('#colors .color').forEach(b => {
+  b.addEventListener('click', () => {
+    state.accent = b.dataset.color;
+    render();
+    save();
+  });
+});
+
+function download(blob, name) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => {
+    URL.revokeObjectURL(a.href);
+    a.remove();
+  }, 1000);
 }
-$('exportPng').onclick=async()=>{const canvas=exportCanvas();canvas.toBlob(async blob=>{const file=new File([blob],'west150-data.png',{type:'image/png'});if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:'WEST150 DATA'});return}catch(e){}}download(blob,'west150-data.png')},'image/png')};
 
-render();save();
+$('saveJson').onclick = () => download(new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' }), 'west150-data-project.json');
+$('loadJson').onclick = () => $('jsonFile').click();
+$('jsonFile').onchange = e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      state = { ...defaults, ...JSON.parse(r.result) };
+      ['kicker', 'headline', 'description', 'value', 'unit', 'series', 'labels'].forEach(id => $(id).value = state[id]);
+      render();
+      save();
+    } catch (err) {
+      alert('올바른 프로젝트 JSON 파일이 아닙니다.');
+    }
+  };
+  r.readAsText(f);
+};
+
+function exportCanvas() {
+  const W = 1200, H = 1500;
+  const c = document.createElement('canvas');
+  c.width = W;
+  c.height = H;
+  const x = c.getContext('2d');
+
+  const dark = state.bg === 'dark';
+  const bg = dark ? '#181b1b' : '#f1ede4';
+  const ink = dark ? '#f1eee6' : '#171816';
+  const muted = dark ? '#b9b7b0' : '#686a66';
+
+  x.fillStyle = bg;
+  x.fillRect(0, 0, W, H);
+
+  // Header
+  x.fillStyle = ink;
+  x.font = '900 24px Arial';
+  x.fillText('WEST150 DATA', 65, 65);
+  x.textAlign = 'right';
+  x.fillText(state.template.toUpperCase() + ' / 01', 1135, 65);
+  x.textAlign = 'left';
+
+  // Kicker
+  x.fillStyle = state.accent;
+  x.font = '900 20px Arial';
+  x.fillText(state.kicker, 65, 150);
+
+  const wrap = (text, max, font, y, line, color) => {
+    x.font = font;
+    x.fillStyle = color;
+    x.textBaseline = 'top';
+    let words = String(text).split(/\s+/);
+    let row = '';
+    let yy = y;
+    for (const w of words) {
+      const t = row ? row + ' ' + w : w;
+      if (x.measureText(t).width > max && row) {
+        x.fillText(row, 65, yy);
+        yy += line;
+        row = w;
+      } else {
+        row = t;
+      }
+    }
+    if (row) {
+      x.fillText(row, 65, yy);
+      yy += line;
+    }
+    return yy;
+  };
+
+  let y = 190;
+  y = wrap(state.headline, 1050, '70px Georgia', y, 76, ink) + 25;
+  x.font = '28px Arial';
+  x.fillStyle = muted;
+  y = wrap(state.description, 850, '28px Arial', y, 40, muted) + 30;
+
+  const n = nums();
+  const m = Math.max(...n, 1);
+  const l = labs();
+
+  if (state.template === 'compare') {
+    for (let i = 0; i < 2; i++) {
+      x.fillStyle = i ? (dark ? '#262b2b' : '#e4ded2') : (dark ? '#222626' : '#d6cfc2');
+      x.fillRect(65 + i * 535, y, 525, 500);
+      x.fillStyle = ink;
+      x.font = '120px Georgia';
+      x.fillText((n[i] || 0) + state.unit, 95 + i * 535, y + 330);
+      x.font = '20px Arial';
+      x.fillText((l[i] || 'OPTION ' + (i + 1)).toUpperCase(), 95 + i * 535, y + 380);
+    }
+  } else if (state.template === 'ranking') {
+    n.forEach((v, i) => {
+      x.strokeStyle = dark ? '#555' : '#c8c0b5';
+      x.beginPath();
+      x.moveTo(65, y + i * 105);
+      x.lineTo(1135, y + i * 105);
+      x.stroke();
+
+      x.fillStyle = state.accent;
+      x.font = '42px Georgia';
+      x.fillText(String(i + 1).padStart(2, '0'), 65, y + 65 + i * 105);
+
+      x.fillStyle = ink;
+      x.font = '28px Arial';
+      x.fillText(l[i] || 'ITEM ' + (i + 1), 150, y + 62 + i * 105);
+
+      x.textAlign = 'right';
+      x.fillText(v + state.unit, 1135, y + 62 + i * 105);
+      x.textAlign = 'left';
+    });
+  } else if (state.template === 'line') {
+    // Line chart
+    x.strokeStyle = state.accent;
+    x.lineWidth = 8;
+    x.beginPath();
+    n.forEach((v, i) => {
+      const px = 65 + i * (1070 / Math.max(1, n.length - 1));
+      const py = y + 430 - (v / m * 350);
+      if (i === 0) x.moveTo(px, py);
+      else x.lineTo(px, py);
+    });
+    x.stroke();
+
+    // Points
+    n.forEach((v, i) => {
+      const px = 65 + i * (1070 / Math.max(1, n.length - 1));
+      const py = y + 430 - (v / m * 350);
+      x.fillStyle = state.accent;
+      x.beginPath();
+      x.arc(px, py, 10, 0, Math.PI * 2);
+      x.fill();
+    });
+  } else if (state.template === 'photo') {
+    // Photo box (left)
+    const grad = x.createLinearGradient(65, y, 65 + 520, y + 500);
+    grad.addColorStop(0, '#6d7474');
+    grad.addColorStop(0.55, '#252a2b');
+    grad.addColorStop(1, '#101314');
+    x.fillStyle = grad;
+    x.fillRect(65, y, 520, 500);
+
+    // Metric (right)
+    x.fillStyle = ink;
+    x.font = '100px Georgia';
+    x.fillText(state.value + state.unit, 620, y + 180);
+
+    x.font = '18px Arial';
+    x.fillStyle = muted;
+    x.fillText('LATEST VALUE', 620, y + 220);
+
+    // Mini bars
+    const base = y + 480;
+    const bw = 55;
+    n.forEach((v, i) => {
+      const h = (v / m) * 200;
+      x.fillStyle = state.accent;
+      x.fillRect(620 + i * (bw + 12), base - h, bw, h);
+    });
+  } else {
+    // big / bar 공통
+    x.font = '180px Georgia';
+    x.fillStyle = ink;
+    x.fillText(state.value + state.unit, 65, y + 170);
+
+    const base = y + 500;
+    const bw = 140;
+    n.forEach((v, i) => {
+      const h = (v / m) * 380;
+      x.fillStyle = state.accent;
+      x.fillRect(65 + i * (bw + 35), base - h, bw, h);
+    });
+  }
+
+  // Footer
+  x.fillStyle = muted;
+  x.font = '18px Arial';
+  x.fillText('WEST150 DATA STUDIO', 65, 1440);
+  x.textAlign = 'right';
+  x.fillText('2026', 1135, 1440);
+  x.textAlign = 'left';
+
+  return c;
+}
+
+$('exportPng').onclick = async () => {
+  const canvas = exportCanvas();
+  canvas.toBlob(async blob => {
+    const file = new File([blob], 'west150-data.png', { type: 'image/png' });
+    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({ files: [file], title: 'WEST150 DATA' });
+        return;
+      } catch (e) {}
+    }
+    download(blob, 'west150-data.png');
+  }, 'image/png');
+};
+
+render();
+save();
 </script>
-</body></html>
+</body>
+</html>
