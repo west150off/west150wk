@@ -6,6 +6,16 @@
 <title>WEST150 신학 스튜디오 — DESIGN EDITION</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+@font-face{
+  font-family:'RIDIBatang';
+  src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_twelve@1.0/RIDIBatang.woff') format('woff');
+  font-weight:400;
+  font-style:normal;
+  font-display:swap;
+}
+</style>
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=Jua&family=Nanum+Brush+Script&family=Nanum+Gothic:wght@400;700;800&family=Nanum+Myeongjo:wght@400;700;800&family=Noto+Sans+KR:wght@100;300;400;500;700;900&family=Noto+Serif+KR:wght@200;400;500;600;700;900&family=Song+Myung&family=Stylish&family=Sunflower:wght@300;500;700&family=Yeon+Sung&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -83,7 +93,7 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
 
 <main class="center"><div class="canvasShell">
 <article class="card" id="card">
-<div class="cardHeader"><span>WEST150 신학</span><span id="page">01 / 08</span></div>
+<div class="cardHeader"><span id="brandName">WEST150 신학</span><span id="page">01 / 08</span></div>
 <div class="cardContent">
 <div class="kicker" id="kicker">성경</div>
 <div class="ref" id="reference">요한복음<br>3:16</div>
@@ -93,7 +103,7 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
 <div class="conceptBox" id="conceptBox"><strong id="conceptLabel">핵심 메시지</strong><p id="conceptText">내어주는 사랑.</p></div>
 <div class="bottomMeta"><div class="meta"><strong id="translation">NIV</strong><span>번역본</span></div><div class="meta"><strong>GOSPEL</strong><span>BOOK</span></div><div class="meta"><strong>01</strong><span>STUDY SERIES</span></div></div>
 </div>
-<div class="footer"><span id="credit">WEST150 신학</span><span>@WEST150OFFICIAL</span></div>
+<div class="footer"><span id="credit">WEST150 신학</span><span id="watermark">@WEST150OFFICIAL</span></div>
 </article>
 </div></main>
 
@@ -108,6 +118,12 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
 <label class="label">해설 / 묵상</label><textarea class="textarea" id="bodyTextInput">하나님의 사랑과 은혜가 우리 삶에 어떤 의미를 주는지 묵상합니다.</textarea>
 <label class="label">핵심 메시지</label><input class="input" id="conceptInput" value="내어주는 사랑.">
 </div>
+<div class="control" id="brandingControl"><h3>브랜드 / 워터마크</h3>
+<label class="label">상단 브랜드명</label><input class="input" id="brandInput" value="WEST150 신학">
+<label class="label">하단 워터마크</label><input class="input" id="creditInput" value="WEST150 신학">
+<label class="label">하단 계정 / 워터마크</label><input class="input" id="watermarkInput" value="@WEST150OFFICIAL">
+<label class="label">페이지 번호</label><input class="input" id="pageLabelInput" value="01 / 01">
+</div>
 <div id="styleControl">
 <div class="control"><h3>레이아웃</h3>
 <div class="choiceGrid" id="textAlign"><button class="choice active" data-align="left">왼쪽</button><button class="choice" data-align="center">가운데</button></div>
@@ -118,6 +134,8 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
 <label class="label">글꼴</label>
 <select class="select" id="fontFamilyInput">
 <option value='"Noto Serif KR","Nanum Myeongjo",serif'>본명조 · 기본</option>
+<option value='"Pretendard",sans-serif'>프리텐다드</option>
+<option value='"RIDIBatang",serif'>리디바탕</option>
 <option value='"Noto Sans KR",sans-serif'>Noto Sans KR</option>
 <option value='"Nanum Gothic",sans-serif'>나눔고딕</option>
 <option value='"Nanum Myeongjo",serif'>나눔명조</option>
@@ -150,7 +168,9 @@ const defaults={
  mainText:'“하나님이 세상을 이처럼 사랑하사 독생자를 주셨으니”',
  bodyText:'하나님의 사랑과 은혜가 우리 삶에 어떤 의미를 주는지 묵상합니다.',
  concept:'내어주는 사랑.',accent:'#9a7b43',bg:'paper',align:'left',scale:100,
- showNum:true,showConcept:true,chapter:'03',credit:'WEST150 신학',pageLabel:'01 / 01'
+ showNum:true,showConcept:true,chapter:'03',credit:'WEST150 신학',brandName:'WEST150 신학',
+  watermark:'@WEST150OFFICIAL',pageLabel:'01 / 01',
+  fontFamily:'"Noto Serif KR","Nanum Myeongjo",serif'
 };
 const presets={
  scripture:{...defaults},
@@ -172,15 +192,15 @@ function updateHistoryButtons(){const bs=$all('.iconBtn');if(bs[0])bs[0].disable
 function current(){return slides[active]}
 function setField(k,v){current()[k]=v;renderCard();renderFilm();pushHistory()}
 function esc(s){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
-function renderCard(){const s=current();if(!s)return;document.documentElement.style.setProperty('--accent',s.accent);$('card').className='card '+(s.bg==='paper'?'':s.bg);$('page').textContent=`${String(active+1).padStart(2,'0')} / ${String(slides.length).padStart(2,'0')}`;$('kicker').textContent=s.kicker;$('reference').innerHTML=esc(s.reference).replace(/\s+/, '<br>');$('mainText').textContent=s.mainText;$('mainText').style.fontSize=(s.scale/100)+'em';$('bodyText').textContent=s.bodyText;$('conceptText').textContent=s.concept;$('translation').textContent=s.translation;$('credit').textContent=s.credit;$('conceptBox').style.display=s.showConcept?'block':'none';['reference','mainText','bodyText'].forEach(id=>$(id).style.textAlign=s.align);$('bodyText').style.marginLeft=s.align==='center'?'auto':'0';$('bodyText').style.marginRight=s.align==='center'?'auto':'0'}
-function syncForm(){const s=current();if(!s)return;$('referenceInput').value=s.reference;$('translationInput').value=s.translation;$('kickerInput').value=s.kicker;$('mainTextInput').value=s.mainText;$('bodyTextInput').value=s.bodyText;$('conceptInput').value=s.concept;$('scale').value=s.scale;$all('#swatches .swatch').forEach(b=>b.classList.toggle('active',b.dataset.color===s.accent));$all('#bgStyle .choice').forEach(b=>b.classList.toggle('active',b.dataset.bg===s.bg));$all('#textAlign .choice').forEach(b=>b.classList.toggle('active',b.dataset.align===s.align));$('conceptToggle').classList.toggle('on',s.showConcept);$all('.template').forEach(b=>b.classList.toggle('active',b.dataset.layout===s.layout))}
+function renderCard(){const s=current();if(!s)return;document.documentElement.style.setProperty('--accent',s.accent);$('card').className='card '+(s.bg==='paper'?'':s.bg);$('card').style.fontFamily=s.fontFamily||'"Noto Serif KR","Nanum Myeongjo",serif';$('page').textContent=s.pageLabel&&s.pageLabel!=='01 / 01'?s.pageLabel:`${String(active+1).padStart(2,'0')} / ${String(slides.length).padStart(2,'0')}`;$('brandName').textContent=s.brandName??'WEST150 신학';$('kicker').textContent=s.kicker;$('reference').innerHTML=esc(s.reference).replace(/\s+/, '<br>');$('mainText').textContent=s.mainText;$('mainText').style.fontSize=(s.scale/100)+'em';$('bodyText').textContent=s.bodyText;$('conceptText').textContent=s.concept;$('translation').textContent=s.translation;$('credit').textContent=s.credit??'WEST150 신학';$('watermark').textContent=s.watermark??'@WEST150OFFICIAL';$('conceptBox').style.display=s.showConcept?'block':'none';['reference','mainText','bodyText'].forEach(id=>$(id).style.textAlign=s.align);$('bodyText').style.marginLeft=s.align==='center'?'auto':'0';$('bodyText').style.marginRight=s.align==='center'?'auto':'0'}
+function syncForm(){const s=current();if(!s)return;$('brandInput').value=s.brandName??'WEST150 신학';$('creditInput').value=s.credit??'WEST150 신학';$('watermarkInput').value=s.watermark??'@WEST150OFFICIAL';$('pageLabelInput').value=s.pageLabel??'01 / 01';$('referenceInput').value=s.reference;$('translationInput').value=s.translation;$('kickerInput').value=s.kicker;$('mainTextInput').value=s.mainText;$('bodyTextInput').value=s.bodyText;$('conceptInput').value=s.concept;$('scale').value=s.scale;$('fontFamilyInput').value=s.fontFamily||'"Noto Serif KR","Nanum Myeongjo",serif';$all('#swatches .swatch').forEach(b=>b.classList.toggle('active',b.dataset.color===s.accent));$all('#bgStyle .choice').forEach(b=>b.classList.toggle('active',b.dataset.bg===s.bg));$all('#textAlign .choice').forEach(b=>b.classList.toggle('active',b.dataset.align===s.align));$('conceptToggle').classList.toggle('on',s.showConcept);$all('.template').forEach(b=>b.classList.toggle('active',b.dataset.layout===s.layout))}
 function renderFilm(){const film=document.querySelector('.film');film.innerHTML=slides.map((s,i)=>`<button class="mini ${i===active?'active':''}" data-index="${i}">${String(i+1).padStart(2,'0')}<br>${esc(s.kicker.slice(0,14))}</button>`).join('');$all('.mini',film).forEach(b=>b.onclick=()=>{active=+b.dataset.index;renderAll();pushHistory()})}
 function renderAll(){renderCard();syncForm();renderFilm()}
 function addCard(data=clone(current()||defaults)){slides.splice(active+1,0,makeSlide(data));active++;renderAll();pushHistory()}
 function deleteCard(){if(slides.length===1){slides[0]=makeSlide(defaults);active=0}else{slides.splice(active,1);active=Math.min(active,slides.length-1)}renderAll();pushHistory()}
 function applyPreset(layout){const p=clone(presets[layout]||defaults);p.layout=layout;slides[active]={id:current().id,...p};renderAll();pushHistory()}
 function bind(id,key,event='input'){ $(id).addEventListener(event,e=>setField(key,e.target.value)) }
-bind('referenceInput','reference');bind('translationInput','translation','change');bind('kickerInput','kicker');bind('mainTextInput','mainText');bind('bodyTextInput','bodyText');bind('conceptInput','concept');
+bind('brandInput','brandName');bind('creditInput','credit');bind('watermarkInput','watermark');bind('pageLabelInput','pageLabel');bind('referenceInput','reference');bind('translationInput','translation','change');bind('kickerInput','kicker');bind('mainTextInput','mainText');bind('bodyTextInput','bodyText');bind('conceptInput','concept');bind('fontFamilyInput','fontFamily','change');
 $('scale').oninput=e=>setField('scale',+e.target.value);
 $all('#swatches .swatch').forEach(b=>b.onclick=()=>setField('accent',b.dataset.color));
 $all('#bgStyle .choice').forEach(b=>b.onclick=()=>setField('bg',b.dataset.bg));
@@ -196,7 +216,7 @@ const templates=$('templates');templates.insertAdjacentHTML('beforeend','<button
 // rebind newly added template
 $all('.template').forEach(b=>b.onclick=()=>applyPreset(b.dataset.layout));
 // panel menu
-const menuBtns=$all('.menu button[data-panel]');const workspace=document.querySelector('.workspace');const leftAside=$('leftAside'),rightAside=$('rightAside'),scriptureControl=$('scriptureControl'),contentControl=$('contentControl'),styleControl=$('styleControl'),bottomBar=$('bottomBar');const wideQuery=window.matchMedia('(min-width:1101px)');let activePanel='template';
+const menuBtns=$all('.menu button[data-panel]');const workspace=document.querySelector('.workspace');const leftAside=$('leftAside'),rightAside=$('rightAside'),scriptureControl=$('scriptureControl'),contentControl=$('contentControl'),styleControl=$('styleControl'),brandingControl=$('brandingControl'),bottomBar=$('bottomBar');const wideQuery=window.matchMedia('(min-width:1101px)');let activePanel='template';
 function applyPanel(){
   // 상단 메뉴가 데스크톱/모바일 모두 실제로 편집 패널을 전환하도록 처리
   const isTemplate=activePanel==='template';
@@ -207,7 +227,7 @@ function applyPanel(){
   rightAside.style.display=isEditor?'block':'none';
   scriptureControl.style.display=activePanel==='scripture'?'block':'none';
   contentControl.style.display=activePanel==='content'?'block':'none';
-  styleControl.style.display=activePanel==='style'?'block':'none';
+  styleControl.style.display=activePanel==='style'?'block':'none';brandingControl.style.display=activePanel==='style'?'block':'none';
   if(activePanel==='cards') bottomBar.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 menuBtns.forEach(b=>b.onclick=()=>{
