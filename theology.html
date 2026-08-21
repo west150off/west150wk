@@ -18,6 +18,7 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
 .menu{height:100%;display:flex;gap:30px;margin-left:24px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}.menu::-webkit-scrollbar{display:none}.menu button{height:100%;background:transparent;border:0;border-bottom:2px solid transparent;color:#939690;font-size:11px;letter-spacing:.08em;white-space:nowrap;flex:0 0 auto}.menu button.active{color:#fff;border-color:var(--accent)}
 .topRight{margin-left:auto;display:flex;gap:8px}.topRight button{background:#131613;border:1px solid #31342f;color:#ddd;padding:10px 13px;border-radius:6px;font-size:10px}.export{font-weight:900!important}
 .workspace{display:grid;grid-template-columns:290px minmax(0,1fr) 315px;min-height:0}
+.workspace:has(.left[style*="display: none"]),.workspace:has(.right[style*="display: none"]){grid-template-columns:minmax(0,1fr)}
 .left,.right{background:#0d0f0d;padding:20px 16px;overflow:auto}.left{border-right:1px solid var(--line)}.right{border-left:1px solid var(--line)}
 .center{padding:26px 20px;background:#0a0c0a;overflow:auto}.sideTitle{font-size:10px;font-weight:900;letter-spacing:.13em;margin:3px 6px 15px}
 .template{display:grid;grid-template-columns:128px 1fr;gap:10px;width:100%;padding:5px;margin-bottom:7px;border:1px solid transparent;border-radius:6px;background:transparent;color:#ddd;text-align:left}.template:hover,.template.active{background:#141713}.template.active{border-color:#c8c0ae}
@@ -33,7 +34,6 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
 .card{width:100%;aspect-ratio:4/5;background:var(--paper);color:var(--ink);position:relative;overflow:hidden;box-shadow:0 25px 85px #0008}.card.dark{background:#171914;color:#f1ecdf}.card.ink{background:#232018;color:#f0e9d8}
 .cardHeader{position:absolute;left:4%;right:4%;top:4%;display:flex;justify-content:space-between;font-size:10px;font-weight:900;letter-spacing:.1em}
 .cardContent{position:absolute;left:4%;right:4%;top:13%;bottom:8%}
-.chapterNum{position:absolute;right:0;top:-25px;font:500 clamp(120px,19vw,250px)/1 Georgia;color:#d8d0c0;letter-spacing:-.1em;opacity:.55}.dark .chapterNum,.ink .chapterNum{color:#45473d;opacity:.8}
 .kicker{position:relative;color:var(--accent);font-size:10px;font-weight:900;letter-spacing:.18em;margin-bottom:26px}
 .ref{position:relative;font:500 clamp(40px,6.2vw,84px)/.92 Georgia;letter-spacing:-.06em;max-width:70%}
 .divider{position:relative;width:120px;height:3px;background:var(--accent);margin:25px 0}
@@ -52,6 +52,7 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
 @media(max-width:1100px){.workspace{grid-template-columns:1fr}.template{grid-template-columns:1fr}.tmeta{display:none}.left,.right{border:0}}
 @media(max-width:700px){.app{grid-template-rows:58px 1fr 58px}.top{padding:0 10px}.brand{font-size:17px}.brand span{display:none}.menu{margin-left:6px;gap:14px}.menu button{font-size:8px}.topRight .iconBtn{display:none}.center{padding:10px}.ref{font-size:44px}.verse{font-size:29px}.body{font-size:10px}.conceptBox{width:42%}}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
 <div class="app">
@@ -78,7 +79,6 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
 <article class="card" id="card">
 <div class="cardHeader"><span>WEST150 THEOLOGY</span><span id="page">01 / 08</span></div>
 <div class="cardContent">
-<div class="chapterNum" id="chapterNum">03</div>
 <div class="kicker" id="kicker">SCRIPTURE</div>
 <div class="ref" id="reference">JOHN<br>3:16</div>
 <div class="divider"></div>
@@ -94,7 +94,7 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
 <aside class="right" id="rightAside">
 <div class="control" id="scriptureControl"><h3>SCRIPTURE</h3>
 <label class="label">REFERENCE</label><input class="input" id="referenceInput" value="JOHN 3:16">
-<label class="label">TRANSLATION</label><select class="select" id="translationInput"><option>NIV</option><option>ESV</option><option>KJV</option><option>NASB</option><option>NKRV</option></select>
+<label class="label">TRANSLATION</label><select class="select" id="translationInput"><option>NIV</option><option>ESV</option><option>KJV</option><option>NASB</option><option>NKRV</option><option>개역개정</option></select>
 <label class="label">SECTION</label><input class="input" id="kickerInput" value="SCRIPTURE">
 </div>
 <div class="control" id="contentControl"><h3>CONTENT</h3>
@@ -110,75 +110,92 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
 <div class="control"><h3>STYLE</h3>
 <label class="label">ACCENT</label><div class="swatches" id="swatches"><button class="swatch active" data-color="#9a7b43"></button><button class="swatch" data-color="#7f342b"></button><button class="swatch" data-color="#394541"></button><button class="swatch" data-color="#c5b7a0"></button></div>
 <label class="label">BACKGROUND</label><div class="choiceGrid" id="bgStyle"><button class="choice active" data-bg="paper">PAPER</button><button class="choice" data-bg="dark">DARK</button><button class="choice" data-bg="ink">INK</button></div>
-<div class="toggle"><span>SHOW CHAPTER NUMBER</span><button class="switch on" id="numToggle"></button></div>
 <div class="toggle"><span>SHOW CORE IDEA</span><button class="switch on" id="conceptToggle"></button></div>
 </div>
 </div>
 </aside>
 </div>
 
-<footer class="bottom" id="bottomBar"><button class="add">＋<br>ADD CARD</button><div class="film"><button class="mini active">SCRIPTURE</button><button class="mini">QUOTE</button><button class="mini">CONCEPT</button><button class="mini">MEDITATION</button><button class="mini">WORD</button></div><span class="zoom">− &nbsp; ━━━━━●━━ &nbsp; + &nbsp; 68%</span></footer>
+<footer class="bottom" id="bottomBar"><button class="add" id="addCardBtn">＋<br>ADD CARD</button><button class="add" id="dupCardBtn">⧉<br>DUPLICATE</button><button class="add" id="delCardBtn">−<br>DELETE</button><div class="film"><button class="mini active">SCRIPTURE</button><button class="mini">QUOTE</button><button class="mini">CONCEPT</button><button class="mini">MEDITATION</button><button class="mini">WORD</button></div><span class="zoom">− &nbsp; ━━━━━●━━ &nbsp; + &nbsp; 68%</span></footer>
 </div>
 
 <script>
 const $=id=>document.getElementById(id);
-function bind(input,output,fn=v=>v){$(input).addEventListener("input",e=>$(output).innerHTML=fn(e.target.value))}
-bind("referenceInput","reference",v=>v.replace(/\s+/,"<br>"));
-bind("kickerInput","kicker");bind("mainTextInput","mainText");bind("bodyTextInput","bodyText");bind("conceptInput","conceptText");
-$("translationInput").onchange=e=>$("translation").textContent=e.target.value;
-$("scale").oninput=e=>{$("mainText").style.fontSize=(Number(e.target.value)/100)+"em"};
-document.querySelectorAll("#swatches .swatch").forEach(b=>b.onclick=()=>{document.querySelectorAll("#swatches .swatch").forEach(x=>x.classList.remove("active"));b.classList.add("active");document.documentElement.style.setProperty("--accent",b.dataset.color)});
-document.querySelectorAll("#bgStyle .choice").forEach(b=>b.onclick=()=>{document.querySelectorAll("#bgStyle .choice").forEach(x=>x.classList.remove("active"));b.classList.add("active");$("card").className="card "+(b.dataset.bg==="paper"?"":b.dataset.bg)});
-document.querySelectorAll("#textAlign .choice").forEach(b=>b.onclick=()=>{document.querySelectorAll("#textAlign .choice").forEach(x=>x.classList.remove("active"));b.classList.add("active");["reference","mainText","bodyText"].forEach(id=>$(id).style.textAlign=b.dataset.align);if(b.dataset.align==="center"){$("bodyText").style.marginLeft="auto";$("bodyText").style.marginRight="auto"}else{$("bodyText").style.marginLeft="0";$("bodyText").style.marginRight="0"}});
-$("numToggle").onclick=e=>{e.currentTarget.classList.toggle("on");$("chapterNum").style.display=e.currentTarget.classList.contains("on")?"block":"none"};
-$("conceptToggle").onclick=e=>{e.currentTarget.classList.toggle("on");$("conceptBox").style.display=e.currentTarget.classList.contains("on")?"block":"none"};
-document.querySelectorAll(".template").forEach(b=>b.onclick=()=>{document.querySelectorAll(".template").forEach(x=>x.classList.remove("active"));b.classList.add("active");const l=b.dataset.layout;
-if(l==="scripture"){$("kicker").textContent="SCRIPTURE";$("reference").innerHTML="JOHN<br>3:16";$("mainText").textContent="“FOR GOD SO LOVED THE WORLD THAT HE GAVE HIS ONE AND ONLY SON.”";$("conceptText").textContent="LOVE THAT GIVES."}
-if(l==="quote"){$("kicker").textContent="THEOLOGY QUOTE";$("reference").innerHTML="AUGUSTINE";$("mainText").textContent="“OUR HEART IS RESTLESS UNTIL IT RESTS IN YOU.”";$("conceptText").textContent="REST IN GOD."}
-if(l==="concept"){$("kicker").textContent="CORE CONCEPT";$("reference").innerHTML="GRACE";$("mainText").textContent="NOT EARNED. NOT DESERVED. FREELY GIVEN.";$("conceptText").textContent="GIFT BEFORE RESPONSE."}
-if(l==="meditation"){$("kicker").textContent="MEDITATION";$("reference").innerHTML="BE STILL";$("mainText").textContent="SILENCE CAN BECOME A PLACE WHERE WE LEARN TO LISTEN.";$("conceptText").textContent="WAIT WITH GOD."}
-if(l==="word"){$("kicker").textContent="WORD STUDY";$("reference").innerHTML="REDEEMED";$("mainText").textContent="TO BE BROUGHT BACK AT A PRICE.";$("conceptText").textContent="RESTORATION."}
-if(l==="chapter"){$("kicker").textContent="CHAPTER GUIDE";$("reference").innerHTML="ROMANS<br>8";$("mainText").textContent="NO CONDEMNATION. NEW LIFE. NOTHING CAN SEPARATE.";$("conceptText").textContent="LIFE IN THE SPIRIT."}
-});
-$("exportBtn").onclick=()=>alert("현재는 실제 편집 UI 코드 버전입니다. PNG 저장 엔진은 html2canvas 또는 서버 렌더링 방식으로 추가할 수 있습니다.");
-
-/* ===== 상단 메뉴 탭 기능 ===== */
-const menuBtns=document.querySelectorAll(".menu button[data-panel]");
-const leftAside=$("leftAside");
-const rightAside=$("rightAside");
-const scriptureControl=$("scriptureControl");
-const contentControl=$("contentControl");
-const styleControl=$("styleControl");
-const bottomBar=$("bottomBar");
-const wideQuery=window.matchMedia("(min-width:1101px)");
-let activePanel="template";
-
+const STORAGE_KEY='west150_theology_studio_v2';
+const $all=(q,root=document)=>[...root.querySelectorAll(q)];
+const defaults={
+ layout:'scripture',reference:'JOHN 3:16',translation:'NIV',kicker:'SCRIPTURE',
+ mainText:'“FOR GOD SO LOVED THE WORLD THAT HE GAVE HIS ONE AND ONLY SON.”',
+ bodyText:'A reflection on the depth of divine love and the meaning of grace revealed through giving.',
+ concept:'LOVE THAT GIVES.',accent:'#9a7b43',bg:'paper',align:'left',scale:100,
+ showNum:true,showConcept:true,chapter:'03',credit:'WEST150 THEOLOGY',pageLabel:'01 / 01'
+};
+const presets={
+ scripture:{...defaults},
+ quote:{...defaults,layout:'quote',kicker:'THEOLOGY QUOTE',reference:'AUGUSTINE',mainText:'“OUR HEART IS RESTLESS UNTIL IT RESTS IN YOU.”',bodyText:'A theological reflection on desire, rest, and the human heart before God.',concept:'REST IN GOD.',chapter:'01'},
+ concept:{...defaults,layout:'concept',kicker:'CORE CONCEPT',reference:'GRACE',mainText:'NOT EARNED. NOT DESERVED. FREELY GIVEN.',bodyText:'Grace begins before achievement and remains beyond deserving.',concept:'GIFT BEFORE RESPONSE.',chapter:'02'},
+ meditation:{...defaults,layout:'meditation',kicker:'MEDITATION',reference:'BE STILL',mainText:'SILENCE CAN BECOME A PLACE WHERE WE LEARN TO LISTEN.',bodyText:'Slow down. Attend. Wait before God without needing to fill every space.',concept:'WAIT WITH GOD.',chapter:'04'},
+ word:{...defaults,layout:'word',kicker:'WORD STUDY',reference:'REDEEMED',mainText:'TO BE BROUGHT BACK AT A PRICE.',bodyText:'A study of restoration, ransom, and belonging.',concept:'RESTORATION.',chapter:'05'},
+ chapter:{...defaults,layout:'chapter',kicker:'CHAPTER GUIDE',reference:'ROMANS 8',mainText:'NO CONDEMNATION. NEW LIFE. NOTHING CAN SEPARATE.',bodyText:'A chapter guide for tracing life in the Spirit and assurance in Christ.',concept:'LIFE IN THE SPIRIT.',chapter:'08'},
+ gaeyeok:{...defaults,layout:'gaeyeok',translation:'개역개정',kicker:'성경 · 개역개정',reference:'요한복음 3:16',mainText:'“하나님이 세상을 이처럼 사랑하사 독생자를 주셨으니”',bodyText:'개역개정 본문을 중심으로 말씀의 핵심과 신학적 의미를 정리합니다.',concept:'하나님의 사랑.',chapter:'03'}
+};
+let slides=[];let active=0;let history=[];let historyIndex=-1;let applying=false;
+function clone(v){return JSON.parse(JSON.stringify(v))}
+function makeSlide(data=defaults){return {id:crypto?.randomUUID?.()||Date.now()+Math.random(),...clone(data)}}
+function saveLocal(){localStorage.setItem(STORAGE_KEY,JSON.stringify({slides,active}))}
+function pushHistory(){if(applying)return;const snap=JSON.stringify({slides,active});if(history[historyIndex]===snap)return;history=history.slice(0,historyIndex+1);history.push(snap);historyIndex=history.length-1;saveLocal();updateHistoryButtons()}
+function restoreHistory(i){if(i<0||i>=history.length)return;applying=true;const d=JSON.parse(history[i]);slides=d.slides;active=d.active;historyIndex=i;renderAll();applying=false;updateHistoryButtons();saveLocal()}
+function undo(){restoreHistory(historyIndex-1)}function redo(){restoreHistory(historyIndex+1)}
+function updateHistoryButtons(){const bs=$all('.iconBtn');if(bs[0])bs[0].disabled=historyIndex<=0;if(bs[1])bs[1].disabled=historyIndex>=history.length-1}
+function current(){return slides[active]}
+function setField(k,v){current()[k]=v;renderCard();renderFilm();pushHistory()}
+function esc(s){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+function renderCard(){const s=current();if(!s)return;document.documentElement.style.setProperty('--accent',s.accent);$('card').className='card '+(s.bg==='paper'?'':s.bg);$('page').textContent=`${String(active+1).padStart(2,'0')} / ${String(slides.length).padStart(2,'0')}`;$('kicker').textContent=s.kicker;$('reference').innerHTML=esc(s.reference).replace(/\s+/, '<br>');$('mainText').textContent=s.mainText;$('mainText').style.fontSize=(s.scale/100)+'em';$('bodyText').textContent=s.bodyText;$('conceptText').textContent=s.concept;$('translation').textContent=s.translation;$('credit').textContent=s.credit;$('conceptBox').style.display=s.showConcept?'block':'none';['reference','mainText','bodyText'].forEach(id=>$(id).style.textAlign=s.align);$('bodyText').style.marginLeft=s.align==='center'?'auto':'0';$('bodyText').style.marginRight=s.align==='center'?'auto':'0'}
+function syncForm(){const s=current();if(!s)return;$('referenceInput').value=s.reference;$('translationInput').value=s.translation;$('kickerInput').value=s.kicker;$('mainTextInput').value=s.mainText;$('bodyTextInput').value=s.bodyText;$('conceptInput').value=s.concept;$('scale').value=s.scale;$all('#swatches .swatch').forEach(b=>b.classList.toggle('active',b.dataset.color===s.accent));$all('#bgStyle .choice').forEach(b=>b.classList.toggle('active',b.dataset.bg===s.bg));$all('#textAlign .choice').forEach(b=>b.classList.toggle('active',b.dataset.align===s.align));$('conceptToggle').classList.toggle('on',s.showConcept);$all('.template').forEach(b=>b.classList.toggle('active',b.dataset.layout===s.layout))}
+function renderFilm(){const film=document.querySelector('.film');film.innerHTML=slides.map((s,i)=>`<button class="mini ${i===active?'active':''}" data-index="${i}">${String(i+1).padStart(2,'0')}<br>${esc(s.kicker.slice(0,14))}</button>`).join('');$all('.mini',film).forEach(b=>b.onclick=()=>{active=+b.dataset.index;renderAll();pushHistory()})}
+function renderAll(){renderCard();syncForm();renderFilm()}
+function addCard(data=clone(current()||defaults)){slides.splice(active+1,0,makeSlide(data));active++;renderAll();pushHistory()}
+function deleteCard(){if(slides.length===1){slides[0]=makeSlide(defaults);active=0}else{slides.splice(active,1);active=Math.min(active,slides.length-1)}renderAll();pushHistory()}
+function applyPreset(layout){const p=clone(presets[layout]||defaults);p.layout=layout;slides[active]={id:current().id,...p};renderAll();pushHistory()}
+function bind(id,key,event='input'){ $(id).addEventListener(event,e=>setField(key,e.target.value)) }
+bind('referenceInput','reference');bind('translationInput','translation','change');bind('kickerInput','kicker');bind('mainTextInput','mainText');bind('bodyTextInput','bodyText');bind('conceptInput','concept');
+$('scale').oninput=e=>setField('scale',+e.target.value);
+$all('#swatches .swatch').forEach(b=>b.onclick=()=>setField('accent',b.dataset.color));
+$all('#bgStyle .choice').forEach(b=>b.onclick=()=>setField('bg',b.dataset.bg));
+$all('#textAlign .choice').forEach(b=>b.onclick=()=>setField('align',b.dataset.align));
+$all('.template').forEach(b=>b.onclick=()=>applyPreset(b.dataset.layout));
+$('addCardBtn').onclick=()=>addCard();$('dupCardBtn').onclick=()=>addCard(clone(current()));$('delCardBtn').onclick=deleteCard;
+const topBtns=$all('.topRight .iconBtn');topBtns[0].onclick=undo;topBtns[1].onclick=redo;topBtns[2].onclick=()=>previewAll();
+document.addEventListener('keydown',e=>{const mod=e.ctrlKey||e.metaKey;if(!mod)return;if(e.key.toLowerCase()==='z'){e.preventDefault();e.shiftKey?redo():undo()}else if(e.key.toLowerCase()==='y'){e.preventDefault();redo()}});
+function previewAll(){const w=window.open('','WEST150 Preview');w.document.write(`<style>body{margin:20px;background:#111;color:#fff;font-family:Arial}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}.item{background:#222;padding:8px}.item img{width:100%}</style><h1>WEST150 THEOLOGY — ALL CARDS</h1><div class="grid" id="g"></div>`);const jobs=slides.map((_,i)=>{const old=active;active=i;renderAll();return html2canvas($('card'),{scale:1.5}).then(c=>c.toDataURL()).finally(()=>{active=old;renderAll()})});Promise.all(jobs).then(imgs=>{w.document.getElementById('g').innerHTML=imgs.map((x,i)=>`<div class="item"><b>${i+1}</b><img src="${x}"></div>`).join('')})}
+$('exportBtn').onclick=async()=>{if(!window.html2canvas){alert('PNG 저장 엔진을 불러오지 못했습니다. 인터넷 연결을 확인하세요.');return}const oldText=$('exportBtn').textContent;$('exportBtn').textContent='EXPORTING…';try{const c=await html2canvas($('card'),{scale:2,useCORS:true,backgroundColor:null});const a=document.createElement('a');a.download=`WEST150-THEOLOGY-${String(active+1).padStart(2,'0')}.png`;a.href=c.toDataURL('image/png');a.click()}finally{$('exportBtn').textContent=oldText}}
+// Add requested category/template: 개역개정
+const templates=$('templates');templates.insertAdjacentHTML('beforeend','<button class="template" data-layout="gaeyeok"><div class="thumb scripture"></div><div class="tmeta"><span>07</span><b>개역개정</b><small>한국어 성경 본문</small></div></button>');
+// rebind newly added template
+$all('.template').forEach(b=>b.onclick=()=>applyPreset(b.dataset.layout));
+// panel menu
+const menuBtns=$all('.menu button[data-panel]');const leftAside=$('leftAside'),rightAside=$('rightAside'),scriptureControl=$('scriptureControl'),contentControl=$('contentControl'),styleControl=$('styleControl'),bottomBar=$('bottomBar');const wideQuery=window.matchMedia('(min-width:1101px)');let activePanel='template';
 function applyPanel(){
-  if(wideQuery.matches){
-    leftAside.style.display="";
-    rightAside.style.display="";
-    [scriptureControl,contentControl,styleControl].forEach(el=>el.style.display="");
-    return;
-  }
-  leftAside.style.display = activePanel==="template" ? "block" : "none";
-  const showRight = ["scripture","content","style"].includes(activePanel);
-  rightAside.style.display = showRight ? "block" : "none";
-  scriptureControl.style.display = activePanel==="scripture" ? "block" : "none";
-  contentControl.style.display = activePanel==="content" ? "block" : "none";
-  styleControl.style.display = activePanel==="style" ? "block" : "none";
+  // 상단 메뉴가 데스크톱/모바일 모두 실제로 편집 패널을 전환하도록 처리
+  const isTemplate=activePanel==='template';
+  const isEditor=['scripture','content','style'].includes(activePanel);
+  leftAside.style.display=isTemplate?'block':'none';
+  rightAside.style.display=isEditor?'block':'none';
+  scriptureControl.style.display=activePanel==='scripture'?'block':'none';
+  contentControl.style.display=activePanel==='content'?'block':'none';
+  styleControl.style.display=activePanel==='style'?'block':'none';
+  if(activePanel==='cards') bottomBar.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
-
 menuBtns.forEach(b=>b.onclick=()=>{
   const panel=b.dataset.panel;
-  menuBtns.forEach(x=>x.classList.remove("active"));
-  b.classList.add("active");
-  if(panel==="save"){$("exportBtn").click();activePanel="template";menuBtns[0].classList.add("active");applyPanel();return}
-  if(panel==="cards"){bottomBar.scrollIntoView({behavior:"smooth",block:"nearest"});activePanel=panel;applyPanel();return}
+  menuBtns.forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  if(panel==='save'){activePanel='save';$('exportBtn').click();return}
   activePanel=panel;
   applyPanel();
 });
-wideQuery.addEventListener("change",applyPanel);
-applyPanel();
+wideQuery.addEventListener('change',applyPanel);
+try{const saved=JSON.parse(localStorage.getItem(STORAGE_KEY));if(saved?.slides?.length){slides=saved.slides;active=Math.min(saved.active||0,saved.slides.length-1)}else slides=[makeSlide(defaults)]}catch(e){slides=[makeSlide(defaults)]}renderAll();history=[JSON.stringify({slides,active})];historyIndex=0;applyPanel();
 </script>
 </body>
 </html>
