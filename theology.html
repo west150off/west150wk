@@ -136,7 +136,9 @@ function bind(input,output,fn=v=>v){$(input).addEventListener("input",e=>$(outpu
 bind("referenceInput","reference",v=>v.replace(/\s+/,"<br>"));
 bind("kickerInput","kicker");bind("mainTextInput","mainText");bind("bodyTextInput","bodyText");bind("conceptInput","conceptText");
 $("translationInput").onchange=e=>$("translation").textContent=e.target.value;
-$("scale").oninput=e=>{$("mainText").style.fontSize=(Number(e.target.value)/100)+"em"};
+$("scaleRef").oninput = e => document.documentElement.style.setProperty('--scale-ref', e.target.value / 100);
+$("scaleMain").oninput = e => document.documentElement.style.setProperty('--scale-main', e.target.value / 100);
+$("scaleBody").oninput = e => document.documentElement.style.setProperty('--scale-body', e.target.value / 100);
 document.querySelectorAll("#swatches .swatch").forEach(b=>b.onclick=()=>{document.querySelectorAll("#swatches .swatch").forEach(x=>x.classList.remove("active"));b.classList.add("active");document.documentElement.style.setProperty("--accent",b.dataset.color)});
 document.querySelectorAll("#bgStyle .choice").forEach(b=>b.onclick=()=>{document.querySelectorAll("#bgStyle .choice").forEach(x=>x.classList.remove("active"));b.classList.add("active");$("card").className="card "+(b.dataset.bg==="paper"?"":b.dataset.bg)});
 document.querySelectorAll("#textAlign .choice").forEach(b=>b.onclick=()=>{document.querySelectorAll("#textAlign .choice").forEach(x=>x.classList.remove("active"));b.classList.add("active");["reference","mainText","bodyText"].forEach(id=>$(id).style.textAlign=b.dataset.align);if(b.dataset.align==="center"){$("bodyText").style.marginLeft="auto";$("bodyText").style.marginRight="auto"}else{$("bodyText").style.marginLeft="0";$("bodyText").style.marginRight="0"}});
