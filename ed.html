@@ -970,9 +970,13 @@ hr{border:0;border-top:1px solid var(--line-soft);margin:14px 0}
       } else if (!photo && mode !== "bottom") {
         ctx.fillStyle = dark ? "#1a1a1c" : "#2a2824"; ctx.fillRect(0, 0, W, ph);
       }
-      metaLabel(ctx, S.section || "EDITORIAL", p, 52, photo && mode !== "bottom" && mode !== "side" ? "#fff" : accent);
+      // 상단 사진 영역 위 섹션·페이지: 밝게 (side/bottom/avatar는 지면 위이므로 accent 유지)
+      const topOverImage = mode !== "bottom" && mode !== "side" && mode !== "avatar";
+      const sectionCol = (photo && topOverImage) ? "#ffffff" : accent;
+      const pageCol = (photo && topOverImage) ? "rgba(255,255,255,.78)" : muted;
+      metaLabel(ctx, S.section || "EDITORIAL", p, 52, sectionCol);
       if (S.pageOn !== false) {
-        ctx.fillStyle = photo && mode !== "bottom" && mode !== "side" ? "rgba(255,255,255,.72)" : muted;
+        ctx.fillStyle = pageCol;
         ctx.font = `600 12px ${SANS}`; ctx.textAlign = "right";
         ctx.fillText(S.page || "01 / 01", W - p, 52); ctx.textAlign = "left";
       }
