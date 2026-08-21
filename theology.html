@@ -46,14 +46,8 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
 .thumb.word:after{content:"01\A REDEEMED";white-space:pre;position:absolute;left:12px;top:11px;font:500 14px var(--card-font);line-height:1.7}.thumb.word:before{content:"단어 연구";position:absolute;right:8px;bottom:9px;font-size:6px;color:#a89266}
 .thumb.chapter:after{content:"ROMANS\A 8";white-space:pre;position:absolute;left:12px;top:11px;font:500 24px var(--card-font);line-height:.9}.thumb.chapter:before{content:"A GUIDE TO THE CHAPTER";position:absolute;left:12px;bottom:9px;font-size:6px}
 .tmeta{display:flex;flex-direction:column;justify-content:center}.tmeta span{font-size:9px;color:#858984}.tmeta b{font-size:10px;letter-spacing:.05em;margin-top:6px}.tmeta small{font-size:8px;color:#747772;margin-top:4px}
-.canvasShell{width:min(100%,900px);margin:auto;transition:width .2s ease}
-.canvasShell.ratio-4-5{width:min(100%,900px)}
-.canvasShell.ratio-1-1{width:min(100%,720px)}
-.canvasShell.ratio-9-16{width:min(100%,480px)}
-.card{width:100%;aspect-ratio:4/5;background:var(--paper);color:var(--ink);position:relative;overflow:hidden;box-shadow:0 25px 85px #0008}
-.card.ratio-1-1{aspect-ratio:1/1}
-.card.ratio-9-16{aspect-ratio:9/16}
-.card.dark{background:#171914;color:#f1ecdf}.card.ink{background:#232018;color:#f0e9d8}
+.canvasShell{width:min(100%,900px);margin:auto}
+.card{width:100%;aspect-ratio:4/5;background:var(--paper);color:var(--ink);position:relative;overflow:hidden;box-shadow:0 25px 85px #0008}.card.dark{background:#171914;color:#f1ecdf}.card.ink{background:#232018;color:#f0e9d8}
 .cardHeader{position:absolute;left:4%;right:4%;top:4%;display:flex;justify-content:space-between;font-size:10px;font-weight:900;letter-spacing:.1em}
 .cardContent{position:absolute;left:4%;right:4%;top:13%;bottom:8%}
 .kicker{position:relative;color:var(--accent);font-size:10px;font-weight:900;letter-spacing:.18em;margin-bottom:26px}
@@ -64,27 +58,12 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
 .conceptBox{position:absolute;right:0;bottom:17%;width:37%;border-top:1px solid #bdb5a6;padding-top:14px}.conceptBox strong{font-size:10px;letter-spacing:.12em;color:var(--accent)}.conceptBox p{font:500 19px/1.25 var(--card-font);margin:10px 0 0}
 .bottomMeta{position:absolute;left:0;right:0;bottom:0;border-top:1px solid #c7c0b2;padding:16px 0;display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:12px}.dark .bottomMeta,.ink .bottomMeta{border-color:#55564e}
 .meta strong{display:block;font-size:13px;color:var(--accent)}.meta span{font-size:8px;color:#68655e}
-.footer{position:absolute;left:4%;right:4%;bottom:3%;display:flex;justify-content:space-between;font-size:9px;color:#69665e;pointer-events:none}.dark .footer,.ink .footer{color:#aaa69b}
-.footer.wm-br{left:auto;right:4%;bottom:3%;top:auto;justify-content:flex-end;gap:10px;width:auto}
-.footer.wm-bl{left:4%;right:auto;bottom:3%;top:auto;justify-content:flex-start;gap:10px;width:auto}
-.footer.wm-tr{left:auto;right:4%;top:4%;bottom:auto;justify-content:flex-end;gap:10px;width:auto}
-.footer.wm-tl{left:4%;right:auto;top:4%;bottom:auto;justify-content:flex-start;gap:10px;width:auto}
+.footer{position:absolute;left:4%;right:4%;bottom:3%;display:flex;justify-content:space-between;font-size:9px;color:#69665e}.dark .footer,.ink .footer{color:#aaa69b}
 .control{margin-bottom:24px}.control h3{font-size:10px;letter-spacing:.12em;margin:0 0 12px}.label{display:block;font-size:9px;color:#929790;margin:9px 0 5px}.input,.textarea,.select{width:100%;border:1px solid #30352f;background:#131613;color:#e5e1d8;border-radius:5px;padding:10px;font-size:11px}.textarea{min-height:78px;resize:vertical}
-.choiceGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
-.choiceGrid.cols3{grid-template-columns:repeat(3,1fr)}
-.choice{background:#111410;border:1px solid #30352f;color:#a9aca5;padding:10px 6px;font-size:9px}.choice.active{border-color:var(--accent);color:#fff}
-.swatches{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.swatch{width:33px;height:33px;border-radius:50%;border:1px solid #5a5c55;padding:0}
-.swatch:nth-child(1){background:#9a7b43}.swatch:nth-child(2){background:#7f342b}.swatch:nth-child(3){background:#394541}.swatch:nth-child(4){background:#c5b7a0}
-.swatch.active{outline:2px solid var(--accent);outline-offset:3px}
-.colorPickWrap{display:flex;align-items:center;gap:8px}
-.colorPickWrap input[type=color]{width:36px;height:36px;border:1px solid #30352f;background:#131613;border-radius:6px;padding:2px;cursor:pointer}
-.colorPickWrap input[type=text]{flex:1;border:1px solid #30352f;background:#131613;color:#e5e1d8;border-radius:5px;padding:10px;font-size:11px}
+.choiceGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}.choice{background:#111410;border:1px solid #30352f;color:#a9aca5;padding:10px 6px;font-size:9px}.choice.active{border-color:var(--accent);color:#fff}
+.swatches{display:flex;gap:10px}.swatch{width:33px;height:33px;border-radius:50%;border:1px solid #5a5c55}.swatch:nth-child(1){background:#9a7b43}.swatch:nth-child(2){background:#7f342b}.swatch:nth-child(3){background:#394541}.swatch:nth-child(4){background:#c5b7a0}.swatch.active{outline:2px solid var(--accent);outline-offset:3px}
 .range{width:100%;accent-color:var(--accent)}
-.rangeRow{display:flex;align-items:center;gap:8px}
-.rangeRow .range{flex:1}
-.rangeVal{min-width:42px;text-align:right;font-size:10px;color:#a7aaa3}
-.toggle{display:flex;align-items:center;justify-content:space-between;padding:8px 0;font-size:10px;color:#a7aaa3}.switch{width:35px;height:19px;border-radius:20px;background:#383c36;position:relative;border:0}.switch:after{content:"";position:absolute;width:17px;height:17px;top:1px;left:1px;background:#eee;border-radius:50%}.switch.on{background:var(--accent)}.switch.on:after{left:17px}
+.toggle{display:flex;align-items:center;justify-content:space-between;padding:8px 0;font-size:10px;color:#a7aaa3}.switch{width:35px;height:19px;border-radius:20px;background:#383c36;position:relative}.switch:after{content:"";position:absolute;width:17px;height:17px;top:1px;left:1px;background:#eee;border-radius:50%}.switch.on{background:var(--accent)}.switch.on:after{left:17px}
 .bottom{display:flex;align-items:center;gap:10px;padding:7px 18px;border-top:1px solid var(--line);background:#0b0d0b;overflow:auto}.add{height:48px;min-width:88px;border:1px solid #353933;background:#121511;color:#a7aaa3}.film{display:flex;gap:8px}.mini{width:82px;height:48px;border:1px solid #30342e;background:#181b17;color:#aaa;font-size:8px}.mini.active{outline:2px solid var(--accent)}.zoom{margin-left:auto;display:flex;align-items:center;gap:8px;color:#969991;font-size:10px;white-space:nowrap}
 .zoomBtn{width:26px;height:26px;border:1px solid #353933;background:#121511;color:#c8cbc4;border-radius:4px;font-size:16px;line-height:1}
 #zoomRange{width:120px;accent-color:var(--accent)}
@@ -115,7 +94,7 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
 </div>
 </aside>
 
-<main class="center"><div class="canvasShell ratio-4-5" id="canvasShell">
+<main class="center"><div class="canvasShell">
 <article class="card" id="card">
 <div class="cardHeader"><span id="brandName">WEST150 신학</span><span id="page">01 / 08</span></div>
 <div class="cardContent">
@@ -127,14 +106,14 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
 <div class="conceptBox" id="conceptBox"><strong id="conceptLabel">핵심 메시지</strong><p id="conceptText">내어주는 사랑.</p></div>
 <div class="bottomMeta"><div class="meta"><strong id="translation">NIV</strong><span>번역본</span></div><div class="meta"><strong>GOSPEL</strong><span>BOOK</span></div><div class="meta"><strong>01</strong><span>STUDY SERIES</span></div></div>
 </div>
-<div class="footer wm-br" id="footer"><span id="credit">WEST150 신학</span><span id="watermark">@WEST150OFFICIAL</span></div>
+<div class="footer"><span id="credit">WEST150 신학</span><span id="watermark">@WEST150OFFICIAL</span></div>
 </article>
 </div></main>
 
 <aside class="right" id="rightAside">
 <div class="control" id="scriptureControl"><h3>성경</h3>
 <label class="label">성경 구절</label><input class="input" id="referenceInput" value="요한복음 3:16">
-<label class="label">번역본</label><select class="select" id="translationInput"><option>NIV</option><option>ESV</option><option>KJV</option><option>NASB</option><option selected>개역개정</option><option>새번역</option><option>공동번역</option><option>NKRV</option></select>
+<label class="label">번역본</label><select class="select" id="translationInput"><option>NIV</option><option>ESV</option><option>KJV</option><option>NASB</option><option selected>개역개정</option><option>새번역</option><option>공동번역</option><option>NKRV</option><option>개역개정</option></select>
 <label class="label">구분</label><input class="input" id="kickerInput" value="성경">
 </div>
 <div class="control" id="contentControl"><h3>내용</h3>
@@ -147,50 +126,14 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
 <label class="label">하단 워터마크</label><input class="input" id="creditInput" value="WEST150 신학">
 <label class="label">하단 계정 / 워터마크</label><input class="input" id="watermarkInput" value="@WEST150OFFICIAL">
 <label class="label">페이지 번호</label><input class="input" id="pageLabelInput" value="01 / 01">
-<label class="label">워터마크 위치</label>
-<div class="choiceGrid" id="wmPos">
-  <button type="button" class="choice" data-wm="tl">좌상</button>
-  <button type="button" class="choice" data-wm="tr">우상</button>
-  <button type="button" class="choice" data-wm="bl">좌하</button>
-  <button type="button" class="choice active" data-wm="br">우하</button>
-</div>
-<label class="label">워터마크 투명도 (계정 노출 강도)</label>
-<div class="rangeRow">
-  <input class="range" id="wmOpacity" type="range" min="0" max="100" value="70">
-  <span class="rangeVal" id="wmOpacityVal">70%</span>
-</div>
 </div>
 <div id="styleControl">
-<div class="control"><h3>비율 (인스타)</h3>
-<div class="choiceGrid cols3" id="ratioStyle">
-  <button type="button" class="choice active" data-ratio="4-5">4:5<br><small>기본</small></button>
-  <button type="button" class="choice" data-ratio="1-1">1:1<br><small>피드</small></button>
-  <button type="button" class="choice" data-ratio="9-16">9:16<br><small>스토리</small></button>
-</div>
-</div>
 <div class="control"><h3>레이아웃</h3>
 <div class="choiceGrid" id="textAlign"><button class="choice active" data-align="left">왼쪽</button><button class="choice" data-align="center">가운데</button></div>
-<label class="label">글자 크기</label>
-<div class="rangeRow"><input class="range" id="scale" type="range" min="70" max="130" value="100"><span class="rangeVal" id="scaleVal">100%</span></div>
-<label class="label">행간 (Line height)</label>
-<div class="rangeRow"><input class="range" id="lineHeight" type="range" min="90" max="180" value="115"><span class="rangeVal" id="lineHeightVal">1.15</span></div>
-<label class="label">자간 (Letter spacing)</label>
-<div class="rangeRow"><input class="range" id="letterSpacing" type="range" min="-8" max="20" value="-2"><span class="rangeVal" id="letterSpacingVal">-0.02em</span></div>
-<label class="label">본문 여백 (상단)</label>
-<div class="rangeRow"><input class="range" id="contentPad" type="range" min="8" max="22" value="13"><span class="rangeVal" id="contentPadVal">13%</span></div>
+<label class="label">글자 크기</label><input class="range" id="scale" type="range" min="70" max="130" value="100">
 </div>
 <div class="control"><h3>스타일</h3>
-<label class="label">강조 색상</label>
-<div class="swatches" id="swatches">
-  <button type="button" class="swatch active" data-color="#9a7b43"></button>
-  <button type="button" class="swatch" data-color="#7f342b"></button>
-  <button type="button" class="swatch" data-color="#394541"></button>
-  <button type="button" class="swatch" data-color="#c5b7a0"></button>
-</div>
-<div class="colorPickWrap" style="margin-top:10px">
-  <input type="color" id="accentPicker" value="#9a7b43" title="직접 선택">
-  <input type="text" id="accentHex" value="#9a7b43" maxlength="7" placeholder="#9a7b43">
-</div>
+<label class="label">강조 색상</label><div class="swatches" id="swatches"><button class="swatch active" data-color="#9a7b43"></button><button class="swatch" data-color="#7f342b"></button><button class="swatch" data-color="#394541"></button><button class="swatch" data-color="#c5b7a0"></button></div>
 <label class="label">글꼴</label>
 <select class="select" id="fontFamilyInput">
 <option value='"Noto Serif KR","Nanum Myeongjo",serif'>본명조 · 기본</option>
@@ -210,7 +153,7 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
 <option value='"Nanum Brush Script",cursive'>나눔손글씨 붓</option>
 </select>
 <label class="label">배경</label><div class="choiceGrid" id="bgStyle"><button class="choice active" data-bg="paper">종이</button><button class="choice" data-bg="dark">어두움</button><button class="choice" data-bg="ink">잉크</button></div>
-<div class="toggle"><span>SHOW 핵심 메시지</span><button type="button" class="switch on" id="conceptToggle"></button></div>
+<div class="toggle"><span>SHOW 핵심 메시지</span><button class="switch on" id="conceptToggle"></button></div>
 </div>
 </div>
 </aside>
@@ -226,7 +169,7 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
 
 <script>
 const $=id=>document.getElementById(id);
-const STORAGE_KEY='west150_theology_studio_v3';
+const STORAGE_KEY='west150_theology_studio_v2';
 const $all=(q,root=document)=>[...root.querySelectorAll(q)];
 const defaults={
  layout:'scripture',reference:'요한복음 3:16',translation:'NIV',kicker:'성경',
@@ -234,14 +177,8 @@ const defaults={
  bodyText:'하나님의 사랑과 은혜가 우리 삶에 어떤 의미를 주는지 묵상합니다.',
  concept:'내어주는 사랑.',accent:'#9a7b43',bg:'paper',align:'left',scale:100,
  showNum:true,showConcept:true,chapter:'03',credit:'WEST150 신학',brandName:'WEST150 신학',
- watermark:'@WEST150OFFICIAL',pageLabel:'01 / 01',
- fontFamily:'"Noto Serif KR","Nanum Myeongjo",serif',
- ratio:'4-5',
- wmPos:'br',
- wmOpacity:70,
- lineHeight:115,
- letterSpacing:-2,
- contentPad:13
+  watermark:'@WEST150OFFICIAL',pageLabel:'01 / 01',
+  fontFamily:'"Noto Serif KR","Nanum Myeongjo",serif'
 };
 const presets={
  scripture:{...defaults},
@@ -254,7 +191,7 @@ const presets={
 };
 let slides=[];let active=0;let history=[];let historyIndex=-1;let applying=false;
 function clone(v){return JSON.parse(JSON.stringify(v))}
-function makeSlide(data=defaults){return {id:crypto?.randomUUID?.()||Date.now()+Math.random(),...clone({...defaults,...data})}}
+function makeSlide(data=defaults){return {id:crypto?.randomUUID?.()||Date.now()+Math.random(),...clone(data)}}
 function saveLocal(){localStorage.setItem(STORAGE_KEY,JSON.stringify({slides,active}))}
 function pushHistory(){if(applying)return;const snap=JSON.stringify({slides,active});if(history[historyIndex]===snap)return;history=history.slice(0,historyIndex+1);history.push(snap);historyIndex=history.length-1;saveLocal();updateHistoryButtons()}
 function restoreHistory(i){if(i<0||i>=history.length)return;applying=true;const d=JSON.parse(history[i]);slides=d.slides;active=d.active;historyIndex=i;renderAll();applying=false;updateHistoryButtons();saveLocal()}
@@ -263,94 +200,8 @@ function updateHistoryButtons(){const bs=$all('.iconBtn');if(bs[0])bs[0].disable
 function current(){return slides[active]}
 function setField(k,v){current()[k]=v;renderCard();renderFilm();pushHistory()}
 function esc(s){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
-function normalizeHex(v){
-  let s=String(v||'').trim();
-  if(!s.startsWith('#'))s='#'+s;
-  if(/^#[0-9a-fA-F]{3}$/.test(s))s='#'+s[1]+s[1]+s[2]+s[2]+s[3]+s[3];
-  if(!/^#[0-9a-fA-F]{6}$/.test(s))return null;
-  return s.toLowerCase();
-}
-function setAccent(color){
-  const hex=normalizeHex(color);
-  if(!hex)return;
-  setField('accent',hex);
-}
-function renderCard(){
-  const s=current();if(!s)return;
-  const ratio=s.ratio||'4-5';
-  document.documentElement.style.setProperty('--accent',s.accent);
-  const card=$('card');
-  card.className='card '+(s.bg==='paper'?'':s.bg)+(ratio!=='4-5'?' ratio-'+ratio:'');
-  card.style.fontFamily=s.fontFamily||'"Noto Serif KR","Nanum Myeongjo",serif';
-  const shell=$('canvasShell');
-  shell.className='canvasShell ratio-'+ratio;
-  $('page').textContent=s.pageLabel&&s.pageLabel!=='01 / 01'?s.pageLabel:`${String(active+1).padStart(2,'0')} / ${String(slides.length).padStart(2,'0')}`;
-  $('brandName').textContent=s.brandName??'WEST150 신학';
-  $('kicker').textContent=s.kicker;
-  $('reference').innerHTML=esc(s.reference).replace(/\s+/,'<br>');
-  $('mainText').textContent=s.mainText;
-  $('mainText').style.fontSize=(s.scale/100)+'em';
-  const lh=(s.lineHeight??115)/100;
-  const ls=(s.letterSpacing??-2)/100+'em';
-  $('reference').style.lineHeight=Math.max(0.85,lh-0.2);
-  $('reference').style.letterSpacing=ls;
-  $('mainText').style.lineHeight=lh;
-  $('mainText').style.letterSpacing=ls;
-  $('bodyText').textContent=s.bodyText;
-  $('bodyText').style.lineHeight=Math.min(2,lh+0.4);
-  $('bodyText').style.letterSpacing=((s.letterSpacing??-2)/200)+'em';
-  const pad=s.contentPad??13;
-  $('cardContent').style.top=pad+'%';
-  $('conceptText').textContent=s.concept;
-  $('translation').textContent=s.translation;
-  $('credit').textContent=s.credit??'WEST150 신학';
-  $('watermark').textContent=s.watermark??'@WEST150OFFICIAL';
-  $('conceptBox').style.display=s.showConcept?'block':'none';
-  ['reference','mainText','bodyText'].forEach(id=>$(id).style.textAlign=s.align);
-  $('bodyText').style.marginLeft=s.align==='center'?'auto':'0';
-  $('bodyText').style.marginRight=s.align==='center'?'auto':'0';
-  // 워터마크 위치·투명도
-  const footer=$('footer');
-  const pos=s.wmPos||'br';
-  footer.className='footer wm-'+pos;
-  const op=(s.wmOpacity??70)/100;
-  footer.style.opacity=String(op);
-  // 상단 브랜드도 같은 강도로 살짝 연동(선택)
-  $('brandName').style.opacity=String(Math.min(1,op+0.15));
-}
-function syncForm(){
-  const s=current();if(!s)return;
-  $('brandInput').value=s.brandName??'WEST150 신학';
-  $('creditInput').value=s.credit??'WEST150 신학';
-  $('watermarkInput').value=s.watermark??'@WEST150OFFICIAL';
-  $('pageLabelInput').value=s.pageLabel??'01 / 01';
-  $('referenceInput').value=s.reference;
-  $('translationInput').value=s.translation;
-  $('kickerInput').value=s.kicker;
-  $('mainTextInput').value=s.mainText;
-  $('bodyTextInput').value=s.bodyText;
-  $('conceptInput').value=s.concept;
-  $('scale').value=s.scale;
-  $('scaleVal').textContent=s.scale+'%';
-  $('lineHeight').value=s.lineHeight??115;
-  $('lineHeightVal').textContent=((s.lineHeight??115)/100).toFixed(2);
-  $('letterSpacing').value=s.letterSpacing??-2;
-  $('letterSpacingVal').textContent=((s.letterSpacing??-2)/100).toFixed(2)+'em';
-  $('contentPad').value=s.contentPad??13;
-  $('contentPadVal').textContent=(s.contentPad??13)+'%';
-  $('wmOpacity').value=s.wmOpacity??70;
-  $('wmOpacityVal').textContent=(s.wmOpacity??70)+'%';
-  $('fontFamilyInput').value=s.fontFamily||'"Noto Serif KR","Nanum Myeongjo",serif';
-  $('accentPicker').value=normalizeHex(s.accent)||'#9a7b43';
-  $('accentHex').value=normalizeHex(s.accent)||'#9a7b43';
-  $all('#swatches .swatch').forEach(b=>b.classList.toggle('active',(normalizeHex(b.dataset.color)||'')===(normalizeHex(s.accent)||'')));
-  $all('#bgStyle .choice').forEach(b=>b.classList.toggle('active',b.dataset.bg===s.bg));
-  $all('#textAlign .choice').forEach(b=>b.classList.toggle('active',b.dataset.align===s.align));
-  $all('#ratioStyle .choice').forEach(b=>b.classList.toggle('active',b.dataset.ratio===(s.ratio||'4-5')));
-  $all('#wmPos .choice').forEach(b=>b.classList.toggle('active',b.dataset.wm===(s.wmPos||'br')));
-  $('conceptToggle').classList.toggle('on',s.showConcept);
-  $all('.template').forEach(b=>b.classList.toggle('active',b.dataset.layout===s.layout));
-}
+function renderCard(){const s=current();if(!s)return;document.documentElement.style.setProperty('--accent',s.accent);$('card').className='card '+(s.bg==='paper'?'':s.bg);$('card').style.fontFamily=s.fontFamily||'"Noto Serif KR","Nanum Myeongjo",serif';$('page').textContent=s.pageLabel&&s.pageLabel!=='01 / 01'?s.pageLabel:`${String(active+1).padStart(2,'0')} / ${String(slides.length).padStart(2,'0')}`;$('brandName').textContent=s.brandName??'WEST150 신학';$('kicker').textContent=s.kicker;$('reference').innerHTML=esc(s.reference).replace(/\s+/, '<br>');$('mainText').textContent=s.mainText;$('mainText').style.fontSize=(s.scale/100)+'em';$('bodyText').textContent=s.bodyText;$('conceptText').textContent=s.concept;$('translation').textContent=s.translation;$('credit').textContent=s.credit??'WEST150 신학';$('watermark').textContent=s.watermark??'@WEST150OFFICIAL';$('conceptBox').style.display=s.showConcept?'block':'none';['reference','mainText','bodyText'].forEach(id=>$(id).style.textAlign=s.align);$('bodyText').style.marginLeft=s.align==='center'?'auto':'0';$('bodyText').style.marginRight=s.align==='center'?'auto':'0'}
+function syncForm(){const s=current();if(!s)return;$('brandInput').value=s.brandName??'WEST150 신학';$('creditInput').value=s.credit??'WEST150 신학';$('watermarkInput').value=s.watermark??'@WEST150OFFICIAL';$('pageLabelInput').value=s.pageLabel??'01 / 01';$('referenceInput').value=s.reference;$('translationInput').value=s.translation;$('kickerInput').value=s.kicker;$('mainTextInput').value=s.mainText;$('bodyTextInput').value=s.bodyText;$('conceptInput').value=s.concept;$('scale').value=s.scale;$('fontFamilyInput').value=s.fontFamily||'"Noto Serif KR","Nanum Myeongjo",serif';$all('#swatches .swatch').forEach(b=>b.classList.toggle('active',b.dataset.color===s.accent));$all('#bgStyle .choice').forEach(b=>b.classList.toggle('active',b.dataset.bg===s.bg));$all('#textAlign .choice').forEach(b=>b.classList.toggle('active',b.dataset.align===s.align));$('conceptToggle').classList.toggle('on',s.showConcept);$all('.template').forEach(b=>b.classList.toggle('active',b.dataset.layout===s.layout))}
 function renderFilm(){const film=document.querySelector('.film');film.innerHTML=slides.map((s,i)=>`<button class="mini ${i===active?'active':''}" data-index="${i}">${String(i+1).padStart(2,'0')}<br>${esc(s.kicker.slice(0,14))}</button>`).join('');$all('.mini',film).forEach(b=>b.onclick=()=>{active=+b.dataset.index;renderAll();pushHistory()})}
 function renderAll(){renderCard();syncForm();renderFilm()}
 const zoomState={value:100};
@@ -371,4 +222,147 @@ $('zoomInBtn').onclick=()=>setZoom(zoomState.value+5);
 $('zoomRange').oninput=e=>setZoom(+e.target.value);
 
 function addCard(data=clone(current()||defaults)){slides.splice(active+1,0,makeSlide(data));active++;renderAll();pushHistory()}
-function deleteCard(){if(slides.length===1){slides[0]=makeSlide(defaults);active=0}else{slides.splice(active,1);active=Math.min(active,slides.length-1)}render
+function deleteCard(){if(slides.length===1){slides[0]=makeSlide(defaults);active=0}else{slides.splice(active,1);active=Math.min(active,slides.length-1)}renderAll();pushHistory()}
+function applyPreset(layout){const p=clone(presets[layout]||defaults);p.layout=layout;slides[active]={id:current().id,...p};renderAll();pushHistory()}
+function bind(id,key,event='input'){ $(id).addEventListener(event,e=>setField(key,e.target.value)) }
+bind('brandInput','brandName');bind('creditInput','credit');bind('watermarkInput','watermark');bind('pageLabelInput','pageLabel');bind('referenceInput','reference');bind('translationInput','translation','change');bind('kickerInput','kicker');bind('mainTextInput','mainText');bind('bodyTextInput','bodyText');bind('conceptInput','concept');bind('fontFamilyInput','fontFamily','change');
+$('scale').oninput=e=>setField('scale',+e.target.value);
+$all('#swatches .swatch').forEach(b=>b.onclick=()=>setField('accent',b.dataset.color));
+$all('#bgStyle .choice').forEach(b=>b.onclick=()=>setField('bg',b.dataset.bg));
+$all('#textAlign .choice').forEach(b=>b.onclick=()=>setField('align',b.dataset.align));
+$all('.template').forEach(b=>b.onclick=()=>applyPreset(b.dataset.layout));
+$('addCardBtn').onclick=()=>addCard();$('dupCardBtn').onclick=()=>addCard(clone(current()));$('delCardBtn').onclick=deleteCard;
+const topBtns=$all('.topRight .iconBtn');topBtns[0].onclick=undo;topBtns[1].onclick=redo;topBtns[2].onclick=()=>previewAll();
+document.addEventListener('keydown',e=>{const mod=e.ctrlKey||e.metaKey;if(!mod)return;if(e.key.toLowerCase()==='z'){e.preventDefault();e.shiftKey?redo():undo()}else if(e.key.toLowerCase()==='y'){e.preventDefault();redo()}});
+
+/* ===== 미리보기와 동일하게 저장하기 위한 캡처 로직 ===== */
+async function captureCard(scale=2){
+  if(!window.html2canvas){
+    throw new Error('html2canvas를 불러오지 못했습니다.');
+  }
+  const prevZoom=zoomState.value;
+  // 1) 줌 영향 제거 (1:1 캡처)
+  setZoom(100);
+  // 2) 웹폰트 로드 대기 (한글 폰트/레이아웃 차이 방지)
+  if(document.fonts&&document.fonts.ready){
+    await document.fonts.ready;
+  }
+  // 레이아웃 안정화
+  await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+
+  const card=$('card');
+  const bg=getComputedStyle(card).backgroundColor||'#ebe5d8';
+
+  try{
+    return await html2canvas(card,{
+      scale,
+      useCORS:true,
+      allowTaint:true,
+      backgroundColor:bg,
+      logging:false,
+      imageTimeout:15000,
+      onclone:(clonedDoc)=>{
+        const clonedCard=clonedDoc.getElementById('card');
+        if(!clonedCard)return;
+        clonedCard.style.transform='none';
+        clonedCard.style.zoom='1';
+        const s=current();
+        if(s?.fontFamily){
+          clonedCard.style.fontFamily=s.fontFamily;
+        }
+        const clonedShell=clonedDoc.querySelector('.canvasShell');
+        if(clonedShell){
+          clonedShell.style.transform='none';
+        }
+      }
+    });
+  }finally{
+    // 3) 원래 줌 복구
+    setZoom(prevZoom);
+  }
+}
+
+async function previewAll(){
+  const w=window.open('','WEST150 Preview');
+  if(!w){
+    alert('팝업이 차단되어 있습니다. 팝업을 허용해 주세요.');
+    return;
+  }
+  w.document.write(`
+    <style>
+      body{margin:20px;background:#111;color:#fff;font-family:Arial,sans-serif}
+      .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+      .item{background:#222;padding:8px}
+      .item img{width:100%;display:block}
+    </style>
+    <h1>WEST150 신학 — ALL 카드</h1>
+    <div class="grid" id="g">불러오는 중…</div>
+  `);
+  w.document.close();
+
+  const old=active;
+  const imgs=[];
+  try{
+    for(let i=0;i<slides.length;i++){
+      active=i;
+      renderAll();
+      const c=await captureCard(1.5);
+      imgs.push(c.toDataURL('image/png'));
+    }
+  }finally{
+    active=old;
+    renderAll();
+  }
+  w.document.getElementById('g').innerHTML=imgs
+    .map((x,i)=>`<div class="item"><b>${i+1}</b><img src="${x}"></div>`)
+    .join('');
+}
+
+$('exportBtn').onclick=async()=>{
+  const oldText=$('exportBtn').textContent;
+  $('exportBtn').textContent='EXPORTING…';
+  try{
+    const c=await captureCard(2);
+    const a=document.createElement('a');
+    a.download=`WEST150-THEOLOGY-${String(active+1).padStart(2,'0')}.png`;
+    a.href=c.toDataURL('image/png');
+    a.click();
+  }catch(err){
+    console.error(err);
+    alert('PNG 저장에 실패했습니다. 인터넷 연결(폰트/라이브러리)을 확인해 주세요.');
+  }finally{
+    $('exportBtn').textContent=oldText;
+  }
+};
+
+// Add requested category/template: 개역개정
+const templates=$('templates');templates.insertAdjacentHTML('beforeend','<button class="template" data-layout="gaeyeok"><div class="thumb scripture"></div><div class="tmeta"><span>07</span><b>개역개정</b><small>한국어 성경 본문</small></div></button>');
+// rebind newly added template
+$all('.template').forEach(b=>b.onclick=()=>applyPreset(b.dataset.layout));
+// panel menu
+const menuBtns=$all('.menu button[data-panel]');const workspace=document.querySelector('.workspace');const leftAside=$('leftAside'),rightAside=$('rightAside'),scriptureControl=$('scriptureControl'),contentControl=$('contentControl'),styleControl=$('styleControl'),brandingControl=$('brandingControl'),bottomBar=$('bottomBar');const wideQuery=window.matchMedia('(min-width:1101px)');let activePanel='template';
+function applyPanel(){
+  const isTemplate=activePanel==='template';
+  const isEditor=['scripture','content','style'].includes(activePanel);
+  workspace.classList.toggle('panel-template',isTemplate);
+  workspace.classList.toggle('panel-editor',isEditor);
+  leftAside.style.display=isTemplate?'block':'none';
+  rightAside.style.display=isEditor?'block':'none';
+  scriptureControl.style.display=activePanel==='scripture'?'block':'none';
+  contentControl.style.display=activePanel==='content'?'block':'none';
+  styleControl.style.display=activePanel==='style'?'block':'none';brandingControl.style.display=activePanel==='style'?'block':'none';
+  if(activePanel==='cards') bottomBar.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+menuBtns.forEach(b=>b.onclick=()=>{
+  const panel=b.dataset.panel;
+  menuBtns.forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  if(panel==='save'){activePanel='save';$('exportBtn').click();return}
+  activePanel=panel;
+  applyPanel();
+});
+wideQuery.addEventListener('change',applyPanel);
+try{const saved=JSON.parse(localStorage.getItem(STORAGE_KEY));if(saved?.slides?.length){slides=saved.slides;active=Math.min(saved.active||0,saved.slides.length-1)}else slides=[makeSlide(defaults)]}catch(e){slides=[makeSlide(defaults)]}renderAll();history=[JSON.stringify({slides,active})];historyIndex=0;applyPanel();applyZoom();
+</script>
+</body>
+</html>
