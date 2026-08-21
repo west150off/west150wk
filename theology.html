@@ -35,11 +35,11 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
 .cardContent{position:absolute;left:4%;right:4%;top:13%;bottom:8%}
 .chapterNum{position:absolute;right:0;top:-25px;font:500 clamp(120px,19vw,250px)/1 Georgia;color:#d8d0c0;letter-spacing:-.1em;opacity:.55}.dark .chapterNum,.ink .chapterNum{color:#45473d;opacity:.8}
 .kicker{position:relative;color:var(--accent);font-size:10px;font-weight:900;letter-spacing:.18em;margin-bottom:26px}
-.ref{position:relative;font:500 clamp(40px,6.2vw,84px)/.92 Georgia;letter-spacing:-.06em;max-width:70%}
+.ref{position:relative;font-family:Georgia;font-weight:500;font-size:60px;line-height:.92;letter-spacing:-.06em;max-width:70%}
 .divider{position:relative;width:120px;height:3px;background:var(--accent);margin:25px 0}
-.verse{position:relative;font:500 clamp(27px,4vw,52px)/1.15 Georgia;max-width:80%}
+.verse{position:relative;font-family:Georgia;font-weight:500;font-size:40px;line-height:1.15;max-width:80%}
 .body{position:relative;max-width:50%;font-size:13px;line-height:1.7;color:#65635d;margin-top:22px}.dark .body,.ink .body{color:#c4c0b5}
-.conceptBox{position:absolute;right:0;bottom:17%;width:37%;border-top:1px solid #bdb5a6;padding-top:14px}.conceptBox strong{font-size:10px;letter-spacing:.12em;color:var(--accent)}.conceptBox p{font:500 19px/1.25 Georgia;margin:10px 0 0}
+.conceptBox p{font-family:Georgia;font-weight:500;font-size:19px;line-height:1.25;margin:10px 0 0}
 .bottomMeta{position:absolute;left:0;right:0;bottom:0;border-top:1px solid #c7c0b2;padding:16px 0;display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:12px}.dark .bottomMeta,.ink .bottomMeta{border-color:#55564e}
 .meta strong{display:block;font-size:13px;color:var(--accent)}.meta span{font-size:8px;color:#68655e}
 .footer{position:absolute;left:4%;right:4%;bottom:3%;display:flex;justify-content:space-between;font-size:9px;color:#69665e}.dark .footer,.ink .footer{color:#aaa69b}
@@ -105,7 +105,17 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
 <div id="styleControl">
 <div class="control"><h3>LAYOUT</h3>
 <div class="choiceGrid" id="textAlign"><button class="choice active" data-align="left">LEFT</button><button class="choice" data-align="center">CENTER</button></div>
-<label class="label">TEXT SCALE</label><input class="range" id="scale" type="range" min="70" max="130" value="100">
+<label class="label">REFERENCE SIZE</label>
+<input class="range" id="referenceScale" type="range" min="50" max="150" value="100">
+
+<label class="label">MAIN TEXT SIZE</label>
+<input class="range" id="mainTextScale" type="range" min="50" max="150" value="100">
+
+<label class="label">REFLECTION SIZE</label>
+<input class="range" id="bodyScale" type="range" min="50" max="150" value="100">
+
+<label class="label">CORE IDEA SIZE</label>
+<input class="range" id="conceptScale" type="range" min="50" max="150" value="100">
 </div>
 <div class="control"><h3>STYLE</h3>
 <label class="label">ACCENT</label><div class="swatches" id="swatches"><button class="swatch active" data-color="#9a7b43"></button><button class="swatch" data-color="#7f342b"></button><button class="swatch" data-color="#394541"></button><button class="swatch" data-color="#c5b7a0"></button></div>
@@ -126,7 +136,17 @@ function bind(input,output,fn=v=>v){$(input).addEventListener("input",e=>$(outpu
 bind("referenceInput","reference",v=>v.replace(/\s+/,"<br>"));
 bind("kickerInput","kicker");bind("mainTextInput","mainText");bind("bodyTextInput","bodyText");bind("conceptInput","conceptText");
 $("translationInput").onchange=e=>$("translation").textContent=e.target.value;
-$("scale").oninput=e=>{$("mainText").style.fontSize=(Number(e.target.value)/100)+"em"};
+function bindFontScale(inputId, targetId, baseSize){
+  $(inputId).oninput = e => {
+    const scale = Number(e.target.value) / 100;
+    $(targetId).style.fontSize = (baseSize * scale) + "px";
+  };
+}
+
+bindFontScale("referenceScale", "reference", 60);
+bindFontScale("mainTextScale", "mainText", 40);
+bindFontScale("bodyScale", "bodyText", 13);
+bindFontScale("conceptScale", "conceptText", 19);
 document.querySelectorAll("#swatches .swatch").forEach(b=>b.onclick=()=>{document.querySelectorAll("#swatches .swatch").forEach(x=>x.classList.remove("active"));b.classList.add("active");document.documentElement.style.setProperty("--accent",b.dataset.color)});
 document.querySelectorAll("#bgStyle .choice").forEach(b=>b.onclick=()=>{document.querySelectorAll("#bgStyle .choice").forEach(x=>x.classList.remove("active"));b.classList.add("active");$("card").className="card "+(b.dataset.bg==="paper"?"":b.dataset.bg)});
 document.querySelectorAll("#textAlign .choice").forEach(b=>b.onclick=()=>{document.querySelectorAll("#textAlign .choice").forEach(x=>x.classList.remove("active"));b.classList.add("active");["reference","mainText","bodyText"].forEach(id=>$(id).style.textAlign=b.dataset.align);if(b.dataset.align==="center"){$("bodyText").style.marginLeft="auto";$("bodyText").style.marginRight="auto"}else{$("bodyText").style.marginLeft="0";$("bodyText").style.marginRight="0"}});
