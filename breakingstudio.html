@@ -180,6 +180,25 @@ button { font-family: inherit; cursor: pointer; border: none; }
   font-size: 10px; opacity: .45; letter-spacing: .04em;
   font-variant-numeric: tabular-nums;
 }
+#card .logoMark {
+  position: absolute; z-index: 12; pointer-events: none;
+  object-fit: contain; max-width: 40%; max-height: 18%;
+}
+#card .logoMark.pos-tr { top: 14px; right: 14px; }
+#card .logoMark.pos-tl { top: 14px; left: 14px; }
+#card .logoMark.pos-br { bottom: 14px; right: 14px; }
+#card .logoMark.pos-bl { bottom: 14px; left: 14px; }
+#card .logoMark.pos-center {
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+}
+#card .logoMark.logoBg {
+  background: #fff; padding: 5px 8px; border-radius: 6px;
+  box-shadow: 0 2px 10px rgba(0,0,0,.18); box-sizing: border-box;
+}
+#card.tpl-cover .logoMark.pos-tr,
+#card.tpl-cover .logoMark.pos-tl { top: 16px; }
+#card.tpl-report .logoMark.pos-tr,
+#card.tpl-report .logoMark.pos-tl { top: 48px; }
 #card .goldRule {
   width: 42px; height: 2px; background: var(--gold); margin: 12px 0;
 }
@@ -541,10 +560,21 @@ button { font-family: inherit; cursor: pointer; border: none; }
           <label>하이라이트 단어 (쉼표 구분)</label>
           <input type="text" id="highlight" placeholder="핵심,단어">
         </div>
+      </div>
+      <div class="sec">
+        <h3>출처</h3>
         <div class="field">
-          <label>출처 / 핸들</label>
-          <input type="text" id="source" value="WEST150 DAILY" placeholder="출처">
+          <label>출처 / 매체명</label>
+          <input type="text" id="source" value="WEST150 DAILY" placeholder="예: WEST150 DAILY, 연합뉴스, Reuters">
         </div>
+        <div class="field">
+          <label>출처 URL (선택)</label>
+          <input type="text" id="sourceUrl" placeholder="https://...">
+          <div class="hint">카드에는 매체명만 표시됩니다. URL은 참고용으로 저장됩니다.</div>
+        </div>
+      </div>
+      <div class="sec">
+        <h3>시간</h3>
         <div class="field">
           <label>시간대</label>
           <select id="timezone">
@@ -571,6 +601,50 @@ button { font-family: inherit; cursor: pointer; border: none; }
             <button type="button" class="toggleBtn active" id="liveOff">OFF</button>
           </div>
         </div>
+      </div>
+      <div class="sec">
+        <h3>워터마크 · 로고</h3>
+        <div class="field">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+            <div id="logoThumb" style="width:48px;height:48px;border-radius:6px;background:#1a1722;border:1px solid var(--chrome-line);background-size:contain;background-position:center;background-repeat:no-repeat;flex:none;"></div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:6px;">
+              <label class="btn small full" id="logoUploadBtn" style="text-align:center;cursor:pointer;">로고 업로드</label>
+              <input type="file" id="logoUpload" accept="image/*" style="display:none;">
+              <button type="button" class="btn ghost small full" id="logoRemove">삭제</button>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label>위치</label>
+          <select id="logoPos">
+            <option value="tr">우측 상단</option>
+            <option value="tl">좌측 상단</option>
+            <option value="br">우측 하단</option>
+            <option value="bl">좌측 하단</option>
+            <option value="center">중앙</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>크기 <span id="logoSizeVal">14</span>%</label>
+          <div class="slider"><input type="range" id="logoSize" min="6" max="32" value="14"></div>
+        </div>
+        <div class="field">
+          <label>투명도 <span id="logoOpacityVal">70</span>%</label>
+          <div class="slider"><input type="range" id="logoOpacity" min="20" max="100" value="70"></div>
+        </div>
+        <div class="field">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+            <input type="checkbox" id="logoBg" style="width:auto;"> 흰 배경 박스
+          </label>
+        </div>
+        <div class="field">
+          <label>적용 범위</label>
+          <select id="logoScope">
+            <option value="one">현재 카드만</option>
+            <option value="all">모든 카드</option>
+          </select>
+        </div>
+        <div class="hint">기본은 우측 상단. 매거진 톤에 맞게 작게·반투명 권장.</div>
       </div>
       <div class="sec">
         <h3>색상</h3>
@@ -640,6 +714,7 @@ function defaults() {
     body: '핵심 사실을 간결하게 정리합니다.\n두 번째 줄도 자연스럽게 이어집니다.',
     highlight: '',
     source: 'WEST150 DAILY',
+    sourceUrl: '',
     timezone: zone,
     timestamp: formatTimeInZone(new Date(), zone),
     showLive: false,
@@ -655,8 +730,22 @@ function defaults() {
     imageFit: 'cover',
     imageOverlay: 40,
     imagePos: 'center',
-    reportPhotoPos: 'bottom'
+    reportPhotoPos: 'bottom',
+    logo: null,
+    logoPos: 'tr',
+    logoSize: 14,
+    logoOpacity: 70,
+    logoBg: false
   };
+}
+
+function logoHtml(s) {
+  if (!s.logo) return '';
+  const pos = s.logoPos || 'tr';
+  const size = s.logoSize != null ? s.logoSize : 14;
+  const op = (s.logoOpacity != null ? s.logoOpacity : 70) / 100;
+  const bg = s.logoBg ? ' logoBg' : '';
+  return '<img class="logoMark pos-' + pos + bg + '" src="' + s.logo + '" alt="" style="width:' + size + '%;opacity:' + op + ';" />';
 }
 
 let slides = [defaults()];
@@ -751,7 +840,7 @@ function cardMarkup(s, pageIdx, total) {
           '<span class="sourceLine">' + (s.source || '') + '</span>' +
           '<span class="timeLine">' + (s.timestamp || '') + '</span>' +
         '</div>' +
-      '</div></div>';
+      '</div>' + logoHtml(s) + '</div>';
   }
 
   if (s.template === 'editorial') {
@@ -766,7 +855,7 @@ function cardMarkup(s, pageIdx, total) {
       '<div class="footer">' +
         '<span class="sourceLine">' + (s.source || '') + '</span>' +
         '<span class="timeLine">' + (s.timestamp || '') + '</span>' +
-      '</div></div>';
+      '</div>' + logoHtml(s) + '</div>';
   }
 
   if (s.template === 'statement') {
@@ -780,7 +869,7 @@ function cardMarkup(s, pageIdx, total) {
       '<div class="meta">' +
         '<span class="sourceLine" style="color:' + accent + ';">— ' + (s.source || '') + '</span>' +
         '<span class="timeLine">' + (s.timestamp || '') + '</span>' +
-      '</div></div>';
+      '</div>' + logoHtml(s) + '</div>';
   }
 
   /* report */
@@ -801,12 +890,11 @@ function cardMarkup(s, pageIdx, total) {
       '<span class="sourceLine">' + (s.source || '') + '</span>' +
       '<span class="timeLine">' + (s.timestamp || '') + '</span>' +
     '</div>';
-  // top photo: head → photo → body → footer ; bottom: head → body → photo → footer
   const mid = reportPos === 'top'
     ? photoStrip + bodyArea
     : bodyArea + photoStrip;
   return '<div id="card" class="tpl-report" style="font-family:' + baseFont + ';--gold:' + accent + ';">' +
-    headBar + mid + footer + '</div>';
+    headBar + mid + footer + logoHtml(s) + '</div>';
 }
 
 const fullCss = document.querySelector('style').textContent;
@@ -861,6 +949,7 @@ function syncForm() {
   $('bodyText').value = s.body || '';
   $('highlight').value = s.highlight || '';
   $('source').value = s.source || '';
+  if ($('sourceUrl')) $('sourceUrl').value = s.sourceUrl || '';
   $('timestamp').value = s.timestamp || '';
   if ($('timezone')) $('timezone').value = s.timezone || 'KST';
   $('fontSelect').value = s.font || 'pretendard';
@@ -882,6 +971,19 @@ function syncForm() {
   if ($('reportPhotoPos')) $('reportPhotoPos').value = s.reportPhotoPos || 'bottom';
   $('liveOn').classList.toggle('active', !!s.showLive);
   $('liveOff').classList.toggle('active', !s.showLive);
+  if ($('logoPos')) $('logoPos').value = s.logoPos || 'tr';
+  if ($('logoSize')) {
+    $('logoSize').value = s.logoSize != null ? s.logoSize : 14;
+    if ($('logoSizeVal')) $('logoSizeVal').textContent = s.logoSize != null ? s.logoSize : 14;
+  }
+  if ($('logoOpacity')) {
+    $('logoOpacity').value = s.logoOpacity != null ? s.logoOpacity : 70;
+    if ($('logoOpacityVal')) $('logoOpacityVal').textContent = s.logoOpacity != null ? s.logoOpacity : 70;
+  }
+  if ($('logoBg')) $('logoBg').checked = !!s.logoBg;
+  if ($('logoThumb')) {
+    $('logoThumb').style.backgroundImage = s.logo ? "url('" + s.logo + "')" : 'none';
+  }
   Array.from(document.querySelectorAll('#tplMenu .ddItem')).forEach(el => {
     el.classList.toggle('active', el.dataset.tpl === s.template);
   });
@@ -898,6 +1000,7 @@ bind('titleText', 'title');
 bind('bodyText', 'body');
 bind('highlight', 'highlight');
 bind('source', 'source');
+if ($('sourceUrl')) bind('sourceUrl', 'sourceUrl');
 bind('timestamp', 'timestamp');
 
 $('fontSelect').addEventListener('change', e => {
@@ -994,6 +1097,54 @@ $('liveOff').addEventListener('click', () => {
   renderMain(); renderList();
 });
 
+function applyLogoProp(prop, value) {
+  const scope = ($('logoScope') && $('logoScope').value) || 'one';
+  if (scope === 'all') {
+    slides.forEach(sl => { sl[prop] = value; });
+  } else {
+    slides[active][prop] = value;
+  }
+  renderMain(); renderList();
+}
+if ($('logoUploadBtn')) $('logoUploadBtn').addEventListener('click', () => $('logoUpload') && $('logoUpload').click());
+if ($('logoUpload')) $('logoUpload').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = new Image();
+    img.onload = () => {
+      const maxW = 400;
+      const scale = Math.min(1, maxW / img.width);
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width * scale;
+      canvas.height = img.height * scale;
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      applyLogoProp('logo', canvas.toDataURL('image/png'));
+      if ($('logoThumb')) $('logoThumb').style.backgroundImage = "url('" + slides[active].logo + "')";
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+  e.target.value = '';
+});
+if ($('logoRemove')) $('logoRemove').addEventListener('click', () => {
+  applyLogoProp('logo', null);
+  if ($('logoThumb')) $('logoThumb').style.backgroundImage = 'none';
+});
+if ($('logoPos')) $('logoPos').addEventListener('change', e => applyLogoProp('logoPos', e.target.value));
+if ($('logoSize')) $('logoSize').addEventListener('input', e => {
+  const v = +e.target.value;
+  if ($('logoSizeVal')) $('logoSizeVal').textContent = v;
+  applyLogoProp('logoSize', v);
+});
+if ($('logoOpacity')) $('logoOpacity').addEventListener('input', e => {
+  const v = +e.target.value;
+  if ($('logoOpacityVal')) $('logoOpacityVal').textContent = v;
+  applyLogoProp('logoOpacity', v);
+});
+if ($('logoBg')) $('logoBg').addEventListener('change', e => applyLogoProp('logoBg', e.target.checked));
+
 Array.from(document.querySelectorAll('#tplMenu .ddItem')).forEach(item => {
   item.addEventListener('click', () => {
     slides[active].template = item.dataset.tpl;
@@ -1020,7 +1171,17 @@ function bindMenu(btnId, ddId) {
 bindMenu('tplMenuBtn', 'tplMenu');
 bindMenu('fontMenuBtn', 'fontMenu');
 bindMenu('photoMenuBtn', 'photoMenu');
-document.addEventListener('click', () => closeMenus());
+// 메뉴 안(드롭다운·버튼) 클릭은 유지, 바깥 클릭만 닫기
+document.addEventListener('click', e => {
+  const t = e.target;
+  if (t && t.closest && t.closest('.menuWrap')) return;
+  closeMenus();
+});
+// 드롭다운 내부 클릭이 document로 전파되지 않도록
+Array.from(document.querySelectorAll('.dropdown')).forEach(dd => {
+  dd.addEventListener('click', e => e.stopPropagation());
+  dd.addEventListener('mousedown', e => e.stopPropagation());
+});
 
 $('addSlide').addEventListener('click', () => {
   const next = JSON.parse(JSON.stringify(slides[active]));
