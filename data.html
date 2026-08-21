@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>WEST150 DATA STUDIO — DESIGN EDITION</title>
+<style>
+:root{
+  --bg:#080a0b;--panel:#0d1012;--panel2:#111518;--line:#252b2e;
+  --text:#ece9e1;--muted:#94999a;--accent:#c9362c;
+  --paper:#eee9df;--papertext:#171717;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);
+font-family:Inter,-apple-system,BlinkMacSystemFont,"Noto Sans KR",Arial,sans-serif}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+#app{min-height:100vh;display:grid;grid-template-rows:64px 1fr 62px}
+
+/* TOP */
+.top{display:flex;align-items:center;border-bottom:1px solid var(--line);background:#090c0e;padding:0 22px;gap:30px}
+.brand{font-weight:900;font-size:25px;letter-spacing:.03em;white-space:nowrap}
+.brand span{font-weight:500;font-size:16px;letter-spacing:.18em;color:#c8c8c4;margin-left:10px}
+.menu{height:100%;display:flex;align-items:center;gap:34px;margin-left:28px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.menu::-webkit-scrollbar{display:none}
+.menu button{height:100%;border:0;border-bottom:2px solid transparent;background:transparent;color:#aaa;font-size:11px;letter-spacing:.08em;padding:0 2px;white-space:nowrap;flex:0 0 auto}
+.menu button.active{color:#fff;border-bottom-color:var(--accent)}
+.topRight{margin-left:auto;display:flex;align-items:center;gap:10px}
+.iconBtn,.export{border:1px solid var(--line);background:#101417;color:#ddd;border-radius:6px;padding:10px 13px;font-size:11px}
+.export{border-color:#596064;padding:12px 17px;font-weight:800;letter-spacing:.08em}
+
+/* BODY */
+.workspace{display:grid;grid-template-columns:300px minmax(0,1fr) 310px;min-height:0}
+.left,.right{background:#0b0e10;overflow:auto}
+.left{border-right:1px solid var(--line);padding:22px 18px}
+.right{border-left:1px solid var(--line);padding:22px 18px}
+.center{min-width:0;background:#0a0d0f;padding:26px 20px 14px;overflow:auto}
+.sideTitle{font-size:11px;font-weight:900;letter-spacing:.1em;margin-bottom:18px;color:#ddd}
+.templateList{display:flex;flex-direction:column;gap:7px}
+.template{display:grid;grid-template-columns:142px 1fr;gap:12px;min-height:84px;border:1px solid transparent;background:transparent;color:#ddd;text-align:left;padding:5px;border-radius:5px}
+.template:hover{background:#101416}.template.active{border-color:#d5d5d0;background:#101416}
+.thumb{height:74px;border:1px solid #2b3033;background:#13181a;position:relative;overflow:hidden}
+.thumb.big:before{content:"47.2%";position:absolute;left:9px;top:8px;font:500 25px Georgia;color:#ddd}.thumb.big:after{content:"";position:absolute;width:70px;height:28px;border-top:2px solid var(--accent);right:8px;bottom:10px;transform:skewY(-22deg)}
+.thumb.photo{background:linear-gradient(135deg,#1b1f20,#59605c 45%,#111)}
+.thumb.photo:after{content:"68%";position:absolute;right:10px;bottom:9px;font:500 28px Georgia}
+.thumb.compare{background:linear-gradient(90deg,#bd382c 0 50%,#1a232b 50%)}.thumb.compare:after{content:"52%  vs  48%";position:absolute;inset:25px 0;text-align:center;font:500 16px Georgia}
+.thumb.bar:before{content:"GLOBAL GROWTH";font-size:7px;position:absolute;top:8px;left:8px}.thumb.bar:after{content:"▁▃▂▆█";letter-spacing:8px;color:#ddd;position:absolute;bottom:12px;left:14px;font-size:23px}
+.thumb.line:after{content:"╱╲__╱╲";position:absolute;color:var(--accent);font-size:27px;left:18px;top:25px}
+.thumb.rank:after{content:"01  UNITED STATES\A\A02  GERMANY\A\A03  JAPAN";white-space:pre;font-size:7px;line-height:1.6;position:absolute;left:10px;top:10px}
+.templateMeta{display:flex;flex-direction:column;justify-content:center}.num{font-size:10px;color:#aaa}.template b{font-size:11px;letter-spacing:.05em;margin-top:6px}.template small{font-size:8px;color:#777;margin-top:4px}
+
+/* CANVAS */
+.canvasShell{width:min(100%,920px);margin:0 auto}
+.card{position:relative;width:100%;aspect-ratio:4/5;background:var(--paper);color:var(--papertext);box-shadow:0 24px 80px #0007;overflow:hidden}
+.card.dark{background:#141414;color:#f2eee7}
+.cardHeader{position:absolute;left:4%;right:4%;top:4%;display:flex;justify-content:space-between;font-size:12px;font-weight:800;letter-spacing:.08em}
+.cardContent{position:absolute;left:4%;right:4%;top:14%;bottom:9%}
+.kicker{color:var(--accent);font-weight:900;font-size:11px;letter-spacing:.15em;margin-bottom:28px}
+.bigNumber{font:500 clamp(70px,12vw,180px)/.8 Georgia,serif;letter-spacing:-.08em}
+.unit{font-size:.38em;letter-spacing:-.03em;margin-left:8px}
+.redRule{height:4px;width:135px;background:var(--accent);margin:28px 0}
+.editorialTitle{font:500 clamp(32px,4.3vw,61px)/1.05 Georgia,serif;max-width:48%;text-transform:uppercase}
+.editorialDesc{font-size:15px;line-height:1.55;color:#5d5b57;max-width:36%;margin-top:26px}
+.chartArea{position:absolute;right:0;top:8%;width:47%;height:55%;border-bottom:1px solid #bcb6ad}
+.gridLine{position:absolute;left:0;right:0;border-top:1px dotted #d2cbc1}
+.gridLine:nth-child(1){top:20%}.gridLine:nth-child(2){top:45%}.gridLine:nth-child(3){top:70%}
+.svgChart{position:absolute;inset:0;width:100%;height:100%}
+.metricRow{position:absolute;left:0;right:0;bottom:0;border-top:1px solid #c5bfb6;border-bottom:1px solid #c5bfb6;padding:18px 0;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.metric{border-right:1px solid #d0c9c0;padding-right:8px}.metric:last-child{border:0}
+.metric strong{display:block;color:#8f3029;font:500 25px Georgia}.metric span{font-size:10px;color:#5c5a56}
+.footer{position:absolute;left:4%;right:4%;bottom:3%;display:flex;justify-content:space-between;color:#666;font-size:9px;letter-spacing:.05em}
+
+/* RIGHT */
+.control{margin-bottom:26px}.control h3{font-size:11px;letter-spacing:.1em;margin:0 0 12px;color:#ddd}
+.dataHead,.dataRow{display:grid;grid-template-columns:1fr 92px;border:1px solid var(--line)}
+.dataHead{color:#8f9697;font-size:9px;padding:8px 10px;border-bottom:0}.dataRow{margin-top:-1px}
+.dataRow input{width:100%;border:0;background:#101417;color:#ddd;padding:11px;border-right:1px solid var(--line);font-size:11px}.dataRow input:last-child{border-right:0;text-align:right}
+.addRow{width:100%;margin-top:9px;border:1px solid #31383b;background:#0e1214;color:#ddd;padding:9px}
+.chartTypes{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.chartType{height:57px;border:1px solid transparent;background:#0d1113;color:#aaa;font-size:9px}.chartType.active{border-color:var(--accent);color:#fff}.chartType b{display:block;font-size:20px;margin-bottom:5px}
+.colorDots{display:flex;gap:12px}.dot{width:32px;height:32px;border-radius:50%;border:1px solid #50585a;background:#c9362c}.dot:nth-child(2){background:#080a0b}.dot:nth-child(3){background:#3c4144}.dot:nth-child(4){background:#e6e2da}.dot.active{outline:2px solid var(--accent);outline-offset:3px}
+.choiceRow{display:flex;gap:7px}.choice{flex:1;border:1px solid #31383b;background:#0e1214;color:#aaa;padding:8px;font-size:10px}.choice.active{border-color:var(--accent);color:#fff}
+.select{width:100%;background:#101417;border:1px solid #2c3336;color:#ddd;padding:10px;margin-top:8px}
+.toggle{display:flex;justify-content:space-between;align-items:center;padding:8px 0;color:#aaa;font-size:10px}.switch{width:34px;height:19px;border-radius:999px;background:#313739;position:relative}.switch:after{content:"";width:17px;height:17px;background:#ddd;border-radius:50%;position:absolute;top:1px;left:1px}.switch.on{background:var(--accent)}.switch.on:after{left:16px}
+
+/* BOTTOM */
+.bottom{border-top:1px solid var(--line);background:#0a0d0f;display:flex;align-items:center;padding:7px 18px;gap:12px;overflow:auto}
+.addCard{height:48px;min-width:90px;background:#101416;border:1px solid #343a3d;color:#aaa;font-size:10px}
+.film{display:flex;gap:8px}.mini{width:78px;height:48px;border:1px solid #303638;background:#15191b;color:#aaa;font-size:9px;display:flex;align-items:center;justify-content:center}.mini.active{outline:2px solid var(--accent)}.mini.paper{background:#eae5db;color:#111}
+.zoom{margin-left:auto;color:#aaa;font-size:10px;white-space:nowrap}
+
+@media(max-width:1100px){.workspace{grid-template-columns:1fr}.template{grid-template-columns:1fr}.templateMeta{display:none}.left,.right{border:0}}
+@media(max-width:700px){#app{grid-template-rows:58px 1fr 58px}.top{padding:0 10px}.brand{font-size:18px}.brand span{display:none}.menu{gap:16px;margin-left:8px}.menu button{font-size:9px}.topRight .iconBtn{display:none}.center{padding:12px}.cardContent{top:12%}.editorialTitle{max-width:58%;font-size:34px}.editorialDesc{max-width:50%;font-size:11px}.metricRow{grid-template-columns:repeat(2,1fr)}.metric:nth-child(2){border-right:0}.bottom{padding:5px 8px}}
+</style>
+</head>
+<body>
+<div id="app">
+<header class="top">
+  <div class="brand">WEST150 <span>DATA STUDIO</span></div>
+  <nav class="menu">
+    <button class="active" data-panel="template">TEMPLATE</button><button data-panel="data">DATA</button><button data-panel="chart">CHART</button>
+    <button data-panel="style">STYLE</button><button data-panel="cards">CARDS</button><button data-panel="save">SAVE</button>
+  </nav>
+  <div class="topRight"><button class="iconBtn">↶</button><button class="iconBtn">↷</button><button class="iconBtn">◉ PREVIEW</button><button class="export" id="exportBtn">⇩ EXPORT PNG</button></div>
+</header>
+
+<div class="workspace">
+<aside class="left" id="leftAside">
+  <div class="sideTitle">▦ &nbsp; TEMPLATES</div>
+  <div class="templateList" id="templateList">
+    <button class="template active" data-template="number"><div class="thumb big"></div><div class="templateMeta"><span class="num">01</span><b>BIG NUMBER</b></div></button>
+    <button class="template" data-template="photo"><div class="thumb photo"></div><div class="templateMeta"><span class="num">02</span><b>PHOTO + DATA</b></div></button>
+    <button class="template" data-template="compare"><div class="thumb compare"></div><div class="templateMeta"><span class="num">03</span><b>COMPARE SPLIT</b></div></button>
+    <button class="template" data-template="bar"><div class="thumb bar"></div><div class="templateMeta"><span class="num">04</span><b>MINIMAL BAR</b></div></button>
+    <button class="template" data-template="line"><div class="thumb line"></div><div class="templateMeta"><span class="num">05</span><b>LINE GRAPH EDITORIAL</b></div></button>
+    <button class="template" data-template="ranking"><div class="thumb rank"></div><div class="templateMeta"><span class="num">06</span><b>RANKING EDITORIAL</b></div></button>
+  </div>
+</aside>
+
+<main class="center">
+  <div class="canvasShell">
+    <article class="card" id="card">
+      <div class="cardHeader"><span>WEST150 DATA</span><span id="pageText">01 / 10</span></div>
+      <div class="cardContent">
+        <div class="kicker" id="kicker">DATA EDITORIAL</div>
+        <div class="bigNumber" id="bigNumber">47.2<span class="unit">%</span></div>
+        <div class="redRule"></div>
+        <div class="editorialTitle" id="headline">THE BIGGEST SHIFT<br>IN FIVE YEARS</div>
+        <div class="editorialDesc" id="description">Public support for Policy X reached a record high in 2026, up 8.7 percentage points from the previous year.</div>
+
+        <div class="chartArea">
+          <div class="gridLine"></div><div class="gridLine"></div><div class="gridLine"></div>
+          <svg class="svgChart" viewBox="0 0 500 300" preserveAspectRatio="none">
+            <polyline id="linePath" points="0,260 80,210 160,185 240,135 320,160 390,70 500,20" fill="none" stroke="#a63129" stroke-width="4"/>
+            <circle cx="500" cy="20" r="9" fill="#c9362c" stroke="#eee9df" stroke-width="4"/>
+          </svg>
+        </div>
+
+        <div class="metricRow">
+          <div class="metric"><strong id="metric1">+8.7%p</strong><span>vs. 2025</span></div>
+          <div class="metric"><strong>HIGHEST</strong><span>since 2021</span></div>
+          <div class="metric"><strong>1,204</strong><span>respondents</span></div>
+          <div class="metric"><strong>MAY 2026</strong><span>latest update</span></div>
+        </div>
+      </div>
+      <div class="footer"><span>SOURCE: WEST150 DATA RESEARCH</span><span>@WEST150OFFICIAL</span></div>
+    </article>
+  </div>
+</main>
+
+<aside class="right" id="rightAside">
+  <div class="control" id="dataControl">
+    <h3>◉ DATA</h3>
+    <div class="dataHead"><span>YEAR</span><span style="text-align:right">VALUE (%)</span></div>
+    <div id="dataRows"></div>
+    <button class="addRow" id="addRow">＋ ADD ROW</button>
+  </div>
+
+  <div class="control" id="chartControl">
+    <h3>⌁ CHART TYPE</h3>
+    <div class="chartTypes">
+      <button class="chartType active"><b>⌁</b>LINE</button><button class="chartType"><b>▮</b>BAR</button>
+      <button class="chartType"><b>◢</b>AREA</button><button class="chartType"><b>▥</b>COLUMN</button>
+    </div>
+  </div>
+
+  <div id="styleControl">
+  <div class="control">
+    <h3>STYLE</h3>
+    <div style="font-size:10px;color:#9ba1a3;margin-bottom:10px">COLOR THEME</div>
+    <div class="colorDots" id="colors"><button class="dot active" data-color="#c9362c"></button><button class="dot" data-color="#111111"></button><button class="dot" data-color="#485055"></button><button class="dot" data-color="#e9e5dc"></button></div>
+  </div>
+
+  <div class="control">
+    <div style="font-size:10px;color:#9ba1a3;margin-bottom:10px">BACKGROUND</div>
+    <div class="choiceRow" id="backgrounds"><button class="choice active" data-bg="light">LIGHT</button><button class="choice" data-bg="dark">DARK</button><button class="choice" data-bg="paper">PAPER</button></div>
+  </div>
+
+  <div class="control">
+    <div style="font-size:10px;color:#9ba1a3;margin-bottom:8px">FONT PAIRING</div>
+    <select class="select"><option>Playfair Display</option><option>Georgia</option><option>Times New Roman</option></select>
+    <select class="select"><option>Inter</option><option>Arial</option><option>Noto Sans KR</option></select>
+  </div>
+
+  <div class="control">
+    <div class="toggle"><span>GRID</span><button class="switch on"></button></div>
+    <div class="toggle"><span>SHOW AXIS</span><button class="switch on"></button></div>
+    <div class="toggle"><span>SHOW POINT</span><button class="switch on"></button></div>
+  </div>
+  </div>
+</aside>
+</div>
+
+<footer class="bottom" id="bottomBar">
+  <button class="addCard">＋<br>ADD CARD</button>
+  <div class="film">
+    <button class="mini paper active">47.2%</button><button class="mini">PHOTO</button>
+    <button class="mini">52% / 48%</button><button class="mini">BAR</button><button class="mini">ELECTION</button>
+  </div>
+  <span class="zoom">− &nbsp; ━━━━━●━━ &nbsp; + &nbsp; 68%</span>
+</footer>
+</div>
+
+<script>
+const data=[
+  ["2022",34.1],["2023",37.6],["2024",40.2],["2025",38.5],["2026",47.2]
+];
+const rows=document.getElementById("dataRows");
+const card=document.getElementById("card");
+const bigNumber=document.getElementById("bigNumber");
+const linePath=document.getElementById("linePath");
+
+function renderRows(){
+ rows.innerHTML="";
+ data.forEach((row,i)=>{
+   const d=document.createElement("div");d.className="dataRow";
+   d.innerHTML=`<input value="${row[0]}" aria-label="Year"><input type="number" step="0.1" value="${row[1]}" aria-label="Value">`;
+   const [a,b]=d.querySelectorAll("input");
+   a.oninput=e=>{data[i][0]=e.target.value;drawChart()};
+   b.oninput=e=>{data[i][1]=Number(e.target.value);drawChart()};
+   rows.appendChild(d);
+ });
+}
+function drawChart(){
+ const vals=data.map(x=>x[1]), min=Math.min(...vals), max=Math.max(...vals);
+ const range=Math.max(max-min,1);
+ const pts=data.map((x,i)=>{
+   const px=(i/(Math.max(data.length-1,1)))*500;
+   const py=260-((x[1]-min)/range)*220;
+   return `${px.toFixed(1)},${py.toFixed(1)}`;
+ }).join(" ");
+ linePath.setAttribute("points",pts);
+ const last=data[data.length-1][1];
+ bigNumber.innerHTML=`${last.toFixed(1)}<span class="unit">%</span>`;
+ document.getElementById("metric1").textContent=`+${(last-data[Math.max(0,data.length-2)][1]).toFixed(1)}%p`;
+}
+document.getElementById("addRow").onclick=()=>{data.push([String(2022+data.length),30]);renderRows();drawChart()};
+
+/* ===== 상단 메뉴 탭 기능 ===== */
+const menuBtns=document.querySelectorAll(".menu button[data-panel]");
+const leftAside=document.getElementById("leftAside");
+const rightAside=document.getElementById("rightAside");
+const dataControl=document.getElementById("dataControl");
+const chartControl=document.getElementById("chartControl");
+const styleControl=document.getElementById("styleControl");
+const bottomBar=document.getElementById("bottomBar");
+const wideQuery=window.matchMedia("(min-width:1101px)");
+let activePanel="template";
+
+function applyPanel(){
+  if(wideQuery.matches){
+    // 데스크톱: 모든 패널 항상 표시, 메뉴는 강조 표시만
+    leftAside.style.display="";
+    rightAside.style.display="";
+    [dataControl,chartControl,styleControl].forEach(el=>el.style.display="");
+    return;
+  }
+  // 좁은 화면: 선택된 메뉴에 해당하는 패널만 표시
+  leftAside.style.display = activePanel==="template" ? "block" : "none";
+  const showRight = ["data","chart","style"].includes(activePanel);
+  rightAside.style.display = showRight ? "block" : "none";
+  if(dataControl) dataControl.style.display = activePanel==="data" ? "block" : "none";
+  if(chartControl) chartControl.style.display = activePanel==="chart" ? "block" : "none";
+  if(styleControl) styleControl.style.display = activePanel==="style" ? "block" : "none";
+}
+
+menuBtns.forEach(b=>b.onclick=()=>{
+  const panel=b.dataset.panel;
+  menuBtns.forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");
+  if(panel==="save"){document.getElementById("exportBtn").click();activePanel="template";menuBtns[0].classList.add("active");applyPanel();return}
+  if(panel==="cards"){bottomBar.scrollIntoView({behavior:"smooth",block:"nearest"});activePanel=panel;applyPanel();return}
+  activePanel=panel;
+  applyPanel();
+});
+wideQuery.addEventListener("change",applyPanel);
+applyPanel();
+
+document.querySelectorAll(".template").forEach(btn=>btn.onclick=()=>{
+ document.querySelectorAll(".template").forEach(x=>x.classList.remove("active"));btn.classList.add("active");
+ const t=btn.dataset.template;
+ const h=document.getElementById("headline"),k=document.getElementById("kicker");
+ if(t==="number"){k.textContent="DATA EDITORIAL";h.innerHTML="THE BIGGEST SHIFT<br>IN FIVE YEARS"}
+ if(t==="photo"){k.textContent="PHOTO + DATA";h.innerHTML="THE STORY<br>BEHIND THE NUMBER"}
+ if(t==="compare"){k.textContent="COMPARE";h.innerHTML="TWO SIDES<br>OF THE DATA"}
+ if(t==="bar"){k.textContent="GLOBAL DATA";h.innerHTML="GROWTH<br>AT A GLANCE"}
+ if(t==="line"){k.textContent="TREND";h.innerHTML="FIVE YEARS<br>OF CHANGE"}
+ if(t==="ranking"){k.textContent="RANKING";h.innerHTML="WHO LEADS<br>THE LIST"}
+});
+
+document.querySelectorAll(".dot").forEach(b=>b.onclick=()=>{
+ document.querySelectorAll(".dot").forEach(x=>x.classList.remove("active"));b.classList.add("active");
+ document.documentElement.style.setProperty("--accent",b.dataset.color);
+ linePath.setAttribute("stroke",b.dataset.color);
+});
+document.querySelectorAll(".choice").forEach(b=>b.onclick=()=>{
+ document.querySelectorAll(".choice").forEach(x=>x.classList.remove("active"));b.classList.add("active");
+ const bg=b.dataset.bg;
+ card.classList.toggle("dark",bg==="dark");
+ card.style.background=bg==="paper"?"#ded7ca":bg==="dark"?"#141414":"#eee9df";
+});
+document.querySelectorAll(".switch").forEach(s=>s.onclick=()=>s.classList.toggle("on"));
+document.getElementById("exportBtn").onclick=()=>{
+ alert("이 디자인 에디션은 UI/레이아웃 코드 버전입니다. 다음 단계에서 실제 PNG 내보내기 엔진을 연결하면 됩니다.");
+};
+renderRows();drawChart();
+</script>
+</body></html>

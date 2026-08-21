@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>WEST150 THEOLOGY STUDIO — DESIGN EDITION</title>
+<style>
+:root{
+--bg:#0b0c0b;--panel:#101210;--line:#2a2c28;--text:#eeeae0;--muted:#92948d;
+--paper:#ebe5d8;--ink:#191a17;--accent:#9a7b43;--accent2:#7f342b;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Noto Sans KR",Arial,sans-serif}
+button,input,textarea,select{font:inherit}button{cursor:pointer}
+.app{min-height:100vh;display:grid;grid-template-rows:64px 1fr 64px}
+.top{display:flex;align-items:center;gap:28px;padding:0 22px;border-bottom:1px solid var(--line);background:#0a0b0a}
+.brand{font-size:24px;font-weight:900;white-space:nowrap}.brand span{font-size:15px;font-weight:500;letter-spacing:.16em;color:#c8c5bc;margin-left:10px}
+.menu{height:100%;display:flex;gap:30px;margin-left:24px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}.menu::-webkit-scrollbar{display:none}.menu button{height:100%;background:transparent;border:0;border-bottom:2px solid transparent;color:#939690;font-size:11px;letter-spacing:.08em;white-space:nowrap;flex:0 0 auto}.menu button.active{color:#fff;border-color:var(--accent)}
+.topRight{margin-left:auto;display:flex;gap:8px}.topRight button{background:#131613;border:1px solid #31342f;color:#ddd;padding:10px 13px;border-radius:6px;font-size:10px}.export{font-weight:900!important}
+.workspace{display:grid;grid-template-columns:290px minmax(0,1fr) 315px;min-height:0}
+.left,.right{background:#0d0f0d;padding:20px 16px;overflow:auto}.left{border-right:1px solid var(--line)}.right{border-left:1px solid var(--line)}
+.center{padding:26px 20px;background:#0a0c0a;overflow:auto}.sideTitle{font-size:10px;font-weight:900;letter-spacing:.13em;margin:3px 6px 15px}
+.template{display:grid;grid-template-columns:128px 1fr;gap:10px;width:100%;padding:5px;margin-bottom:7px;border:1px solid transparent;border-radius:6px;background:transparent;color:#ddd;text-align:left}.template:hover,.template.active{background:#141713}.template.active{border-color:#c8c0ae}
+.thumb{height:72px;position:relative;overflow:hidden;border:1px solid #32352f;background:#1a1d18}
+.thumb.scripture:before{content:"JOHN\A 3:16";white-space:pre;position:absolute;left:10px;top:10px;font:500 18px Georgia;line-height:1}.thumb.scripture:after{content:"FOR GOD SO LOVED THE WORLD";position:absolute;left:10px;bottom:9px;width:85px;font-size:6px;color:#c5bda9}
+.thumb.quote:before{content:"“";font:900 55px Georgia;color:var(--accent);position:absolute;left:12px;top:-6px}.thumb.quote:after{content:"TRUTH\A HAS A\A VOICE";white-space:pre;position:absolute;right:13px;bottom:10px;font:500 13px Georgia}
+.thumb.concept:after{content:"GRACE\A    ↓\AFAITH";white-space:pre;position:absolute;left:16px;top:13px;font-size:10px;line-height:1.5;color:#ddd}.thumb.concept:before{content:"THEOLOGY";position:absolute;right:8px;top:8px;font-size:6px;color:#9a7b43}
+.thumb.meditation{background:linear-gradient(135deg,#272b26,#a79b85 48%,#171914)}.thumb.meditation:after{content:"BE STILL";position:absolute;left:10px;bottom:9px;font:500 22px Georgia;color:#f4eee1}
+.thumb.word:after{content:"01\A REDEEMED";white-space:pre;position:absolute;left:12px;top:11px;font:500 14px Georgia;line-height:1.7}.thumb.word:before{content:"WORD STUDY";position:absolute;right:8px;bottom:9px;font-size:6px;color:#a89266}
+.thumb.chapter:after{content:"ROMANS\A 8";white-space:pre;position:absolute;left:12px;top:11px;font:500 24px Georgia;line-height:.9}.thumb.chapter:before{content:"A GUIDE TO THE CHAPTER";position:absolute;left:12px;bottom:9px;font-size:6px}
+.tmeta{display:flex;flex-direction:column;justify-content:center}.tmeta span{font-size:9px;color:#858984}.tmeta b{font-size:10px;letter-spacing:.05em;margin-top:6px}.tmeta small{font-size:8px;color:#747772;margin-top:4px}
+.canvasShell{width:min(100%,900px);margin:auto}
+.card{width:100%;aspect-ratio:4/5;background:var(--paper);color:var(--ink);position:relative;overflow:hidden;box-shadow:0 25px 85px #0008}.card.dark{background:#171914;color:#f1ecdf}.card.ink{background:#232018;color:#f0e9d8}
+.cardHeader{position:absolute;left:4%;right:4%;top:4%;display:flex;justify-content:space-between;font-size:10px;font-weight:900;letter-spacing:.1em}
+.cardContent{position:absolute;left:4%;right:4%;top:13%;bottom:8%}
+.chapterNum{position:absolute;right:0;top:-25px;font:500 clamp(120px,19vw,250px)/1 Georgia;color:#d8d0c0;letter-spacing:-.1em;opacity:.55}.dark .chapterNum,.ink .chapterNum{color:#45473d;opacity:.8}
+.kicker{position:relative;color:var(--accent);font-size:10px;font-weight:900;letter-spacing:.18em;margin-bottom:26px}
+.ref{position:relative;font:500 clamp(40px,6.2vw,84px)/.92 Georgia;letter-spacing:-.06em;max-width:70%}
+.divider{position:relative;width:120px;height:3px;background:var(--accent);margin:25px 0}
+.verse{position:relative;font:500 clamp(27px,4vw,52px)/1.15 Georgia;max-width:80%}
+.body{position:relative;max-width:50%;font-size:13px;line-height:1.7;color:#65635d;margin-top:22px}.dark .body,.ink .body{color:#c4c0b5}
+.conceptBox{position:absolute;right:0;bottom:17%;width:37%;border-top:1px solid #bdb5a6;padding-top:14px}.conceptBox strong{font-size:10px;letter-spacing:.12em;color:var(--accent)}.conceptBox p{font:500 19px/1.25 Georgia;margin:10px 0 0}
+.bottomMeta{position:absolute;left:0;right:0;bottom:0;border-top:1px solid #c7c0b2;padding:16px 0;display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:12px}.dark .bottomMeta,.ink .bottomMeta{border-color:#55564e}
+.meta strong{display:block;font-size:13px;color:var(--accent)}.meta span{font-size:8px;color:#68655e}
+.footer{position:absolute;left:4%;right:4%;bottom:3%;display:flex;justify-content:space-between;font-size:9px;color:#69665e}.dark .footer,.ink .footer{color:#aaa69b}
+.control{margin-bottom:24px}.control h3{font-size:10px;letter-spacing:.12em;margin:0 0 12px}.label{display:block;font-size:9px;color:#929790;margin:9px 0 5px}.input,.textarea,.select{width:100%;border:1px solid #30352f;background:#131613;color:#e5e1d8;border-radius:5px;padding:10px;font-size:11px}.textarea{min-height:78px;resize:vertical}
+.choiceGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}.choice{background:#111410;border:1px solid #30352f;color:#a9aca5;padding:10px 6px;font-size:9px}.choice.active{border-color:var(--accent);color:#fff}
+.swatches{display:flex;gap:10px}.swatch{width:33px;height:33px;border-radius:50%;border:1px solid #5a5c55}.swatch:nth-child(1){background:#9a7b43}.swatch:nth-child(2){background:#7f342b}.swatch:nth-child(3){background:#394541}.swatch:nth-child(4){background:#c5b7a0}.swatch.active{outline:2px solid var(--accent);outline-offset:3px}
+.range{width:100%;accent-color:var(--accent)}
+.toggle{display:flex;align-items:center;justify-content:space-between;padding:8px 0;font-size:10px;color:#a7aaa3}.switch{width:35px;height:19px;border-radius:20px;background:#383c36;position:relative}.switch:after{content:"";position:absolute;width:17px;height:17px;top:1px;left:1px;background:#eee;border-radius:50%}.switch.on{background:var(--accent)}.switch.on:after{left:17px}
+.bottom{display:flex;align-items:center;gap:10px;padding:7px 18px;border-top:1px solid var(--line);background:#0b0d0b;overflow:auto}.add{height:48px;min-width:88px;border:1px solid #353933;background:#121511;color:#a7aaa3}.film{display:flex;gap:8px}.mini{width:82px;height:48px;border:1px solid #30342e;background:#181b17;color:#aaa;font-size:8px}.mini.active{outline:2px solid var(--accent)}.zoom{margin-left:auto;color:#969991;font-size:10px;white-space:nowrap}
+@media(max-width:1100px){.workspace{grid-template-columns:1fr}.template{grid-template-columns:1fr}.tmeta{display:none}.left,.right{border:0}}
+@media(max-width:700px){.app{grid-template-rows:58px 1fr 58px}.top{padding:0 10px}.brand{font-size:17px}.brand span{display:none}.menu{margin-left:6px;gap:14px}.menu button{font-size:8px}.topRight .iconBtn{display:none}.center{padding:10px}.ref{font-size:44px}.verse{font-size:29px}.body{font-size:10px}.conceptBox{width:42%}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top">
+<div class="brand">WEST150 <span>THEOLOGY STUDIO</span></div>
+<nav class="menu"><button class="active" data-panel="template">TEMPLATE</button><button data-panel="scripture">SCRIPTURE</button><button data-panel="content">CONTENT</button><button data-panel="style">STYLE</button><button data-panel="cards">CARDS</button><button data-panel="save">SAVE</button></nav>
+<div class="topRight"><button class="iconBtn">↶</button><button class="iconBtn">↷</button><button class="iconBtn">◉ PREVIEW</button><button class="export" id="exportBtn">⇩ EXPORT PNG</button></div>
+</header>
+
+<div class="workspace">
+<aside class="left" id="leftAside">
+<div class="sideTitle">✝ &nbsp; THEOLOGY LAYOUTS</div>
+<div id="templates">
+<button class="template active" data-layout="scripture"><div class="thumb scripture"></div><div class="tmeta"><span>01</span><b>SCRIPTURE EDITORIAL</b><small>성경 본문</small></div></button>
+<button class="template" data-layout="quote"><div class="thumb quote"></div><div class="tmeta"><span>02</span><b>THEOLOGY QUOTE</b><small>신학 인용</small></div></button>
+<button class="template" data-layout="concept"><div class="thumb concept"></div><div class="tmeta"><span>03</span><b>CORE CONCEPT</b><small>핵심 개념</small></div></button>
+<button class="template" data-layout="meditation"><div class="thumb meditation"></div><div class="tmeta"><span>04</span><b>MEDITATION</b><small>묵상 카드</small></div></button>
+<button class="template" data-layout="word"><div class="thumb word"></div><div class="tmeta"><span>05</span><b>WORD STUDY</b><small>단어 연구</small></div></button>
+<button class="template" data-layout="chapter"><div class="thumb chapter"></div><div class="tmeta"><span>06</span><b>CHAPTER GUIDE</b><small>성경 장 요약</small></div></button>
+</div>
+</aside>
+
+<main class="center"><div class="canvasShell">
+<article class="card" id="card">
+<div class="cardHeader"><span>WEST150 THEOLOGY</span><span id="page">01 / 08</span></div>
+<div class="cardContent">
+<div class="chapterNum" id="chapterNum">03</div>
+<div class="kicker" id="kicker">SCRIPTURE</div>
+<div class="ref" id="reference">JOHN<br>3:16</div>
+<div class="divider"></div>
+<div class="verse" id="mainText">“FOR GOD SO LOVED THE WORLD THAT HE GAVE HIS ONE AND ONLY SON.”</div>
+<div class="body" id="bodyText">A reflection on the depth of divine love and the meaning of grace revealed through giving.</div>
+<div class="conceptBox" id="conceptBox"><strong id="conceptLabel">CORE IDEA</strong><p id="conceptText">LOVE THAT GIVES.</p></div>
+<div class="bottomMeta"><div class="meta"><strong id="translation">NIV</strong><span>TRANSLATION</span></div><div class="meta"><strong>GOSPEL</strong><span>BOOK</span></div><div class="meta"><strong>01</strong><span>STUDY SERIES</span></div></div>
+</div>
+<div class="footer"><span id="credit">WEST150 THEOLOGY</span><span>@WEST150OFFICIAL</span></div>
+</article>
+</div></main>
+
+<aside class="right" id="rightAside">
+<div class="control" id="scriptureControl"><h3>SCRIPTURE</h3>
+<label class="label">REFERENCE</label><input class="input" id="referenceInput" value="JOHN 3:16">
+<label class="label">TRANSLATION</label><select class="select" id="translationInput"><option>NIV</option><option>ESV</option><option>KJV</option><option>NASB</option><option>NKRV</option></select>
+<label class="label">SECTION</label><input class="input" id="kickerInput" value="SCRIPTURE">
+</div>
+<div class="control" id="contentControl"><h3>CONTENT</h3>
+<label class="label">MAIN TEXT / QUOTE</label><textarea class="textarea" id="mainTextInput">“FOR GOD SO LOVED THE WORLD THAT HE GAVE HIS ONE AND ONLY SON.”</textarea>
+<label class="label">REFLECTION</label><textarea class="textarea" id="bodyTextInput">A reflection on the depth of divine love and the meaning of grace revealed through giving.</textarea>
+<label class="label">CORE IDEA</label><input class="input" id="conceptInput" value="LOVE THAT GIVES.">
+</div>
+<div id="styleControl">
+<div class="control"><h3>LAYOUT</h3>
+<div class="choiceGrid" id="textAlign"><button class="choice active" data-align="left">LEFT</button><button class="choice" data-align="center">CENTER</button></div>
+<label class="label">TEXT SCALE</label><input class="range" id="scale" type="range" min="70" max="130" value="100">
+</div>
+<div class="control"><h3>STYLE</h3>
+<label class="label">ACCENT</label><div class="swatches" id="swatches"><button class="swatch active" data-color="#9a7b43"></button><button class="swatch" data-color="#7f342b"></button><button class="swatch" data-color="#394541"></button><button class="swatch" data-color="#c5b7a0"></button></div>
+<label class="label">BACKGROUND</label><div class="choiceGrid" id="bgStyle"><button class="choice active" data-bg="paper">PAPER</button><button class="choice" data-bg="dark">DARK</button><button class="choice" data-bg="ink">INK</button></div>
+<div class="toggle"><span>SHOW CHAPTER NUMBER</span><button class="switch on" id="numToggle"></button></div>
+<div class="toggle"><span>SHOW CORE IDEA</span><button class="switch on" id="conceptToggle"></button></div>
+</div>
+</div>
+</aside>
+</div>
+
+<footer class="bottom" id="bottomBar"><button class="add">＋<br>ADD CARD</button><div class="film"><button class="mini active">SCRIPTURE</button><button class="mini">QUOTE</button><button class="mini">CONCEPT</button><button class="mini">MEDITATION</button><button class="mini">WORD</button></div><span class="zoom">− &nbsp; ━━━━━●━━ &nbsp; + &nbsp; 68%</span></footer>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+function bind(input,output,fn=v=>v){$(input).addEventListener("input",e=>$(output).innerHTML=fn(e.target.value))}
+bind("referenceInput","reference",v=>v.replace(/\s+/,"<br>"));
+bind("kickerInput","kicker");bind("mainTextInput","mainText");bind("bodyTextInput","bodyText");bind("conceptInput","conceptText");
+$("translationInput").onchange=e=>$("translation").textContent=e.target.value;
+$("scale").oninput=e=>{$("mainText").style.fontSize=(Number(e.target.value)/100)+"em"};
+document.querySelectorAll("#swatches .swatch").forEach(b=>b.onclick=()=>{document.querySelectorAll("#swatches .swatch").forEach(x=>x.classList.remove("active"));b.classList.add("active");document.documentElement.style.setProperty("--accent",b.dataset.color)});
+document.querySelectorAll("#bgStyle .choice").forEach(b=>b.onclick=()=>{document.querySelectorAll("#bgStyle .choice").forEach(x=>x.classList.remove("active"));b.classList.add("active");$("card").className="card "+(b.dataset.bg==="paper"?"":b.dataset.bg)});
+document.querySelectorAll("#textAlign .choice").forEach(b=>b.onclick=()=>{document.querySelectorAll("#textAlign .choice").forEach(x=>x.classList.remove("active"));b.classList.add("active");["reference","mainText","bodyText"].forEach(id=>$(id).style.textAlign=b.dataset.align);if(b.dataset.align==="center"){$("bodyText").style.marginLeft="auto";$("bodyText").style.marginRight="auto"}else{$("bodyText").style.marginLeft="0";$("bodyText").style.marginRight="0"}});
+$("numToggle").onclick=e=>{e.currentTarget.classList.toggle("on");$("chapterNum").style.display=e.currentTarget.classList.contains("on")?"block":"none"};
+$("conceptToggle").onclick=e=>{e.currentTarget.classList.toggle("on");$("conceptBox").style.display=e.currentTarget.classList.contains("on")?"block":"none"};
+document.querySelectorAll(".template").forEach(b=>b.onclick=()=>{document.querySelectorAll(".template").forEach(x=>x.classList.remove("active"));b.classList.add("active");const l=b.dataset.layout;
+if(l==="scripture"){$("kicker").textContent="SCRIPTURE";$("reference").innerHTML="JOHN<br>3:16";$("mainText").textContent="“FOR GOD SO LOVED THE WORLD THAT HE GAVE HIS ONE AND ONLY SON.”";$("conceptText").textContent="LOVE THAT GIVES."}
+if(l==="quote"){$("kicker").textContent="THEOLOGY QUOTE";$("reference").innerHTML="AUGUSTINE";$("mainText").textContent="“OUR HEART IS RESTLESS UNTIL IT RESTS IN YOU.”";$("conceptText").textContent="REST IN GOD."}
+if(l==="concept"){$("kicker").textContent="CORE CONCEPT";$("reference").innerHTML="GRACE";$("mainText").textContent="NOT EARNED. NOT DESERVED. FREELY GIVEN.";$("conceptText").textContent="GIFT BEFORE RESPONSE."}
+if(l==="meditation"){$("kicker").textContent="MEDITATION";$("reference").innerHTML="BE STILL";$("mainText").textContent="SILENCE CAN BECOME A PLACE WHERE WE LEARN TO LISTEN.";$("conceptText").textContent="WAIT WITH GOD."}
+if(l==="word"){$("kicker").textContent="WORD STUDY";$("reference").innerHTML="REDEEMED";$("mainText").textContent="TO BE BROUGHT BACK AT A PRICE.";$("conceptText").textContent="RESTORATION."}
+if(l==="chapter"){$("kicker").textContent="CHAPTER GUIDE";$("reference").innerHTML="ROMANS<br>8";$("mainText").textContent="NO CONDEMNATION. NEW LIFE. NOTHING CAN SEPARATE.";$("conceptText").textContent="LIFE IN THE SPIRIT."}
+});
+$("exportBtn").onclick=()=>alert("현재는 실제 편집 UI 코드 버전입니다. PNG 저장 엔진은 html2canvas 또는 서버 렌더링 방식으로 추가할 수 있습니다.");
+
+/* ===== 상단 메뉴 탭 기능 ===== */
+const menuBtns=document.querySelectorAll(".menu button[data-panel]");
+const leftAside=$("leftAside");
+const rightAside=$("rightAside");
+const scriptureControl=$("scriptureControl");
+const contentControl=$("contentControl");
+const styleControl=$("styleControl");
+const bottomBar=$("bottomBar");
+const wideQuery=window.matchMedia("(min-width:1101px)");
+let activePanel="template";
+
+function applyPanel(){
+  if(wideQuery.matches){
+    leftAside.style.display="";
+    rightAside.style.display="";
+    [scriptureControl,contentControl,styleControl].forEach(el=>el.style.display="");
+    return;
+  }
+  leftAside.style.display = activePanel==="template" ? "block" : "none";
+  const showRight = ["scripture","content","style"].includes(activePanel);
+  rightAside.style.display = showRight ? "block" : "none";
+  scriptureControl.style.display = activePanel==="scripture" ? "block" : "none";
+  contentControl.style.display = activePanel==="content" ? "block" : "none";
+  styleControl.style.display = activePanel==="style" ? "block" : "none";
+}
+
+menuBtns.forEach(b=>b.onclick=()=>{
+  const panel=b.dataset.panel;
+  menuBtns.forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");
+  if(panel==="save"){$("exportBtn").click();activePanel="template";menuBtns[0].classList.add("active");applyPanel();return}
+  if(panel==="cards"){bottomBar.scrollIntoView({behavior:"smooth",block:"nearest"});activePanel=panel;applyPanel();return}
+  activePanel=panel;
+  applyPanel();
+});
+wideQuery.addEventListener("change",applyPanel);
+applyPanel();
+</script>
+</body>
+</html>

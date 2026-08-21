@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>WEST150 EDITORIAL STUDIO</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;background:#e9e5dc;color:#171717;font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR","Helvetica Neue",Arial,sans-serif}
+button,input,textarea,select{font:inherit}button{cursor:pointer}
+header{height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;background:#f2efe8;border-bottom:1px solid #cfc9bd;position:sticky;top:0;z-index:100}
+.logo{font-size:13px;font-weight:900;letter-spacing:.12em}.edition{font:700 9px Inter;letter-spacing:.15em;color:#777}
+nav{position:sticky;top:58px;z-index:99;display:flex;gap:5px;overflow:auto;padding:8px;background:rgba(242,239,232,.96);border-bottom:1px solid #cfc9bd;backdrop-filter:blur(12px)}
+nav::-webkit-scrollbar{display:none}nav button{white-space:nowrap;border:1px solid #bbb4a8;background:#ece8df;color:#5d584f;border-radius:7px;padding:9px 12px;font-size:10px;font-weight:800}
+nav button.active{background:#181818;color:#f5f1e9;border-color:#181818}
+main{display:grid;grid-template-columns:400px minmax(0,1fr);gap:20px;padding:16px;min-height:calc(100vh - 107px)}
+.panel{display:none}.panel.active{display:block}.box{background:#f3f0e9;border:1px solid #cfc9bd;border-radius:10px;padding:13px;margin-bottom:10px}
+h2{font:900 10px Inter;letter-spacing:.13em;margin:0 0 10px}h3{font-size:11px;margin:0 0 8px}
+.note{font-size:10px;line-height:1.6;color:#777}.field{margin:10px 0}label{display:flex;justify-content:space-between;font-size:9px;color:#777;margin-bottom:5px}
+input[type=text],input[type=file],textarea,select{width:100%;background:#e9e5dc;color:#171717;border:1px solid #c2bbaf;border-radius:6px;padding:9px;font-size:11px}
+textarea{min-height:90px;resize:vertical}input[type=range]{width:100%}
+.row{display:flex;gap:6px;flex-wrap:wrap}.row button{background:#e7e2d9;border:1px solid #bbb4a8;border-radius:6px;padding:8px 10px;font-size:10px;color:#333}.row .primary{background:#171717;color:#fff;border-color:#171717}
+.layouts{display:grid;grid-template-columns:1fr 1fr;gap:7px}.layoutBtn{background:#ece8df;border:1px solid #c4bdb1;text-align:left;border-radius:7px;padding:10px;min-height:60px}.layoutBtn.active{background:#171717;color:#fff;border-color:#171717}.layoutBtn b{display:block;font:900 9px Inter}.layoutBtn small{display:block;font-size:8px;color:#888;margin-top:4px}
+.preview{display:flex;justify-content:center;align-items:flex-start}.stage{position:sticky;top:124px;text-align:center}.canvasWrap{width:min(68vw,620px);aspect-ratio:4/5;background:#fff;box-shadow:0 18px 60px rgba(0,0,0,.16);overflow:hidden}.canvasWrap.grid{outline:1px dashed #999;outline-offset:-5px}canvas{display:block;width:100%;height:100%}.status{font-size:9px;color:#777;margin-top:8px}
+.chips{display:flex;gap:6px;overflow:auto}.chip{white-space:nowrap;border:1px solid #c2bbaf;border-radius:999px;padding:7px 9px;font-size:9px;color:#666}
+hr{border:0;border-top:1px solid #d0c9bd;margin:12px 0}
+@media(max-width:850px){main{grid-template-columns:1fr;padding:9px}.preview{order:-1}.stage{position:relative;top:auto}.canvasWrap{width:min(92vw,540px)}}
+</style>
+</head>
+<body>
+<header><div class="logo">WEST150 EDITORIAL STUDIO</div><div class="edition">INDEPENDENT EDITORIAL SYSTEM</div></header>
+<nav>
+<button class="tab active" data-panel="design">DESIGN</button>
+<button class="tab" data-panel="type">Aa TYPE</button>
+<button class="tab" data-panel="photo">PHOTO</button>
+<button class="tab" data-panel="grid">GRID</button>
+<button class="tab" data-panel="brand">BRAND</button>
+<button class="tab" data-panel="story">STORY</button>
+<button class="tab" data-panel="save">SAVE</button>
+</nav>
+
+<main>
+<section>
+<div class="panel active" id="design">
+<div class="box"><h2>EDITORIAL SYSTEM</h2><div class="layouts">
+<button class="layoutBtn active" data-layout="cover"><b>MAGAZINE COVER</b><small>매거진 표지</small></button>
+<button class="layoutBtn" data-layout="photo"><b>PHOTO ESSAY</b><small>사진 중심</small></button>
+<button class="layoutBtn" data-layout="type"><b>BIG TYPE</b><small>대형 타이포</small></button>
+<button class="layoutBtn" data-layout="article"><b>2-COLUMN</b><small>기사형</small></button>
+<button class="layoutBtn" data-layout="quote"><b>QUOTE</b><small>인용문</small></button>
+<button class="layoutBtn" data-layout="interview"><b>INTERVIEW</b><small>Q&A</small></button>
+<button class="layoutBtn" data-layout="timeline"><b>TIMELINE</b><small>연표</small></button>
+<button class="layoutBtn" data-layout="data"><b>DATA</b><small>숫자·통계</small></button>
+<button class="layoutBtn" data-layout="compare"><b>COMPARE</b><small>비교</small></button>
+<button class="layoutBtn" data-layout="conclusion"><b>CONCLUSION</b><small>핵심 정리</small></button>
+</div></div>
+</div>
+
+<div class="panel" id="type"><div class="box"><h2>TYPOGRAPHY</h2>
+<div class="field"><label>제목 크기 <span id="tv">78</span></label><input id="titleSize" type="range" min="34" max="110" value="78"></div>
+<div class="field"><label>본문 크기 <span id="bv">22</span></label><input id="bodySize" type="range" min="14" max="38" value="22"></div>
+<div class="field"><label>자간 <span id="kv">-2</span></label><input id="tracking" type="range" min="-8" max="8" value="-2"></div>
+<div class="field"><label>줄간격 <span id="lhv">1.05</span></label><input id="lineHeight" type="range" min=".85" max="1.4" value="1.05" step=".01"></div>
+<div class="field"><label>굵기</label><select id="weight"><option value="500">Medium</option><option value="700">Bold</option><option value="800">ExtraBold</option><option value="900" selected>Black</option></select></div>
+<div class="row"><button onclick="S.align='left';draw()">좌</button><button onclick="S.align='center';draw()">중앙</button><button onclick="S.align='right';draw()">우</button></div>
+</div></div>
+
+<div class="panel" id="photo"><div class="box"><h2>PHOTO ESSAY</h2>
+<div class="field"><label>사진 업로드</label><input id="photoFile" type="file" accept="image/*"></div>
+<div class="field"><label>확대 <span id="zv">100%</span></label><input id="zoom" type="range" min="70" max="180" value="100"></div>
+<div class="field"><label>밝기 <span id="brv">100%</span></label><input id="bright" type="range" min="60" max="150" value="100"></div>
+<div class="field"><label>대비 <span id="cov">100%</span></label><input id="contrast" type="range" min="60" max="160" value="100"></div>
+<div class="field"><label>채도 <span id="sv">100%</span></label><input id="sat" type="range" min="0" max="160" value="100"></div>
+<div class="row"><button onclick="S.mono=!S.mono;draw()">흑백</button><button onclick="resetPhoto()">초기화</button></div>
+<p class="note">EDITORIAL은 사진을 강하게 보여주고 텍스트를 절제하는 방향으로 설계했습니다.</p>
+</div></div>
+
+<div class="panel" id="grid"><div class="box"><h2>EDITORIAL GRID</h2>
+<div class="field"><label>여백 <span id="pv">7%</span></label><input id="pad" type="range" min="4" max="15" value="7"></div>
+<div class="field"><label>컬럼</label><select id="columns"><option>12 COLUMN</option><option>6 COLUMN</option><option>2 COLUMN</option></select></div>
+<div class="row"><button onclick="S.showGrid=!S.showGrid;draw()">GRID ON/OFF</button><button onclick="S.safe=!S.safe;draw()">SAFE AREA</button></div>
+<p class="note">속보용 UPDATE나 긴급 배지 대신, 여백·컬럼·사진 비율을 중심으로 편집합니다.</p>
+</div></div>
+
+<div class="panel" id="brand"><div class="box"><h2>BRAND & CAPTION</h2>
+<div class="field"><label>브랜드</label><input id="brand" value="WEST150"></div>
+<div class="field"><label>섹션</label><input id="section" value="EDITORIAL"></div>
+<div class="field"><label>작성/저자</label><input id="author" value=""></div>
+<div class="field"><label>출처</label><input id="source" value=""></div>
+<div class="field"><label>로고</label><input id="logoFile" type="file" accept="image/*"></div>
+<div class="row"><button onclick="S.logoOn=!S.logoOn;draw()">로고 표시/숨김</button><button onclick="S.dark=!S.dark;draw()">DARK MODE</button></div>
+</div></div>
+
+<div class="panel" id="story"><div class="box"><h2>STORY</h2>
+<div class="field"><label>카드 제목</label><input id="title" value="THE NEW WORLD ORDER"></div>
+<div class="field"><label>본문 / 설명</label><textarea id="body">A new chapter is taking shape. What happened, why it matters, and what comes next.</textarea></div>
+<div class="field"><label>페이지</label><input id="page" value="01 / 08"></div>
+<div class="row"><button class="primary" onclick="addCard()">＋ 카드 추가</button><button onclick="moveCard(-1)">←</button><button onclick="moveCard(1)">→</button><button onclick="duplicateCard()">복제</button></div>
+<hr><div class="chips" id="chips"></div>
+<p class="note">BREAKING STUDIO의 UPDATE 01/02/03 시스템은 의도적으로 포함하지 않았습니다. EDITORIAL은 하나의 완성된 STORY를 구성합니다.</p>
+</div></div>
+
+<div class="panel" id="save"><div class="box"><h2>SAVE</h2>
+<div class="row"><button class="primary" onclick="savePNG()">현재 카드 PNG</button><button onclick="saveAll()">전체 카드 PNG</button><button onclick="saveProject()">프로젝트 저장</button><button onclick="loadProject()">프로젝트 불러오기</button></div>
+<hr><p class="note">1080 × 1350 · iPhone 사진 저장/공유에 맞춘 세로 규격</p>
+</div></div>
+</section>
+
+<section class="preview"><div class="stage"><div class="canvasWrap" id="wrap"><canvas id="canvas" width="1080" height="1350"></canvas></div><div class="status" id="status">CARD 01 · COVER</div></div></section>
+</main>
+
+<script>
+const $=id=>document.getElementById(id);
+const S={layout:"cover",title:"THE NEW WORLD ORDER",body:"A new chapter is taking shape. What happened, why it matters, and what comes next.",page:"01 / 08",brand:"WEST150",section:"EDITORIAL",author:"",source:"",photo:null,logo:null,logoOn:true,dark:false,mono:false,zoom:100,bright:100,contrast:100,sat:100,pad:7,align:"left",showGrid:false,safe:false,titleSize:78,bodySize:22,tracking:-2,lineHeight:1.05,weight:900};
+let cards=[{...S}],idx=0;
+
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));document.querySelectorAll(".panel").forEach(x=>x.classList.remove("active"));b.classList.add("active");$(b.dataset.panel).classList.add("active")});
+document.querySelectorAll(".layoutBtn").forEach(b=>b.onclick=()=>{S.layout=b.dataset.layout;document.querySelectorAll(".layoutBtn").forEach(x=>x.classList.remove("active"));b.classList.add("active");sync();draw()});
+
+function bind(id,key,parse=false){$(id).addEventListener("input",()=>{S[key]=parse?+$(id).value:$(id).value;sync();draw()})}
+["title","body","page","brand","section","author","source"].forEach(id=>bind(id,id));
+bind("titleSize","titleSize",true);bind("bodySize","bodySize",true);bind("tracking","tracking",true);bind("lineHeight","lineHeight",true);bind("weight","weight",true);bind("zoom","zoom",true);bind("bright","bright",true);bind("contrast","contrast",true);bind("sat","sat",true);bind("pad","pad",true);
+$("photoFile").onchange=e=>readFile(e.target.files[0],v=>{S.photo=v;sync();draw()});
+$("logoFile").onchange=e=>readFile(e.target.files[0],v=>{S.logo=v;sync();draw()});
+function readFile(f,cb){if(!f)return;const r=new FileReader();r.onload=()=>cb(r.result);r.readAsDataURL(f)}
+function sync(){cards[idx]={...S};localStorage.setItem("west150_editorial_independent",JSON.stringify(cards))}
+function loadState(o){Object.assign(S,o);$("title").value=S.title;$("body").value=S.body;$("page").value=S.page;$("brand").value=S.brand;$("section").value=S.section;$("author").value=S.author;$("source").value=S.source;draw();chips()}
+function addCard(){sync();cards.splice(idx+1,0,{...S,page:`${String(idx+2).padStart(2,"0")} / 08`});idx++;loadState(cards[idx])}
+function duplicateCard(){addCard()}
+function moveCard(d){sync();let n=idx+d;if(n>=0&&n<cards.length){idx=n;loadState(cards[idx])}}
+function chips(){$("chips").innerHTML=cards.map((_,i)=>`<span class="chip" onclick="idx=${i};loadState(cards[i])">CARD ${String(i+1).padStart(2,"0")}</span>`).join("")}
+function resetPhoto(){Object.assign(S,{zoom:100,bright:100,contrast:100,sat:100,mono:false});sync();draw()}
+function img(src){return new Promise(r=>{let i=new Image();i.onload=()=>r(i);i.src=src})}
+function drawImage(ctx,i,x,y,w,h){let sc=Math.max(w/i.width,h/i.height)*(S.zoom/100),iw=i.width*sc,ih=i.height*sc;ctx.save();ctx.filter=`brightness(${S.bright}%) contrast(${S.contrast}%) saturate(${S.sat}%) grayscale(${S.mono?100:0}%)`;ctx.drawImage(i,x+(w-iw)/2,y+(h-ih)/2,iw,ih);ctx.restore()}
+function wrap(ctx,t,x,y,max,line,limit=8){let words=(t||"").split(/\s+/),ls=[],cur="";for(let w of words){let q=cur?cur+" "+w:w;if(ctx.measureText(q).width>max&&cur){ls.push(cur);cur=w;if(ls.length>=limit)break}else cur=q}if(ls.length<limit&&cur)ls.push(cur);ls.forEach((v,i)=>ctx.fillText(v,x,y+i*line))}
+async function draw(){
+ const c=$("canvas"),ctx=c.getContext("2d"),W=1080,H=1350, dark=S.dark,bg=dark?"#111":"#f5f1e8",fg=dark?"#f5f1e8":"#171717",muted=dark?"#aaa":"#777",accent=dark?"#ddd":"#9b1c20",p=W*S.pad/100,w=W-p*2;
+ ctx.clearRect(0,0,W,H);ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+ let im=S.photo?await img(S.photo):null;
+ if(im){let r=S.layout==="cover"?[0,0,W,760]:S.layout==="photo"?[0,0,W,H]:S.layout==="quote"?[0,0,W,650]:S.layout==="interview"?[0,0,W,570]:[p,70,w,420];drawImage(ctx,im,...r);if(["cover","photo","quote","interview"].includes(S.layout)){ctx.fillStyle="rgba(0,0,0,.22)";ctx.fillRect(...r)}}
+ ctx.fillStyle=accent;ctx.font="900 16px Arial";ctx.fillText((S.section||"EDITORIAL").toUpperCase(),p,55);
+ ctx.fillStyle=muted;ctx.font="700 11px Arial";ctx.textAlign="right";ctx.fillText(S.page||"01 / 01",W-p,55);ctx.textAlign="left";
+ let ty=S.layout==="cover"?850:S.layout==="photo"?1120:S.layout==="quote"?720:S.layout==="interview"?660:S.layout==="article"?560:S.layout==="type"?300:S.layout==="timeline"?180:S.layout==="data"?610:S.layout==="compare"?180:190;
+ ctx.fillStyle=fg;ctx.font=`${S.weight} ${S.titleSize}px Arial`;ctx.letterSpacing=S.tracking+"px";ctx.textAlign=S.align==="center"?"center":S.align==="right"?"right":"left";let tx=S.align==="center"?W/2:S.align==="right"?W-p:p;wrap(ctx,S.title,tx,ty,w,S.titleSize*S.lineHeight,5);
+ ctx.fillStyle=muted;ctx.font=`400 ${S.bodySize}px "Noto Sans KR",Arial`;let by=ty+S.titleSize*S.lineHeight*2.15;wrap(ctx,S.body,tx,by,w,S.bodySize*1.5,7);
+ if(S.layout==="article"){ctx.strokeStyle=muted;ctx.beginPath();ctx.moveTo(p,535);ctx.lineTo(W-p,535);ctx.stroke();ctx.font=`400 ${S.bodySize}px Arial`;wrap(ctx,S.body,p,610,w/2-18,S.bodySize*1.5,14)}
+ if(S.layout==="quote"){ctx.fillStyle=fg;ctx.font="900 110px Georgia";ctx.fillText("“",p,820)}
+ if(S.layout==="interview"){ctx.fillStyle=accent;ctx.font="900 17px Arial";ctx.fillText("Q&A",p,1080)}
+ if(S.layout==="timeline"){ctx.strokeStyle=accent;ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(p,300);ctx.lineTo(p,1190);ctx.stroke();["01","02","03","04"].forEach((n,i)=>{let y=410+i*190;ctx.fillStyle=accent;ctx.beginPath();ctx.arc(p,y,8,0,Math.PI*2);ctx.fill();ctx.fillStyle=fg;ctx.font="900 18px Arial";ctx.fillText(n,p+30,y+6)})}
+ if(S.layout==="data"){ctx.fillStyle=fg;ctx.font="900 150px Arial";ctx.fillText("47%",p,1040);ctx.fillStyle=muted;ctx.font="400 18px Arial";ctx.fillText("KEY FIGURE",p,1080);ctx.fillStyle=accent;ctx.fillRect(p,1120,w*.47,18)}
+ if(S.layout==="compare"){ctx.strokeStyle=muted;ctx.beginPath();ctx.moveTo(W/2,520);ctx.lineTo(W/2,1180);ctx.stroke();ctx.fillStyle=accent;ctx.font="900 15px Arial";ctx.fillText("A",p,570);ctx.fillText("B",W/2+20,570)}
+ if(S.layout==="conclusion"){ctx.strokeStyle=fg;ctx.beginPath();ctx.moveTo(p,530);ctx.lineTo(W-p,530);ctx.stroke();ctx.fillStyle=accent;ctx.font="900 16px Arial";ctx.fillText("THE TAKEAWAY",p,570)}
+ if(S.showGrid){ctx.strokeStyle="rgba(120,110,100,.16)";ctx.lineWidth=1;for(let i=1;i<12;i++){let x=i*W/12;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke()}}
+ if(S.logoOn){ctx.fillStyle=fg;ctx.font="900 18px Arial";ctx.fillText(S.brand||"WEST150",W-p-170,H-42)}
+ ctx.fillStyle=muted;ctx.font="400 12px Arial";if(S.author)ctx.fillText(S.author,p,H-42);if(S.source)ctx.fillText("SOURCE · "+S.source,W/2,H-42);
+ $("status").textContent=`CARD ${String(idx+1).padStart(2,"0")} · ${S.layout.toUpperCase()}`;
+ $("tv").textContent=S.titleSize;$("bv").textContent=S.bodySize;$("kv").textContent=S.tracking;$("lhv").textContent=S.lineHeight;$("zv").textContent=S.zoom+"%";$("brv").textContent=S.bright+"%";$("cov").textContent=S.contrast+"%";$("sv").textContent=S.sat+"%";$("pv").textContent=S.pad+"%";
+}
+function savePNG(){sync();$("canvas").toBlob(b=>{let a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=`WEST150_EDITORIAL_${String(idx+1).padStart(2,"0")}.png`;a.click()})}
+function saveAll(){sync();cards.forEach((card,i)=>{let old={...S};Object.assign(S,card);draw().then(()=>setTimeout(()=>{savePNG();Object.assign(S,old)},i*700))})}
+function saveProject(){sync();let a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(cards)],{type:"application/json"}));a.download="WEST150_EDITORIAL_PROJECT.json";a.click()}
+function loadProject(){let x=document.createElement("input");x.type="file";x.accept=".json";x.onchange=e=>readFile(e.target.files[0],v=>{try{cards=JSON.parse(atob(v.split(",")[1]||""));}catch(_){} });x.click()}
+loadState(cards[0]);chips();
+</script>
+</body>
+</html>
