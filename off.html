@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Briefing Studio · Official</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css" />
+<style>
+@font-face {
+  font-family: 'RidiBatang';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_twelve@1.0/RIDIBatang.woff') format('woff');
+  font-weight: normal;
+  font-display: swap;
+}
+:root {
+  --chrome-bg: #0e1218;
+  --chrome-panel: #151b24;
+  --chrome-line: #273040;
+  --chrome-text: #e8eef5;
+  --chrome-sub: #8494a8;
+  --chrome-input: #1a222e;
+  --chrome-btn: #243041;
+  --chrome-btn-hover: #2f3d52;
+  --accent: #2a5ba8;
+  --accent-soft: #2a5ba822;
+  --danger: #e85a6b;
+  --navy: #1b3a5f;
+  --gold: #c9a44c;
+}
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; height: 100%;
+  font-family: 'Pretendard Variable', 'Apple SD Gothic Neo', sans-serif;
+  background: var(--chrome-bg); color: var(--chrome-text);
+}
+#app { display: flex; flex-direction: column; height: 100vh; }
+
+#topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 20px; height: 54px; flex: none;
+  background: var(--chrome-panel); border-bottom: 1px solid var(--chrome-line);
+  position: relative; z-index: 200;
+}
+.brand {
+  font-weight: 700; font-size: 14px; letter-spacing: .06em;
+  display: flex; align-items: center; gap: 10px;
+}
+.brand .mark {
+  width: 8px; height: 8px; border-radius: 2px;
+  background: var(--accent); box-shadow: 0 0 10px var(--accent);
+}
+.brand span.sub { font-weight: 500; font-size: 11px; color: var(--chrome-sub); letter-spacing: .12em; }
+.actions { display: flex; gap: 6px; align-items: center; }
+button { font-family: inherit; cursor: pointer; border: none; }
+.btn {
+  padding: 8px 14px; border-radius: 6px; font-size: 12px; font-weight: 600;
+  background: var(--chrome-btn); color: var(--chrome-text); transition: .15s;
+}
+.btn:hover { background: var(--chrome-btn-hover); }
+.btn.primary { background: var(--accent); color: #fff; }
+.btn.primary:hover { filter: brightness(1.08); }
+.btn.ghost { background: transparent; color: var(--chrome-sub); border: 1px solid var(--chrome-line); }
+.btn.ghost:hover { color: var(--chrome-text); border-color: var(--accent); }
+.btn.small { padding: 6px 10px; font-size: 11px; }
+.btn.full { width: 100%; }
+
+.menuWrap { position: relative; }
+.dropdown {
+  position: absolute; top: calc(100% + 6px); left: 0;
+  background: #1a222e; border: 1px solid var(--chrome-line); border-radius: 10px;
+  padding: 8px; display: none; flex-direction: column; min-width: 210px;
+  box-shadow: 0 16px 40px #0008; z-index: 300;
+}
+.dropdown.open { display: flex; }
+.dropdown.panel { width: 280px; max-height: 72vh; overflow-y: auto; padding: 14px; gap: 10px; }
+.ddItem {
+  padding: 9px 11px; border-radius: 6px; font-size: 12.5px; cursor: pointer;
+  color: var(--chrome-text); display: flex; align-items: center; gap: 8px;
+}
+.ddItem:hover { background: var(--chrome-btn-hover); }
+.ddItem.active { background: var(--accent-soft); color: #7eb6ff; }
+
+#body { flex: 1; display: flex; min-height: 0; }
+
+#left {
+  width: 168px; flex: none; background: var(--chrome-panel);
+  border-right: 1px solid var(--chrome-line); display: flex; flex-direction: column;
+}
+#left .hd {
+  padding: 12px 12px 6px; font-size: 11px; color: var(--chrome-sub);
+  font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+}
+#slideList {
+  flex: 1; overflow-y: auto; padding: 0 10px 10px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.thumb {
+  position: relative; border-radius: 8px; overflow: hidden; cursor: pointer;
+  border: 2px solid transparent; background: #000; aspect-ratio: 4/5; flex-shrink: 0;
+}
+.thumb.active { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.thumb iframe {
+  width: 400%; height: 400%; transform: scale(.25); transform-origin: top left;
+  border: 0; pointer-events: none;
+}
+.thumb .idx {
+  position: absolute; top: 4px; left: 5px; font-size: 10px; font-weight: 700;
+  color: #fff; background: #000a; padding: 1px 5px; border-radius: 4px;
+}
+.thumb .tag {
+  position: absolute; bottom: 4px; left: 5px; font-size: 9px; font-weight: 700;
+  color: #fff; background: var(--navy); padding: 1px 5px; border-radius: 4px;
+}
+.thumb .del {
+  position: absolute; top: 4px; right: 4px; width: 18px; height: 18px;
+  border-radius: 4px; background: #000a; color: #fff; font-size: 11px;
+  line-height: 18px; text-align: center; opacity: 0; transition: .15s;
+}
+.thumb:hover .del { opacity: 1; }
+.thumb .del:hover { background: var(--danger); }
+#addSlide {
+  margin: 0 10px 12px; padding: 10px; border-radius: 8px;
+  background: var(--chrome-btn); color: var(--chrome-sub); font-size: 12px;
+  font-weight: 600; border: 1px dashed var(--chrome-line); width: calc(100% - 20px);
+}
+#addSlide:hover { color: var(--chrome-text); border-color: var(--accent); }
+
+#stage {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  overflow: auto; padding: 36px;
+  background: radial-gradient(ellipse at 50% 30%, #1a2433 0%, var(--chrome-bg) 65%);
+}
+#canvasWrap { box-shadow: 0 28px 60px -18px #000c; border-radius: 2px; }
+
+/* ===== Card ===== */
+#card {
+  width: 400px; height: 500px; position: relative; overflow: hidden;
+  display: flex; flex-direction: column;
+  background: #f4f6f8; color: #15202b;
+  font-family: 'Pretendard Variable', sans-serif;
+}
+#card .agency {
+  font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase;
+}
+#card .docType {
+  display: inline-block; font-size: 10px; font-weight: 800; letter-spacing: .08em;
+  padding: 3px 10px; border-radius: 2px; background: var(--navy); color: #fff;
+}
+#card .titleText {
+  font-weight: 900; letter-spacing: -.015em; line-height: 1.28;
+  white-space: pre-wrap; word-break: keep-all;
+}
+#card .bodyText {
+  font-weight: 500; line-height: 1.65; opacity: .92;
+  white-space: pre-wrap; word-break: keep-all;
+}
+#card .sourceLine { font-size: 11px; opacity: .55; letter-spacing: .02em; }
+#card .timeLine {
+  font-size: 10px; opacity: .45; letter-spacing: .04em;
+  font-variant-numeric: tabular-nums; font-family: 'Courier New', monospace;
+}
+#card .navyRule {
+  width: 40px; height: 3px; background: var(--navy); margin: 12px 0; border-radius: 1px;
+}
+#card mark {
+  background: var(--mk, #c5daf5); color: #15202b; padding: 0 3px;
+  box-decoration-break: clone; -webkit-box-decoration-break: clone;
+}
+#card .factItem {
+  display: flex; gap: 10px; align-items: flex-start; margin-bottom: 10px;
+}
+#card .factItem:last-child { margin-bottom: 0; }
+#card .factNum {
+  flex: none; width: 20px; height: 20px; border-radius: 3px;
+  background: var(--navy); color: #fff; font-size: 11px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+}
+#card .factTxt { flex: 1; min-width: 0; font-size: inherit; line-height: 1.5; word-break: keep-all; }
+
+/* Cover */
+#card.tpl-cover {
+  background: #f4f6f8; padding: 0; color: #15202b;
+}
+#card.tpl-cover .headBar {
+  background: linear-gradient(120deg, #1b3a5f, #234b78);
+  color: #fff; padding: 14px 24px;
+  display: flex; justify-content: space-between; align-items: center;
+  box-shadow: 0 4px 12px #1b3a5f33;
+}
+#card.tpl-cover .headBar .agency { color: #fff; display: flex; align-items: center; gap: 7px; }
+#card.tpl-cover .headBar .agency::before {
+  content: ""; width: 7px; height: 7px; border-radius: 50%; background: #7dc4ff; flex: none;
+}
+#card.tpl-cover .bodyArea {
+  flex: 1; padding: 24px 26px 20px; display: flex; flex-direction: column;
+  border-left: 4px solid #1b3a5f; margin: 16px 18px 0; background: #fff;
+  border-radius: 0 4px 4px 0; box-shadow: 0 6px 20px #1b3a5f12;
+}
+#card.tpl-cover .titleText { font-size: 24px; }
+#card.tpl-cover .footer {
+  padding: 12px 26px 16px; display: flex; justify-content: space-between; align-items: center;
+  border-top: 1px solid #c5ced8; margin-top: 12px;
+}
+
+/* Facts */
+#card.tpl-facts {
+  background: #fbfaf6; color: #1a1a1a; padding: 26px 28px 20px;
+  border: 1px solid #1a1a1a22; position: relative;
+}
+#card.tpl-facts::before {
+  content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: #1b3a5f;
+}
+#card.tpl-facts .topRow {
+  display: flex; justify-content: space-between; align-items: center;
+  border-bottom: 2px solid #1a1a1a; padding-bottom: 10px; margin-bottom: 14px;
+}
+#card.tpl-facts .agency { color: #1b3a5f; letter-spacing: .14em; }
+#card.tpl-facts .titleText {
+  font-family: 'Noto Serif KR', 'RidiBatang', serif;
+  font-size: 22px; margin-bottom: 6px;
+}
+#card.tpl-facts .factList { margin-top: 8px; flex: 1; }
+#card.tpl-facts .footer {
+  margin-top: auto; padding-top: 12px; border-top: 1px solid #1a1a1a33;
+  display: flex; justify-content: space-between; align-items: center;
+}
+
+/* Schedule / clauses */
+#card.tpl-schedule {
+  background: #fbfaf6; color: #1a1a1a; padding: 24px 26px 18px;
+  border: 1px solid #1a1a1a; position: relative;
+  font-family: 'Noto Serif KR', 'RidiBatang', serif;
+}
+#card.tpl-schedule::before {
+  content: ""; position: absolute; inset: 8px; border: 1px solid #1a1a1a44; pointer-events: none;
+}
+#card.tpl-schedule .topCenter {
+  text-align: center; border-bottom: 3px double #1a1a1a; padding-bottom: 12px; margin-bottom: 14px;
+}
+#card.tpl-schedule .agency {
+  letter-spacing: .35em; font-size: 13px; padding-left: .35em; color: #1a1a1a;
+}
+#card.tpl-schedule .docType {
+  background: none; color: #1a1a1a; border: 1px solid #1a1a1a;
+  border-radius: 0; margin-top: 8px; letter-spacing: .12em;
+}
+#card.tpl-schedule .titleText {
+  text-align: center; font-size: 18px; font-weight: 800; margin: 10px 0 12px;
+}
+#card.tpl-schedule .clause {
+  display: flex; gap: 8px; margin-bottom: 10px; line-height: 1.7;
+  border-bottom: 1px dotted #1a1a1a2e; padding-bottom: 8px; font-size: 13px;
+}
+#card.tpl-schedule .clause:last-child { border-bottom: none; }
+#card.tpl-schedule .clauseLabel {
+  flex: none; font-weight: 800; font-size: 12px; min-width: 42px; color: #1b3a5f;
+}
+#card.tpl-schedule .footer {
+  margin-top: auto; padding-top: 12px; border-top: 1px solid #1a1a1a;
+  display: flex; justify-content: space-between; align-items: center;
+  font-family: 'Pretendard Variable', sans-serif;
+}
+
+/* Quote / statement */
+#card.tpl-quote {
+  background: linear-gradient(165deg, #f4f6f8, #e8eef5); color: #15202b; padding: 28px 28px 22px;
+}
+#card.tpl-quote .topRow {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;
+}
+#card.tpl-quote .agency { color: #1b3a5f; }
+#card.tpl-quote .quoteBox {
+  flex: 1; background: #fff; border-radius: 8px; padding: 22px 20px;
+  border-left: 4px solid #1b3a5f; box-shadow: 0 8px 24px #1b3a5f12;
+  display: flex; flex-direction: column; justify-content: center;
+}
+#card.tpl-quote .qMark {
+  font-family: Georgia, 'Noto Serif KR', serif;
+  font-size: 42px; line-height: 1; color: #1b3a5f; opacity: .85; margin-bottom: 4px;
+}
+#card.tpl-quote .titleText {
+  font-family: 'Noto Serif KR', 'RidiBatang', serif;
+  font-size: 20px; font-weight: 700; line-height: 1.45;
+}
+#card.tpl-quote .speaker {
+  margin-top: 14px; font-size: 12px; font-weight: 700; color: #1b3a5f;
+}
+#card.tpl-quote .speaker span { font-weight: 500; opacity: .65; margin-left: 6px; }
+#card.tpl-quote .footer {
+  margin-top: 16px; padding-top: 12px; border-top: 1px solid #c5ced8;
+  display: flex; justify-content: space-between; align-items: center;
+}
+
+/* Logo / text watermark */
+#card .logoMark {
+  position: absolute; z-index: 12; pointer-events: none;
+  object-fit: contain; max-width: 40%; max-height: 18%;
+}
+#card .logoMark.pos-tr { top: 14px; right: 14px; }
+#card .logoMark.pos-tl { top: 14px; left: 14px; }
+#card .logoMark.pos-br { bottom: 14px; right: 14px; }
+#card .logoMark.pos-bl { bottom: 14px; left: 14px; }
+#card .logoMark.pos-center { top: 50%; left: 50%; transform: translate(-50%, -50%); }
+#card .logoMark.logoBg {
+  background: #fff; padding: 5px 8px; border-radius: 6px;
+  box-shadow: 0 2px 10px rgba(0,0,0,.12); box-sizing: border-box;
+}
+#card.tpl-cover .logoMark.pos-tr,
+#card.tpl-cover .logoMark.pos-tl { top: 52px; }
+#card .wmText {
+  position: absolute; z-index: 11; pointer-events: none;
+  font-weight: 700; letter-spacing: .06em; white-space: nowrap; line-height: 1.2;
+}
+#card .wmText.pos-tr { top: 14px; right: 14px; }
+#card .wmText.pos-tl { top: 14px; left: 14px; }
+#card .wmText.pos-br { bottom: 14px; right: 14px; }
+#card .wmText.pos-bl { bottom: 14px; left: 14px; }
+#card .wmText.pos-center {
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%) rotate(-28deg);
+  letter-spacing: .14em; opacity: .18 !important;
+}
+#card.tpl-cover .wmText.pos-tr,
+#card.tpl-cover .wmText.pos-tl { top: 52px; }
+
+/* Photo strip for cover optional */
+#card .photoStrip {
+  height: 120px; background-size: cover; background-position: center;
+  background-repeat: no-repeat; background-color: #0a0a0e; flex: none;
+  position: relative;
+}
+#card .photoStrip.fit-contain { background-size: contain; }
+#card .photoStrip .scrim {
+  position: absolute; inset: 0;
+  background: linear-gradient(0deg, rgba(244,246,248,.4), transparent);
+}
+
+#right {
+  width: 300px; flex: none; background: var(--chrome-panel);
+  border-left: 1px solid var(--chrome-line); overflow-y: auto;
+}
+.sec { padding: 14px 16px; border-bottom: 1px solid var(--chrome-line); }
+.sec h3 {
+  margin: 0 0 10px; font-size: 11px; font-weight: 700;
+  color: var(--chrome-sub); letter-spacing: .06em; text-transform: uppercase;
+}
+.field { margin-bottom: 11px; }
+.field:last-child { margin-bottom: 0; }
+.field label { display: block; font-size: 11.5px; color: var(--chrome-sub); margin-bottom: 5px; }
+.field input[type=text], .field textarea, .field select, .field input[type=number] {
+  width: 100%; background: var(--chrome-input); border: 1px solid var(--chrome-line);
+  color: var(--chrome-text); border-radius: 6px; padding: 8px 10px;
+  font-size: 12.5px; font-family: inherit; resize: vertical;
+}
+.field textarea { min-height: 72px; line-height: 1.45; }
+.field input:focus, .field textarea:focus, .field select:focus {
+  outline: none; border-color: var(--accent);
+}
+.row2 { display: flex; gap: 8px; }
+.row2 .field { flex: 1; }
+.colorField {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--chrome-input); border: 1px solid var(--chrome-line);
+  border-radius: 6px; padding: 5px 9px;
+}
+.colorField input[type=color] {
+  width: 24px; height: 24px; border: none; background: none; padding: 0; cursor: pointer;
+}
+.colorField span { font-size: 11px; color: var(--chrome-sub); flex: 1; }
+.slider { display: flex; align-items: center; gap: 8px; }
+.slider input[type=range] { flex: 1; accent-color: var(--accent); }
+.slider .val { font-size: 11px; color: var(--chrome-sub); width: 28px; text-align: right; }
+.hint { font-size: 10.5px; color: var(--chrome-sub); margin-top: 5px; line-height: 1.45; }
+
+#undoRedoFloat {
+  position: fixed; right: 16px; bottom: 16px; z-index: 90;
+  display: flex; gap: 5px; padding: 5px; border-radius: 10px;
+  background: rgba(21,27,36,.8); border: 1px solid rgba(255,255,255,.08);
+  backdrop-filter: blur(10px);
+}
+#undoRedoFloat button {
+  width: 36px; height: 32px; border-radius: 7px;
+  background: rgba(255,255,255,.06); color: var(--chrome-text);
+  font-size: 14px; font-weight: 700;
+}
+#undoRedoFloat button:hover:not(:disabled) { background: var(--accent-soft); }
+#undoRedoFloat button:disabled { opacity: .3; cursor: default; }
+
+::-webkit-scrollbar { width: 7px; height: 7px; }
+::-webkit-scrollbar-thumb { background: #3a4a60; border-radius: 4px; }
+
+#mobileBar { display: none; gap: 6px; }
+@media (max-width: 960px) {
+  #left {
+    position: fixed; left: 0; top: 54px; bottom: 0; z-index: 80; width: min(260px, 80vw);
+    transform: translateX(-105%); transition: transform .2s;
+  }
+  #left.open { transform: translateX(0); }
+  #right {
+    position: fixed; right: 0; top: 54px; bottom: 0; z-index: 80; width: min(300px, 88vw);
+    transform: translateX(105%); transition: transform .2s;
+  }
+  #right.open { transform: translateX(0); }
+  #stage { padding: 16px; }
+  #mobileBar { display: flex !important; }
+}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body>
+<div id="app">
+  <div id="topbar">
+    <div class="brand">
+      <span class="mark"></span>
+      BRIEFING STUDIO
+      <span class="sub">OFFICIAL</span>
+    </div>
+    <div id="mobileBar">
+      <button type="button" class="btn ghost" id="mobileSlidesBtn">슬라이드</button>
+      <button type="button" class="btn ghost" id="mobilePanelBtn">패널</button>
+    </div>
+    <div class="actions">
+      <div class="menuWrap">
+        <button class="btn ghost" id="tplMenuBtn">템플릿 ▾</button>
+        <div class="dropdown" id="tplMenu">
+          <div class="ddItem active" data-tpl="cover">표지 · 기관 브리핑</div>
+          <div class="ddItem" data-tpl="facts">팩트시트 · 요지</div>
+          <div class="ddItem" data-tpl="schedule">조항 · 일정</div>
+          <div class="ddItem" data-tpl="quote">공식 발언</div>
+        </div>
+      </div>
+      <div class="menuWrap">
+        <button class="btn ghost" id="fontMenuBtn">글꼴 ▾</button>
+        <div class="dropdown panel" id="fontMenu">
+          <div class="field">
+            <label>기본 글꼴</label>
+            <select id="fontSelect">
+              <option value="pretendard">Pretendard</option>
+              <option value="ridibatang">리디바탕</option>
+              <option value="notoserif">Noto Serif KR</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>제목 글꼴</label>
+            <select id="titleFontSelect">
+              <option value="">기본과 동일</option>
+              <option value="pretendard">Pretendard</option>
+              <option value="ridibatang">리디바탕</option>
+              <option value="notoserif">Noto Serif KR</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>본문 글꼴</label>
+            <select id="bodyFontSelect">
+              <option value="">기본과 동일</option>
+              <option value="pretendard">Pretendard</option>
+              <option value="ridibatang">리디바탕</option>
+              <option value="notoserif">Noto Serif KR</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>제목 크기 <span id="titleSizeVal">24</span></label>
+            <div class="slider"><input type="range" id="titleSize" min="14" max="36" value="24"></div>
+          </div>
+          <div class="field">
+            <label>본문 크기 <span id="bodySizeVal">13</span></label>
+            <div class="slider"><input type="range" id="bodySize" min="11" max="18" value="13"></div>
+          </div>
+        </div>
+      </div>
+      <div class="menuWrap">
+        <button class="btn ghost" id="photoMenuBtn">사진 ▾</button>
+        <div class="dropdown panel" id="photoMenu">
+          <div class="field">
+            <label class="btn small full" id="uploadBtn" style="text-align:center;cursor:pointer;">사진 업로드</label>
+            <input type="file" id="imageUpload" accept="image/*" style="display:none;">
+          </div>
+          <div class="field">
+            <button class="btn ghost small full" id="imageRemove">사진 삭제</button>
+          </div>
+          <div class="field">
+            <label>채우기</label>
+            <select id="imageFit">
+              <option value="cover">전체 채우기</option>
+              <option value="contain">전체 보기</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>위치</label>
+            <select id="imagePos">
+              <option value="center">중앙</option>
+              <option value="top">상단</option>
+              <option value="bottom">하단</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>효과</label>
+            <select id="imageFilter">
+              <option value="none">없음</option>
+              <option value="gray">흑백</option>
+              <option value="sepia">세피아</option>
+              <option value="dark">어둡게</option>
+            </select>
+          </div>
+          <div class="hint">표지 템플릿에서 하단 사진 스트립으로 표시됩니다.</div>
+        </div>
+      </div>
+      <button class="btn ghost" id="exportOne">이 카드 저장</button>
+      <button class="btn primary" id="exportAll">전체 ZIP</button>
+    </div>
+  </div>
+
+  <div id="body">
+    <div id="left">
+      <div class="hd">Slides <span id="slideCount" style="opacity:.6;"></span></div>
+      <div id="slideList"></div>
+      <button id="addSlide">+ 카드 추가</button>
+    </div>
+    <div id="stage"><div id="canvasWrap"></div></div>
+    <div id="right">
+      <div class="sec">
+        <h3>기관 · 문서</h3>
+        <div class="field">
+          <label>기관명</label>
+          <input type="text" id="agency" value="관계 기관" placeholder="예: 산업통상자원부">
+        </div>
+        <div class="field">
+          <label>문서 유형</label>
+          <input type="text" id="docType" value="보도자료" placeholder="보도자료 / 팩트시트 / 공고">
+        </div>
+        <div class="field">
+          <label>제목</label>
+          <textarea id="titleText" style="min-height:56px;" placeholder="발표 제목"></textarea>
+        </div>
+        <div class="field">
+          <label>본문 · 요지 (줄바꿈 = 항목)</label>
+          <textarea id="bodyText" style="min-height:100px;" placeholder="핵심 요지를 한 줄씩 입력"></textarea>
+          <div class="hint">팩트시트·조항 템플릿에서는 줄마다 번호가 붙습니다.</div>
+        </div>
+        <div class="field">
+          <label>하이라이트 단어 (쉼표)</label>
+          <input type="text" id="highlight" placeholder="핵심,키워드">
+        </div>
+        <div class="field">
+          <label>발언자 (공식 발언 템플릿)</label>
+          <input type="text" id="speaker" placeholder="이름">
+        </div>
+        <div class="field">
+          <label>직함 · 소속</label>
+          <input type="text" id="speakerRole" placeholder="대변인 / 장관">
+        </div>
+      </div>
+      <div class="sec">
+        <h3>출처</h3>
+        <div class="field">
+          <label>출처 / 배포처</label>
+          <input type="text" id="source" value="공식 보도자료" placeholder="공식 보도자료">
+        </div>
+        <div class="field">
+          <label>출처 URL (선택)</label>
+          <input type="text" id="sourceUrl" placeholder="https://...">
+        </div>
+      </div>
+      <div class="sec">
+        <h3>시간</h3>
+        <div class="field">
+          <label>시간대</label>
+          <select id="timezone">
+            <option value="KST">한국 (KST)</option>
+            <option value="ET">미국 동부 (ET)</option>
+            <option value="PT">미국 서부 (PT)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>배포 · 발표 시각</label>
+          <input type="text" id="timestamp" placeholder="2026.08.22 10:00 KST">
+        </div>
+        <div class="field">
+          <button type="button" class="btn small full" id="nowTimeBtn">현재 시각 넣기</button>
+        </div>
+      </div>
+      <div class="sec">
+        <h3>워터마크 · 로고</h3>
+        <div class="field">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+            <div id="logoThumb" style="width:48px;height:48px;border-radius:6px;background:#1a222e;border:1px solid var(--chrome-line);background-size:contain;background-position:center;background-repeat:no-repeat;flex:none;"></div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:6px;">
+              <label class="btn small full" id="logoUploadBtn" style="text-align:center;cursor:pointer;">로고 업로드</label>
+              <input type="file" id="logoUpload" accept="image/*" style="display:none;">
+              <button type="button" class="btn ghost small full" id="logoRemove">삭제</button>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label>위치</label>
+          <select id="logoPos">
+            <option value="tr">우측 상단</option>
+            <option value="tl">좌측 상단</option>
+            <option value="br">우측 하단</option>
+            <option value="bl">좌측 하단</option>
+            <option value="center">중앙</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>크기 <span id="logoSizeVal">12</span>%</label>
+          <div class="slider"><input type="range" id="logoSize" min="6" max="28" value="12"></div>
+        </div>
+        <div class="field">
+          <label>투명도 <span id="logoOpacityVal">75</span>%</label>
+          <div class="slider"><input type="range" id="logoOpacity" min="20" max="100" value="75"></div>
+        </div>
+        <div class="field">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+            <input type="checkbox" id="logoBg" style="width:auto;"> 흰 배경 박스
+          </label>
+        </div>
+        <div class="field">
+          <label>적용 범위</label>
+          <select id="logoScope">
+            <option value="one">현재 카드만</option>
+            <option value="all">모든 카드</option>
+          </select>
+        </div>
+        <div style="border-top:1px solid var(--chrome-line);margin:12px 0 10px;"></div>
+        <div class="field">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+            <input type="checkbox" id="wmTextOn" style="width:auto;"> 텍스트 워터마크
+          </label>
+        </div>
+        <div class="field">
+          <label>문구</label>
+          <input type="text" id="wmText" value="요약 · 비공식" placeholder="요약 · 비공식">
+        </div>
+        <div class="field">
+          <label>위치</label>
+          <select id="wmTextPos">
+            <option value="br">우측 하단</option>
+            <option value="bl">좌측 하단</option>
+            <option value="tr">우측 상단</option>
+            <option value="tl">좌측 상단</option>
+            <option value="center">중앙 대각선</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>글자 크기 <span id="wmTextSizeVal">10</span>px</label>
+          <div class="slider"><input type="range" id="wmTextSize" min="8" max="22" value="10"></div>
+        </div>
+        <div class="field">
+          <label>투명도 <span id="wmTextOpacityVal">40</span>%</label>
+          <div class="slider"><input type="range" id="wmTextOpacity" min="15" max="80" value="40"></div>
+        </div>
+        <div class="field">
+          <label>글자색</label>
+          <div class="colorField"><input type="color" id="wmTextColor" value="#1b3a5f"><span id="wmTextColorHex">#1b3a5f</span></div>
+        </div>
+      </div>
+      <div class="sec">
+        <h3>색상</h3>
+        <div class="row2">
+          <div class="field">
+            <label>기관색 (네이비)</label>
+            <div class="colorField"><input type="color" id="accentColor" value="#1b3a5f"><span id="accentHex">#1b3a5f</span></div>
+          </div>
+          <div class="field">
+            <label>하이라이트</label>
+            <div class="colorField"><input type="color" id="mkColor" value="#c5daf5"><span id="mkHex">#c5daf5</span></div>
+          </div>
+        </div>
+        <div class="hint">네이비·쿨그레이·백지가 공문서·팩트시트 톤에 맞습니다.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="undoRedoFloat">
+  <button type="button" id="undoBtn" title="실행 취소">↶</button>
+  <button type="button" id="redoBtn" title="다시 실행">↷</button>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const FONTS = {
+  pretendard: "'Pretendard Variable', sans-serif",
+  ridibatang: "'RidiBatang', 'Noto Serif KR', serif",
+  notoserif: "'Noto Serif KR', serif"
+};
+const TPL_LABEL = {
+  cover: 'COVER',
+  facts: 'FACTS',
+  schedule: 'CLAUSE',
+  quote: 'QUOTE'
+};
+
+function fontCss(key) { return FONTS[key] || FONTS.pretendard; }
+
+function formatTimeInZone(date, zone) {
+  const map = { KST: 'Asia/Seoul', ET: 'America/New_York', PT: 'America/Los_Angeles' };
+  const tz = map[zone] || map.KST;
+  try {
+    const parts = new Intl.DateTimeFormat('en-CA', {
+      timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', hour12: false
+    }).formatToParts(date);
+    const get = t => (parts.find(p => p.type === t) || {}).value || '';
+    return get('year') + '.' + get('month') + '.' + get('day') + ' ' + get('hour') + ':' + get('minute') + ' ' + zone;
+  } catch (e) {
+    const offset = zone === 'ET' ? -5 : zone === 'PT' ? -8 : 9;
+    const d = new Date(date.getTime() + offset * 3600000);
+    return d.getUTCFullYear() + '.' +
+      String(d.getUTCMonth()+1).padStart(2,'0') + '.' +
+      String(d.getUTCDate()).padStart(2,'0') + ' ' +
+      String(d.getUTCHours()).padStart(2,'0') + ':' +
+      String(d.getUTCMinutes()).padStart(2,'0') + ' ' + zone;
+  }
+}
+
+function defaults() {
+  const zone = 'KST';
+  return {
+    template: 'cover',
+    agency: '관계 기관',
+    docType: '보도자료',
+    title: '공식 발표 제목을 입력하세요',
+    body: '핵심 요지 첫 번째\n핵심 요지 두 번째\n핵심 요지 세 번째',
+    highlight: '',
+    speaker: '',
+    speakerRole: '',
+    source: '공식 보도자료',
+    sourceUrl: '',
+    timezone: zone,
+    timestamp: formatTimeInZone(new Date(), zone),
+    font: 'pretendard',
+    titleFont: '',
+    bodyFont: '',
+    titleSize: 24,
+    bodySize: 13,
+    accent: '#1b3a5f',
+    mk: '#c5daf5',
+    image: null,
+    imageFit: 'cover',
+    imagePos: 'center',
+    imageFilter: 'none',
+    logo: null,
+    logoPos: 'tr',
+    logoSize: 12,
+    logoOpacity: 75,
+    logoBg: false,
+    wmTextOn: false,
+    wmText: '요약 · 비공식',
+    wmTextPos: 'br',
+    wmTextSize: 10,
+    wmTextOpacity: 40,
+    wmTextColor: '#1b3a5f'
+  };
+}
+
+let slides = [defaults()];
+let active = 0;
+
+function applyHighlight(text, words, mk) {
+  if (!text) return '';
+  let html = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+  if (!words || !words.trim()) return html;
+  words.split(',').map(w => w.trim()).filter(Boolean).forEach(w => {
+    const re = new RegExp('(' + w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
+    html = html.replace(re, '<mark style="background:' + mk + '">$1</mark>');
+  });
+  return html;
+}
+
+function linesOf(body) {
+  return String(body || '').split('\n').map(l => l.trim()).filter(Boolean);
+}
+
+function filterStyle(s) {
+  const f = s.imageFilter || 'none';
+  if (f === 'gray') return 'grayscale(1)';
+  if (f === 'sepia') return 'sepia(.65)';
+  if (f === 'dark') return 'brightness(.75)';
+  return 'none';
+}
+function bgPos(s) {
+  const p = s.imagePos || 'center';
+  return p === 'top' ? 'center top' : p === 'bottom' ? 'center bottom' : 'center center';
+}
+
+function logoHtml(s) {
+  let html = '';
+  if (s.logo) {
+    const pos = s.logoPos || 'tr';
+    const size = s.logoSize != null ? s.logoSize : 12;
+    const op = (s.logoOpacity != null ? s.logoOpacity : 75) / 100;
+    const bg = s.logoBg ? ' logoBg' : '';
+    html += '<img class="logoMark pos-' + pos + bg + '" src="' + s.logo + '" alt="" style="width:' + size + '%;opacity:' + op + ';" />';
+  }
+  if (s.wmTextOn && s.wmText && String(s.wmText).trim()) {
+    const pos = s.wmTextPos || 'br';
+    const size = s.wmTextSize != null ? s.wmTextSize : 10;
+    const op = (s.wmTextOpacity != null ? s.wmTextOpacity : 40) / 100;
+    const col = s.wmTextColor || '#1b3a5f';
+    const safe = String(s.wmText).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    html += '<div class="wmText pos-' + pos + '" style="font-size:' + size + 'px;opacity:' + op + ';color:' + col + ';">' + safe + '</div>';
+  }
+  return html;
+}
+
+function cardMarkup(s) {
+  const titleFont = fontCss(s.titleFont || s.font);
+  const bodyFont = fontCss(s.bodyFont || s.font);
+  const baseFont = fontCss(s.font);
+  const accent = s.accent || '#1b3a5f';
+  const mk = s.mk || '#c5daf5';
+  const titleHtml = applyHighlight(s.title, s.highlight, mk);
+  const titleStyle = 'font-family:' + titleFont + ';font-size:' + (s.titleSize || 24) + 'px;';
+  const bodyStyle = 'font-family:' + bodyFont + ';font-size:' + (s.bodySize || 13) + 'px;';
+  const lines = linesOf(s.body);
+
+  if (s.template === 'cover') {
+    const photo = s.image
+      ? '<div class="photoStrip' + (s.imageFit === 'contain' ? ' fit-contain' : '') + '" style="background-image:url(\'' + s.image + '\');background-position:' + bgPos(s) + ';filter:' + filterStyle(s) + ';"><div class="scrim"></div></div>'
+      : '';
+    return '<div id="card" class="tpl-cover" style="font-family:' + baseFont + ';--navy:' + accent + ';">' +
+      '<div class="headBar" style="background:linear-gradient(120deg,' + accent + ',' + accent + 'cc);">' +
+        '<span class="agency">' + (s.agency || '기관') + '</span>' +
+        '<span class="docType" style="background:rgba(255,255,255,.18);">' + (s.docType || '보도자료') + '</span>' +
+      '</div>' +
+      '<div class="bodyArea" style="border-left-color:' + accent + ';">' +
+        '<div class="titleText" style="' + titleStyle + '">' + titleHtml + '</div>' +
+        '<div class="navyRule" style="background:' + accent + ';"></div>' +
+        '<div class="bodyText" style="' + bodyStyle + '">' + applyHighlight(lines.slice(0, 4).join('\n'), s.highlight, mk) + '</div>' +
+      '</div>' +
+      photo +
+      '<div class="footer">' +
+        '<span class="sourceLine">' + (s.source || '') + '</span>' +
+        '<span class="timeLine">' + (s.timestamp || '') + '</span>' +
+      '</div>' + logoHtml(s) + '</div>';
+  }
+
+  if (s.template === 'facts') {
+    const items = lines.map((line, i) =>
+      '<div class="factItem"><div class="factNum" style="background:' + accent + ';">' + (i + 1) + '</div>' +
+      '<div class="factTxt" style="' + bodyStyle + '">' + applyHighlight(line, s.highlight, mk) + '</div></div>'
+    ).join('');
+    return '<div id="card" class="tpl-facts" style="font-family:' + baseFont + ';--navy:' + accent + ';">' +
+      '<div style="position:absolute;left:0;top:0;bottom:0;width:5px;background:' + accent + ';"></div>' +
+      '<div class="topRow">' +
+        '<span class="agency" style="color:' + accent + ';">' + (s.agency || '') + '</span>' +
+        '<span class="docType" style="background:' + accent + ';">' + (s.docType || '팩트시트') + '</span>' +
+      '</div>' +
+      '<div class="titleText" style="' + titleStyle + '">' + titleHtml + '</div>' +
+      '<div class="navyRule" style="background:' + accent + ';"></div>' +
+      '<div class="factList">' + (items || '<div class="bodyText" style="' + bodyStyle + '">요지를 입력하세요</div>') + '</div>' +
+      '<div class="footer">' +
+        '<span class="sourceLine">' + (s.source || '') + '</span>' +
+        '<span class="timeLine">' + (s.timestamp || '') + '</span>' +
+      '</div>' + logoHtml(s) + '</div>';
+  }
+
+  if (s.template === 'schedule') {
+    const clauses = lines.map((line, i) =>
+      '<div class="clause"><span class="clauseLabel" style="color:' + accent + ';">제' + (i + 1) + '항</span>' +
+      '<span style="' + bodyStyle + '">' + applyHighlight(line, s.highlight, mk) + '</span></div>'
+    ).join('');
+    return '<div id="card" class="tpl-schedule" style="--navy:' + accent + ';">' +
+      '<div class="topCenter">' +
+        '<div class="agency">' + (s.agency || '공식 문서') + '</div>' +
+        '<span class="docType">' + (s.docType || '공고') + '</span>' +
+      '</div>' +
+      '<div class="titleText" style="' + titleStyle + '">' + titleHtml + '</div>' +
+      '<div style="flex:1;">' + (clauses || '<div style="' + bodyStyle + '">조항을 입력하세요</div>') + '</div>' +
+      '<div class="footer">' +
+        '<span class="sourceLine">' + (s.source || '') + '</span>' +
+        '<span class="timeLine">' + (s.timestamp || '') + '</span>' +
+      '</div>' + logoHtml(s) + '</div>';
+  }
+
+  /* quote */
+  return '<div id="card" class="tpl-quote" style="font-family:' + baseFont + ';--navy:' + accent + ';">' +
+    '<div class="topRow">' +
+      '<span class="agency" style="color:' + accent + ';">' + (s.agency || '') + '</span>' +
+      '<span class="docType" style="background:' + accent + ';">' + (s.docType || '공식 발언') + '</span>' +
+    '</div>' +
+    '<div class="quoteBox" style="border-left-color:' + accent + ';">' +
+      '<div class="qMark" style="color:' + accent + ';">“</div>' +
+      '<div class="titleText" style="' + titleStyle + '">' + titleHtml + '</div>' +
+      (s.body ? '<div class="bodyText" style="' + bodyStyle + 'margin-top:10px;">' + applyHighlight(s.body, s.highlight, mk) + '</div>' : '') +
+      ((s.speaker || s.speakerRole) ? '<div class="speaker" style="color:' + accent + ';">— ' + (s.speaker || '') +
+        (s.speakerRole ? '<span>' + s.speakerRole + '</span>' : '') + '</div>' : '') +
+    '</div>' +
+    '<div class="footer">' +
+      '<span class="sourceLine">' + (s.source || '') + '</span>' +
+      '<span class="timeLine">' + (s.timestamp || '') + '</span>' +
+    '</div>' + logoHtml(s) + '</div>';
+}
+
+const fullCss = document.querySelector('style').textContent;
+const fontLinks = Array.from(document.querySelectorAll('link[rel="stylesheet"]')).map(l => l.outerHTML).join('');
+
+function renderMain() {
+  $('canvasWrap').innerHTML = cardMarkup(slides[active]);
+}
+function thumbSrcDoc(s) {
+  return '<!DOCTYPE html><html><head>' + fontLinks + '<style>' + fullCss + '</style></head><body style="margin:0;">' +
+    cardMarkup(s) + '</body></html>';
+}
+function renderList() {
+  const list = $('slideList');
+  list.innerHTML = '';
+  slides.forEach((s, i) => {
+    const div = document.createElement('div');
+    div.className = 'thumb' + (i === active ? ' active' : '');
+    const iframe = document.createElement('iframe');
+    iframe.srcdoc = thumbSrcDoc(s);
+    div.appendChild(iframe);
+    const idx = document.createElement('div');
+    idx.className = 'idx'; idx.textContent = i + 1;
+    div.appendChild(idx);
+    const tag = document.createElement('div');
+    tag.className = 'tag'; tag.textContent = TPL_LABEL[s.template] || s.template;
+    div.appendChild(tag);
+    const del = document.createElement('div');
+    del.className = 'del'; del.textContent = '✕';
+    del.onclick = e => { e.stopPropagation(); if (slides.length === 1) return; slides.splice(i, 1); if (active >= slides.length) active = slides.length - 1; syncForm(); renderMain(); renderList(); };
+    div.appendChild(del);
+    div.onclick = () => { active = i; syncForm(); renderMain(); renderList(); };
+    list.appendChild(div);
+  });
+  $('slideCount').textContent = '(' + slides.length + ')';
+}
+
+function syncForm() {
+  const s = slides[active];
+  $('agency').value = s.agency || '';
+  $('docType').value = s.docType || '';
+  $('titleText').value = s.title || '';
+  $('bodyText').value = s.body || '';
+  $('highlight').value = s.highlight || '';
+  $('speaker').value = s.speaker || '';
+  $('speakerRole').value = s.speakerRole || '';
+  $('source').value = s.source || '';
+  if ($('sourceUrl')) $('sourceUrl').value = s.sourceUrl || '';
+  $('timestamp').value = s.timestamp || '';
+  if ($('timezone')) $('timezone').value = s.timezone || 'KST';
+  $('fontSelect').value = s.font || 'pretendard';
+  $('titleFontSelect').value = s.titleFont || '';
+  $('bodyFontSelect').value = s.bodyFont || '';
+  $('titleSize').value = s.titleSize || 24;
+  $('titleSizeVal').textContent = s.titleSize || 24;
+  $('bodySize').value = s.bodySize || 13;
+  $('bodySizeVal').textContent = s.bodySize || 13;
+  $('accentColor').value = s.accent || '#1b3a5f';
+  $('accentHex').textContent = s.accent || '#1b3a5f';
+  $('mkColor').value = s.mk || '#c5daf5';
+  $('mkHex').textContent = s.mk || '#c5daf5';
+  if ($('imageFit')) $('imageFit').value = s.imageFit || 'cover';
+  if ($('imagePos')) $('imagePos').value = s.imagePos || 'center';
+  if ($('imageFilter')) $('imageFilter').value = s.imageFilter || 'none';
+  if ($('logoPos')) $('logoPos').value = s.logoPos || 'tr';
+  if ($('logoSize')) { $('logoSize').value = s.logoSize != null ? s.logoSize : 12; $('logoSizeVal').textContent = s.logoSize != null ? s.logoSize : 12; }
+  if ($('logoOpacity')) { $('logoOpacity').value = s.logoOpacity != null ? s.logoOpacity : 75; $('logoOpacityVal').textContent = s.logoOpacity != null ? s.logoOpacity : 75; }
+  if ($('logoBg')) $('logoBg').checked = !!s.logoBg;
+  if ($('logoThumb')) $('logoThumb').style.backgroundImage = s.logo ? "url('" + s.logo + "')" : 'none';
+  if ($('wmTextOn')) $('wmTextOn').checked = !!s.wmTextOn;
+  if ($('wmText')) $('wmText').value = s.wmText || '';
+  if ($('wmTextPos')) $('wmTextPos').value = s.wmTextPos || 'br';
+  if ($('wmTextSize')) { $('wmTextSize').value = s.wmTextSize != null ? s.wmTextSize : 10; $('wmTextSizeVal').textContent = s.wmTextSize != null ? s.wmTextSize : 10; }
+  if ($('wmTextOpacity')) { $('wmTextOpacity').value = s.wmTextOpacity != null ? s.wmTextOpacity : 40; $('wmTextOpacityVal').textContent = s.wmTextOpacity != null ? s.wmTextOpacity : 40; }
+  if ($('wmTextColor')) { $('wmTextColor').value = s.wmTextColor || '#1b3a5f'; if ($('wmTextColorHex')) $('wmTextColorHex').textContent = s.wmTextColor || '#1b3a5f'; }
+  Array.from(document.querySelectorAll('#tplMenu .ddItem')).forEach(el => {
+    el.classList.toggle('active', el.dataset.tpl === s.template);
+  });
+}
+
+function bind(id, prop) {
+  const el = $(id);
+  if (!el) return;
+  el.addEventListener('input', e => {
+    slides[active][prop] = e.target.value;
+    renderMain(); renderList();
+  });
+}
+['agency','docType','titleText','bodyText','highlight','speaker','speakerRole','source','sourceUrl','timestamp'].forEach(id => {
+  const map = { titleText: 'title', bodyText: 'body' };
+  bind(id, map[id] || id);
+});
+
+$('fontSelect').addEventListener('change', e => { slides[active].font = e.target.value; renderMain(); renderList(); });
+$('titleFontSelect').addEventListener('change', e => { slides[active].titleFont = e.target.value; renderMain(); renderList(); });
+$('bodyFontSelect').addEventListener('change', e => { slides[active].bodyFont = e.target.value; renderMain(); renderList(); });
+$('titleSize').addEventListener('input', e => { slides[active].titleSize = +e.target.value; $('titleSizeVal').textContent = e.target.value; renderMain(); renderList(); });
+$('bodySize').addEventListener('input', e => { slides[active].bodySize = +e.target.value; $('bodySizeVal').textContent = e.target.value; renderMain(); renderList(); });
+$('accentColor').addEventListener('input', e => { slides[active].accent = e.target.value; $('accentHex').textContent = e.target.value; renderMain(); renderList(); });
+$('mkColor').addEventListener('input', e => { slides[active].mk = e.target.value; $('mkHex').textContent = e.target.value; renderMain(); renderList(); });
+
+if ($('imageFit')) $('imageFit').addEventListener('change', e => { slides[active].imageFit = e.target.value; renderMain(); renderList(); });
+if ($('imagePos')) $('imagePos').addEventListener('change', e => { slides[active].imagePos = e.target.value; renderMain(); renderList(); });
+if ($('imageFilter')) $('imageFilter').addEventListener('change', e => { slides[active].imageFilter = e.target.value; renderMain(); renderList(); });
+if ($('timezone')) $('timezone').addEventListener('change', e => { slides[active].timezone = e.target.value; });
+if ($('nowTimeBtn')) $('nowTimeBtn').addEventListener('click', () => {
+  const zone = ($('timezone') && $('timezone').value) || 'KST';
+  slides[active].timezone = zone;
+  slides[active].timestamp = formatTimeInZone(new Date(), zone);
+  $('timestamp').value = slides[active].timestamp;
+  renderMain(); renderList();
+});
+
+function applyLogoProp(prop, value) {
+  const scope = ($('logoScope') && $('logoScope').value) || 'one';
+  if (scope === 'all') slides.forEach(sl => { sl[prop] = value; });
+  else slides[active][prop] = value;
+  renderMain(); renderList();
+}
+if ($('logoUploadBtn')) $('logoUploadBtn').addEventListener('click', () => $('logoUpload') && $('logoUpload').click());
+if ($('logoUpload')) $('logoUpload').addEventListener('change', e => {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = new Image();
+    img.onload = () => {
+      const scale = Math.min(1, 400 / img.width);
+      const c = document.createElement('canvas');
+      c.width = img.width * scale; c.height = img.height * scale;
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      applyLogoProp('logo', c.toDataURL('image/png'));
+      if ($('logoThumb')) $('logoThumb').style.backgroundImage = "url('" + slides[active].logo + "')";
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+  e.target.value = '';
+});
+if ($('logoRemove')) $('logoRemove').addEventListener('click', () => {
+  applyLogoProp('logo', null);
+  if ($('logoThumb')) $('logoThumb').style.backgroundImage = 'none';
+});
+if ($('logoPos')) $('logoPos').addEventListener('change', e => applyLogoProp('logoPos', e.target.value));
+if ($('logoSize')) $('logoSize').addEventListener('input', e => { $('logoSizeVal').textContent = e.target.value; applyLogoProp('logoSize', +e.target.value); });
+if ($('logoOpacity')) $('logoOpacity').addEventListener('input', e => { $('logoOpacityVal').textContent = e.target.value; applyLogoProp('logoOpacity', +e.target.value); });
+if ($('logoBg')) $('logoBg').addEventListener('change', e => applyLogoProp('logoBg', e.target.checked));
+if ($('wmTextOn')) $('wmTextOn').addEventListener('change', e => applyLogoProp('wmTextOn', e.target.checked));
+if ($('wmText')) $('wmText').addEventListener('input', e => applyLogoProp('wmText', e.target.value));
+if ($('wmTextPos')) $('wmTextPos').addEventListener('change', e => applyLogoProp('wmTextPos', e.target.value));
+if ($('wmTextSize')) $('wmTextSize').addEventListener('input', e => { $('wmTextSizeVal').textContent = e.target.value; applyLogoProp('wmTextSize', +e.target.value); });
+if ($('wmTextOpacity')) $('wmTextOpacity').addEventListener('input', e => { $('wmTextOpacityVal').textContent = e.target.value; applyLogoProp('wmTextOpacity', +e.target.value); });
+if ($('wmTextColor')) $('wmTextColor').addEventListener('input', e => { if ($('wmTextColorHex')) $('wmTextColorHex').textContent = e.target.value; applyLogoProp('wmTextColor', e.target.value); });
+
+Array.from(document.querySelectorAll('#tplMenu .ddItem')).forEach(item => {
+  item.addEventListener('click', () => {
+    slides[active].template = item.dataset.tpl;
+    syncForm(); renderMain(); renderList();
+    closeMenus();
+  });
+});
+
+function closeMenus() {
+  Array.from(document.querySelectorAll('.dropdown')).forEach(d => d.classList.remove('open'));
+}
+function bindMenu(btnId, ddId) {
+  $(btnId).addEventListener('click', e => {
+    e.stopPropagation();
+    const dd = $(ddId);
+    const open = dd.classList.contains('open');
+    closeMenus();
+    if (!open) dd.classList.add('open');
+  });
+}
+bindMenu('tplMenuBtn', 'tplMenu');
+bindMenu('fontMenuBtn', 'fontMenu');
+bindMenu('photoMenuBtn', 'photoMenu');
+document.addEventListener('click', e => {
+  if (e.target && e.target.closest && e.target.closest('.menuWrap')) return;
+  closeMenus();
+});
+Array.from(document.querySelectorAll('.dropdown')).forEach(dd => {
+  dd.addEventListener('click', e => e.stopPropagation());
+  dd.addEventListener('mousedown', e => e.stopPropagation());
+});
+
+$('addSlide').addEventListener('click', () => {
+  const next = JSON.parse(JSON.stringify(slides[active]));
+  slides.splice(active + 1, 0, next);
+  active = active + 1;
+  syncForm(); renderMain(); renderList();
+});
+
+$('uploadBtn').addEventListener('click', () => $('imageUpload').click());
+$('imageUpload').addEventListener('change', e => {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = new Image();
+    img.onload = () => {
+      const scale = Math.min(1, 1200 / img.width);
+      const c = document.createElement('canvas');
+      c.width = img.width * scale; c.height = img.height * scale;
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      slides[active].image = c.toDataURL('image/jpeg', 0.88);
+      renderMain(); renderList();
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+  e.target.value = '';
+});
+$('imageRemove').addEventListener('click', () => {
+  slides[active].image = null;
+  renderMain(); renderList();
+});
+
+async function captureBlob(node) {
+  const canvas = await html2canvas(node, { backgroundColor: null, scale: 2, useCORS: true, logging: false, allowTaint: true });
+  return new Promise(r => canvas.toBlob(b => r(b), 'image/png', 0.95));
+}
+function downloadBlob(blob, name) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = name;
+  document.body.appendChild(a); a.click();
+  setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 800);
+}
+$('exportOne').addEventListener('click', async () => {
+  try {
+    const blob = await captureBlob($('canvasWrap'));
+    if (blob) downloadBlob(blob, 'briefing_' + (active + 1) + '.png');
+  } catch (e) { alert('저장 실패'); }
+});
+$('exportAll').addEventListener('click', async () => {
+  const orig = active;
+  try {
+    const zip = new JSZip();
+    for (let i = 0; i < slides.length; i++) {
+      active = i; renderMain();
+      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+      const blob = await captureBlob($('canvasWrap'));
+      if (blob) zip.file('briefing_' + (i + 1) + '.png', blob);
+    }
+    downloadBlob(await zip.generateAsync({ type: 'blob' }), 'briefing_cards.zip');
+  } catch (e) { alert('ZIP 저장 실패'); }
+  active = orig; renderMain(); renderList();
+});
+
+/* Undo */
+let history = [], histIdx = -1, applying = false, histTimer = null;
+function pushHist() {
+  if (applying) return;
+  const snap = JSON.stringify({ slides, active });
+  if (histIdx >= 0 && history[histIdx] === snap) return;
+  history = history.slice(0, histIdx + 1);
+  history.push(snap);
+  if (history.length > 40) history.shift();
+  histIdx = history.length - 1;
+  updateUndo();
+}
+function scheduleHist() {
+  if (applying) return;
+  clearTimeout(histTimer);
+  histTimer = setTimeout(pushHist, 300);
+}
+function restore(idx) {
+  if (idx < 0 || idx >= history.length) return;
+  applying = true;
+  try {
+    const data = JSON.parse(history[idx]);
+    slides = data.slides; active = data.active; histIdx = idx;
+    syncForm(); renderMain(); renderList(); updateUndo();
+  } finally { applying = false; }
+}
+function updateUndo() {
+  $('undoBtn').disabled = histIdx <= 0;
+  $('redoBtn').disabled = histIdx >= history.length - 1;
+}
+$('undoBtn').addEventListener('click', () => { if (histIdx > 0) restore(histIdx - 1); });
+$('redoBtn').addEventListener('click', () => { if (histIdx < history.length - 1) restore(histIdx + 1); });
+document.addEventListener('keydown', e => {
+  if (!(e.ctrlKey || e.metaKey)) return;
+  const k = e.key.toLowerCase();
+  if (k === 'z' && !e.shiftKey) { e.preventDefault(); if (histIdx > 0) restore(histIdx - 1); }
+  else if (k === 'y' || (k === 'z' && e.shiftKey)) { e.preventDefault(); if (histIdx < history.length - 1) restore(histIdx + 1); }
+});
+const _rm = renderMain;
+renderMain = function () { _rm(); if (!applying) scheduleHist(); };
+
+(function () {
+  const left = $('left'), right = $('right');
+  if ($('mobileSlidesBtn')) $('mobileSlidesBtn').addEventListener('click', e => {
+    e.stopPropagation(); right.classList.remove('open'); left.classList.toggle('open');
+  });
+  if ($('mobilePanelBtn')) $('mobilePanelBtn').addEventListener('click', e => {
+    e.stopPropagation(); left.classList.remove('open'); right.classList.toggle('open');
+  });
+})();
+
+syncForm();
+renderMain();
+renderList();
+pushHist();
+updateUndo();
+</script>
+</body>
+</html>
