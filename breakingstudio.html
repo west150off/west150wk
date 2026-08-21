@@ -19,6 +19,7 @@ main{max-width:1320px;margin:auto;padding:12px 12px 110px;display:grid;grid-temp
 h2{font-size:13px;margin:0 0 10px}.row{display:flex;gap:7px;flex-wrap:wrap}.row>*{flex:1;min-width:90px}
 .field{margin:9px 0}.field label{display:flex;justify-content:space-between;color:#aaa;font-size:11px;margin-bottom:5px}
 .field input,.field textarea,.field select{width:100%;background:#0d0d0d;border:1px solid #383838;color:#fff;border-radius:9px;padding:10px;outline:0}.field textarea{min-height:78px;resize:vertical}
+.field input:disabled,.field select:disabled{opacity:.4;cursor:not-allowed}
 .templateGrid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.tpl{padding:10px;text-align:left;border:1px solid #353535;background:#101010;border-radius:10px}.tpl b{display:block;font:800 11px Inter;margin-bottom:3px}.tpl span{font-size:10px;color:#888}.tpl.active{border-color:var(--red);box-shadow:inset 0 0 0 1px var(--red)}
 .previewPanel{min-width:0}.previewWrap{display:flex;justify-content:center}
 .card{width:min(100%,520px);aspect-ratio:4/5;position:relative;overflow:hidden;background:#0b0b0b;box-shadow:0 18px 70px #000;border-radius:2px;color:#fff;touch-action:none}
@@ -245,6 +246,7 @@ function render(){
  $("bright").value=a.bright;$("contrast").value=a.contrast;$("sat").value=a.sat;$("rotate").value=a.rotate;$("contentY").value=a.contentY;$("pad").value=a.pad;$("logoSize").value=a.logoSize;$("designLock").checked=!!a.designLock;
  $("titleFont").value=a.titleFont||"default";$("bodyFont").value=a.bodyFont||"default";
  $("badgeText").value=a.badgeText||"";
+ ["titleSize","bodySize","metaSize","letter","line","weight","titleFont","bodyFont","bright","contrast","sat","rotate","contentY","pad","logoSize","logoInput"].forEach(id=>{$(id).disabled=!!a.designLock});
  $("titleSizeVal").textContent=a.titleSize+"px";$("bodySizeVal").textContent=a.bodySize+"px";$("metaSizeVal").textContent=a.metaSize+"px";$("letterVal").textContent=a.letter+"%";$("lineVal").textContent=a.line;$("brightVal").textContent=a.bright+"%";$("contrastVal").textContent=a.contrast+"%";$("satVal").textContent=a.sat+"%";$("rotateVal").textContent=a.rotate+"°";$("contentYVal").textContent=a.contentY+"%";$("padVal").textContent=a.pad+"%";$("logoSizeVal").textContent=a.logoSize+"%";
  $("tc").textContent=a.title.length+"자";$("bc").textContent=a.body.length+"자";
  $("zv").textContent=a.zoom+"%";$("xv").textContent=a.x+"%";$("yv").textContent=a.y+"%";$("sv").textContent=a.shade+"%";
@@ -313,7 +315,6 @@ function addUpdate(){
   const t=new Intl.DateTimeFormat("en-US",{hour:"2-digit",minute:"2-digit",hour12:false,timeZone:"Asia/Seoul"}).format(d);
   c().updates.push({time:t,text:""});
   c().template="update";
-  c().title=c().title||"BREAKING NEWS";
   render();
   setTimeout(()=>{
     const areas=$("updateList").querySelectorAll("textarea");
@@ -393,7 +394,7 @@ $("badgeText").addEventListener("input",()=>{snap();c().badgeText=$("badgeText")
 ["title","body","source","time"].forEach(id=>$(id).addEventListener("input",()=>{snap();c()[id]=$(id).value;render()}));
 ["zoom","px","py","shade"].forEach(id=>$(id).addEventListener("input",()=>{c().zoom=+$("zoom").value;c().x=+$("px").value;c().y=+$("py").value;c().shade=+$("shade").value;render()}));
 $("photoInput").addEventListener("change",e=>{let f=e.target.files[0];if(!f)return;snap();let r=new FileReader();r.onload=()=>{c().photo=r.result;render()};r.readAsDataURL(f)});
-function nowTime(){snap();let d=new Date();c().time=new Intl.DateTimeFormat("en-US",{month:"short",day:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit",hour12:false,timeZone:"Asia/Seoul"}).format(d).toUpperCase().replace(","," · ")+" KST";render()}
+function nowTime(){snap();let d=new Date();let dp=new Intl.DateTimeFormat("en-US",{month:"short",day:"2-digit",year:"numeric",timeZone:"Asia/Seoul"}).format(d).toUpperCase();let tp=new Intl.DateTimeFormat("en-US",{hour:"2-digit",minute:"2-digit",hour12:false,timeZone:"Asia/Seoul"}).format(d);c().time=`${dp} · ${tp} KST`;render()}
 function clearTime(){snap();c().time="";render()}
 function resetPhoto(){snap();c().zoom=100;c().x=0;c().y=0;render()}
 function removePhoto(){snap();c().photo=null;$("photoInput").value="";render()}
