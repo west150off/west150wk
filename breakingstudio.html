@@ -255,8 +255,6 @@ body.safeOn #card:after{content:"SAFE AREA";position:absolute;inset:6%;border:1p
 .topNav{position:sticky;top:0;z-index:1000;display:flex;align-items:center;gap:6px;overflow:visible;padding:7px 14px;background:rgba(8,8,8,.97);border-bottom:1px solid #292929;backdrop-filter:blur(14px)}
 .csMenuWrap{position:relative;flex:none}.csMenuBtn,.csTopBtn{border:1px solid #303030;background:#121212;color:#bdbdbd;border-radius:7px;padding:8px 11px;font:700 11px Inter,"Noto Sans KR",Arial;white-space:nowrap}.csMenuBtn:hover,.csTopBtn:hover{background:#1b1b1b;color:#fff;border-color:#444}.csTopBtn{font-weight:800}.csTopBtn.primary{background:var(--red);border-color:var(--red);color:#fff}.csTopBtn.ghost{background:transparent}.csTopSpacer{flex:1}.csDropdown{position:absolute;left:0;top:calc(100% + 7px);width:260px;max-height:68vh;overflow:auto;padding:7px;background:rgba(20,20,20,.99);border:1px solid #3a3a3a;border-radius:10px;box-shadow:0 18px 48px rgba(0,0,0,.52);display:none}.csDropdown.open{display:block}.csDropdown>button{display:block;width:100%;text-align:left;background:transparent;border:0;color:#ddd;padding:9px 10px;border-radius:6px;font:700 12px Inter,"Noto Sans KR",Arial}.csDropdown>button:hover,.csDropdown .menuTpl.active{background:#fff;color:#111}.csLabel{font-size:10px;color:#777;padding:8px 10px 5px;letter-spacing:.08em}.csSep{border-top:1px solid #2f2f2f;margin:6px 0}.menuTpl{display:flex;align-items:center;justify-content:space-between;width:100%;gap:8px;padding:8px 10px;background:transparent;border:0;color:#ddd;border-radius:6px;text-align:left;font:700 11px Inter,"Noto Sans KR",Arial}.menuTpl small{color:#777;font-weight:600}.menuTpl.active small{color:#666}.menuTpl:hover,.menuTpl.hovered{background:#242424!important;color:#fff!important}.menuTpl.hovered small{color:#bdbdbd}.csDropdown #menuTemplateList{display:none!important}.csDropdown .csLabel{display:none!important}@media(max-width:850px){.topNav{flex-wrap:wrap}.csTopSpacer{display:none}.csTopBtn{padding:7px 9px;font-size:10px}}
 
-/* FONT SIZE FIX: slider values apply 1:1 to live card. */
-#card .title,#card .body{font-size:inherit;}
 </style>
 </head>
 <body>
@@ -454,8 +452,8 @@ body.safeOn #card:after{content:"SAFE AREA";position:absolute;inset:6%;border:1p
       <div class="metaRight" id="metaRight"></div>
       <div class="content">
         <div class="badge" id="badge">BREAKING NEWS</div>
-        <div class="title" id="ptitle"></div>
-        <div class="body" id="pbody"></div>
+        <div class="title" id="ptitle">속보 제목을 입력하세요</div>
+        <div class="body" id="pbody">핵심 내용을 입력하면 이곳에 표시됩니다.</div>
         <div class="timeline" id="timeline"></div>
         <div class="source" id="psource"></div>
       </div>
@@ -544,7 +542,7 @@ function render(){
  $("titleSizeVal").textContent=a.titleSize+"px";$("bodySizeVal").textContent=a.bodySize+"px";$("metaSizeVal").textContent=a.metaSize+"px";$("letterVal").textContent=a.letter+"%";$("lineVal").textContent=a.line;$("brightVal").textContent=a.bright+"%";$("contrastVal").textContent=a.contrast+"%";$("satVal").textContent=a.sat+"%";$("rotateVal").textContent=a.rotate+"°";$("contentYVal").textContent=a.contentY+"%";$("padVal").textContent=a.pad+"%";$("logoSizeVal").textContent=a.logoSize+"%";
  $("tc").textContent=a.title.length+"자";$("bc").textContent=a.body.length+"자";
  $("zv").textContent=a.zoom+"%";$("xv").textContent=a.x+"%";$("yv").textContent=a.y+"%";$("sv").textContent=a.shade+"%";$("blurVal").textContent=(a.blur??16)+"px";
- let card=$("card");card.className="card "+a.template+(a.photo?" hasImage":"")+(a.photo&&a.imageFit==="contain"&&((a.blur??16)>0)?" image-contain-blur":"");card.style.setProperty("--accent-color",a.accent||"#b91522");if(a.photo&&a.imageFit==="contain"){card.style.setProperty("--blur-bg",`url("${a.photo}")`);card.style.setProperty("--blur-amount",`${a.blur??16}px`)}else{card.style.removeProperty("--blur-bg");card.style.removeProperty("--blur-amount")};$("img").style.objectFit=a.imageFit==="contain"?"contain":"cover";$("img").style.inset=a.imageFit==="contain"?"0":"-10%";$("img").style.width=a.imageFit==="contain"?"100%":"120%";$("img").style.height=a.imageFit==="contain"?"100%":"120%";$("img").style.background=a.imageFit==="contain"?(a.template==="clean"||a.template==="statement"?"#f1efe9":"#0b0b0b"):"";card.style.background="";
+ let card=$("card");card.style.setProperty("--title-size-live",`${a.titleSize}px`);card.style.setProperty("--body-size-live",`${a.bodySize}px`);card.className="card "+a.template+(a.photo?" hasImage":"")+(a.photo&&a.imageFit==="contain"&&((a.blur??16)>0)?" image-contain-blur":"");card.style.setProperty("--accent-color",a.accent||"#b91522");if(a.photo&&a.imageFit==="contain"){card.style.setProperty("--blur-bg",`url("${a.photo}")`);card.style.setProperty("--blur-amount",`${a.blur??16}px`)}else{card.style.removeProperty("--blur-bg");card.style.removeProperty("--blur-amount")};$("img").style.objectFit=a.imageFit==="contain"?"contain":"cover";$("img").style.inset=a.imageFit==="contain"?"0":"-10%";$("img").style.width=a.imageFit==="contain"?"100%":"120%";$("img").style.height=a.imageFit==="contain"?"100%":"120%";$("img").style.background=a.imageFit==="contain"?(a.template==="clean"||a.template==="statement"?"#f1efe9":"#0b0b0b"):"";card.style.background="";
  $("img").src=a.photo||"";
  $("img").style.transform=`translate(${a.x/2}%,${a.y/2}%) scale(${a.zoom/100}) rotate(${a.rotate}deg)`;
  $("img").style.filter=`brightness(${a.bright}%) contrast(${a.contrast}%) saturate(${a.sat}%) grayscale(${a.mono?100:0}%)`;
@@ -990,4 +988,14 @@ render();
 .card.editorial.hasImage .photo{filter:saturate(.86) contrast(1.04)!important}
 .card.statement.hasImage .photo{filter:saturate(.72) contrast(1.04)!important;mix-blend-mode:multiply}
 .card.clean.hasImage .photo{filter:saturate(.78) contrast(1.02)!important}
+</style>
+<style>
+/* ===== TEXT VISIBILITY + TYPOGRAPHY FIX ===== */
+#card .content{z-index:40 !important;visibility:visible !important;opacity:1 !important;}
+#card .content .badge,#card .content .title,#card .content .body,#card .content .timeline,#card .content .source{visibility:visible !important;opacity:1 !important;}
+#card .content .title{position:relative !important;display:block !important;z-index:60 !important;font-size:var(--title-size-live,68px) !important;color:var(--title-color-live,#fff) !important;}
+#card .content .body{position:relative !important;display:block !important;z-index:60 !important;font-size:var(--body-size-live,28px) !important;color:var(--body-color-live,#ddd) !important;}
+#card .content .badge,#card .content .source{position:relative !important;z-index:61 !important;}
+.card.statement .content .title,.card.clean .content .title{--title-color-live:#111;}
+.card.statement .content .body,.card.clean .content .body{--body-color-live:#3f3c37;}
 </style>
