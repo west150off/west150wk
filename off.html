@@ -135,207 +135,299 @@ button { font-family: inherit; cursor: pointer; border: none; }
 }
 #canvasWrap { box-shadow: 0 28px 60px -18px #000c; border-radius: 2px; }
 
-/* ===== Card ===== */
+/* ===== Card — MAX Magazine Art Direction ===== */
 #card {
   width: 400px; height: 500px; position: relative; overflow: hidden;
   display: flex; flex-direction: column;
-  background: #f4f6f8; color: #15202b;
+  background: #0a0a0a; color: #f3ecd9;
   font-family: 'Pretendard Variable', sans-serif;
 }
 #card .agency {
-  font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase;
+  font-size: 9.5px; font-weight: 700; letter-spacing: .28em; text-transform: uppercase;
+  color: #c9a44c;
 }
 #card .docType {
-  display: inline-block; font-size: 10px; font-weight: 800; letter-spacing: .08em;
-  padding: 3px 10px; border-radius: 2px; background: var(--navy); color: #fff;
+  display: inline-block; font-size: 9px; font-weight: 600; letter-spacing: .18em;
+  text-transform: uppercase; color: #9a8b6a; background: none; border: none; border-radius: 0; padding: 0;
 }
 #card .titleText {
-  font-weight: 900; letter-spacing: -.015em; line-height: 1.28;
-  white-space: pre-wrap; word-break: keep-all;
+  font-family: 'Noto Serif KR', 'RidiBatang', serif;
+  font-weight: 900; letter-spacing: -.03em; line-height: 1.12;
+  white-space: pre-wrap; word-break: keep-all; color: #f5ecd8;
 }
 #card .bodyText {
-  font-weight: 500; line-height: 1.65; opacity: .92;
+  font-weight: 400; line-height: 1.75; color: #b7ad96;
   white-space: pre-wrap; word-break: keep-all;
 }
-#card .sourceLine { font-size: 11px; opacity: .55; letter-spacing: .02em; }
+#card .sourceLine { font-size: 10px; color: #7a6e55; letter-spacing: .06em; font-weight: 500; }
 #card .timeLine {
-  font-size: 10px; opacity: .45; letter-spacing: .04em;
-  font-variant-numeric: tabular-nums; font-family: 'Courier New', monospace;
+  font-size: 10px; color: #5e5645; letter-spacing: .05em;
+  font-variant-numeric: tabular-nums;
 }
 #card .navyRule {
-  width: 40px; height: 3px; background: var(--navy); margin: 12px 0; border-radius: 1px;
+  width: 28px; height: 1px; background: #c9a44c; margin: 18px 0 20px;
 }
 #card mark {
-  background: var(--mk, #c5daf5); color: #15202b; padding: 0 3px;
+  background: var(--mk, #c9a44c); color: #0a0a0a; padding: 0 2px;
   box-decoration-break: clone; -webkit-box-decoration-break: clone;
 }
 #card .factItem {
-  display: flex; gap: 10px; align-items: flex-start; margin-bottom: 10px;
+  display: grid; grid-template-columns: 32px 1fr; gap: 14px;
+  align-items: start; margin: 0; padding: 13px 0;
+  border-bottom: 1px solid rgba(255,255,255,.06);
 }
-#card .factItem:last-child { margin-bottom: 0; }
+#card .factItem:last-child { border-bottom: none; }
 #card .factNum {
-  flex: none; width: 20px; height: 20px; border-radius: 3px;
-  background: var(--navy); color: #fff; font-size: 11px; font-weight: 800;
-  display: flex; align-items: center; justify-content: center;
+  font-family: 'Noto Serif KR', serif;
+  font-size: 15px; font-weight: 700; color: #c9a44c;
+  letter-spacing: 0; line-height: 1.3;
+  background: none; border: none; width: auto; height: auto; border-radius: 0;
+  display: block; min-width: 0; padding: 0;
 }
-#card .factTxt { flex: 1; min-width: 0; font-size: inherit; line-height: 1.5; word-break: keep-all; }
+#card .factTxt {
+  font-size: inherit; line-height: 1.55; word-break: keep-all; color: #e4dcc8;
+  padding-top: 2px;
+}
 
-/* Cover */
+/* ========== COVER : full editorial feature ========== */
 #card.tpl-cover {
-  background: #f4f6f8; padding: 0; color: #15202b;
+  background: #0a0a0a; padding: 0; color: #f3ecd9;
+}
+#card.tpl-cover .photoStrip {
+  position: absolute; inset: 0; height: auto; z-index: 0; opacity: 1;
+  margin: 0; border-radius: 0;
+}
+#card.tpl-cover .photoStrip .scrim {
+  background:
+    linear-gradient(180deg, rgba(10,10,10,.55) 0%, rgba(10,10,10,.2) 28%, rgba(10,10,10,.45) 55%, rgba(10,10,10,.92) 78%, #0a0a0a 100%);
+}
+#card.tpl-cover .coverFrame {
+  position: absolute; inset: 16px; border: 1px solid rgba(201,164,76,.28);
+  pointer-events: none; z-index: 2;
 }
 #card.tpl-cover .headBar {
-  background: linear-gradient(120deg, #1b3a5f, #234b78);
-  color: #fff; padding: 14px 24px;
+  position: relative; z-index: 3;
+  padding: 28px 36px 0;
   display: flex; justify-content: space-between; align-items: center;
-  box-shadow: 0 4px 12px #1b3a5f33;
+  background: transparent; box-shadow: none;
 }
-#card.tpl-cover .headBar .agency { color: #fff; display: flex; align-items: center; gap: 7px; }
-#card.tpl-cover .headBar .agency::before {
-  content: ""; width: 7px; height: 7px; border-radius: 50%; background: #7dc4ff; flex: none;
+#card.tpl-cover .headBar .agency {
+  color: #c9a44c; letter-spacing: .28em; font-size: 9.5px;
+}
+#card.tpl-cover .headBar .agency::before { display: none; content: none; }
+#card.tpl-cover .headBar .docType {
+  color: rgba(243,236,217,.55); letter-spacing: .2em; font-size: 9px;
 }
 #card.tpl-cover .bodyArea {
-  flex: 1; padding: 24px 26px 20px; display: flex; flex-direction: column;
-  border-left: 4px solid #1b3a5f; margin: 16px 18px 0; background: #fff;
-  border-radius: 0 4px 4px 0; box-shadow: 0 6px 20px #1b3a5f12;
+  position: relative; z-index: 3;
+  flex: 1; display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 0 36px 22px; margin: 0; border: none; background: transparent;
+  box-shadow: none; border-radius: 0;
 }
-#card.tpl-cover .titleText { font-size: 24px; }
+#card.tpl-cover .kickerLine {
+  font-size: 10px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase;
+  color: #c9a44c; margin-bottom: 12px;
+}
+#card.tpl-cover .titleText {
+  font-size: 32px; line-height: 1.1; color: #fffef8;
+  text-shadow: 0 2px 24px rgba(0,0,0,.35);
+}
+#card.tpl-cover .bodyText {
+  margin-top: 14px; font-size: 13px; color: rgba(230,220,200,.78);
+  max-width: 92%; line-height: 1.65;
+}
 #card.tpl-cover .footer {
-  padding: 12px 26px 16px; display: flex; justify-content: space-between; align-items: center;
-  border-top: 1px solid #c5ced8; margin-top: 12px;
+  position: relative; z-index: 3;
+  padding: 14px 36px 28px;
+  display: flex; justify-content: space-between; align-items: center;
+  border-top: none; margin: 0;
 }
+#card.tpl-cover .footer::before {
+  content: ""; position: absolute; left: 36px; right: 36px; top: 0;
+  height: 1px; background: linear-gradient(90deg, #c9a44c, rgba(201,164,76,.15));
+}
+#card.tpl-cover .footer .sourceLine { color: rgba(201,164,76,.75); }
+#card.tpl-cover .footer .timeLine { color: rgba(243,236,217,.4); }
 
-/* Facts */
+/* ========== FACTS : light magazine report ========== */
 #card.tpl-facts {
-  background: #fbfaf6; color: #1a1a1a; padding: 26px 28px 20px;
-  border: 1px solid #1a1a1a22; position: relative;
+  background: #f4efe6; color: #12100c; padding: 0; border: none;
 }
-#card.tpl-facts::before {
-  content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: #1b3a5f;
+#card.tpl-facts::before { display: none; content: none; }
+#card.tpl-facts .factsTop {
+  padding: 26px 30px 0;
 }
 #card.tpl-facts .topRow {
-  display: flex; justify-content: space-between; align-items: center;
-  border-bottom: 2px solid #1a1a1a; padding-bottom: 10px; margin-bottom: 14px;
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 0; padding-bottom: 0; border-bottom: none;
 }
-#card.tpl-facts .agency { color: #1b3a5f; letter-spacing: .14em; }
+#card.tpl-facts .agency { color: #1a1a1a; letter-spacing: .24em; font-size: 9.5px; }
+#card.tpl-facts .docType { color: #8a8275; letter-spacing: .16em; }
+#card.tpl-facts .mastRule {
+  height: 1px; background: #1a1a1a; margin: 16px 0 20px; opacity: .9;
+}
 #card.tpl-facts .titleText {
-  font-family: 'Noto Serif KR', 'RidiBatang', serif;
-  font-size: 22px; margin-bottom: 6px;
+  font-size: 28px; line-height: 1.14; color: #0e0d0b; letter-spacing: -.03em;
+  padding: 0 30px; font-family: 'Noto Serif KR', 'RidiBatang', serif;
 }
-#card.tpl-facts .factList { margin-top: 8px; flex: 1; }
+#card.tpl-facts .deck {
+  padding: 12px 30px 0; font-size: 12.5px; line-height: 1.6; color: #5a5348;
+  font-weight: 500;
+}
+#card.tpl-facts .factList {
+  flex: 1; margin: 22px 30px 0; padding: 0;
+  border-top: 1px solid rgba(26,26,26,.12);
+}
+#card.tpl-facts .factItem { border-bottom-color: rgba(26,26,26,.1); padding: 12px 0; }
+#card.tpl-facts .factNum {
+  color: #1a1a1a; font-size: 16px; font-family: 'Noto Serif KR', serif;
+}
+#card.tpl-facts .factTxt { color: #1f1c17; }
 #card.tpl-facts .footer {
-  margin-top: auto; padding-top: 12px; border-top: 1px solid #1a1a1a33;
+  margin: 18px 30px 26px; padding-top: 14px;
+  border-top: 1px solid rgba(26,26,26,.12);
   display: flex; justify-content: space-between; align-items: center;
 }
+#card.tpl-facts .sourceLine, #card.tpl-facts .timeLine { color: #8a8275; }
 
-/* Schedule / clauses */
+/* ========== SCHEDULE : dark contents page ========== */
 #card.tpl-schedule {
-  background: #fbfaf6; color: #1a1a1a; padding: 24px 26px 18px;
-  border: 1px solid #1a1a1a; position: relative;
-  font-family: 'Noto Serif KR', 'RidiBatang', serif;
+  background: #0e0e0e; color: #f3ecd9; padding: 0; border: none;
+  font-family: 'Pretendard Variable', sans-serif;
 }
-#card.tpl-schedule::before {
-  content: ""; position: absolute; inset: 8px; border: 1px solid #1a1a1a44; pointer-events: none;
+#card.tpl-schedule::before { display: none; content: none; }
+#card.tpl-schedule .schInner {
+  flex: 1; display: flex; flex-direction: column;
+  margin: 18px; padding: 22px 22px 18px;
+  border: 1px solid rgba(201,164,76,.22);
 }
 #card.tpl-schedule .topCenter {
-  text-align: center; border-bottom: 3px double #1a1a1a; padding-bottom: 12px; margin-bottom: 14px;
+  text-align: left; margin-bottom: 0; padding-bottom: 0; border: none;
 }
 #card.tpl-schedule .agency {
-  letter-spacing: .35em; font-size: 13px; padding-left: .35em; color: #1a1a1a;
+  letter-spacing: .28em; font-size: 9.5px; color: #c9a44c; font-weight: 700;
+  font-family: 'Pretendard Variable', sans-serif; padding-left: 0;
 }
 #card.tpl-schedule .docType {
-  background: none; color: #1a1a1a; border: 1px solid #1a1a1a;
-  border-radius: 0; margin-top: 8px; letter-spacing: .12em;
+  display: block; margin-top: 8px; color: #7a6e55; letter-spacing: .16em;
+  background: none; border: none;
 }
 #card.tpl-schedule .titleText {
-  text-align: center; font-size: 18px; font-weight: 800; margin: 10px 0 12px;
+  text-align: left; font-size: 24px; font-weight: 900; margin: 20px 0 6px;
+  font-family: 'Noto Serif KR', 'RidiBatang', serif; line-height: 1.18;
+  color: #f5ecd8;
+}
+#card.tpl-schedule .schList {
+  flex: 1; margin-top: 8px; border-top: 1px solid rgba(201,164,76,.2);
 }
 #card.tpl-schedule .clause {
-  display: flex; gap: 8px; margin-bottom: 10px; line-height: 1.7;
-  border-bottom: 1px dotted #1a1a1a2e; padding-bottom: 8px; font-size: 13px;
+  display: grid; grid-template-columns: 40px 1fr; gap: 10px;
+  margin: 0; padding: 14px 0;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+  line-height: 1.5; font-size: 13.5px;
 }
 #card.tpl-schedule .clause:last-child { border-bottom: none; }
 #card.tpl-schedule .clauseLabel {
-  flex: none; font-weight: 800; font-size: 12px; min-width: 42px; color: #1b3a5f;
+  font-family: 'Noto Serif KR', serif;
+  font-weight: 700; font-size: 15px; color: #c9a44c; min-width: 0;
+  letter-spacing: 0; padding-top: 0;
 }
 #card.tpl-schedule .footer {
-  margin-top: auto; padding-top: 12px; border-top: 1px solid #1a1a1a;
+  margin-top: 8px; padding-top: 14px; border-top: 1px solid rgba(201,164,76,.18);
   display: flex; justify-content: space-between; align-items: center;
   font-family: 'Pretendard Variable', sans-serif;
 }
 
-/* Quote / statement */
+/* ========== QUOTE : monumental pull-quote ========== */
 #card.tpl-quote {
-  background: linear-gradient(165deg, #f4f6f8, #e8eef5); color: #15202b; padding: 28px 28px 22px;
+  background: #0a0a0a; color: #f3ecd9; padding: 0; position: relative;
+}
+#card.tpl-quote::before {
+  content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  background: #c9a44c; z-index: 2;
+}
+#card.tpl-quote .quoteInner {
+  flex: 1; display: flex; flex-direction: column;
+  padding: 32px 34px 26px 38px; position: relative; z-index: 1;
 }
 #card.tpl-quote .topRow {
-  display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 36px;
 }
-#card.tpl-quote .agency { color: #1b3a5f; }
+#card.tpl-quote .agency { color: #c9a44c; }
+#card.tpl-quote .docType { color: #7a6e55; }
 #card.tpl-quote .quoteBox {
-  flex: 1; background: #fff; border-radius: 8px; padding: 22px 20px;
-  border-left: 4px solid #1b3a5f; box-shadow: 0 8px 24px #1b3a5f12;
+  flex: 1; background: transparent; border: none; box-shadow: none;
+  border-radius: 0; padding: 0;
   display: flex; flex-direction: column; justify-content: center;
 }
 #card.tpl-quote .qMark {
-  font-family: Georgia, 'Noto Serif KR', serif;
-  font-size: 42px; line-height: 1; color: #1b3a5f; opacity: .85; margin-bottom: 4px;
+  font-family: 'Noto Serif KR', Georgia, serif;
+  font-size: 88px; line-height: .7; color: #c9a44c;
+  margin: 0 0 8px -4px; font-weight: 900; opacity: 1;
 }
 #card.tpl-quote .titleText {
-  font-family: 'Noto Serif KR', 'RidiBatang', serif;
-  font-size: 20px; font-weight: 700; line-height: 1.45;
+  font-size: 23px; font-weight: 700; line-height: 1.42; color: #f8f1e0;
+  letter-spacing: -.02em;
 }
+#card.tpl-quote .bodyText { color: #9e9480; margin-top: 16px; font-size: 13px; }
 #card.tpl-quote .speaker {
-  margin-top: 14px; font-size: 12px; font-weight: 700; color: #1b3a5f;
+  margin-top: 32px; padding-top: 16px;
+  border-top: 1px solid rgba(201,164,76,.25);
+  font-size: 11.5px; font-weight: 700; color: #c9a44c;
+  letter-spacing: .08em; text-transform: uppercase;
 }
-#card.tpl-quote .speaker span { font-weight: 500; opacity: .65; margin-left: 6px; }
+#card.tpl-quote .speaker span {
+  display: block; margin: 6px 0 0; font-weight: 500; color: #7a6e55;
+  letter-spacing: .04em; text-transform: none; font-size: 12px; opacity: 1;
+}
 #card.tpl-quote .footer {
-  margin-top: 16px; padding-top: 12px; border-top: 1px solid #c5ced8;
+  margin-top: 20px; padding-top: 0; border-top: none;
   display: flex; justify-content: space-between; align-items: center;
 }
 
-/* Logo / text watermark */
+/* Logo / watermark */
 #card .logoMark {
   position: absolute; z-index: 12; pointer-events: none;
-  object-fit: contain; max-width: 40%; max-height: 18%;
+  object-fit: contain; max-width: 32%; max-height: 14%;
 }
-#card .logoMark.pos-tr { top: 14px; right: 14px; }
-#card .logoMark.pos-tl { top: 14px; left: 14px; }
-#card .logoMark.pos-br { bottom: 14px; right: 14px; }
-#card .logoMark.pos-bl { bottom: 14px; left: 14px; }
+#card .logoMark.pos-tr { top: 24px; right: 24px; }
+#card .logoMark.pos-tl { top: 24px; left: 24px; }
+#card .logoMark.pos-br { bottom: 24px; right: 24px; }
+#card .logoMark.pos-bl { bottom: 24px; left: 24px; }
 #card .logoMark.pos-center { top: 50%; left: 50%; transform: translate(-50%, -50%); }
 #card .logoMark.logoBg {
-  background: #fff; padding: 5px 8px; border-radius: 6px;
-  box-shadow: 0 2px 10px rgba(0,0,0,.12); box-sizing: border-box;
+  background: #fff; padding: 4px 7px; border-radius: 2px;
+  box-shadow: 0 2px 14px rgba(0,0,0,.3); box-sizing: border-box;
 }
 #card.tpl-cover .logoMark.pos-tr,
-#card.tpl-cover .logoMark.pos-tl { top: 52px; }
+#card.tpl-cover .logoMark.pos-tl { top: 26px; }
+#card.tpl-facts .logoMark.pos-tr,
+#card.tpl-facts .logoMark.pos-tl { top: 22px; }
+#card.tpl-quote .logoMark.pos-tr { right: 28px; top: 28px; }
 #card .wmText {
   position: absolute; z-index: 11; pointer-events: none;
-  font-weight: 700; letter-spacing: .06em; white-space: nowrap; line-height: 1.2;
+  font-weight: 600; letter-spacing: .12em; white-space: nowrap; line-height: 1.2;
 }
-#card .wmText.pos-tr { top: 14px; right: 14px; }
-#card .wmText.pos-tl { top: 14px; left: 14px; }
-#card .wmText.pos-br { bottom: 14px; right: 14px; }
-#card .wmText.pos-bl { bottom: 14px; left: 14px; }
+#card .wmText.pos-tr { top: 24px; right: 24px; }
+#card .wmText.pos-tl { top: 24px; left: 24px; }
+#card .wmText.pos-br { bottom: 24px; right: 24px; }
+#card .wmText.pos-bl { bottom: 24px; left: 24px; }
 #card .wmText.pos-center {
   top: 50%; left: 50%;
   transform: translate(-50%, -50%) rotate(-28deg);
-  letter-spacing: .14em; opacity: .18 !important;
+  letter-spacing: .22em; opacity: .08 !important; font-size: 1.15em !important;
 }
-#card.tpl-cover .wmText.pos-tr,
-#card.tpl-cover .wmText.pos-tl { top: 52px; }
 
-/* Photo strip for cover optional */
 #card .photoStrip {
-  height: 120px; background-size: cover; background-position: center;
-  background-repeat: no-repeat; background-color: #0a0a0e; flex: none;
-  position: relative;
+  height: 140px; background-size: cover; background-position: center;
+  background-repeat: no-repeat; background-color: #151515; flex: none;
+  position: relative; margin: 0; border-radius: 0; overflow: hidden;
 }
 #card .photoStrip.fit-contain { background-size: contain; }
 #card .photoStrip .scrim {
   position: absolute; inset: 0;
-  background: linear-gradient(0deg, rgba(244,246,248,.4), transparent);
+  background: linear-gradient(180deg, #0a0a0a 0%, transparent 40%, #0a0a0a 100%);
 }
 
 #right {
@@ -463,8 +555,8 @@ button { font-family: inherit; cursor: pointer; border: none; }
             </select>
           </div>
           <div class="field">
-            <label>제목 크기 <span id="titleSizeVal">24</span></label>
-            <div class="slider"><input type="range" id="titleSize" min="14" max="36" value="24"></div>
+            <label>제목 크기 <span id="titleSizeVal">30</span></label>
+            <div class="slider"><input type="range" id="titleSize" min="16" max="42" value="30"></div>
           </div>
           <div class="field">
             <label>본문 크기 <span id="bodySizeVal">13</span></label>
@@ -662,15 +754,15 @@ button { font-family: inherit; cursor: pointer; border: none; }
         <h3>색상</h3>
         <div class="row2">
           <div class="field">
-            <label>기관색 (네이비)</label>
-            <div class="colorField"><input type="color" id="accentColor" value="#1b3a5f"><span id="accentHex">#1b3a5f</span></div>
+            <label>포인트색</label>
+            <div class="colorField"><input type="color" id="accentColor" value="#c9a44c"><span id="accentHex">#c9a44c</span></div>
           </div>
           <div class="field">
             <label>하이라이트</label>
-            <div class="colorField"><input type="color" id="mkColor" value="#c5daf5"><span id="mkHex">#c5daf5</span></div>
+            <div class="colorField"><input type="color" id="mkColor" value="#e8d9a8"><span id="mkHex">#e8d9a8</span></div>
           </div>
         </div>
-        <div class="hint">네이비·쿨그레이·백지가 공문서·팩트시트 톤에 맞습니다.</div>
+        <div class="hint">다크 에디토리얼 + 골드. 표지·발언은 블랙, 팩트시트는 라이트 지면입니다.</div>
       </div>
     </div>
   </div>
@@ -736,10 +828,10 @@ function defaults() {
     font: 'pretendard',
     titleFont: '',
     bodyFont: '',
-    titleSize: 24,
+    titleSize: 30,
     bodySize: 13,
-    accent: '#1b3a5f',
-    mk: '#c5daf5',
+    accent: '#c9a44c',
+    mk: '#e8d9a8',
     image: null,
     imageFit: 'cover',
     imagePos: 'center',
@@ -815,25 +907,32 @@ function cardMarkup(s) {
   const accent = s.accent || '#1b3a5f';
   const mk = s.mk || '#c5daf5';
   const titleHtml = applyHighlight(s.title, s.highlight, mk);
-  const titleStyle = 'font-family:' + titleFont + ';font-size:' + (s.titleSize || 24) + 'px;';
+  const titleStyle = 'font-family:' + titleFont + ';font-size:' + (s.titleSize || 30) + 'px;';
   const bodyStyle = 'font-family:' + bodyFont + ';font-size:' + (s.bodySize || 13) + 'px;';
   const lines = linesOf(s.body);
+
+  const ruleColor = accent || '#c9a44c';
+  const deck = lines.length > 1 ? lines[0] : '';
+  const factLines = (s.template === 'facts' && lines.length > 1) ? lines.slice(1) : lines;
 
   if (s.template === 'cover') {
     const photo = s.image
       ? '<div class="photoStrip' + (s.imageFit === 'contain' ? ' fit-contain' : '') + '" style="background-image:url(\'' + s.image + '\');background-position:' + bgPos(s) + ';filter:' + filterStyle(s) + ';"><div class="scrim"></div></div>'
-      : '';
-    return '<div id="card" class="tpl-cover" style="font-family:' + baseFont + ';--navy:' + accent + ';">' +
-      '<div class="headBar" style="background:linear-gradient(120deg,' + accent + ',' + accent + 'cc);">' +
-        '<span class="agency">' + (s.agency || '기관') + '</span>' +
-        '<span class="docType" style="background:rgba(255,255,255,.18);">' + (s.docType || '보도자료') + '</span>' +
-      '</div>' +
-      '<div class="bodyArea" style="border-left-color:' + accent + ';">' +
-        '<div class="titleText" style="' + titleStyle + '">' + titleHtml + '</div>' +
-        '<div class="navyRule" style="background:' + accent + ';"></div>' +
-        '<div class="bodyText" style="' + bodyStyle + '">' + applyHighlight(lines.slice(0, 4).join('\n'), s.highlight, mk) + '</div>' +
-      '</div>' +
+      : '<div class="photoStrip" style="background:radial-gradient(ellipse at 30% 20%,#2a2418 0%,#0a0a0a 70%);"><div class="scrim"></div></div>';
+    const bodyLines = lines.slice(0, 3).join('\n');
+    return '<div id="card" class="tpl-cover" style="font-family:' + baseFont + ';">' +
       photo +
+      '<div class="coverFrame"></div>' +
+      '<div class="headBar">' +
+        '<span class="agency">' + (s.agency || 'INSTITUTION') + '</span>' +
+        '<span class="docType">' + (s.docType || 'BRIEFING') + '</span>' +
+      '</div>' +
+      '<div class="bodyArea">' +
+        '<div class="kickerLine" style="color:' + ruleColor + ';">SPECIAL REPORT</div>' +
+        '<div class="titleText" style="' + titleStyle + '">' + titleHtml + '</div>' +
+        '<div class="navyRule" style="background:' + ruleColor + ';"></div>' +
+        (bodyLines ? '<div class="bodyText" style="' + bodyStyle + '">' + applyHighlight(bodyLines, s.highlight, mk) + '</div>' : '') +
+      '</div>' +
       '<div class="footer">' +
         '<span class="sourceLine">' + (s.source || '') + '</span>' +
         '<span class="timeLine">' + (s.timestamp || '') + '</span>' +
@@ -841,19 +940,25 @@ function cardMarkup(s) {
   }
 
   if (s.template === 'facts') {
-    const items = lines.map((line, i) =>
-      '<div class="factItem"><div class="factNum" style="background:' + accent + ';">' + (i + 1) + '</div>' +
-      '<div class="factTxt" style="' + bodyStyle + '">' + applyHighlight(line, s.highlight, mk) + '</div></div>'
-    ).join('');
-    return '<div id="card" class="tpl-facts" style="font-family:' + baseFont + ';--navy:' + accent + ';">' +
-      '<div style="position:absolute;left:0;top:0;bottom:0;width:5px;background:' + accent + ';"></div>' +
-      '<div class="topRow">' +
-        '<span class="agency" style="color:' + accent + ';">' + (s.agency || '') + '</span>' +
-        '<span class="docType" style="background:' + accent + ';">' + (s.docType || '팩트시트') + '</span>' +
+    const listSrc = factLines.length ? factLines : lines;
+    const items = listSrc.map(function(line, i) {
+      return '<div class="factItem"><div class="factNum">' + String(i + 1).padStart(2, '0') + '</div>' +
+        '<div class="factTxt" style="' + bodyStyle + '">' + applyHighlight(line, s.highlight, mk) + '</div></div>';
+    }).join('');
+    const deckHtml = (lines.length > 1)
+      ? '<div class="deck">' + applyHighlight(lines[0], s.highlight, mk) + '</div>'
+      : '';
+    return '<div id="card" class="tpl-facts" style="font-family:' + baseFont + ';">' +
+      '<div class="factsTop">' +
+        '<div class="topRow">' +
+          '<span class="agency">' + (s.agency || '') + '</span>' +
+          '<span class="docType">' + (s.docType || 'FACT SHEET') + '</span>' +
+        '</div>' +
+        '<div class="mastRule"></div>' +
       '</div>' +
       '<div class="titleText" style="' + titleStyle + '">' + titleHtml + '</div>' +
-      '<div class="navyRule" style="background:' + accent + ';"></div>' +
-      '<div class="factList">' + (items || '<div class="bodyText" style="' + bodyStyle + '">요지를 입력하세요</div>') + '</div>' +
+      deckHtml +
+      '<div class="factList">' + (items || '<div class="factTxt">요지를 입력하세요</div>') + '</div>' +
       '<div class="footer">' +
         '<span class="sourceLine">' + (s.source || '') + '</span>' +
         '<span class="timeLine">' + (s.timestamp || '') + '</span>' +
@@ -861,39 +966,42 @@ function cardMarkup(s) {
   }
 
   if (s.template === 'schedule') {
-    const clauses = lines.map((line, i) =>
-      '<div class="clause"><span class="clauseLabel" style="color:' + accent + ';">제' + (i + 1) + '항</span>' +
-      '<span style="' + bodyStyle + '">' + applyHighlight(line, s.highlight, mk) + '</span></div>'
-    ).join('');
-    return '<div id="card" class="tpl-schedule" style="--navy:' + accent + ';">' +
-      '<div class="topCenter">' +
-        '<div class="agency">' + (s.agency || '공식 문서') + '</div>' +
-        '<span class="docType">' + (s.docType || '공고') + '</span>' +
-      '</div>' +
-      '<div class="titleText" style="' + titleStyle + '">' + titleHtml + '</div>' +
-      '<div style="flex:1;">' + (clauses || '<div style="' + bodyStyle + '">조항을 입력하세요</div>') + '</div>' +
-      '<div class="footer">' +
-        '<span class="sourceLine">' + (s.source || '') + '</span>' +
-        '<span class="timeLine">' + (s.timestamp || '') + '</span>' +
+    const clauses = lines.map(function(line, i) {
+      return '<div class="clause"><span class="clauseLabel" style="color:' + ruleColor + ';">' + String(i + 1).padStart(2, '0') + '</span>' +
+        '<span style="' + bodyStyle + '">' + applyHighlight(line, s.highlight, mk) + '</span></div>';
+    }).join('');
+    return '<div id="card" class="tpl-schedule">' +
+      '<div class="schInner">' +
+        '<div class="topCenter">' +
+          '<div class="agency">' + (s.agency || 'OFFICIAL') + '</div>' +
+          '<span class="docType">' + (s.docType || 'OUTLINE') + '</span>' +
+        '</div>' +
+        '<div class="titleText" style="' + titleStyle + '">' + titleHtml + '</div>' +
+        '<div class="schList">' + (clauses || '<div style="' + bodyStyle + '">항목을 입력하세요</div>') + '</div>' +
+        '<div class="footer">' +
+          '<span class="sourceLine">' + (s.source || '') + '</span>' +
+          '<span class="timeLine">' + (s.timestamp || '') + '</span>' +
+        '</div>' +
       '</div>' + logoHtml(s) + '</div>';
   }
 
-  /* quote */
-  return '<div id="card" class="tpl-quote" style="font-family:' + baseFont + ';--navy:' + accent + ';">' +
-    '<div class="topRow">' +
-      '<span class="agency" style="color:' + accent + ';">' + (s.agency || '') + '</span>' +
-      '<span class="docType" style="background:' + accent + ';">' + (s.docType || '공식 발언') + '</span>' +
-    '</div>' +
-    '<div class="quoteBox" style="border-left-color:' + accent + ';">' +
-      '<div class="qMark" style="color:' + accent + ';">“</div>' +
-      '<div class="titleText" style="' + titleStyle + '">' + titleHtml + '</div>' +
-      (s.body ? '<div class="bodyText" style="' + bodyStyle + 'margin-top:10px;">' + applyHighlight(s.body, s.highlight, mk) + '</div>' : '') +
-      ((s.speaker || s.speakerRole) ? '<div class="speaker" style="color:' + accent + ';">— ' + (s.speaker || '') +
-        (s.speakerRole ? '<span>' + s.speakerRole + '</span>' : '') + '</div>' : '') +
-    '</div>' +
-    '<div class="footer">' +
-      '<span class="sourceLine">' + (s.source || '') + '</span>' +
-      '<span class="timeLine">' + (s.timestamp || '') + '</span>' +
+  return '<div id="card" class="tpl-quote" style="font-family:' + baseFont + ';">' +
+    '<div class="quoteInner">' +
+      '<div class="topRow">' +
+        '<span class="agency">' + (s.agency || '') + '</span>' +
+        '<span class="docType">' + (s.docType || 'STATEMENT') + '</span>' +
+      '</div>' +
+      '<div class="quoteBox">' +
+        '<div class="qMark" style="color:' + ruleColor + ';">“</div>' +
+        '<div class="titleText" style="' + titleStyle + '">' + titleHtml + '</div>' +
+        (s.body && lines.length ? '<div class="bodyText" style="' + bodyStyle + '">' + applyHighlight(lines.slice(0, 2).join('\n'), s.highlight, mk) + '</div>' : '') +
+        ((s.speaker || s.speakerRole) ? '<div class="speaker">' + (s.speaker || '') +
+          (s.speakerRole ? '<span>' + s.speakerRole + '</span>' : '') + '</div>' : '') +
+      '</div>' +
+      '<div class="footer">' +
+        '<span class="sourceLine">' + (s.source || '') + '</span>' +
+        '<span class="timeLine">' + (s.timestamp || '') + '</span>' +
+      '</div>' +
     '</div>' + logoHtml(s) + '</div>';
 }
 
@@ -948,14 +1056,14 @@ function syncForm() {
   $('fontSelect').value = s.font || 'pretendard';
   $('titleFontSelect').value = s.titleFont || '';
   $('bodyFontSelect').value = s.bodyFont || '';
-  $('titleSize').value = s.titleSize || 24;
-  $('titleSizeVal').textContent = s.titleSize || 24;
+  $('titleSize').value = s.titleSize || 30;
+  $('titleSizeVal').textContent = s.titleSize || 30;
   $('bodySize').value = s.bodySize || 13;
   $('bodySizeVal').textContent = s.bodySize || 13;
-  $('accentColor').value = s.accent || '#1b3a5f';
-  $('accentHex').textContent = s.accent || '#1b3a5f';
-  $('mkColor').value = s.mk || '#c5daf5';
-  $('mkHex').textContent = s.mk || '#c5daf5';
+  $('accentColor').value = s.accent || '#c9a44c';
+  $('accentHex').textContent = s.accent || '#c9a44c';
+  $('mkColor').value = s.mk || '#e8d9a8';
+  $('mkHex').textContent = s.mk || '#e8d9a8';
   if ($('imageFit')) $('imageFit').value = s.imageFit || 'cover';
   if ($('imagePos')) $('imagePos').value = s.imagePos || 'center';
   if ($('imageFilter')) $('imageFilter').value = s.imageFilter || 'none';
