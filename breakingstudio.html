@@ -520,8 +520,10 @@ function c(){return cards[idx]}
 function cp(v){return JSON.parse(JSON.stringify(v))}
 function snap(){undos.push(cp(cards));if(undos.length>25)undos.shift();redos=[]}
 function renderTemplates(){
- $("templates").innerHTML="";
- defs.forEach(d=>{let b=document.createElement("button");b.className="tpl "+(c().template===d[0]?"active":"");b.innerHTML=`<b>${d[1]}</b><span>${d[2]}</span>`;b.onclick=()=>{if(c().designLock)return;snap();c().template=d[0];render()};$("templates").appendChild(b)})
+ const el=$("templates");
+ if(!el) return;
+ el.innerHTML="";
+ defs.forEach(d=>{let b=document.createElement("button");b.className="tpl "+(c().template===d[0]?"active":"");b.innerHTML=`<b>${d[1]}</b><span>${d[2]}</span>`;b.onclick=()=>{if(c().designLock)return;snap();c().template=d[0];render()};el.appendChild(b)})
 }
 function render(){
  let a=c(); if(!Array.isArray(a.updates)) a.updates=[];
