@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f3efe6">
 <title>WEST150 EDITORIAL STUDIO — PREMIUM</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+KR:wght@400;500;700;900&family=Noto+Serif+KR:wght@400;600;700;900&display=swap" rel="stylesheet">
@@ -51,7 +52,67 @@ nav button{
   color:var(--muted);border-radius:6px;padding:9px 12px;font:800 10px Inter;letter-spacing:.06em;
 }
 nav button.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
-main{display:grid;grid-template-columns:min(420px,38vw) minmax(0,1fr);gap:22px;padding:18px;min-height:calc(100vh - 107px)}
+main{display:grid;grid-template-columns:148px minmax(0,1fr) min(360px,34vw);gap:16px;padding:16px;min-height:calc(100vh - 107px);align-items:start}
+.rightPanel{background:var(--panel);border:1px solid var(--line-soft);border-radius:8px;padding:12px 12px 16px;min-width:0;max-height:calc(100vh - 140px);overflow:auto;position:sticky;top:124px;align-self:start;box-shadow:0 1px 0 rgba(255,255,255,.45) inset}
+.rightPanel .rightPanelTitle{font:800 10px Inter;letter-spacing:.14em;margin:0 0 12px;padding-bottom:10px;border-bottom:1px solid var(--line-soft);color:var(--ink);display:flex;align-items:center;justify-content:space-between;gap:8px}
+.rightPanel .rightPanelTitle span{font-weight:600;color:var(--muted);letter-spacing:.06em;font-size:9px}
+
+.slidesPanel{
+  background:var(--panel);border:1px solid var(--line-soft);border-radius:8px;
+  padding:10px 8px;display:flex;flex-direction:column;min-height:0;max-height:calc(100vh - 140px);
+  position:sticky;top:124px;align-self:start;
+}
+.slidesPanel .slidesHd{
+  display:flex;align-items:center;justify-content:space-between;gap:6px;
+  padding:2px 4px 10px;font:800 10px Inter;letter-spacing:.12em;
+}
+.slidesPanel .slidesHd span{color:var(--muted);font-weight:600;font-size:9px;letter-spacing:.06em}
+#slideList{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:0 2px 8px;min-height:0}
+.slideThumb{
+  position:relative;border-radius:8px;overflow:hidden;cursor:pointer;
+  border:2px solid transparent;background:#ddd8cc;aspect-ratio:4/5;flex:none;
+  box-shadow:0 4px 14px rgba(20,18,12,.08);
+}
+.slideThumb.active{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.slideThumb canvas,.slideThumb img{display:block;width:100%;height:100%;object-fit:cover}
+.slideThumb .idx{
+  position:absolute;top:4px;left:5px;font:800 9px Inter;color:#fff;
+  background:rgba(0,0,0,.55);padding:2px 5px;border-radius:4px;letter-spacing:.04em;
+}
+.slideThumb .tag{
+  position:absolute;bottom:4px;left:5px;right:5px;font:700 8px Inter;letter-spacing:.04em;
+  color:#fff;background:rgba(0,0,0,.5);padding:2px 5px;border-radius:4px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.slideThumb .del,.slideThumb .dup{
+  position:absolute;top:4px;width:18px;height:18px;border-radius:5px;
+  background:rgba(0,0,0,.55);color:#fff;font-size:11px;line-height:18px;text-align:center;
+  opacity:0;transition:.15s;border:0;padding:0;
+}
+.slideThumb .del{right:4px}
+.slideThumb .dup{right:24px;font-size:10px}
+.slideThumb:hover .del,.slideThumb:hover .dup{opacity:1}
+.slideThumb .del:hover{background:var(--accent)}
+.slideThumb .dup:hover{background:#3a6ea5}
+#addSlideBtn{
+  margin:4px 2px 0;padding:10px;border-radius:8px;background:var(--paper);
+  color:var(--muted);font:700 11px Inter;border:1px dashed var(--line);width:100%;
+}
+#addSlideBtn:hover{color:var(--ink);border-color:var(--ink)}
+.slideActions{display:flex;gap:4px;padding:0 2px 8px}
+.slideActions button{flex:1;padding:7px 0;font-size:11px}
+#undoRedoFloat{
+  position:fixed;right:18px;bottom:18px;z-index:100;display:flex;gap:6px;padding:6px;
+  border-radius:12px;background:rgba(20,18,16,.72);border:1px solid rgba(255,255,255,.1);
+  backdrop-filter:blur(10px);box-shadow:0 8px 24px rgba(0,0,0,.2);
+}
+#undoRedoFloat button{
+  width:40px;height:36px;border-radius:8px;background:rgba(255,255,255,.08);
+  color:#f5f1e8;font-size:16px;font-weight:700;border:1px solid transparent;
+}
+#undoRedoFloat button:hover:not(:disabled){background:rgba(154,31,36,.55);border-color:rgba(154,31,36,.4)}
+#undoRedoFloat button:disabled{opacity:.35;cursor:default}
+.controlsCol{min-width:0}
 .panel{display:none}.panel.active{display:block}
 .box{
   background:var(--panel);border:1px solid var(--line-soft);border-radius:8px;
@@ -107,9 +168,14 @@ hr{border:0;border-top:1px solid var(--line-soft);margin:14px 0}
 }
 @media(max-width:900px){
   main{grid-template-columns:1fr;padding:10px}
-  .preview{order:-1}
+  .slidesPanel{position:relative;top:auto;max-height:none;order:2}
+  #slideList{flex-direction:row;overflow-x:auto;padding-bottom:6px}
+  .slideThumb{width:88px;flex:none}
+  .preview{order:1}
+  .rightPanel{order:3;position:relative;top:auto;max-height:none}
   .stage{position:relative;top:auto}
   .canvasWrap{width:min(92vw,520px)}
+  #undoRedoFloat{right:10px;bottom:10px}
 }
 </style>
 </head>
@@ -123,14 +189,37 @@ hr{border:0;border-top:1px solid var(--line-soft);margin:14px 0}
   <button class="tab" data-panel="type">Aa TYPE</button>
   <button class="tab" data-panel="photo">PHOTO</button>
   <button class="tab" data-panel="grid">GRID</button>
-  <button class="tab" data-panel="brand">BRAND</button>
+  <button class="tab" data-panel="panelBrand">BRAND</button>
   <button class="tab" data-panel="story">STORY</button>
   <button class="tab" data-panel="save">SAVE</button>
 </nav>
 
 <main>
-<section>
-  <div class="panel active" id="design">
+<aside class="slidesPanel" id="slidesPanel">
+  <div class="slidesHd">CARDS <span id="slideCount">1</span></div>
+  <div class="slideActions">
+    <button type="button" id="slidePrevBtn" title="이전">←</button>
+    <button type="button" id="slideNextBtn" title="다음">→</button>
+    <button type="button" id="slideDupBtn" title="복제">⧉</button>
+    <button type="button" id="slideDelBtn" title="삭제">✕</button>
+  </div>
+  <div id="slideList"></div>
+  <button type="button" id="addSlideBtn">＋ 카드</button>
+</aside>
+
+<section class="preview">
+  <div class="stage">
+    <div class="canvasWrap" id="wrap">
+      <canvas id="canvas" width="1080" height="1350"></canvas>
+    </div>
+    <div class="status" id="status">CARD 01 · COVER</div>
+  </div>
+</section>
+
+<aside class="rightPanel" id="rightPanel">
+  <div class="rightPanelTitle">EDIT <span id="rightPanelLabel">DESIGN</span></div>
+  <div class="controlsCol">
+<div class="panel active" id="design">
     <div class="box">
       <div class="premium-tag">PREMIUM EDITORIAL</div>
       <h2>LAYOUT SYSTEM</h2>
@@ -145,14 +234,17 @@ hr{border:0;border-top:1px solid var(--line-soft);margin:14px 0}
         <button class="layoutBtn" data-layout="data"><b>DATA</b><small>숫자·통계</small></button>
         <button class="layoutBtn" data-layout="compare"><b>COMPARE</b><small>비교</small></button>
         <button class="layoutBtn" data-layout="conclusion"><b>CONCLUSION</b><small>핵심 정리</small></button>
+        <button class="layoutBtn" data-layout="list"><b>LIST</b><small>리스트</small></button>
+        <button class="layoutBtn" data-layout="stats"><b>STATS</b><small>스탯</small></button>
+        <button class="layoutBtn" data-layout="chart"><b>CHART</b><small>차트</small></button>
       </div>
-      <p class="note">매거진 아트 디렉션 기준으로 여백·타이포·사진 비율을 맞춘 10종 레이아웃입니다.</p>
+      <p class="note">레이아웃 13종 · LIST/STATS/CHART 데이터는 STORY에서 입력</p>
     </div>
   </div>
 
   <div class="panel" id="type">
     <div class="box">
-      <h2>TYPOGRAPHY</h2>
+      <h2>1. 타이포</h2>
       <div class="field"><label>제목 크기 <span id="tv">78</span></label><input id="titleSize" type="range" min="34" max="120" value="78"></div>
       <div class="field"><label>본문 크기 <span id="bv">22</span></label><input id="bodySize" type="range" min="14" max="38" value="22"></div>
       <div class="field"><label>자간 <span id="kv">-2</span></label><input id="tracking" type="range" min="-8" max="8" value="-2"></div>
@@ -190,27 +282,58 @@ hr{border:0;border-top:1px solid var(--line-soft);margin:14px 0}
         <button data-align="right">우</button>
       </div>
     </div>
+    <div class="box">
+      <h2>2. 강조 하이라이트</h2>
+      <p class="note">제목·본문에 <b>==강조==</b> 형태로 감싸기</p>
+      <div class="field"><label>하이라이트 색</label><input id="highlightColor" type="color" value="#f6b8c4" style="height:36px;padding:4px;"></div>
+    </div>
   </div>
 
   <div class="panel" id="photo">
     <div class="box">
-      <h2>PHOTO</h2>
-      <div class="field"><label>사진 업로드</label><input id="photoFile" type="file" accept="image/*"></div>
-      <div class="field"><label>확대 <span id="zv">100%</span></label><input id="zoom" type="range" min="70" max="180" value="100"></div>
-      <div class="field"><label>밝기 <span id="brv">100%</span></label><input id="bright" type="range" min="60" max="150" value="100"></div>
-      <div class="field"><label>대비 <span id="cov">100%</span></label><input id="contrast" type="range" min="60" max="160" value="100"></div>
-      <div class="field"><label>채도 <span id="sv">100%</span></label><input id="sat" type="range" min="0" max="160" value="100"></div>
+      <h2>1. 업로드 · 배치</h2>
+      <div class="field"><label>사진</label><input id="photoFile" type="file" accept="image/*"></div>
+      <div class="field"><label>배치</label>
+        <select id="imageMode">
+          <option value="auto">자동</option>
+          <option value="full">FULL 전체</option>
+          <option value="top">TOP 상단</option>
+          <option value="bottom">BOTTOM 하단</option>
+          <option value="side">SIDE 우측</option>
+          <option value="inset">INSET 삽입</option>
+          <option value="avatar">AVATAR 원형</option>
+        </select>
+      </div>
       <div class="row">
         <button id="monoBtn">흑백</button>
         <button id="resetPhotoBtn">초기화</button>
       </div>
-      <p class="note">사진은 cover 크롭·그라데이션 오버레이로 처리됩니다. 흑백은 에디토리얼 포트폴리오 톤에 맞습니다.</p>
+    </div>
+    <div class="box">
+      <h2>2. 구도</h2>
+      <div class="field"><label>확대 <span id="zv">100%</span></label><input id="zoom" type="range" min="70" max="180" value="100"></div>
+      <div class="field"><label>가로 <span id="pxv">0</span></label><input id="photoX" type="range" min="-50" max="50" value="0"></div>
+      <div class="field"><label>세로 <span id="pyv">0</span></label><input id="photoY" type="range" min="-50" max="50" value="0"></div>
+      <div class="field"><label>회전 <span id="prv">0°</span></label><input id="photoRotate" type="range" min="-180" max="180" value="0"></div>
+    </div>
+    <div class="box">
+      <h2>3. 보정</h2>
+      <div class="field"><label>밝기 <span id="brv">100%</span></label><input id="bright" type="range" min="60" max="150" value="100"></div>
+      <div class="field"><label>대비 <span id="cov">100%</span></label><input id="contrast" type="range" min="60" max="160" value="100"></div>
+      <div class="field"><label>채도 <span id="sv">100%</span></label><input id="sat" type="range" min="0" max="160" value="100"></div>
+    </div>
+    <div class="box">
+      <h2>4. 마스크 바</h2>
+      <div class="row"><button id="maskBarBtn">마스크 바</button></div>
+      <div class="field"><label>위치 <span id="mby">55%</span></label><input id="maskBarY" type="range" min="20" max="90" value="55"></div>
+      <div class="field"><label>높이 <span id="mbh">12%</span></label><input id="maskBarH" type="range" min="4" max="30" value="12"></div>
+      <p class="note">사진 위 제목 가독성용 반투명 밴드</p>
     </div>
   </div>
 
   <div class="panel" id="grid">
     <div class="box">
-      <h2>EDITORIAL GRID</h2>
+      <h2>그리드 · 여백</h2>
       <div class="field"><label>여백 <span id="pv">7%</span></label><input id="pad" type="range" min="4" max="14" value="7"></div>
       <div class="field"><label>컬럼</label>
         <select id="columns">
@@ -227,63 +350,105 @@ hr{border:0;border-top:1px solid var(--line-soft);margin:14px 0}
     </div>
   </div>
 
-  <div class="panel" id="brand">
+  <div class="panel" id="panelBrand">
     <div class="box">
-      <h2>BRAND &amp; CAPTION</h2>
-      <div class="field"><label>브랜드</label><input id="brand" type="text" value="WEST150"></div>
-      <div class="field"><label>섹션</label><input id="section" type="text" value="EDITORIAL"></div>
-      <div class="field"><label>작성/저자</label><input id="author" type="text" value=""></div>
+      <h2>1. 브랜드</h2>
+      <div class="field"><label>브랜드명 (우측 하단)</label><input id="brand" type="text" value="WEST150"></div>
+      <div class="field"><label>섹션 (상단)</label><input id="section" type="text" value="EDITORIAL"></div>
+      <div class="field"><label>작성 / 저자</label><input id="author" type="text" value=""></div>
       <div class="field"><label>출처</label><input id="source" type="text" value=""></div>
       <div class="field"><label>로고 이미지</label><input id="logoFile" type="file" accept="image/*"></div>
       <div class="row">
-        <button id="logoBtn" class="active">로고 표시</button>
         <button id="brandTextBtn" class="active">브랜드 텍스트</button>
+        <button id="logoBtn" class="active">로고 표시</button>
         <button id="darkBtn">DARK MODE</button>
       </div>
-      <hr>
-      <h2>WATERMARK</h2>
-      <div class="field"><label>워터마크 문구</label><input id="watermark" type="text" value="" placeholder="예: WEST150 · CONFIDENTIAL"></div>
+    </div>
+    <div class="box">
+      <h2>2. 액센트</h2>
+      <div class="field"><label>포인트 컬러</label><input id="accentColor" type="color" value="#9a1f24" style="height:36px;padding:4px;"></div>
+    </div>
+    <div class="box">
+      <h2>3. 워터마크</h2>
+      <div class="row"><button id="wmBtn" class="active">워터마크 표시</button></div>
+      <div class="field"><label>문구</label><input id="watermark" type="text" value="" placeholder="예: WEST150 · CONFIDENTIAL"></div>
       <div class="field"><label>불투명도 <span id="wmv">18%</span></label><input id="wmOpacity" type="range" min="4" max="40" value="18"></div>
       <div class="field"><label>크기 <span id="wms">28</span></label><input id="wmSize" type="range" min="14" max="56" value="28"></div>
       <div class="field"><label>위치</label>
         <select id="wmPos">
-          <option value="diagonal">대각선 (기본)</option>
+          <option value="diagonal">대각선</option>
           <option value="center">중앙</option>
           <option value="bottom">하단</option>
           <option value="top">상단</option>
         </select>
       </div>
-      <div class="row">
-        <button id="wmBtn" class="active">워터마크 표시</button>
-      </div>
-      <p class="note">비우면 그려지지 않습니다. 문구 입력 후 표시를 켜 주세요.</p>
     </div>
   </div>
 
   <div class="panel" id="story">
     <div class="box">
-      <h2>STORY</h2>
-      <div class="field"><label>카드 제목</label><input id="title" type="text" value="THE NEW WORLD ORDER"></div>
-      <div class="field"><label>본문 / 설명</label><textarea id="body">A new chapter is taking shape. What happened, why it matters, and what comes next.</textarea></div>
+      <h2>1. 본문</h2>
+      <div class="field"><label>제목</label><input id="title" type="text" value="THE NEW WORLD ORDER"></div>
+      <div class="field"><label>본문</label><textarea id="body">A new chapter is taking shape. What happened, why it matters, and what comes next.</textarea></div>
       <div class="field"><label>페이지</label><input id="page" type="text" value="01 / 08"></div>
       <div class="row">
-        <button class="primary" id="addCardBtn">＋ 카드 추가</button>
+        <button id="pageBtn" class="active">페이지 표시</button>
+        <button class="primary" id="addCardBtn">＋ 카드</button>
+        <button id="dupCardBtn">복제</button>
         <button id="prevCardBtn">←</button>
         <button id="nextCardBtn">→</button>
-        <button id="dupCardBtn">복제</button>
       </div>
-      <hr>
+    </div>
+    <div class="box">
+      <h2>2. Sticky 메모</h2>
+      <div class="row"><button id="stickyBtn">메모 표시</button></div>
+      <div class="field"><label>메모 문구</label><textarea id="stickyText" style="min-height:64px">핵심 메모</textarea></div>
+      <div class="field"><label>메모 색</label><input id="stickyColor" type="color" value="#fff3a0" style="height:36px;padding:4px;"></div>
+      <div class="field"><label>가로 위치 <span id="stx">70%</span></label><input id="stickyX" type="range" min="5" max="85" value="70"></div>
+      <div class="field"><label>세로 위치 <span id="sty">18%</span></label><input id="stickyY" type="range" min="5" max="85" value="18"></div>
+      <p class="note">카드 위에 붙이는 메모. 위치는 % 기준입니다.</p>
+    </div>
+    <div class="box">
+      <h2>3. LIST · STATS · CHART</h2>
+      <p class="note">해당 레이아웃 선택 시 사용 · STATS/CHART는 <b>값|라벨</b></p>
+      <div class="field"><label>리스트 (줄바꿈)</label><textarea id="listItems">핵심 발표 내용
+시장 반응 요약
+향후 일정</textarea></div>
+      <div class="field"><label>스탯 (값|라벨)</label><textarea id="statItems">47%|성장률
+1.2M|조회수
+89|점수</textarea></div>
+      <div class="field"><label>차트 (값|라벨)</label><textarea id="chartItems">72|서울
+54|부산
+41|대구
+33|인천</textarea></div>
+      <div class="field"><label>차트 유형</label>
+        <select id="chartType">
+          <option value="hbar">가로 바</option>
+          <option value="vbar">세로 바</option>
+        </select>
+      </div>
+    </div>
+    <div class="box">
+      <h2>4. DATA 수치</h2>
+      <p class="note">DATA 레이아웃 전용</p>
+      <div class="field"><label>큰 숫자</label><input id="dataFigure" type="text" value="47%"></div>
+      <div class="field"><label>라벨</label><input id="dataLabel" type="text" value="KEY FIGURE"></div>
+      <div class="field"><label>진행 바 % <span id="dbv">47</span></label><input id="dataBar" type="range" min="0" max="100" value="47"></div>
+      <div class="field"><label>보조 수치</label><input id="dataSub" type="text" value="" placeholder="예: YoY +12%"></div>
+    </div>
+    <div class="box">
+      <h2>카드 목록</h2>
       <div class="chips" id="chips"></div>
-      <p class="note">한 편의 스토리를 카드 시퀀스로 구성합니다.</p>
     </div>
   </div>
 
   <div class="panel" id="save">
     <div class="box">
-      <h2>EXPORT</h2>
+      <h2>내보내기</h2>
       <div class="row">
         <button class="primary" id="savePngBtn">현재 카드 PNG</button>
         <button id="saveAllBtn">전체 카드 PNG</button>
+        <button id="saveZipBtn">전체 ZIP 저장</button>
         <button id="saveProjectBtn">프로젝트 저장</button>
         <button id="loadProjectBtn">프로젝트 불러오기</button>
       </div>
@@ -291,88 +456,105 @@ hr{border:0;border-top:1px solid var(--line-soft);margin:14px 0}
       <p class="note">1080 × 1350 · 세로 규격<br>미리보기와 저장이 동일한 Canvas 파이프라인이라 결과가 일치합니다.</p>
     </div>
   </div>
-</section>
-
-<section class="preview">
-  <div class="stage">
-    <div class="canvasWrap" id="wrap">
-      <canvas id="canvas" width="1080" height="1350"></canvas>
-    </div>
-    <div class="status" id="status">CARD 01 · COVER</div>
   </div>
-</section>
+</aside>
+
 </main>
+
+<div id="undoRedoFloat">
+  <button type="button" id="undoBtn" title="실행 취소">↶</button>
+  <button type="button" id="redoBtn" title="다시 실행">↷</button>
+</div>
 
 <script>
 (() => {
   const $ = id => document.getElementById(id);
-  const KEY = "west150_editorial_premium_v1";
-
+  const KEY = "west150_editorial_premium_v2";
   const SERIF = '"Cormorant Garamond","Noto Serif KR",Georgia,serif';
   const SANS = 'Inter,"Noto Sans KR","Pretendard",Arial,sans-serif';
   const KR_SERIF = '"Noto Serif KR",Georgia,serif';
   const KR_SANS = '"Noto Sans KR",Inter,sans-serif';
-  const PRETENDARD = '"Pretendard","Pretendard Variable",Inter,"Noto Sans KR",sans-serif';
+  const PRETENDARD = '"Pretendard",Inter,"Noto Sans KR",sans-serif';
   const RIDI = '"RIDIBatang","Noto Serif KR",Georgia,serif';
 
   const defaults = {
-    layout: "cover",
-    title: "THE NEW WORLD ORDER",
+    layout: "cover", title: "THE NEW WORLD ORDER",
     body: "A new chapter is taking shape. What happened, why it matters, and what comes next.",
-    page: "01 / 08",
-    brand: "WEST150",
-    section: "EDITORIAL",
-    author: "",
-    source: "",
-    photo: null,
-    logo: null,
-    logoOn: true,
-    brandTextOn: true,
-    dark: false,
-    watermark: "",
-    wmOn: true,
-    wmOpacity: 18,
-    wmSize: 28,
-    wmPos: "diagonal",
-    mono: false,
-    zoom: 100,
-    bright: 100,
-    contrast: 100,
-    sat: 100,
-    pad: 7,
-    columns: 12,
-    align: "left",
-    showGrid: false,
-    safe: false,
-    titleSize: 78,
-    bodySize: 22,
-    tracking: -2,
-    lineHeight: 1.05,
-    weight: 900,
-    titleFont: "serif",
-    bodyFont: "sans"
+    page: "01 / 08", pageOn: true, brand: "WEST150", section: "EDITORIAL",
+    author: "", source: "", photo: null, logo: null, logoOn: true, brandTextOn: true,
+    dark: false, watermark: "", wmOn: true, wmOpacity: 18, wmSize: 28, wmPos: "diagonal",
+    dataFigure: "47%", dataLabel: "KEY FIGURE", dataBar: 47, dataSub: "",
+    mono: false, zoom: 100, bright: 100, contrast: 100, sat: 100, pad: 7, columns: 12,
+    align: "left", showGrid: false, safe: false, titleSize: 78, bodySize: 22,
+    tracking: -2, lineHeight: 1.05, weight: 900, titleFont: "serif", bodyFont: "sans",
+    accentColor: "#9a1f24", highlightColor: "#f6b8c4", imageMode: "auto",
+    photoX: 0, photoY: 0, photoRotate: 0, maskBar: false, maskBarY: 55, maskBarH: 12,
+    listItems: "핵심 발표 내용\n시장 반응 요약\n향후 일정",
+    statItems: "47%|성장률\n1.2M|조회수\n89|점수",
+    chartItems: "72|서울\n54|부산\n41|대구\n33|인천", chartType: "hbar",
+    stickyOn: false,
+    stickyText: "핵심 메모",
+    stickyColor: "#fff3a0",
+    stickyX: 70,
+    stickyY: 18
   };
 
   let S = { ...defaults };
-  let cards = [clone(defaults)];
-  let idx = 0;
-  let drawToken = 0;
+  let cards = [JSON.parse(JSON.stringify(defaults))];
+  let idx = 0, drawToken = 0, thumbCache = {};
+  let historyStack = [], historyIndex = -1, applyingHistory = false, historyTimer = null;
+  const MAX_HISTORY = 40;
 
-  function clone(o) { return JSON.parse(JSON.stringify(o)); }
-  function fmt(n) { return String(n).padStart(2, "0"); }
-
+  const clone = o => JSON.parse(JSON.stringify(o));
+  const fmt = n => String(n).padStart(2, "0");
   function persist() {
-    try {
-      localStorage.setItem(KEY, JSON.stringify({ version: 1, cards, idx }));
-      return true;
-    } catch (e) {
-      return false;
-    }
+    try { localStorage.setItem(KEY, JSON.stringify({ version: 2, cards, idx })); return true; }
+    catch (e) { return false; }
   }
-
   function sync() {
     cards[idx] = clone(S);
-    return persist();
+    const ok = persist();
+    if (!applyingHistory) scheduleHistory();
+    return ok;
+  }
+  function scheduleHistory() {
+    if (applyingHistory) return;
+    clearTimeout(historyTimer);
+    historyTimer = setTimeout(pushHistory, 400);
+  }
+  function pushHistory() {
+    if (applyingHistory) return;
+    const snap = JSON.stringify({ cards, idx });
+    if (historyIndex >= 0 && historyStack[historyIndex] === snap) return;
+    historyStack = historyStack.slice(0, historyIndex + 1);
+    historyStack.push(snap);
+    if (historyStack.length > MAX_HISTORY) historyStack.shift();
+    historyIndex = historyStack.length - 1;
+    updateUndoRedoButtons();
+  }
+  function restoreHistory(hIdx) {
+    if (hIdx < 0 || hIdx >= historyStack.length) return;
+    applyingHistory = true;
+    try {
+      const data = JSON.parse(historyStack[hIdx]);
+      cards = data.cards; idx = Math.min(Number(data.idx) || 0, cards.length - 1);
+      historyIndex = hIdx; thumbCache = {}; loadState(cards[idx]); updateUndoRedoButtons();
+    } finally { applyingHistory = false; }
+  }
+  function undo() {
+    if (historyIndex <= 0) return;
+    const snap = JSON.stringify({ cards, idx });
+    if (historyStack[historyIndex] !== snap) pushHistory();
+    if (historyIndex <= 0) return;
+    restoreHistory(historyIndex - 1);
+  }
+  function redo() {
+    if (historyIndex >= historyStack.length - 1) return;
+    restoreHistory(historyIndex + 1);
+  }
+  function updateUndoRedoButtons() {
+    if ($("undoBtn")) $("undoBtn").disabled = historyIndex <= 0;
+    if ($("redoBtn")) $("redoBtn").disabled = historyIndex >= historyStack.length - 1;
   }
 
   function titleFamily() {
@@ -390,13 +572,15 @@ hr{border:0;border-top:1px solid var(--line-soft);margin:14px 0}
     return SANS;
   }
 
-  // —— UI ——
   document.querySelectorAll(".tab").forEach(btn => {
     btn.addEventListener("click", () => {
       document.querySelectorAll(".tab").forEach(x => x.classList.remove("active"));
       document.querySelectorAll(".panel").forEach(x => x.classList.remove("active"));
       btn.classList.add("active");
-      $(btn.dataset.panel).classList.add("active");
+      const panel = $(btn.dataset.panel);
+      if (panel) panel.classList.add("active");
+      if ($("rightPanelLabel")) $("rightPanelLabel").textContent = (btn.textContent || "").trim();
+      if ($("rightPanel")) $("rightPanel").scrollTop = 0;
     });
   });
 
@@ -407,7 +591,6 @@ hr{border:0;border-top:1px solid var(--line-soft);margin:14px 0}
       sync(); draw();
     });
   });
-
   document.querySelectorAll("#alignRow button").forEach(btn => {
     btn.addEventListener("click", () => {
       S.align = btn.dataset.align;
@@ -417,56 +600,45 @@ hr{border:0;border-top:1px solid var(--line-soft);margin:14px 0}
   });
 
   function bindText(id, key) {
-    const el = $(id);
-    if (!el) return;
+    const el = $(id); if (!el) return;
     el.addEventListener("input", () => { S[key] = el.value; sync(); draw(); });
   }
   function bindNum(id, key) {
-    const el = $(id);
-    if (!el) return;
+    const el = $(id); if (!el) return;
     el.addEventListener("input", () => { S[key] = Number(el.value); sync(); draw(); });
   }
+  ["title","body","page","brand","section","author","source","watermark","dataFigure","dataLabel","dataSub","listItems","statItems","chartItems","stickyText"].forEach(k => bindText(k, k));
+  ["titleSize","bodySize","tracking","lineHeight","weight","zoom","bright","contrast","sat","pad","wmOpacity","wmSize","dataBar","photoX","photoY","photoRotate","maskBarY","maskBarH","stickyX","stickyY"].forEach(k => bindNum(k, k));
 
-  ["title", "body", "page", "brand", "section", "author", "source", "watermark"].forEach(k => bindText(k, k));
-  ["titleSize", "bodySize", "tracking", "lineHeight", "weight", "zoom", "bright", "contrast", "sat", "pad", "wmOpacity", "wmSize"].forEach(k => bindNum(k, k));
-
-  $("columns").addEventListener("change", () => {
-    S.columns = Number($("columns").value) || 12;
-    sync(); draw();
-  });
-  $("titleFont").addEventListener("change", () => {
-    S.titleFont = $("titleFont").value;
-    sync(); draw();
-  });
-  $("bodyFont").addEventListener("change", () => {
-    S.bodyFont = $("bodyFont").value;
-    sync(); draw();
-  });
-  $("wmPos").addEventListener("change", () => {
-    S.wmPos = $("wmPos").value;
-    sync(); draw();
-  });
+  if ($("columns")) $("columns").addEventListener("change", () => { S.columns = Number($("columns").value) || 12; sync(); draw(); });
+  if ($("titleFont")) $("titleFont").addEventListener("change", () => { S.titleFont = $("titleFont").value; sync(); draw(); });
+  if ($("bodyFont")) $("bodyFont").addEventListener("change", () => { S.bodyFont = $("bodyFont").value; sync(); draw(); });
+  if ($("wmPos")) $("wmPos").addEventListener("change", () => { S.wmPos = $("wmPos").value; sync(); draw(); });
+  if ($("imageMode")) $("imageMode").addEventListener("change", () => { S.imageMode = $("imageMode").value; sync(); draw(); });
+  if ($("chartType")) $("chartType").addEventListener("change", () => { S.chartType = $("chartType").value; sync(); draw(); });
+  if ($("accentColor")) $("accentColor").addEventListener("input", () => { S.accentColor = $("accentColor").value; sync(); draw(); });
+  if ($("highlightColor")) $("highlightColor").addEventListener("input", () => { S.highlightColor = $("highlightColor").value; sync(); draw(); });
+  if ($("stickyColor")) $("stickyColor").addEventListener("input", () => { S.stickyColor = $("stickyColor").value; sync(); draw(); });
 
   function toggle(btnId, key) {
-    const btn = $(btnId);
+    const btn = $(btnId); if (!btn) return;
     btn.addEventListener("click", () => {
       S[key] = !S[key];
       btn.classList.toggle("active", S[key]);
       sync(); draw();
     });
   }
-  toggle("monoBtn", "mono");
-  toggle("gridBtn", "showGrid");
-  toggle("safeBtn", "safe");
-  toggle("logoBtn", "logoOn");
-  toggle("brandTextBtn", "brandTextOn");
-  toggle("darkBtn", "dark");
-  toggle("wmBtn", "wmOn");
+  ["monoBtn|mono","gridBtn|showGrid","safeBtn|safe","logoBtn|logoOn","brandTextBtn|brandTextOn","darkBtn|dark","wmBtn|wmOn","maskBarBtn|maskBar","pageBtn|pageOn","stickyBtn|stickyOn"].forEach(pair => {
+    const [id, key] = pair.split("|"); toggle(id, key);
+  });
 
-  $("resetPhotoBtn").addEventListener("click", () => {
-    Object.assign(S, { zoom: 100, bright: 100, contrast: 100, sat: 100, mono: false });
-    ["zoom", "bright", "contrast", "sat"].forEach(k => $(k).value = 100);
-    $("monoBtn").classList.remove("active");
+  if ($("resetPhotoBtn")) $("resetPhotoBtn").addEventListener("click", () => {
+    Object.assign(S, { zoom: 100, bright: 100, contrast: 100, sat: 100, mono: false, photoX: 0, photoY: 0, photoRotate: 0 });
+    ["zoom","bright","contrast","sat"].forEach(k => { if ($(k)) $(k).value = 100; });
+    if ($("photoX")) $("photoX").value = 0;
+    if ($("photoY")) $("photoY").value = 0;
+    if ($("photoRotate")) $("photoRotate").value = 0;
+    if ($("monoBtn")) $("monoBtn").classList.remove("active");
     sync(); draw();
   });
 
@@ -476,73 +648,106 @@ hr{border:0;border-top:1px solid var(--line-soft);margin:14px 0}
     r.onload = () => cb(r.result);
     r.readAsDataURL(file);
   }
-  $("photoFile").addEventListener("change", e => {
-    readFile(e.target.files[0], v => { S.photo = v; sync(); draw(); });
-  });
-  $("logoFile").addEventListener("change", e => {
-    readFile(e.target.files[0], v => { S.logo = v; sync(); draw(); });
-  });
-
-  $("addCardBtn").addEventListener("click", () => {
-    sync();
-    cards.splice(idx + 1, 0, clone(S));
-    idx++;
-    cards[idx].page = `${fmt(idx + 1)} / ${fmt(Math.max(cards.length, 8))}`;
-    loadState(cards[idx]);
-  });
-  $("dupCardBtn").addEventListener("click", () => $("addCardBtn").click());
-  $("prevCardBtn").addEventListener("click", () => moveCard(-1));
-  $("nextCardBtn").addEventListener("click", () => moveCard(1));
+  if ($("photoFile")) $("photoFile").addEventListener("change", e => readFile(e.target.files[0], v => { S.photo = v; sync(); draw(); }));
+  if ($("logoFile")) $("logoFile").addEventListener("change", e => readFile(e.target.files[0], v => { S.logo = v; sync(); draw(); }));
 
   function moveCard(d) {
     sync();
     const n = idx + d;
     if (n < 0 || n >= cards.length) return;
-    idx = n;
+    idx = n; loadState(cards[idx]);
+  }
+  function addCard() {
+    sync();
+    cards.splice(idx + 1, 0, clone(S));
+    idx++;
+    cards[idx].page = `${fmt(idx + 1)} / ${fmt(Math.max(cards.length, 8))}`;
     loadState(cards[idx]);
   }
+  function duplicateCard() {
+    sync(); pushHistory();
+    cards.splice(idx + 1, 0, clone(S));
+    const next = {};
+    Object.keys(thumbCache).forEach(k => {
+      const n = Number(k);
+      if (n <= idx) next[n] = thumbCache[n];
+      else next[n + 1] = thumbCache[n];
+    });
+    thumbCache = next;
+    idx++;
+    cards[idx].page = `${fmt(idx + 1)} / ${fmt(Math.max(cards.length, 8))}`;
+    loadState(cards[idx]); pushHistory();
+  }
+  function deleteCardAt(i) {
+    pushHistory();
+    if (cards.length <= 1) {
+      cards[0] = clone(defaults); idx = 0; thumbCache = {}; loadState(cards[0]); pushHistory(); return;
+    }
+    cards.splice(i, 1);
+    const next = {};
+    Object.keys(thumbCache).forEach(k => {
+      const n = Number(k);
+      if (n < i) next[n] = thumbCache[n];
+      else if (n > i) next[n - 1] = thumbCache[n];
+    });
+    thumbCache = next;
+    if (idx > i) idx--;
+    else if (idx >= cards.length) idx = cards.length - 1;
+    loadState(cards[idx]); pushHistory();
+  }
+
+  if ($("addCardBtn")) $("addCardBtn").addEventListener("click", addCard);
+  if ($("dupCardBtn")) $("dupCardBtn").addEventListener("click", duplicateCard);
+  if ($("prevCardBtn")) $("prevCardBtn").addEventListener("click", () => moveCard(-1));
+  if ($("nextCardBtn")) $("nextCardBtn").addEventListener("click", () => moveCard(1));
+  if ($("addSlideBtn")) $("addSlideBtn").addEventListener("click", addCard);
+  if ($("slidePrevBtn")) $("slidePrevBtn").addEventListener("click", () => moveCard(-1));
+  if ($("slideNextBtn")) $("slideNextBtn").addEventListener("click", () => moveCard(1));
+  if ($("slideDupBtn")) $("slideDupBtn").addEventListener("click", duplicateCard);
+  if ($("slideDelBtn")) $("slideDelBtn").addEventListener("click", () => deleteCardAt(idx));
+  if ($("undoBtn")) $("undoBtn").addEventListener("click", undo);
+  if ($("redoBtn")) $("redoBtn").addEventListener("click", redo);
 
   function chips() {
+    if (!$("chips")) return;
     $("chips").innerHTML = cards.map((_, i) =>
       `<span class="chip ${i === idx ? "active" : ""}" data-i="${i}">CARD ${fmt(i + 1)}</span>`
     ).join("");
     $("chips").querySelectorAll(".chip").forEach(el => {
-      el.addEventListener("click", () => {
-        sync();
-        idx = Number(el.dataset.i);
-        loadState(cards[idx]);
-      });
+      el.addEventListener("click", () => { sync(); idx = Number(el.dataset.i); loadState(cards[idx]); });
     });
   }
 
   function loadState(o) {
     S = { ...defaults, ...clone(o) };
-    ["title", "body", "page", "brand", "section", "author", "source", "watermark"].forEach(k => {
+    ["title","body","page","brand","section","author","source","watermark","dataFigure","dataLabel","dataSub","listItems","statItems","chartItems","stickyText"].forEach(k => {
       if ($(k)) $(k).value = S[k] ?? "";
     });
-    ["titleSize", "bodySize", "tracking", "lineHeight", "weight", "zoom", "bright", "contrast", "sat", "pad", "wmOpacity", "wmSize"].forEach(k => {
+    ["titleSize","bodySize","tracking","lineHeight","weight","zoom","bright","contrast","sat","pad","wmOpacity","wmSize","dataBar","photoX","photoY","photoRotate","maskBarY","maskBarH","stickyX","stickyY"].forEach(k => {
       if ($(k)) $(k).value = S[k];
     });
-    $("columns").value = String(S.columns || 12);
+    if ($("stickyColor")) $("stickyColor").value = S.stickyColor || "#fff3a0";
+    if ($("columns")) $("columns").value = String(S.columns || 12);
     if ($("titleFont")) $("titleFont").value = S.titleFont || "serif";
     if ($("bodyFont")) $("bodyFont").value = S.bodyFont || "sans";
     if ($("wmPos")) $("wmPos").value = S.wmPos || "diagonal";
-
+    if ($("imageMode")) $("imageMode").value = S.imageMode || "auto";
+    if ($("chartType")) $("chartType").value = S.chartType || "hbar";
+    if ($("accentColor")) $("accentColor").value = S.accentColor || "#9a1f24";
+    if ($("highlightColor")) $("highlightColor").value = S.highlightColor || "#f6b8c4";
     document.querySelectorAll(".layoutBtn").forEach(b => b.classList.toggle("active", b.dataset.layout === S.layout));
     document.querySelectorAll("#alignRow button").forEach(b => b.classList.toggle("active", b.dataset.align === S.align));
-    $("monoBtn").classList.toggle("active", !!S.mono);
-    $("gridBtn").classList.toggle("active", !!S.showGrid);
-    $("safeBtn").classList.toggle("active", !!S.safe);
-    $("logoBtn").classList.toggle("active", !!S.logoOn);
-    $("brandTextBtn").classList.toggle("active", !!S.brandTextOn);
-    $("darkBtn").classList.toggle("active", !!S.dark);
+    ["monoBtn|mono","gridBtn|showGrid","safeBtn|safe","logoBtn|logoOn","brandTextBtn|brandTextOn","darkBtn|dark","wmBtn|wmOn","maskBarBtn|maskBar","pageBtn|pageOn","stickyBtn|stickyOn"].forEach(pair => {
+      const [id, key] = pair.split("|");
+      if ($(id)) $(id).classList.toggle("active", !!S[key] || (key === "wmOn" && S.wmOn !== false) || (key === "pageOn" && S.pageOn !== false));
+    });
+    // fix toggles that default true
     if ($("wmBtn")) $("wmBtn").classList.toggle("active", S.wmOn !== false);
-
+    if ($("pageBtn")) $("pageBtn").classList.toggle("active", S.pageOn !== false);
     chips();
     draw();
   }
 
-  // —— Canvas ——
   function loadImage(src) {
     return new Promise(resolve => {
       if (!src) return resolve(null);
@@ -552,623 +757,631 @@ hr{border:0;border-top:1px solid var(--line-soft);margin:14px 0}
       i.src = src;
     });
   }
-
   async function ensureFonts() {
     try {
       await document.fonts.load(`600 48px ${SERIF}`);
       await document.fonts.load(`900 48px ${SANS}`);
-      await document.fonts.load(`700 32px ${KR_SERIF}`);
-      await document.fonts.load(`400 22px ${KR_SANS}`);
-      await document.fonts.load(`700 48px ${PRETENDARD}`);
       await document.fonts.load(`400 48px ${RIDI}`);
-      await document.fonts.load(`700 48px ${RIDI}`);
+      await document.fonts.load(`700 48px ${PRETENDARD}`);
       await document.fonts.ready;
     } catch (_) {}
   }
 
-  function drawImageCover(ctx, img, x, y, w, h) {
+  function drawImageCover(ctx, img, x, y, w, h, mode) {
     if (!img) return;
-    const sc = Math.max(w / img.width, h / img.height) * (S.zoom / 100);
-    const iw = img.width * sc;
-    const ih = img.height * sc;
+    mode = mode || "cover";
     ctx.save();
     ctx.beginPath();
-    ctx.rect(x, y, w, h);
+    if (mode === "avatar") ctx.arc(x + w/2, y + h/2, Math.min(w, h)/2, 0, Math.PI * 2);
+    else ctx.rect(x, y, w, h);
     ctx.clip();
+    const sc = Math.max(w / img.width, h / img.height) * (S.zoom / 100);
+    const iw = img.width * sc, ih = img.height * sc;
+    const ox = (S.photoX || 0) / 100 * w * 0.5;
+    const oy = (S.photoY || 0) / 100 * h * 0.5;
+    const rot = (S.photoRotate || 0) * Math.PI / 180;
     ctx.filter = `brightness(${S.bright}%) contrast(${S.contrast}%) saturate(${S.sat}%) grayscale(${S.mono ? 100 : 0}%)`;
-    ctx.drawImage(img, x + (w - iw) / 2, y + (h - ih) / 2, iw, ih);
+    ctx.translate(x + w/2 + ox, y + h/2 + oy);
+    if (rot) ctx.rotate(rot);
+    ctx.drawImage(img, -iw/2, -ih/2, iw, ih);
     ctx.restore();
   }
 
-  function setTracking(ctx, emPx) {
-    try {
-      if ("letterSpacing" in ctx) ctx.letterSpacing = emPx + "px";
-    } catch (_) {}
+  function parsePairs(text) {
+    return String(text || "").split(/\n/).map(l => l.trim()).filter(Boolean).map(l => {
+      const i = l.indexOf("|");
+      if (i < 0) return { value: l, label: "" };
+      return { value: l.slice(0, i).trim(), label: l.slice(i + 1).trim() };
+    });
   }
-
-  function wrapText(ctx, text, x, y, maxWidth, lineHeight, limit = 8, align = "left") {
-    const raw = String(text || "");
+  function parseLines(text) {
+    return String(text || "").split(/\n/).map(l => l.trim()).filter(Boolean);
+  }
+  function setTracking(ctx, px) {
+    try { if ("letterSpacing" in ctx) ctx.letterSpacing = px + "px"; } catch (_) {}
+  }
+  function wrapLines(ctx, text, maxWidth, limit = 20) {
     const lines = [];
-    const hasSpace = /\s/.test(raw);
-    const parts = hasSpace ? raw.split(/\s+/) : [...raw];
-    let cur = "";
-    for (const part of parts) {
-      const next = cur ? (hasSpace ? cur + " " + part : cur + part) : part;
-      if (ctx.measureText(next).width > maxWidth && cur) {
-        lines.push(cur);
-        cur = part;
-        if (lines.length >= limit) break;
-      } else cur = next;
+    const paragraphs = String(text || "").replace(/\r\n/g, "\n").replace(/\r/g, "\n").split("\n");
+    for (const para of paragraphs) {
+      if (lines.length >= limit) break;
+      if (para === "") { lines.push(""); continue; }
+      const hasSpace = /[ \t]/.test(para);
+      const parts = hasSpace ? para.split(/([ \t]+)/) : [...para];
+      let cur = "";
+      for (const part of parts) {
+        const next = cur + part;
+        if (ctx.measureText(next).width > maxWidth && cur.trim()) {
+          lines.push(cur.replace(/[ \t]+$/, ""));
+          cur = part.replace(/^[ \t]+/, "");
+          if (lines.length >= limit) break;
+        } else cur = next;
+      }
+      if (lines.length < limit) lines.push(cur);
     }
-    if (cur && lines.length < limit) lines.push(cur);
+    return lines.slice(0, limit);
+  }
+  function wrapText(ctx, text, x, y, maxWidth, lineHeight, limit = 8, align = "left") {
+    const lines = wrapLines(ctx, text, maxWidth, limit);
     ctx.textAlign = align;
     lines.forEach((line, i) => ctx.fillText(line, x, y + i * lineHeight));
     ctx.textAlign = "left";
-    return y + lines.length * lineHeight;
+    return y + Math.max(lines.length, 1) * lineHeight;
   }
-
+  function drawHighlightedText(ctx, text, x, y, maxWidth, lineHeight, limit, align, color, fontSpec, hlColor) {
+    const raw = String(text || "").replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+    const parts = []; const re = /==([^=]+)==/g; let last = 0, m;
+    while ((m = re.exec(raw))) {
+      if (m.index > last) parts.push({ t: raw.slice(last, m.index), hl: false });
+      parts.push({ t: m[1], hl: true }); last = m.index + m[0].length;
+    }
+    if (last < raw.length) parts.push({ t: raw.slice(last), hl: false });
+    if (!parts.length) parts.push({ t: raw, hl: false });
+    const plain = parts.map(p => p.t).join("");
+    ctx.font = fontSpec;
+    const lines = wrapLines(ctx, plain, maxWidth, limit);
+    const ranges = []; let pos = 0;
+    for (const p of parts) {
+      const a = pos, b = pos + p.t.length;
+      if (p.hl) ranges.push([a, b]);
+      pos = b;
+    }
+    let searchFrom = 0;
+    ctx.textAlign = "left";
+    lines.forEach((line, li) => {
+      let lineStart = plain.indexOf(line, searchFrom);
+      if (lineStart < 0) lineStart = searchFrom;
+      const lineEnd = lineStart + line.length;
+      searchFrom = lineEnd;
+      let drawX = x;
+      if (align === "center") drawX = x - ctx.measureText(line).width / 2;
+      if (align === "right") drawX = x - ctx.measureText(line).width;
+      for (const [a, b] of ranges) {
+        const hs = Math.max(a, lineStart), he = Math.min(b, lineEnd);
+        if (hs < he && line.length) {
+          const prefix = plain.slice(lineStart, hs);
+          // prefix may include chars not in visual line if mismatch - use line-relative
+          const rel = line;
+          const relStart = Math.max(0, hs - lineStart);
+          const relEnd = Math.min(line.length, he - lineStart);
+          if (relStart < relEnd) {
+            const pre2 = rel.slice(0, relStart);
+            const seg = rel.slice(relStart, relEnd);
+            const px = drawX + ctx.measureText(pre2).width;
+            const pw = ctx.measureText(seg).width;
+            ctx.fillStyle = hlColor || "#f6b8c4";
+            ctx.fillRect(px - 2, y + li * lineHeight - lineHeight * 0.78, pw + 4, lineHeight * 0.95);
+          }
+        }
+      }
+      ctx.fillStyle = color;
+      ctx.fillText(line, drawX, y + li * lineHeight);
+    });
+    return y + Math.max(lines.length, 1) * lineHeight;
+  }
   function line(ctx, x1, y1, x2, y2, color, width = 1) {
-    ctx.save();
-    ctx.strokeStyle = color;
-    ctx.lineWidth = width;
-    ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
-    ctx.stroke();
-    ctx.restore();
+    ctx.save(); ctx.strokeStyle = color; ctx.lineWidth = width;
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); ctx.restore();
   }
-
   function hairframe(ctx, inset, color) {
-    ctx.save();
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 1;
-    ctx.strokeRect(inset, inset, 1080 - inset * 2, 1350 - inset * 2);
-    ctx.restore();
+    ctx.save(); ctx.strokeStyle = color; ctx.lineWidth = 1;
+    ctx.strokeRect(inset, inset, 1080 - inset * 2, 1350 - inset * 2); ctx.restore();
   }
-
   function metaLabel(ctx, text, x, y, color) {
-    ctx.fillStyle = color;
-    ctx.font = `700 13px ${SANS}`;
-    setTracking(ctx, 2.4);
-    ctx.fillText(String(text || "").toUpperCase(), x, y);
-    setTracking(ctx, 0);
+    ctx.fillStyle = color; ctx.font = `700 13px ${SANS}`;
+    setTracking(ctx, 2.4); ctx.fillText(String(text || "").toUpperCase(), x, y); setTracking(ctx, 0);
   }
 
   async function draw() {
     const token = ++drawToken;
     await ensureFonts();
     if (token !== drawToken) return;
-
-    const canvas = $("canvas");
+    const canvas = $("canvas"); if (!canvas) return;
     const ctx = canvas.getContext("2d");
     const W = 1080, H = 1350;
-    const p = W * (S.pad / 100);
-    const ww = W - p * 2;
-
+    const p = W * (S.pad / 100), ww = W - p * 2;
     const dark = !!S.dark;
     const bg = dark ? "#0e0e0f" : "#f5f1e8";
     const fg = dark ? "#f4f0e7" : "#141210";
     const muted = dark ? "#a8a49c" : "#6e6a62";
     const hair = dark ? "rgba(244,240,231,.14)" : "rgba(20,18,16,.14)";
-    const accent = dark ? "#d4c7b4" : "#9a1f24";
-    const paperSoft = dark ? "#161617" : "#efeae0";
-
+    const accent = dark ? "#d4c7b4" : (S.accentColor || "#9a1f24");
+    const hlCol = S.highlightColor || "#f6b8c4";
     const photo = await loadImage(S.photo);
     const logo = await loadImage(S.logo);
     if (token !== drawToken) return;
 
     ctx.clearRect(0, 0, W, H);
-    ctx.fillStyle = bg;
-    ctx.fillRect(0, 0, W, H);
-    setTracking(ctx, S.tracking * 0.35);
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
 
     const titleAlign = () => {
       const a = S.align === "center" ? "center" : S.align === "right" ? "right" : "left";
       const x = a === "center" ? W / 2 : a === "right" ? W - p : p;
       return { a, x };
     };
-
     const drawHeader = (c1 = accent, c2 = muted) => {
       metaLabel(ctx, S.section || "EDITORIAL", p, 52, c1);
-      ctx.fillStyle = c2;
-      ctx.font = `600 12px ${SANS}`;
-      setTracking(ctx, 1.5);
-      ctx.textAlign = "right";
-      ctx.fillText(S.page || "01 / 01", W - p, 52);
-      ctx.textAlign = "left";
-      setTracking(ctx, 0);
+      if (S.pageOn !== false) {
+        ctx.fillStyle = c2; ctx.font = `600 12px ${SANS}`; setTracking(ctx, 1.5);
+        ctx.textAlign = "right"; ctx.fillText(S.page || "01 / 01", W - p, 52);
+        ctx.textAlign = "left"; setTracking(ctx, 0);
+      }
       line(ctx, p, 72, W - p, 72, hair, 1);
     };
-
     const drawTitle = (y, maxW = ww, limit = 5, color = fg, size = S.titleSize) => {
       const { a, x } = titleAlign();
-      ctx.fillStyle = color;
-      ctx.font = `${S.weight} ${size}px ${titleFamily()}`;
       setTracking(ctx, S.tracking * 0.45);
-      const end = wrapText(ctx, S.title, x, y, maxW, size * S.lineHeight, limit, a);
-      setTracking(ctx, 0);
-      return end;
+      const end = drawHighlightedText(ctx, S.title, x, y, maxW, size * S.lineHeight, limit, a, color, `${S.weight} ${size}px ${titleFamily()}`, hlCol);
+      setTracking(ctx, 0); return end;
     };
-
     const drawBody = (x, y, maxW, limit = 7, align = "left", color = muted, size = S.bodySize) => {
-      ctx.fillStyle = color;
-      ctx.font = `400 ${size}px ${bodyFamily()}`;
       setTracking(ctx, 0.2);
-      const end = wrapText(ctx, S.body, x, y, maxW, size * 1.55, limit, align);
-      setTracking(ctx, 0);
-      return end;
+      const end = drawHighlightedText(ctx, S.body, x, y, maxW, size * 1.55, limit, align, color, `400 ${size}px ${bodyFamily()}`, hlCol);
+      setTracking(ctx, 0); return end;
+    };
+    const drawMaskBarIf = () => {
+      if (!S.maskBar) return;
+      const by = H * ((S.maskBarY || 55) / 100);
+      const bh = H * ((S.maskBarH || 12) / 100);
+      ctx.fillStyle = "rgba(0,0,0,0.55)"; ctx.fillRect(0, by, W, bh);
     };
 
-    // —— Layouts ——
     if (S.layout === "cover") {
-      const ph = 720;
-      if (photo) {
-        drawImageCover(ctx, photo, 0, 0, W, ph);
-        const g = ctx.createLinearGradient(0, ph * 0.35, 0, ph);
-        g.addColorStop(0, "rgba(0,0,0,0)");
-        g.addColorStop(1, "rgba(0,0,0,.45)");
-        ctx.fillStyle = g;
-        ctx.fillRect(0, 0, W, ph);
-      } else {
-        ctx.fillStyle = dark ? "#1a1a1c" : "#2a2824";
-        ctx.fillRect(0, 0, W, ph);
-        // subtle grain blocks
-        ctx.fillStyle = "rgba(255,255,255,.03)";
-        for (let i = 0; i < 12; i++) {
-          ctx.fillRect(40 + i * 85, 80 + (i % 3) * 160, 60, 2);
+      const mode = S.imageMode || "auto";
+      const titleLH = S.titleSize * S.lineHeight;
+      const bodyLH = S.bodySize * 1.55;
+      const estTitleLines = Math.min(6, Math.max(2, String(S.title || "").split("\n").length));
+      const estBodyLines = Math.min(12, Math.max(2, String(S.body || "").split("\n").length + 1));
+      const needText = 90 + estTitleLines * titleLH + 36 + estBodyLines * bodyLH + 90;
+      let ph = Math.min(700, Math.max(280, H - needText));
+      if (mode === "full") ph = H;
+      else if (mode === "bottom") ph = Math.min(460, Math.max(260, H - needText));
+      if (photo && mode === "side") {
+        drawImageCover(ctx, photo, W * 0.48, 90, W * 0.52, H - 180);
+      } else if (photo && mode === "avatar") {
+        const sz = 280; drawImageCover(ctx, photo, (W - sz) / 2, 120, sz, sz, "avatar");
+      } else if (photo && mode !== "bottom") {
+        drawImageCover(ctx, photo, 0, 0, W, mode === "full" ? H : ph);
+        if (mode !== "full") {
+          const g = ctx.createLinearGradient(0, ph * 0.35, 0, ph);
+          g.addColorStop(0, "rgba(0,0,0,0)"); g.addColorStop(1, "rgba(0,0,0,.45)");
+          ctx.fillStyle = g; ctx.fillRect(0, 0, W, ph);
         }
+      } else if (!photo && mode !== "bottom") {
+        ctx.fillStyle = dark ? "#1a1a1c" : "#2a2824"; ctx.fillRect(0, 0, W, ph);
       }
-
-      metaLabel(ctx, S.section || "EDITORIAL", p, 52, "#fff");
-      ctx.fillStyle = "rgba(255,255,255,.72)";
-      ctx.font = `600 12px ${SANS}`;
-      ctx.textAlign = "right";
-      ctx.fillText(S.page || "01 / 01", W - p, 52);
-      ctx.textAlign = "left";
-
-      // paper band
-      ctx.fillStyle = bg;
-      ctx.fillRect(0, ph, W, H - ph);
-      line(ctx, p, ph + 1, W - p, ph + 1, hair, 1);
-
+      metaLabel(ctx, S.section || "EDITORIAL", p, 52, photo && mode !== "bottom" && mode !== "side" ? "#fff" : accent);
+      if (S.pageOn !== false) {
+        ctx.fillStyle = photo && mode !== "bottom" && mode !== "side" ? "rgba(255,255,255,.72)" : muted;
+        ctx.font = `600 12px ${SANS}`; ctx.textAlign = "right";
+        ctx.fillText(S.page || "01 / 01", W - p, 52); ctx.textAlign = "left";
+      }
+      if (mode !== "full") {
+        ctx.fillStyle = bg; ctx.fillRect(0, ph, W, H - ph);
+        line(ctx, p, ph + 1, W - p, ph + 1, hair, 1);
+      }
       const { a, x } = titleAlign();
-      ctx.fillStyle = fg;
-      ctx.font = `${S.weight} ${S.titleSize}px ${titleFamily()}`;
+      const titleY = mode === "full" ? Math.max(100, H - needText + 30) : ph + 88;
+      const tCol = mode === "full" ? "#fff" : fg;
       setTracking(ctx, S.tracking * 0.5);
-      const ty = wrapText(ctx, S.title, x, ph + 110, ww, S.titleSize * S.lineHeight, 4, a);
+      const ty = drawHighlightedText(ctx, S.title, x, titleY, ww, titleLH, 6, a, tCol, `${S.weight} ${S.titleSize}px ${titleFamily()}`, hlCol);
       setTracking(ctx, 0);
-      line(ctx, a === "center" ? W / 2 - 40 : a === "right" ? W - p - 80 : p, ty + 28, a === "center" ? W / 2 + 40 : a === "right" ? W - p : p + 80, ty + 28, accent, 2);
-      drawBody(x, Math.min(H - 120, ty + 58), ww * 0.92, 4, a, muted);
-      hairframe(ctx, 28, hair);
+      const bodyTop = ty + Math.max(32, S.bodySize * 0.9);
+      const avail = Math.max(bodyLH * 2, H - 70 - bodyTop);
+      const bodyLimit = Math.max(4, Math.min(16, Math.floor(avail / bodyLH)));
+      drawBody(x, bodyTop, ww * 0.92, bodyLimit, a, mode === "full" ? "rgba(255,255,255,.85)" : muted);
+      if (photo && mode === "bottom") drawImageCover(ctx, photo, 0, H - ph, W, ph);
+      drawMaskBarIf(); hairframe(ctx, 28, hair);
     }
-
     else if (S.layout === "photo") {
       if (photo) drawImageCover(ctx, photo, 0, 0, W, H);
-      else {
-        ctx.fillStyle = "#1c1b19";
-        ctx.fillRect(0, 0, W, H);
-      }
+      else { ctx.fillStyle = "#1c1b19"; ctx.fillRect(0, 0, W, H); }
       const g = ctx.createLinearGradient(0, H * 0.42, 0, H);
-      g.addColorStop(0, "rgba(0,0,0,0)");
-      g.addColorStop(0.45, "rgba(0,0,0,.25)");
-      g.addColorStop(1, "rgba(0,0,0,.88)");
-      ctx.fillStyle = g;
-      ctx.fillRect(0, 0, W, H);
-
+      g.addColorStop(0, "rgba(0,0,0,0)"); g.addColorStop(1, "rgba(0,0,0,.88)");
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
       metaLabel(ctx, S.section || "PHOTO ESSAY", p, 52, "#fff");
-      ctx.fillStyle = "rgba(255,255,255,.7)";
-      ctx.font = `600 12px ${SANS}`;
-      ctx.textAlign = "right";
-      ctx.fillText(S.page || "01 / 01", W - p, 52);
-      ctx.textAlign = "left";
-
-      const a = S.align === "center" ? "center" : S.align === "right" ? "right" : "left";
-      const x = a === "center" ? W / 2 : a === "right" ? W - p : p;
-      ctx.fillStyle = "#fff";
-      ctx.font = `${S.weight} ${S.titleSize}px ${titleFamily()}`;
-      setTracking(ctx, S.tracking * 0.5);
-      const ty = wrapText(ctx, S.title, x, 980, ww, S.titleSize * S.lineHeight, 4, a);
-      setTracking(ctx, 0);
-      ctx.fillStyle = "rgba(255,255,255,.78)";
-      ctx.font = `400 ${S.bodySize}px ${bodyFamily()}`;
-      wrapText(ctx, S.body, x, ty + 36, ww * 0.9, S.bodySize * 1.5, 3, a);
-      hairframe(ctx, 28, "rgba(255,255,255,.12)");
+      if (S.pageOn !== false) {
+        ctx.fillStyle = "rgba(255,255,255,.7)"; ctx.font = `600 12px ${SANS}`;
+        ctx.textAlign = "right"; ctx.fillText(S.page || "01 / 01", W - p, 52); ctx.textAlign = "left";
+      }
+      const { a, x } = titleAlign();
+      const ty = drawHighlightedText(ctx, S.title, x, 980, ww, S.titleSize * S.lineHeight, 4, a, "#fff", `${S.weight} ${S.titleSize}px ${titleFamily()}`, hlCol);
+      drawBody(x, ty + 36, ww * 0.9, 3, a, "rgba(255,255,255,.78)");
+      drawMaskBarIf(); hairframe(ctx, 28, "rgba(255,255,255,.12)");
     }
-
     else if (S.layout === "type") {
       drawHeader();
-      // accent rail
-      ctx.fillStyle = accent;
-      ctx.fillRect(0, 0, 14, H);
-
-      ctx.fillStyle = muted;
-      ctx.font = `700 12px ${SANS}`;
-      setTracking(ctx, 2);
-      ctx.fillText("BIG TYPE  /  EDITORIAL STATEMENT", p + 18, 160);
-      setTracking(ctx, 0);
-
+      ctx.fillStyle = accent; ctx.fillRect(0, 0, 14, H);
       const ts = Math.max(S.titleSize, 96);
-      ctx.fillStyle = fg;
-      ctx.font = `${S.weight} ${ts}px ${titleFamily()}`;
-      setTracking(ctx, S.tracking * 0.55);
-      const ty = wrapText(ctx, S.title, p + 18, 280, ww - 18, ts * 0.92, 6, "left");
-      setTracking(ctx, 0);
-
+      const ty = drawHighlightedText(ctx, S.title, p + 18, 280, ww - 18, ts * 0.92, 6, "left", fg, `${S.weight} ${ts}px ${titleFamily()}`, hlCol);
       line(ctx, p + 18, ty + 42, W - p, ty + 42, accent, 3);
-      drawBody(p + 18, ty + 88, ww * 0.72, 7, "left", muted);
-      hairframe(ctx, 28, hair);
+      drawBody(p + 18, ty + 88, ww * 0.72, 7); hairframe(ctx, 28, hair);
     }
-
     else if (S.layout === "article") {
       drawHeader();
-      ctx.fillStyle = fg;
       const ts = Math.min(S.titleSize, 72);
-      ctx.font = `600 ${ts}px ${titleFamily()}`;
-      setTracking(ctx, S.tracking * 0.4);
-      const ty = wrapText(ctx, S.title, p, 170, ww, ts * 1.08, 4, "left");
-      setTracking(ctx, 0);
+      const ty = drawTitle(170, ww, 4, fg, ts);
       line(ctx, p, ty + 28, W - p, ty + 28, fg, 1.5);
-
-      if (photo) {
-        drawImageCover(ctx, photo, p, ty + 52, ww, 280);
-        line(ctx, p, ty + 52 + 280 + 28, W - p, ty + 52 + 280 + 28, hair, 1);
-      }
-
+      if (photo) drawImageCover(ctx, photo, p, ty + 52, ww, 280);
       const top = photo ? ty + 52 + 280 + 56 : ty + 72;
       const col = (ww - 40) / 2;
       const words = String(S.body || "").split(/\s+/);
       const mid = Math.ceil(words.length / 2);
-      const leftText = words.slice(0, mid).join(" ");
-      const rightText = words.slice(mid).join(" ");
-
-      ctx.fillStyle = muted;
-      ctx.font = `400 ${S.bodySize}px ${bodyFamily()}`;
-      wrapText(ctx, leftText || S.body, p, top, col, S.bodySize * 1.6, 14, "left");
-      wrapText(ctx, rightText || "", p + col + 40, top, col, S.bodySize * 1.6, 14, "left");
+      ctx.fillStyle = muted; ctx.font = `400 ${S.bodySize}px ${bodyFamily()}`;
+      wrapText(ctx, words.slice(0, mid).join(" "), p, top, col, S.bodySize * 1.6, 14, "left");
+      wrapText(ctx, words.slice(mid).join(" "), p + col + 40, top, col, S.bodySize * 1.6, 14, "left");
       hairframe(ctx, 28, hair);
     }
-
     else if (S.layout === "quote") {
       drawHeader();
-      if (photo) {
-        drawImageCover(ctx, photo, 0, 90, W, 520);
-        ctx.fillStyle = "rgba(0,0,0,.38)";
-        ctx.fillRect(0, 90, W, 520);
-      } else {
-        ctx.fillStyle = paperSoft;
-        ctx.fillRect(0, 90, W, 320);
-      }
-
-      ctx.fillStyle = accent;
-      ctx.font = `500 200px ${SERIF}`;
-      ctx.fillText("“", p - 8, photo ? 740 : 520);
-
+      if (photo) { drawImageCover(ctx, photo, 0, 90, W, 520); ctx.fillStyle = "rgba(0,0,0,.38)"; ctx.fillRect(0, 90, W, 520); }
+      ctx.fillStyle = accent; ctx.font = `500 200px ${SERIF}`; ctx.fillText("“", p - 8, photo ? 740 : 520);
       const qs = Math.min(S.titleSize, 68);
-      ctx.fillStyle = fg;
-      ctx.font = `500 ${qs}px ${titleFamily()}`;
-      setTracking(ctx, S.tracking * 0.3);
-      const qy = photo ? 780 : 560;
-      const ty = wrapText(ctx, S.title, p + 12, qy, ww - 24, qs * 1.18, 5, "left");
-      setTracking(ctx, 0);
-
-      line(ctx, p + 12, ty + 36, p + 72, ty + 36, accent, 2);
-      ctx.fillStyle = muted;
-      ctx.font = `700 14px ${SANS}`;
-      setTracking(ctx, 1.5);
-      ctx.fillText((S.author || S.brand || "WEST150 EDITORIAL").toUpperCase(), p + 12, ty + 68);
-      setTracking(ctx, 0);
+      const ty = drawHighlightedText(ctx, S.title, p + 12, photo ? 780 : 560, ww - 24, qs * 1.18, 5, "left", fg, `500 ${qs}px ${titleFamily()}`, hlCol);
+      ctx.fillStyle = muted; ctx.font = `700 14px ${SANS}`;
+      ctx.fillText((S.author || S.brand || "WEST150").toUpperCase(), p + 12, ty + 68);
       hairframe(ctx, 28, hair);
     }
-
     else if (S.layout === "interview") {
       drawHeader();
-      if (photo) {
-        drawImageCover(ctx, photo, W * 0.52, 100, W * 0.48 - p, H - 200);
-        // frame
-        ctx.strokeStyle = hair;
-        ctx.lineWidth = 1;
-        ctx.strokeRect(W * 0.52, 100, W * 0.48 - p, H - 200);
-      }
-
-      ctx.fillStyle = accent;
-      ctx.font = `800 14px ${SANS}`;
-      setTracking(ctx, 2);
-      ctx.fillText("INTERVIEW", p, 160);
-      setTracking(ctx, 0);
-
+      if (photo) drawImageCover(ctx, photo, W * 0.52, 100, W * 0.48 - p, H - 200);
+      ctx.fillStyle = accent; ctx.font = `800 14px ${SANS}`; ctx.fillText("INTERVIEW", p, 160);
       const ts = Math.min(S.titleSize, 64);
-      ctx.fillStyle = fg;
-      ctx.font = `600 ${ts}px ${titleFamily()}`;
-      const ty = wrapText(ctx, S.title, p, 240, W * 0.44, ts * 1.1, 5, "left");
-
-      ctx.fillStyle = accent;
-      ctx.font = `800 12px ${SANS}`;
-      setTracking(ctx, 1.8);
-      ctx.fillText("ANSWER", p, ty + 70);
-      setTracking(ctx, 0);
-      line(ctx, p, ty + 86, p + 48, ty + 86, accent, 2);
-      drawBody(p, ty + 120, W * 0.44, 10, "left", muted);
-      hairframe(ctx, 28, hair);
+      const ty = drawHighlightedText(ctx, S.title, p, 240, W * 0.44, ts * 1.1, 5, "left", fg, `600 ${ts}px ${titleFamily()}`, hlCol);
+      ctx.fillStyle = accent; ctx.font = `800 12px ${SANS}`; ctx.fillText("ANSWER", p, ty + 70);
+      drawBody(p, ty + 120, W * 0.44, 10); hairframe(ctx, 28, hair);
     }
-
     else if (S.layout === "timeline") {
       drawHeader();
-      const ts = Math.min(S.titleSize, 64);
-      ctx.fillStyle = fg;
-      ctx.font = `700 ${ts}px ${titleFamily()}`;
-      wrapText(ctx, S.title, p, 150, ww, ts * 1.05, 3, "left");
-
-      const items = 4;
-      const startY = 320;
-      const gap = 200;
-      line(ctx, p + 12, startY - 30, p + 12, startY + gap * (items - 1) + 40, accent, 2);
-
-      for (let i = 0; i < items; i++) {
+      drawTitle(150, ww, 3, fg, Math.min(S.titleSize, 64));
+      const startY = 320, gap = 200;
+      line(ctx, p + 12, startY - 30, p + 12, startY + gap * 3 + 40, accent, 2);
+      for (let i = 0; i < 4; i++) {
         const y = startY + i * gap;
-        ctx.fillStyle = bg;
-        ctx.beginPath();
-        ctx.arc(p + 12, y, 9, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.strokeStyle = accent;
-        ctx.lineWidth = 2.5;
-        ctx.stroke();
-
-        ctx.fillStyle = fg;
-        ctx.font = `800 18px ${SANS}`;
-        setTracking(ctx, 1);
-        ctx.fillText(fmt(i + 1), p + 42, y + 6);
-        setTracking(ctx, 0);
-
-        ctx.fillStyle = muted;
-        ctx.font = `400 ${S.bodySize}px ${bodyFamily()}`;
+        ctx.fillStyle = bg; ctx.beginPath(); ctx.arc(p + 12, y, 9, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = accent; ctx.lineWidth = 2.5; ctx.stroke();
+        ctx.fillStyle = fg; ctx.font = `800 18px ${SANS}`; ctx.fillText(fmt(i + 1), p + 42, y + 6);
+        ctx.fillStyle = muted; ctx.font = `400 ${S.bodySize}px ${bodyFamily()}`;
         wrapText(ctx, S.body, p + 110, y + 6, ww - 110, S.bodySize * 1.45, 2, "left");
       }
       hairframe(ctx, 28, hair);
     }
-
     else if (S.layout === "data") {
       drawHeader();
-      const ts = Math.min(S.titleSize, 58);
-      ctx.fillStyle = fg;
-      ctx.font = `700 ${ts}px ${titleFamily()}`;
-      wrapText(ctx, S.title, p, 160, ww, ts * 1.08, 3, "left");
-
-      ctx.fillStyle = accent;
-      ctx.font = `600 220px ${SERIF}`;
-      setTracking(ctx, -4);
-      ctx.fillText("47%", p - 6, 520);
-      setTracking(ctx, 0);
-
-      ctx.fillStyle = muted;
-      ctx.font = `700 13px ${SANS}`;
-      setTracking(ctx, 2);
-      ctx.fillText("KEY FIGURE", p, 560);
-      setTracking(ctx, 0);
-
-      // bar
-      ctx.fillStyle = dark ? "#2a2a2c" : "#e2dcd2";
-      ctx.fillRect(p, 620, ww, 18);
-      ctx.fillStyle = accent;
-      ctx.fillRect(p, 620, ww * 0.47, 18);
-
-      drawBody(p, 700, ww * 0.75, 6, "left", muted);
-      hairframe(ctx, 28, hair);
+      const ty = drawTitle(160, ww, 3, fg, Math.min(S.titleSize, 58));
+      const figure = (S.dataFigure || "47%").trim() || "47%";
+      let figSize = 200;
+      if (figure.length > 4) figSize = 140;
+      if (figure.length > 6) figSize = 110;
+      const figY = ty + figSize * 0.85 + 36;
+      ctx.fillStyle = accent; ctx.font = `600 ${figSize}px ${SERIF}`; ctx.fillText(figure, p - 4, figY);
+      const labelY = figY + 42;
+      ctx.fillStyle = muted; ctx.font = `700 13px ${SANS}`;
+      ctx.fillText((S.dataLabel || "KEY FIGURE").toUpperCase(), p, labelY);
+      const barY = labelY + 48, barPct = Math.max(0, Math.min(100, Number(S.dataBar) || 0));
+      ctx.fillStyle = dark ? "#2a2a2c" : "#e2dcd2"; ctx.fillRect(p, barY, ww, 18);
+      ctx.fillStyle = accent; ctx.fillRect(p, barY, ww * (barPct / 100), 18);
+      let nextY = barY + 56;
+      if (S.dataSub) {
+        ctx.fillStyle = fg; ctx.font = `600 18px ${SANS}`;
+        nextY = wrapText(ctx, S.dataSub, p, nextY, ww * 0.85, 28, 2, "left") + 24;
+      }
+      drawBody(p, nextY, ww * 0.78, 6); hairframe(ctx, 28, hair);
     }
-
     else if (S.layout === "compare") {
       drawHeader();
-      const ts = Math.min(S.titleSize, 58);
-      ctx.fillStyle = fg;
-      ctx.font = `700 ${ts}px ${titleFamily()}`;
-      wrapText(ctx, S.title, p, 150, ww, ts * 1.05, 3, "left");
-
+      drawTitle(150, ww, 3, fg, Math.min(S.titleSize, 58));
       line(ctx, W / 2, 300, W / 2, 1180, hair, 1);
-
       ["A", "B"].forEach((label, i) => {
         const x = i ? W / 2 + 36 : p;
-        ctx.fillStyle = accent;
-        ctx.font = `800 14px ${SANS}`;
-        setTracking(ctx, 2);
-        ctx.fillText("OPTION " + label, x, 360);
-        setTracking(ctx, 0);
-
-        ctx.fillStyle = fg;
-        ctx.font = `600 42px ${titleFamily()}`;
-        ctx.fillText(i ? "After" : "Before", x, 430);
-
-        ctx.fillStyle = muted;
-        ctx.font = `400 ${S.bodySize}px ${bodyFamily()}`;
+        ctx.fillStyle = accent; ctx.font = `800 14px ${SANS}`; ctx.fillText("OPTION " + label, x, 360);
+        ctx.fillStyle = fg; ctx.font = `600 42px ${titleFamily()}`; ctx.fillText(i ? "After" : "Before", x, 430);
+        ctx.fillStyle = muted; ctx.font = `400 ${S.bodySize}px ${bodyFamily()}`;
         wrapText(ctx, S.body, x, 500, ww / 2 - 50, S.bodySize * 1.55, 10, "left");
       });
       hairframe(ctx, 28, hair);
     }
-
     else if (S.layout === "conclusion") {
       drawHeader();
-      ctx.fillStyle = accent;
-      ctx.font = `800 13px ${SANS}`;
-      setTracking(ctx, 2.2);
-      ctx.fillText("THE TAKEAWAY", p, 180);
-      setTracking(ctx, 0);
+      ctx.fillStyle = accent; ctx.font = `800 13px ${SANS}`; ctx.fillText("THE TAKEAWAY", p, 180);
       line(ctx, p, 210, W - p, 210, fg, 1.5);
-
-      const ts = Math.min(S.titleSize, 78);
-      ctx.fillStyle = fg;
-      ctx.font = `600 ${ts}px ${titleFamily()}`;
-      setTracking(ctx, S.tracking * 0.35);
-      const ty = wrapText(ctx, S.title, p, 300, ww, ts * 1.08, 4, "left");
-      setTracking(ctx, 0);
-
+      const ty = drawTitle(300, ww, 4, fg, Math.min(S.titleSize, 78));
       line(ctx, p, ty + 36, p + 96, ty + 36, accent, 3);
-      drawBody(p, ty + 80, ww * 0.8, 8, "left", muted);
+      drawBody(p, ty + 80, ww * 0.8, 8); hairframe(ctx, 28, hair);
+    }
+    else if (S.layout === "list") {
+      drawHeader();
+      const ty = drawTitle(160, ww, 3, fg, Math.min(S.titleSize, 64));
+      const items = parseLines(S.listItems);
+      const use = items.length ? items : ["항목을 STORY에 입력하세요"];
+      use.slice(0, 8).forEach((item, i) => {
+        const y = ty + 50 + i * 72;
+        ctx.fillStyle = accent; ctx.beginPath(); ctx.arc(p + 14, y - 6, 14, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = "#fff"; ctx.font = `800 12px ${SANS}`; ctx.textAlign = "center";
+        ctx.fillText(String(i + 1), p + 14, y - 2); ctx.textAlign = "left";
+        ctx.fillStyle = fg; ctx.font = `500 ${S.bodySize + 2}px ${bodyFamily()}`;
+        wrapText(ctx, item, p + 44, y, ww - 44, (S.bodySize + 2) * 1.45, 2, "left");
+      });
+      hairframe(ctx, 28, hair);
+    }
+    else if (S.layout === "stats") {
+      drawHeader();
+      const ty = drawTitle(150, ww, 3, fg, Math.min(S.titleSize, 58));
+      const stats = parsePairs(S.statItems);
+      const use = stats.length ? stats : [{ value: "—", label: "STAT" }];
+      const cols = Math.min(3, use.length);
+      use.slice(0, 6).forEach((st, i) => {
+        const col = i % cols, row = Math.floor(i / cols);
+        const x = p + col * (ww / cols), y = ty + 80 + row * 200;
+        ctx.fillStyle = accent; ctx.font = `700 56px ${titleFamily()}`; ctx.fillText(st.value, x, y);
+        ctx.fillStyle = muted; ctx.font = `700 14px ${SANS}`; ctx.fillText((st.label || "").toUpperCase(), x, y + 36);
+      });
+      if (S.body) drawBody(p, H - 180, ww * 0.85, 3);
+      hairframe(ctx, 28, hair);
+    }
+    else if (S.layout === "chart") {
+      drawHeader();
+      const ty = drawTitle(150, ww, 3, fg, Math.min(S.titleSize, 58));
+      const items = parsePairs(S.chartItems);
+      const use = items.length ? items : [{ value: "50", label: "A" }];
+      const nums = use.map(it => { const n = parseFloat(String(it.value).replace(/[^0-9.\-]/g, "")); return isNaN(n) ? 0 : n; });
+      const maxV = Math.max(1, ...nums), top = ty + 50;
+      if ((S.chartType || "hbar") === "vbar") {
+        const n = use.length, gap = 12, barW = Math.min(64, (ww - gap * (n - 1)) / n);
+        const base = H - 160, maxH = base - top - 40;
+        use.forEach((it, i) => {
+          const v = nums[i], bh = maxH * (v / maxV), x = p + i * (barW + gap);
+          ctx.fillStyle = dark ? "#2a2a2c" : "#e2dcd2"; ctx.fillRect(x, top, barW, maxH);
+          ctx.fillStyle = accent; ctx.fillRect(x, top + maxH - bh, barW, bh);
+          ctx.fillStyle = muted; ctx.font = `700 12px ${SANS}`; ctx.textAlign = "center";
+          ctx.fillText(it.label || it.value, x + barW / 2, base + 24);
+          ctx.fillStyle = fg; ctx.font = `800 13px ${SANS}`;
+          ctx.fillText(String(it.value), x + barW / 2, top + maxH - bh - 12); ctx.textAlign = "left";
+        });
+      } else {
+        use.slice(0, 8).forEach((it, i) => {
+          const y = top + i * 70, v = nums[i];
+          ctx.fillStyle = muted; ctx.font = `700 13px ${SANS}`; ctx.fillText(it.label || it.value, p, y);
+          ctx.fillStyle = dark ? "#2a2a2c" : "#e2dcd2"; ctx.fillRect(p, y + 12, ww, 16);
+          ctx.fillStyle = accent; ctx.fillRect(p, y + 12, ww * (v / maxV), 16);
+          ctx.fillStyle = fg; ctx.font = `800 12px ${SANS}`; ctx.textAlign = "right";
+          ctx.fillText(String(it.value), W - p, y); ctx.textAlign = "left";
+        });
+      }
       hairframe(ctx, 28, hair);
     }
 
-    // Grid overlay
     if (S.showGrid) {
       const cols = S.columns || 12;
-      for (let i = 1; i < cols; i++) {
-        const x = (W / cols) * i;
-        line(ctx, x, 0, x, H, "rgba(120,110,100,0.16)", 1);
-      }
+      for (let i = 1; i < cols; i++) line(ctx, (W / cols) * i, 0, (W / cols) * i, H, "rgba(120,110,100,0.16)", 1);
     }
-
     if (S.safe) {
-      ctx.save();
-      ctx.strokeStyle = "rgba(154,31,36,0.4)";
-      ctx.lineWidth = 1;
-      ctx.setLineDash([7, 5]);
-      ctx.strokeRect(p, p, W - p * 2, H - p * 2);
-      ctx.restore();
+      ctx.save(); ctx.strokeStyle = "rgba(154,31,36,0.4)"; ctx.lineWidth = 1;
+      ctx.setLineDash([7, 5]); ctx.strokeRect(p, p, W - p * 2, H - p * 2); ctx.restore();
     }
 
-    // Footer
     const footerY = H - 40;
-    if (S.author) {
-      ctx.fillStyle = muted;
-      ctx.font = `400 12px ${SANS}`;
-      ctx.textAlign = "left";
-      ctx.fillText(S.author, p, footerY);
-    }
+    if (S.author) { ctx.fillStyle = muted; ctx.font = `400 12px ${SANS}`; ctx.fillText(S.author, p, footerY); }
     if (S.source) {
-      ctx.fillStyle = muted;
-      ctx.font = `400 12px ${SANS}`;
-      ctx.textAlign = "center";
-      ctx.fillText("SOURCE · " + S.source, W / 2, footerY);
-      ctx.textAlign = "left";
+      ctx.fillStyle = muted; ctx.font = `400 12px ${SANS}`; ctx.textAlign = "center";
+      ctx.fillText("SOURCE · " + S.source, W / 2, footerY); ctx.textAlign = "left";
     }
     if (S.brandTextOn) {
-      ctx.fillStyle = fg;
-      ctx.font = `800 15px ${SANS}`;
-      setTracking(ctx, 2);
-      ctx.textAlign = "right";
-      ctx.fillText((S.brand || "WEST150").toUpperCase(), W - p, footerY);
-      ctx.textAlign = "left";
-      setTracking(ctx, 0);
+      ctx.fillStyle = fg; ctx.font = `800 15px ${SANS}`; setTracking(ctx, 2);
+      ctx.textAlign = "right"; ctx.fillText((S.brand || "WEST150").toUpperCase(), W - p, footerY);
+      ctx.textAlign = "left"; setTracking(ctx, 0);
     }
     if (S.logoOn && logo) {
-      const lh = 28;
-      const lw = (logo.width / logo.height) * lh;
+      const lh = 28, lw = (logo.width / logo.height) * lh;
       ctx.drawImage(logo, W - p - lw, footerY - 44, lw, lh);
     }
 
-    // Watermark
     const wmText = (S.watermark || "").trim();
     if (S.wmOn !== false && wmText) {
       const op = Math.max(0.04, Math.min(0.45, (S.wmOpacity || 18) / 100));
-      const size = S.wmSize || 28;
-      const pos = S.wmPos || "diagonal";
+      const size = S.wmSize || 28, pos = S.wmPos || "diagonal";
       ctx.save();
       ctx.fillStyle = dark ? `rgba(244,240,231,${op})` : `rgba(20,18,16,${op})`;
       ctx.font = `700 ${size}px ${SANS}`;
-      setTracking(ctx, 3);
       if (pos === "diagonal") {
-        ctx.translate(W / 2, H / 2);
-        ctx.rotate(-Math.PI / 6);
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        // repeat lightly for premium feel
+        ctx.translate(W / 2, H / 2); ctx.rotate(-Math.PI / 6);
+        ctx.textAlign = "center"; ctx.textBaseline = "middle";
         const gap = size * 5.5;
-        for (let row = -2; row <= 2; row++) {
-          for (let col = -2; col <= 2; col++) {
-            ctx.globalAlpha = op * (row === 0 && col === 0 ? 1 : 0.55);
-            ctx.fillText(wmText.toUpperCase(), col * gap * 1.6, row * gap);
-          }
+        for (let row = -2; row <= 2; row++) for (let col = -2; col <= 2; col++) {
+          ctx.globalAlpha = op * (row === 0 && col === 0 ? 1 : 0.55);
+          ctx.fillText(wmText.toUpperCase(), col * gap * 1.6, row * gap);
         }
       } else if (pos === "center") {
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.globalAlpha = op;
+        ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.globalAlpha = op;
         ctx.fillText(wmText.toUpperCase(), W / 2, H / 2);
       } else if (pos === "top") {
-        ctx.textAlign = "center";
-        ctx.textBaseline = "top";
-        ctx.globalAlpha = op;
+        ctx.textAlign = "center"; ctx.textBaseline = "top"; ctx.globalAlpha = op;
         ctx.fillText(wmText.toUpperCase(), W / 2, p + 24);
       } else {
-        ctx.textAlign = "center";
-        ctx.textBaseline = "bottom";
-        ctx.globalAlpha = op;
+        ctx.textAlign = "center"; ctx.textBaseline = "bottom"; ctx.globalAlpha = op;
         ctx.fillText(wmText.toUpperCase(), W / 2, H - p - 56);
       }
       ctx.restore();
-      setTracking(ctx, 0);
+    }
+
+    // Sticky memo
+    if (S.stickyOn) {
+      const st = String(S.stickyText || "").trim();
+      if (st) {
+        const sx = W * ((S.stickyX || 70) / 100);
+        const sy = H * ((S.stickyY || 18) / 100);
+        const sw = 220, padS = 14;
+        ctx.font = `600 16px ${SANS}`;
+        const lines = [];
+        let cur = "";
+        for (const ch of st.split(/(\s+)/)) {
+          const next = cur + ch;
+          if (ctx.measureText(next).width > sw - padS * 2 && cur.trim()) {
+            lines.push(cur); cur = ch;
+            if (lines.length >= 6) break;
+          } else cur = next;
+        }
+        if (cur && lines.length < 6) lines.push(cur);
+        const sh = padS * 2 + lines.length * 22 + 8;
+        ctx.save();
+        ctx.shadowColor = "rgba(0,0,0,.18)";
+        ctx.shadowBlur = 12;
+        ctx.shadowOffsetY = 4;
+        ctx.fillStyle = S.stickyColor || "#fff3a0";
+        const r = 6;
+        ctx.beginPath();
+        ctx.moveTo(sx + r, sy);
+        ctx.arcTo(sx + sw, sy, sx + sw, sy + sh, r);
+        ctx.arcTo(sx + sw, sy + sh, sx, sy + sh, r);
+        ctx.arcTo(sx, sy + sh, sx, sy, r);
+        ctx.arcTo(sx, sy, sx + sw, sy, r);
+        ctx.closePath();
+        ctx.fill();
+        ctx.shadowColor = "transparent";
+        // tape
+        ctx.fillStyle = "rgba(255,255,255,.45)";
+        ctx.fillRect(sx + sw * 0.35, sy - 6, sw * 0.3, 12);
+        ctx.fillStyle = "#3a3630";
+        ctx.font = `600 15px ${SANS}`;
+        lines.forEach((ln, i) => ctx.fillText(ln, sx + padS, sy + padS + 16 + i * 22));
+        ctx.restore();
+      }
     }
 
     const saved = persist();
-    $("status").textContent = `CARD ${fmt(idx + 1)} · ${S.layout.toUpperCase()} · ${saved ? "AUTO-SAVED" : "STORAGE FULL"}`;
-    [
-      ["tv", S.titleSize], ["bv", S.bodySize], ["kv", S.tracking], ["lhv", S.lineHeight],
-      ["zv", S.zoom + "%"], ["brv", S.bright + "%"], ["cov", S.contrast + "%"],
-      ["sv", S.sat + "%"], ["pv", S.pad + "%"],
-      ["wmv", (S.wmOpacity || 18) + "%"], ["wms", S.wmSize || 28]
+    if ($("status")) $("status").textContent = `CARD ${fmt(idx + 1)} · ${S.layout.toUpperCase()} · ${saved ? "AUTO-SAVED" : "STORAGE FULL"}`;
+    [["tv", S.titleSize],["bv", S.bodySize],["kv", S.tracking],["lhv", S.lineHeight],
+     ["zv", S.zoom + "%"],["brv", S.bright + "%"],["cov", S.contrast + "%"],["sv", S.sat + "%"],
+     ["pv", S.pad + "%"],["wmv", (S.wmOpacity || 18) + "%"],["wms", S.wmSize || 28],
+     ["pxv", S.photoX || 0],["pyv", S.photoY || 0],["prv", (S.photoRotate || 0) + "°"],
+     ["mby", (S.maskBarY || 55) + "%"],["mbh", (S.maskBarH || 12) + "%"],["dbv", String(S.dataBar ?? 47)],["stx", (S.stickyX || 70) + "%"],["sty", (S.stickyY || 18) + "%"]
     ].forEach(([id, v]) => { if ($(id)) $(id).textContent = v; });
+
+    try {
+      thumbCache[idx] = canvas.toDataURL("image/jpeg", 0.72);
+    } catch (_) {}
+    renderSlideList();
   }
 
-  // —— Export (same canvas = WYSIWYG) ——
+  function renderSlideList() {
+    const box = $("slideList"); if (!box) return;
+    if ($("slideCount")) $("slideCount").textContent = String(cards.length);
+    box.innerHTML = "";
+    cards.forEach((c, i) => {
+      const d = document.createElement("div");
+      d.className = "slideThumb" + (i === idx ? " active" : "");
+      const cv = document.createElement("canvas"); cv.width = 216; cv.height = 270; d.appendChild(cv);
+      const lab = document.createElement("span"); lab.className = "idx"; lab.textContent = fmt(i + 1); d.appendChild(lab);
+      const tag = document.createElement("span"); tag.className = "tag"; tag.textContent = (c.layout || "cover").toUpperCase(); d.appendChild(tag);
+      const dup = document.createElement("button"); dup.className = "dup"; dup.type = "button"; dup.title = "복제"; dup.textContent = "⧉";
+      dup.addEventListener("click", e => {
+        e.stopPropagation();
+        sync();
+        if (i !== idx) {
+          idx = i;
+          Object.assign(S, clone(cards[idx]));
+        }
+        duplicateCard();
+      });
+      d.appendChild(dup);
+      const del = document.createElement("button"); del.className = "del"; del.type = "button"; del.textContent = "×";
+      del.addEventListener("click", e => { e.stopPropagation(); deleteCardAt(i); });
+      d.appendChild(del);
+      d.addEventListener("click", () => { if (i === idx) return; sync(); idx = i; loadState(cards[idx]); });
+      box.appendChild(d);
+      const ctx = cv.getContext("2d");
+      if (thumbCache[i]) {
+        const im = new Image();
+        im.onload = () => { ctx.clearRect(0, 0, 216, 270); ctx.drawImage(im, 0, 0, 216, 270); };
+        im.src = thumbCache[i];
+      } else {
+        ctx.fillStyle = c.dark ? "#111" : "#f5f1e8"; ctx.fillRect(0, 0, 216, 270);
+        ctx.fillStyle = "#666"; ctx.font = "700 11px Inter,sans-serif"; ctx.fillText(fmt(i + 1), 10, 20);
+      }
+    });
+  }
+
   function canvasBlob() {
     return new Promise(resolve => $("canvas").toBlob(resolve, "image/png"));
   }
-
   async function savePNG() {
-    sync();
-    await draw();
-    const blob = await canvasBlob();
-    if (!blob) return;
+    sync(); await draw();
+    const blob = await canvasBlob(); if (!blob) return;
     const file = new File([blob], `WEST150_EDITORIAL_${fmt(idx + 1)}.png`, { type: "image/png" });
     try {
       if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-        await navigator.share({ title: "WEST150 EDITORIAL", files: [file] });
-        return;
+        await navigator.share({ title: "WEST150 EDITORIAL", files: [file] }); return;
       }
     } catch (_) {}
     const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url; a.download = file.name;
+    const a = document.createElement("a"); a.href = url; a.download = file.name;
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 2000);
   }
-
   async function saveAll() {
     sync();
-    const original = clone(S);
-    const originalIdx = idx;
-    const files = [];
+    const original = clone(S), originalIdx = idx, files = [];
     for (let i = 0; i < cards.length; i++) {
-      idx = i;
-      Object.assign(S, clone(cards[i]));
-      await draw();
+      idx = i; Object.assign(S, clone(cards[i])); await draw();
       const b = await canvasBlob();
       if (b) files.push(new File([b], `WEST150_EDITORIAL_${fmt(i + 1)}.png`, { type: "image/png" }));
     }
-    idx = originalIdx;
-    Object.assign(S, original);
-    await draw();
+    idx = originalIdx; Object.assign(S, original); await draw();
     try {
       if (navigator.share && navigator.canShare && navigator.canShare({ files })) {
-        await navigator.share({ title: "WEST150 EDITORIAL", files });
-        return;
+        await navigator.share({ title: "WEST150 EDITORIAL", files }); return;
       }
     } catch (_) {}
-    alert("이 브라우저에서는 여러 PNG를 한 번에 공유할 수 없습니다. 현재 카드 PNG 저장을 사용하세요.");
+    alert("여러 PNG 공유를 지원하지 않습니다. ZIP 저장을 이용해 주세요.");
   }
-
+  async function saveZip() {
+    if (typeof JSZip === "undefined") { alert("JSZip 로드 실패"); return; }
+    sync();
+    const original = clone(S), originalIdx = idx, zip = new JSZip();
+    for (let i = 0; i < cards.length; i++) {
+      idx = i; Object.assign(S, clone(cards[i])); await draw();
+      const b = await canvasBlob();
+      if (b) zip.file(`WEST150_EDITORIAL_${fmt(i + 1)}.png`, b);
+    }
+    idx = originalIdx; Object.assign(S, original); await draw();
+    const blob = await zip.generateAsync({ type: "blob" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a"); a.href = url; a.download = "WEST150_EDITORIAL_CARDS.zip";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+  }
   function saveProject() {
     sync();
-    const blob = new Blob([JSON.stringify({ version: 1, cards, idx }, null, 2)], { type: "application/json" });
+    const blob = new Blob([JSON.stringify({ version: 2, cards, idx }, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url; a.download = "WEST150_EDITORIAL_PREMIUM.json"; a.click();
+    const a = document.createElement("a"); a.href = url; a.download = "WEST150_EDITORIAL_PREMIUM.json"; a.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
-
   function loadProject() {
     const input = document.createElement("input");
-    input.type = "file";
-    input.accept = ".json,application/json";
+    input.type = "file"; input.accept = ".json,application/json";
     input.onchange = e => {
-      const f = e.target.files && e.target.files[0];
-      if (!f) return;
+      const f = e.target.files && e.target.files[0]; if (!f) return;
       const r = new FileReader();
       r.onload = () => {
         try {
@@ -1177,21 +1390,28 @@ hr{border:0;border-top:1px solid var(--line-soft);margin:14px 0}
           if (!Array.isArray(list) || !list.length) throw new Error("empty");
           cards = list.map(c => ({ ...defaults, ...c }));
           idx = Math.min(Number(d.idx) || 0, cards.length - 1);
-          loadState(cards[idx]);
-          persist();
-        } catch (_) {
-          alert("프로젝트 파일을 읽을 수 없습니다.");
-        }
+          loadState(cards[idx]); persist();
+        } catch (_) { alert("프로젝트 파일을 읽을 수 없습니다."); }
       };
       r.readAsText(f);
     };
     input.click();
   }
 
-  $("savePngBtn").addEventListener("click", savePNG);
-  $("saveAllBtn").addEventListener("click", saveAll);
-  $("saveProjectBtn").addEventListener("click", saveProject);
-  $("loadProjectBtn").addEventListener("click", loadProject);
+  if ($("savePngBtn")) $("savePngBtn").addEventListener("click", savePNG);
+  if ($("saveAllBtn")) $("saveAllBtn").addEventListener("click", saveAll);
+  if ($("saveZipBtn")) $("saveZipBtn").addEventListener("click", saveZip);
+  if ($("saveProjectBtn")) $("saveProjectBtn").addEventListener("click", saveProject);
+  if ($("loadProjectBtn")) $("loadProjectBtn").addEventListener("click", loadProject);
+
+  document.addEventListener("keydown", e => {
+    const mod = e.ctrlKey || e.metaKey; if (!mod) return;
+    const t = e.target;
+    if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
+    const key = e.key.toLowerCase();
+    if (key === "z" && !e.shiftKey) { e.preventDefault(); undo(); }
+    else if (key === "y" || (key === "z" && e.shiftKey)) { e.preventDefault(); redo(); }
+  });
 
   try {
     const saved = JSON.parse(localStorage.getItem(KEY) || "null");
@@ -1202,6 +1422,8 @@ hr{border:0;border-top:1px solid var(--line-soft);margin:14px 0}
   } catch (_) {}
 
   loadState(cards[idx]);
+  pushHistory();
+  updateUndoRedoButtons();
 })();
 </script>
 </body>
