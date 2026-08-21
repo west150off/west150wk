@@ -199,6 +199,25 @@ button { font-family: inherit; cursor: pointer; border: none; }
 #card.tpl-cover .logoMark.pos-tl { top: 16px; }
 #card.tpl-report .logoMark.pos-tr,
 #card.tpl-report .logoMark.pos-tl { top: 48px; }
+#card .wmText {
+  position: absolute; z-index: 11; pointer-events: none;
+  font-weight: 700; letter-spacing: .06em; white-space: nowrap;
+  line-height: 1.2;
+}
+#card .wmText.pos-tr { top: 14px; right: 14px; }
+#card .wmText.pos-tl { top: 14px; left: 14px; }
+#card .wmText.pos-br { bottom: 14px; right: 14px; }
+#card .wmText.pos-bl { bottom: 14px; left: 14px; }
+#card .wmText.pos-center {
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%) rotate(-28deg);
+  font-size: 1.15em; letter-spacing: .14em;
+  opacity: .22 !important;
+}
+#card.tpl-report .wmText.pos-tr,
+#card.tpl-report .wmText.pos-tl { top: 48px; }
+#card.tpl-cover .wmText.pos-br { bottom: 18px; }
+#card.tpl-editorial .wmText { letter-spacing: .04em; }
 #card .goldRule {
   width: 42px; height: 2px; background: var(--gold); margin: 12px 0;
 }
@@ -644,7 +663,42 @@ button { font-family: inherit; cursor: pointer; border: none; }
             <option value="all">모든 카드</option>
           </select>
         </div>
-        <div class="hint">기본은 우측 상단. 매거진 톤에 맞게 작게·반투명 권장.</div>
+        <div style="border-top:1px solid var(--chrome-line);margin:12px 0 10px;"></div>
+        <div class="field">
+          <label style="font-weight:700;color:var(--chrome-text);">텍스트 워터마크</label>
+        </div>
+        <div class="field">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+            <input type="checkbox" id="wmTextOn" style="width:auto;"> 텍스트 워터마크 표시
+          </label>
+        </div>
+        <div class="field">
+          <label>문구</label>
+          <input type="text" id="wmText" value="WEST150" placeholder="WEST150 / © 매체명">
+        </div>
+        <div class="field">
+          <label>위치</label>
+          <select id="wmTextPos">
+            <option value="br">우측 하단</option>
+            <option value="bl">좌측 하단</option>
+            <option value="tr">우측 상단</option>
+            <option value="tl">좌측 상단</option>
+            <option value="center">중앙 (대각선)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>글자 크기 <span id="wmTextSizeVal">11</span>px</label>
+          <div class="slider"><input type="range" id="wmTextSize" min="9" max="28" value="11"></div>
+        </div>
+        <div class="field">
+          <label>투명도 <span id="wmTextOpacityVal">45</span>%</label>
+          <div class="slider"><input type="range" id="wmTextOpacity" min="15" max="90" value="45"></div>
+        </div>
+        <div class="field">
+          <label>글자색</label>
+          <div class="colorField"><input type="color" id="wmTextColor" value="#c9a44c"><span id="wmTextColorHex">#c9a44c</span></div>
+        </div>
+        <div class="hint">로고 이미지와 텍스트 워터마크를 함께 쓸 수 있습니다.</div>
       </div>
       <div class="sec">
         <h3>색상</h3>
@@ -735,17 +789,34 @@ function defaults() {
     logoPos: 'tr',
     logoSize: 14,
     logoOpacity: 70,
-    logoBg: false
+    logoBg: false,
+    wmTextOn: false,
+    wmText: 'WEST150',
+    wmTextPos: 'br',
+    wmTextSize: 11,
+    wmTextOpacity: 45,
+    wmTextColor: '#c9a44c'
   };
 }
 
 function logoHtml(s) {
-  if (!s.logo) return '';
-  const pos = s.logoPos || 'tr';
-  const size = s.logoSize != null ? s.logoSize : 14;
-  const op = (s.logoOpacity != null ? s.logoOpacity : 70) / 100;
-  const bg = s.logoBg ? ' logoBg' : '';
-  return '<img class="logoMark pos-' + pos + bg + '" src="' + s.logo + '" alt="" style="width:' + size + '%;opacity:' + op + ';" />';
+  let html = '';
+  if (s.logo) {
+    const pos = s.logoPos || 'tr';
+    const size = s.logoSize != null ? s.logoSize : 14;
+    const op = (s.logoOpacity != null ? s.logoOpacity : 70) / 100;
+    const bg = s.logoBg ? ' logoBg' : '';
+    html += '<img class="logoMark pos-' + pos + bg + '" src="' + s.logo + '" alt="" style="width:' + size + '%;opacity:' + op + ';" />';
+  }
+  if (s.wmTextOn && s.wmText && String(s.wmText).trim()) {
+    const pos = s.wmTextPos || 'br';
+    const size = s.wmTextSize != null ? s.wmTextSize : 11;
+    const op = (s.wmTextOpacity != null ? s.wmTextOpacity : 45) / 100;
+    const col = s.wmTextColor || '#c9a44c';
+    const safe = String(s.wmText).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    html += '<div class="wmText pos-' + pos + '" style="font-size:' + size + 'px;opacity:' + op + ';color:' + col + ';">' + safe + '</div>';
+  }
+  return html;
 }
 
 let slides = [defaults()];
@@ -984,6 +1055,21 @@ function syncForm() {
   if ($('logoThumb')) {
     $('logoThumb').style.backgroundImage = s.logo ? "url('" + s.logo + "')" : 'none';
   }
+  if ($('wmTextOn')) $('wmTextOn').checked = !!s.wmTextOn;
+  if ($('wmText')) $('wmText').value = s.wmText || '';
+  if ($('wmTextPos')) $('wmTextPos').value = s.wmTextPos || 'br';
+  if ($('wmTextSize')) {
+    $('wmTextSize').value = s.wmTextSize != null ? s.wmTextSize : 11;
+    if ($('wmTextSizeVal')) $('wmTextSizeVal').textContent = s.wmTextSize != null ? s.wmTextSize : 11;
+  }
+  if ($('wmTextOpacity')) {
+    $('wmTextOpacity').value = s.wmTextOpacity != null ? s.wmTextOpacity : 45;
+    if ($('wmTextOpacityVal')) $('wmTextOpacityVal').textContent = s.wmTextOpacity != null ? s.wmTextOpacity : 45;
+  }
+  if ($('wmTextColor')) {
+    $('wmTextColor').value = s.wmTextColor || '#c9a44c';
+    if ($('wmTextColorHex')) $('wmTextColorHex').textContent = s.wmTextColor || '#c9a44c';
+  }
   Array.from(document.querySelectorAll('#tplMenu .ddItem')).forEach(el => {
     el.classList.toggle('active', el.dataset.tpl === s.template);
   });
@@ -1144,6 +1230,24 @@ if ($('logoOpacity')) $('logoOpacity').addEventListener('input', e => {
   applyLogoProp('logoOpacity', v);
 });
 if ($('logoBg')) $('logoBg').addEventListener('change', e => applyLogoProp('logoBg', e.target.checked));
+
+if ($('wmTextOn')) $('wmTextOn').addEventListener('change', e => applyLogoProp('wmTextOn', e.target.checked));
+if ($('wmText')) $('wmText').addEventListener('input', e => applyLogoProp('wmText', e.target.value));
+if ($('wmTextPos')) $('wmTextPos').addEventListener('change', e => applyLogoProp('wmTextPos', e.target.value));
+if ($('wmTextSize')) $('wmTextSize').addEventListener('input', e => {
+  const v = +e.target.value;
+  if ($('wmTextSizeVal')) $('wmTextSizeVal').textContent = v;
+  applyLogoProp('wmTextSize', v);
+});
+if ($('wmTextOpacity')) $('wmTextOpacity').addEventListener('input', e => {
+  const v = +e.target.value;
+  if ($('wmTextOpacityVal')) $('wmTextOpacityVal').textContent = v;
+  applyLogoProp('wmTextOpacity', v);
+});
+if ($('wmTextColor')) $('wmTextColor').addEventListener('input', e => {
+  if ($('wmTextColorHex')) $('wmTextColorHex').textContent = e.target.value;
+  applyLogoProp('wmTextColor', e.target.value);
+});
 
 Array.from(document.querySelectorAll('#tplMenu .ddItem')).forEach(item => {
   item.addEventListener('click', () => {
