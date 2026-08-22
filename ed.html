@@ -912,6 +912,171 @@
   }
   #card.tpl-wtimes .watermark{color:#111;text-shadow:none;opacity:.35;}
 
+
+  /* ===== AP PHOTO ===== */
+  #card.tpl-apphoto{background:#0a0a0a;color:#fff;padding:0;}
+  #card.tpl-apphoto .apPhoto{position:absolute;inset:0;background-size:cover;background-position:center;}
+  #card.tpl-apphoto .apScrim{position:absolute;left:0;right:0;bottom:0;height:42%;
+    background:linear-gradient(180deg,transparent,rgba(0,0,0,.88));pointer-events:none;}
+  #card.tpl-apphoto .apBody{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:18px 20px 16px;}
+  #card.tpl-apphoto .apHeadline{font-family:inherit;font-weight:600;font-size:20px;line-height:1.25;
+    margin:0 0 8px;white-space:pre-wrap;word-break:keep-all;}
+  #card.tpl-apphoto .apCap{font-family:inherit;font-size:12px;line-height:1.4;color:rgba(255,255,255,.75);
+    white-space:pre-wrap;word-break:keep-all;}
+  #card.tpl-apphoto .metaRow{border-top-color:rgba(255,255,255,.2);color:rgba(255,255,255,.55);margin-top:10px;padding-top:8px;}
+  #card.tpl-apphoto .photoCredit{left:20px;bottom:auto;top:12px;}
+
+  /* ===== INTERCEPT ===== */
+  #card.tpl-intercept{background:#0f0f0f;color:#f2f2f2;padding:28px 24px 20px;}
+  #card.tpl-intercept .icKicker{font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#e10600;margin-bottom:14px;}
+  #card.tpl-intercept .icHeadline{font-family:inherit;font-weight:800;font-size:28px;line-height:1.15;
+    letter-spacing:-.03em;margin:0 0 14px;white-space:pre-wrap;word-break:keep-all;}
+  #card.tpl-intercept .icDeck{font-family:inherit;font-size:14px;line-height:1.5;color:rgba(242,242,242,.8);
+    white-space:pre-wrap;word-break:keep-all;flex:1;}
+  #card.tpl-intercept .metaRow{border-top-color:rgba(255,255,255,.15);color:rgba(255,255,255,.5);margin-top:16px;padding-top:12px;}
+
+  /* ===== PROPUBLICA ===== */
+  #card.tpl-propublica{background:#fff;color:#1a1a1a;padding:26px 24px 18px;}
+  #card.tpl-propublica .ppBar{height:6px;background:#0c2340;margin:-26px -24px 18px;width:calc(100% + 48px);}
+  #card.tpl-propublica .ppKicker{font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#0c2340;margin-bottom:10px;}
+  #card.tpl-propublica .ppHeadline{font-family:inherit;font-weight:700;font-size:26px;line-height:1.18;
+    margin:0 0 12px;white-space:pre-wrap;word-break:keep-all;}
+  #card.tpl-propublica .ppDeck{font-family:inherit;font-size:14px;line-height:1.5;color:#333;
+    white-space:pre-wrap;word-break:keep-all;flex:1;}
+  #card.tpl-propublica .metaRow{border-top-color:#d0d7e2;color:#5a6570;margin-top:16px;padding-top:12px;}
+  #card.tpl-propublica .watermark{color:#1a1a1a;text-shadow:none;opacity:.35;}
+
+  /* ===== FOREIGN AFFAIRS ===== */
+  #card.tpl-fa{background:#0b1c2c;color:#f5f0e6;padding:28px 26px 20px;}
+  #card.tpl-fa .faGold{width:40px;height:3px;background:#c4a35a;margin-bottom:16px;}
+  #card.tpl-fa .faKicker{font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#c4a35a;margin-bottom:12px;}
+  #card.tpl-fa .faHeadline{font-family:inherit;font-weight:400;font-size:30px;line-height:1.14;
+    letter-spacing:-.02em;margin:0 0 14px;white-space:pre-wrap;word-break:keep-all;}
+  #card.tpl-fa .faDeck{font-family:inherit;font-size:14px;line-height:1.5;color:rgba(245,240,230,.85);
+    white-space:pre-wrap;word-break:keep-all;flex:1;}
+  #card.tpl-fa .metaRow{border-top-color:rgba(196,163,90,.35);color:rgba(245,240,230,.55);margin-top:16px;padding-top:12px;}
+
+  /* ===== NATIONAL REVIEW ===== */
+  #card.tpl-nr{background:#f8f5ef;color:#1c1914;padding:28px 26px 20px;}
+  #card.tpl-nr .nrKicker{font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#6b1c23;margin-bottom:12px;}
+  #card.tpl-nr .nrHeadline{font-family:inherit;font-weight:400;font-size:30px;line-height:1.15;
+    letter-spacing:-.025em;margin:0 0 14px;white-space:pre-wrap;word-break:keep-all;}
+  #card.tpl-nr .nrDeck{font-family:inherit;font-size:14px;line-height:1.55;color:#3a3530;
+    white-space:pre-wrap;word-break:keep-all;flex:1;}
+  #card.tpl-nr .metaRow{border-top-color:rgba(28,25,20,.2);color:rgba(28,25,20,.5);margin-top:16px;padding-top:12px;}
+  #card.tpl-nr .watermark{color:#1c1914;text-shadow:none;opacity:.35;}
+
+  /* ===== STRATECHERY ===== */
+  #card.tpl-stratechery{background:#fff;color:#222;padding:32px 28px 22px;}
+  #card.tpl-stratechery .stKicker{font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:11px;font-weight:600;letter-spacing:.04em;color:#666;margin-bottom:16px;}
+  #card.tpl-stratechery .stHeadline{font-family:inherit;font-weight:700;font-size:28px;line-height:1.2;
+    letter-spacing:-.02em;margin:0 0 18px;white-space:pre-wrap;word-break:keep-all;}
+  #card.tpl-stratechery .stDeck{font-family:inherit;font-size:15px;line-height:1.6;color:#333;
+    white-space:pre-wrap;word-break:keep-all;flex:1;}
+  #card.tpl-stratechery .metaRow{border-top-color:#eee;color:#888;margin-top:20px;padding-top:12px;}
+  #card.tpl-stratechery .watermark{color:#222;text-shadow:none;opacity:.3;}
+
+  /* ===== MORNING BREW ===== */
+  #card.tpl-mb{background:#fffaf3;color:#1a1a1a;padding:24px 22px 18px;}
+  #card.tpl-mb .mbTop{display:flex;align-items:center;gap:8px;margin-bottom:14px;}
+  #card.tpl-mb .mbDot{width:10px;height:10px;border-radius:50%;background:#ff6b2c;}
+  #card.tpl-mb .mbBrand{font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:12px;font-weight:800;letter-spacing:.04em;}
+  #card.tpl-mb .mbHeadline{font-family:inherit;font-weight:800;font-size:24px;line-height:1.2;
+    margin:0 0 14px;white-space:pre-wrap;word-break:keep-all;}
+  #card.tpl-mb .mbList{display:flex;flex-direction:column;gap:10px;flex:1;}
+  #card.tpl-mb .mbItem{display:flex;gap:10px;font-size:14px;line-height:1.4;}
+  #card.tpl-mb .mbNum{flex:none;font-weight:900;color:#ff6b2c;min-width:18px;}
+  #card.tpl-mb .metaRow{border-top-color:#f0e6d8;color:#777;margin-top:14px;padding-top:10px;}
+  #card.tpl-mb .watermark{color:#1a1a1a;text-shadow:none;opacity:.35;}
+
+  /* ===== SUBSTACK ===== */
+  #card.tpl-substack{background:#fff;color:#1a1a1a;padding:28px 26px 20px;}
+  #card.tpl-substack .ssBy{font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:12px;font-weight:600;color:#666;margin-bottom:12px;}
+  #card.tpl-substack .ssHeadline{font-family:inherit;font-weight:700;font-size:28px;line-height:1.18;
+    letter-spacing:-.025em;margin:0 0 14px;white-space:pre-wrap;word-break:keep-all;}
+  #card.tpl-substack .ssDeck{font-family:inherit;font-size:15px;line-height:1.55;color:#333;
+    white-space:pre-wrap;word-break:keep-all;flex:1;}
+  #card.tpl-substack .metaRow{border-top-color:#eee;color:#888;margin-top:16px;padding-top:12px;}
+  #card.tpl-substack .watermark{color:#1a1a1a;text-shadow:none;opacity:.3;}
+
+  /* ===== IG NEWS ===== */
+  #card.tpl-ig{background:#111;color:#fff;padding:22px 20px 18px;}
+  #card.tpl-ig .igKicker{display:inline-block;background:#fff;color:#111;
+    font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:11px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;
+    padding:6px 12px;margin-bottom:16px;}
+  #card.tpl-ig .igHeadline{font-family:inherit;font-weight:800;font-size:28px;line-height:1.15;
+    letter-spacing:-.03em;margin:0 0 12px;white-space:pre-wrap;word-break:keep-all;}
+  #card.tpl-ig .igDeck{font-family:inherit;font-size:14px;line-height:1.45;color:rgba(255,255,255,.8);
+    white-space:pre-wrap;word-break:keep-all;flex:1;}
+  #card.tpl-ig .metaRow{border-top-color:rgba(255,255,255,.2);color:rgba(255,255,255,.55);margin-top:14px;padding-top:10px;}
+
+  /* ===== TELEGRAM ===== */
+  #card.tpl-telegram{background:#0e1621;color:#e8eef5;padding:22px 20px 16px;}
+  #card.tpl-telegram .tgHead{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+  #card.tpl-telegram .tgAvatar{width:36px;height:36px;border-radius:50%;background:#2aabee;
+    display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;color:#fff;}
+  #card.tpl-telegram .tgName{font-family:'Pretendard Variable','Pretendard',sans-serif;font-weight:700;font-size:14px;}
+  #card.tpl-telegram .tgSub{font-size:11px;color:#6d7f8f;}
+  #card.tpl-telegram .tgBubble{background:#182533;border-radius:12px;padding:14px 16px;flex:1;}
+  #card.tpl-telegram .tgHeadline{font-family:inherit;font-weight:700;font-size:18px;line-height:1.3;
+    margin:0 0 8px;white-space:pre-wrap;word-break:keep-all;}
+  #card.tpl-telegram .tgDeck{font-family:inherit;font-size:13.5px;line-height:1.45;color:#b8c5d1;
+    white-space:pre-wrap;word-break:keep-all;}
+  #card.tpl-telegram .metaRow{border-top-color:rgba(255,255,255,.1);color:#6d7f8f;margin-top:12px;padding-top:10px;}
+
+  /* ===== SHIMBUN ===== */
+  #card.tpl-shimbun{background:#f7f4ec;color:#1a1a1a;padding:24px 22px 16px;}
+  #card.tpl-shimbun .shMast{border-bottom:2px solid #1a1a1a;padding-bottom:8px;margin-bottom:14px;
+    display:flex;justify-content:space-between;align-items:flex-end;}
+  #card.tpl-shimbun .shBrand{font-family:Georgia,'Noto Serif KR',serif;font-weight:700;font-size:18px;letter-spacing:.08em;}
+  #card.tpl-shimbun .shDate{font-size:10px;letter-spacing:.1em;color:#555;}
+  #card.tpl-shimbun .shKicker{font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#8b0000;margin-bottom:8px;}
+  #card.tpl-shimbun .shHeadline{font-family:inherit;font-weight:700;font-size:26px;line-height:1.2;
+    margin:0 0 12px;white-space:pre-wrap;word-break:keep-all;}
+  #card.tpl-shimbun .shDeck{font-family:inherit;font-size:13.5px;line-height:1.55;color:#333;
+    white-space:pre-wrap;word-break:keep-all;flex:1;}
+  #card.tpl-shimbun .metaRow{border-top:1px solid #1a1a1a;color:#555;margin-top:12px;padding-top:10px;}
+  #card.tpl-shimbun .watermark{color:#1a1a1a;text-shadow:none;opacity:.35;}
+
+  /* ===== CONSTRUCTIVIST ===== */
+  #card.tpl-construct{background:#111;color:#fff;padding:0;overflow:hidden;}
+  #card.tpl-construct .coShape{position:absolute;right:-40px;top:-40px;width:200px;height:200px;
+    background:#e10600;transform:rotate(25deg);z-index:0;}
+  #card.tpl-construct .coShape2{position:absolute;left:-30px;bottom:40px;width:120px;height:120px;
+    border:6px solid #f5e642;transform:rotate(-15deg);z-index:0;}
+  #card.tpl-construct .coInner{position:relative;z-index:1;height:100%;padding:28px 24px 20px;
+    display:flex;flex-direction:column;box-sizing:border-box;}
+  #card.tpl-construct .coKicker{font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:11px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#f5e642;margin-bottom:14px;}
+  #card.tpl-construct .coHeadline{font-family:inherit;font-weight:900;font-size:30px;line-height:1.1;
+    letter-spacing:-.03em;margin:0 0 14px;white-space:pre-wrap;word-break:keep-all;text-transform:uppercase;}
+  #card.tpl-construct .coDeck{font-family:inherit;font-size:14px;line-height:1.4;color:rgba(255,255,255,.85);
+    white-space:pre-wrap;word-break:keep-all;flex:1;max-width:90%;}
+  #card.tpl-construct .metaRow{border-top-color:rgba(255,255,255,.25);color:rgba(255,255,255,.55);margin-top:14px;padding-top:10px;}
+
+  /* ===== SWISS ===== */
+  #card.tpl-swiss{background:#f2f2f2;color:#111;padding:28px 24px 18px;}
+  #card.tpl-swiss .swGrid{display:grid;grid-template-columns:8px 1fr;gap:16px;flex:1;min-height:0;}
+  #card.tpl-swiss .swBar{background:#e10600;width:8px;}
+  #card.tpl-swiss .swKicker{font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#e10600;margin-bottom:12px;}
+  #card.tpl-swiss .swHeadline{font-family:inherit;font-weight:700;font-size:28px;line-height:1.15;
+    letter-spacing:-.03em;margin:0 0 14px;white-space:pre-wrap;word-break:keep-all;}
+  #card.tpl-swiss .swDeck{font-family:inherit;font-size:14px;line-height:1.5;color:#333;
+    white-space:pre-wrap;word-break:keep-all;}
+  #card.tpl-swiss .metaRow{border-top-color:#ccc;color:#666;margin-top:16px;padding-top:12px;}
+  #card.tpl-swiss .watermark{color:#111;text-shadow:none;opacity:.3;}
+
+
   /* Logo mark */
   #card .logoMark{
     position:absolute;z-index:11;pointer-events:none;
@@ -1222,6 +1387,19 @@
           <div class="ddItem" data-template="vox"><span class="ic">▲</span>Vox</div>
           <div class="ddItem" data-template="economist"><span class="ic">■</span>Economist</div>
           <div class="ddItem" data-template="wtimes"><span class="ic">☰</span>Washington Times</div>
+          <div class="ddItem" data-template="apphoto"><span class="ic">▣</span>AP Photo</div>
+          <div class="ddItem" data-template="intercept"><span class="ic">◆</span>The Intercept</div>
+          <div class="ddItem" data-template="propublica"><span class="ic">■</span>ProPublica</div>
+          <div class="ddItem" data-template="fa"><span class="ic">§</span>Foreign Affairs</div>
+          <div class="ddItem" data-template="nr"><span class="ic">¶</span>National Review</div>
+          <div class="ddItem" data-template="stratechery"><span class="ic">Aa</span>Stratechery</div>
+          <div class="ddItem" data-template="mb"><span class="ic">●</span>Morning Brew</div>
+          <div class="ddItem" data-template="substack"><span class="ic">✎</span>Substack</div>
+          <div class="ddItem" data-template="ig"><span class="ic">◎</span>IG News</div>
+          <div class="ddItem" data-template="telegram"><span class="ic">✈</span>Telegram</div>
+          <div class="ddItem" data-template="shimbun"><span class="ic">日</span>Shimbun</div>
+          <div class="ddItem" data-template="construct"><span class="ic">▲</span>Constructivist</div>
+          <div class="ddItem" data-template="swiss"><span class="ic">+</span>Swiss</div>
           <div class="ddSep"></div>
           <div class="ddLabel">기본</div>
           <div class="ddItem" data-template="basic"><span class="ic">Aa</span>텍스트 기본</div>
@@ -1963,6 +2141,199 @@ function cardMarkup(s, pageIdx, total){
     </div>`;
   }
 
+
+  /* ===== AP Photo ===== */
+  if(s.template === 'apphoto'){
+    const posMap = {top:'center top', center:'center center', bottom:'center bottom'};
+    const pos = posMap[s.imagePos] || 'center center';
+    const fit = s.imageFit || 'cover';
+    const filt = filterCss(s.imageFilter);
+    const bgSize = fit === 'original' ? 'auto' : fit;
+    let photoStyle = s.image
+      ? `background-image:url('${s.image}');background-size:${bgSize};background-position:${pos};filter:${filt};`
+      : `background:linear-gradient(160deg,#333,#111);`;
+    const deck = (s.summary || '').trim();
+    return `<div id="card" class="tpl-apphoto" style="width:${w}px;height:${h}px;background:#0a0a0a;font-family:${baseFont};">
+      <div class="apPhoto" style="${photoStyle}"></div>
+      <div class="apScrim"></div>
+      <div class="apBody">
+        <div class="apHeadline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:#fff;${alignStyle}">${headline}</div>
+        ${deck ? `<div class="apCap" style="font-size:${s.subSize}px;font-family:${bodyFont};${alignStyle}">${parseInlineFormat(deck, neon)}</div>` : ''}
+        ${metaBlock}
+      </div>
+      ${pc}${wm}${lg}
+    </div>`;
+  }
+
+  /* ===== Intercept ===== */
+  if(s.template === 'intercept'){
+    const deck = (s.summary || '').trim();
+    return `<div id="card" class="tpl-intercept" style="width:${w}px;height:${h}px;background:${s.bg||'#0f0f0f'};font-family:${baseFont};">
+      <div class="icKicker" style="color:${crimson};font-size:${s.tagSize}px;">${escapeHtml(s.tagText || 'INVESTIGATION')}</div>
+      <div class="icHeadline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text||'#f2f2f2'};${alignStyle}">${headline}</div>
+      ${deck ? `<div class="icDeck" style="font-size:${s.subSize}px;font-family:${bodyFont};${alignStyle}">${parseInlineFormat(deck, crimson)}</div>` : ''}
+      ${metaBlock}
+      ${wm}${lg}
+    </div>`;
+  }
+
+  /* ===== ProPublica ===== */
+  if(s.template === 'propublica'){
+    const deck = (s.summary || '').trim();
+    return `<div id="card" class="tpl-propublica" style="width:${w}px;height:${h}px;background:${s.bg||'#fff'};font-family:${baseFont};">
+      <div class="ppBar" style="background:${s.bg==='#fff'||!s.bg?'#0c2340':s.bg};"></div>
+      <div class="ppKicker" style="color:#0c2340;font-size:${s.tagSize}px;">${escapeHtml(s.tagText || 'INVESTIGATION')}</div>
+      <div class="ppHeadline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text||'#1a1a1a'};${alignStyle}">${headline}</div>
+      ${deck ? `<div class="ppDeck" style="font-size:${s.subSize}px;font-family:${bodyFont};${alignStyle}">${parseInlineFormat(deck, '#0c2340')}</div>` : ''}
+      ${metaBlock}
+      ${wm}${lg}
+    </div>`;
+  }
+
+  /* ===== Foreign Affairs ===== */
+  if(s.template === 'fa'){
+    const deck = (s.summary || '').trim();
+    return `<div id="card" class="tpl-fa" style="width:${w}px;height:${h}px;background:${s.bg||'#0b1c2c'};font-family:${baseFont};">
+      <div class="faGold" style="background:${neon};"></div>
+      <div class="faKicker" style="color:${neon};font-size:${s.tagSize}px;">${escapeHtml(s.tagText || 'ESSAY')}</div>
+      <div class="faHeadline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text||'#f5f0e6'};${alignStyle}">${headline}</div>
+      ${deck ? `<div class="faDeck" style="font-size:${s.subSize}px;font-family:${bodyFont};${alignStyle}">${parseInlineFormat(deck, neon)}</div>` : ''}
+      ${metaBlock}
+      ${wm}${lg}
+    </div>`;
+  }
+
+  /* ===== National Review ===== */
+  if(s.template === 'nr'){
+    const deck = (s.summary || '').trim();
+    return `<div id="card" class="tpl-nr" style="width:${w}px;height:${h}px;background:${s.bg||'#f8f5ef'};font-family:${baseFont};">
+      <div class="nrKicker" style="color:${crimson};font-size:${s.tagSize}px;">${escapeHtml(s.tagText || 'OPINION')}</div>
+      <div class="nrHeadline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text||'#1c1914'};${alignStyle}">${headline}</div>
+      ${deck ? `<div class="nrDeck" style="font-size:${s.subSize}px;font-family:${bodyFont};${alignStyle}">${parseInlineFormat(deck, crimson)}</div>` : ''}
+      ${metaBlock}
+      ${wm}${lg}
+    </div>`;
+  }
+
+  /* ===== Stratechery ===== */
+  if(s.template === 'stratechery'){
+    const deck = (s.summary || '').trim();
+    return `<div id="card" class="tpl-stratechery" style="width:${w}px;height:${h}px;background:${s.bg||'#fff'};font-family:${baseFont};">
+      <div class="stKicker" style="font-size:${s.tagSize}px;">${escapeHtml(s.tagText || 'ANALYSIS')}</div>
+      <div class="stHeadline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text||'#222'};${alignStyle}">${headline}</div>
+      ${deck ? `<div class="stDeck" style="font-size:${s.subSize}px;font-family:${bodyFont};${alignStyle}">${parseInlineFormat(deck, neon)}</div>` : ''}
+      ${metaBlock}
+      ${wm}${lg}
+    </div>`;
+  }
+
+  /* ===== Morning Brew ===== */
+  if(s.template === 'mb'){
+    const lines = String(s.bullets||'').split('\n').map(l=>l.trim()).filter(Boolean);
+    const items = lines.map((line,i) =>
+      `<div class="mbItem"><span class="mbNum" style="color:${neon}">${i+1}</span><span style="font-size:${s.subSize}px;font-family:${bodyFont};">${parseInlineFormat(line, neon)}</span></div>`
+    ).join('');
+    return `<div id="card" class="tpl-mb" style="width:${w}px;height:${h}px;background:${s.bg||'#fffaf3'};font-family:${baseFont};">
+      <div class="mbTop"><span class="mbDot" style="background:${neon}"></span><span class="mbBrand">${escapeHtml(s.brandName || 'WEST150 DAILY')}</span></div>
+      <div class="mbHeadline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text||'#1a1a1a'};${alignStyle}">${headline}</div>
+      <div class="mbList">${items || '<div class="mbItem"><span class="mbNum">1</span><span>포인트를 입력하세요</span></div>'}</div>
+      ${metaBlock}
+      ${wm}${lg}
+    </div>`;
+  }
+
+  /* ===== Substack ===== */
+  if(s.template === 'substack'){
+    const deck = (s.summary || '').trim();
+    return `<div id="card" class="tpl-substack" style="width:${w}px;height:${h}px;background:${s.bg||'#fff'};font-family:${baseFont};">
+      <div class="ssBy">${escapeHtml(s.watermark || s.brandName || '@west150daily')}</div>
+      <div class="ssHeadline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text||'#1a1a1a'};${alignStyle}">${headline}</div>
+      ${deck ? `<div class="ssDeck" style="font-size:${s.subSize}px;font-family:${bodyFont};${alignStyle}">${parseInlineFormat(deck, neon)}</div>` : ''}
+      ${metaBlock}
+      ${wm}${lg}
+    </div>`;
+  }
+
+  /* ===== IG News ===== */
+  if(s.template === 'ig'){
+    const deck = (s.summary || '').trim();
+    return `<div id="card" class="tpl-ig" style="width:${w}px;height:${h}px;background:${s.bg||'#111'};font-family:${baseFont};">
+      <div class="igKicker" style="background:${neon};color:#111;font-size:${s.tagSize}px;">${escapeHtml(s.tagText || s.category || 'NEWS')}</div>
+      <div class="igHeadline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text||'#fff'};${alignStyle}">${headline}</div>
+      ${deck ? `<div class="igDeck" style="font-size:${s.subSize}px;font-family:${bodyFont};${alignStyle}">${parseInlineFormat(deck, neon)}</div>` : ''}
+      ${metaBlock}
+      ${wm}${lg}
+    </div>`;
+  }
+
+  /* ===== Telegram ===== */
+  if(s.template === 'telegram'){
+    const deck = (s.summary || '').trim();
+    const initial = escapeHtml((s.brandName || 'W').trim().charAt(0).toUpperCase() || 'W');
+    return `<div id="card" class="tpl-telegram" style="width:${w}px;height:${h}px;background:${s.bg||'#0e1621'};font-family:${baseFont};">
+      <div class="tgHead">
+        <div class="tgAvatar" style="background:${neon}">${initial}</div>
+        <div><div class="tgName">${escapeHtml(s.brandName || 'WEST150 DAILY')}</div><div class="tgSub">${escapeHtml(s.tagText || 'channel')}</div></div>
+      </div>
+      <div class="tgBubble">
+        <div class="tgHeadline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text||'#e8eef5'};${alignStyle}">${headline}</div>
+        ${deck ? `<div class="tgDeck" style="font-size:${s.subSize}px;font-family:${bodyFont};${alignStyle}">${parseInlineFormat(deck, neon)}</div>` : ''}
+      </div>
+      ${metaBlock}
+      ${wm}${lg}
+    </div>`;
+  }
+
+  /* ===== Shimbun ===== */
+  if(s.template === 'shimbun'){
+    const deck = (s.summary || '').trim();
+    return `<div id="card" class="tpl-shimbun" style="width:${w}px;height:${h}px;background:${s.bg||'#f7f4ec'};font-family:${baseFont};">
+      <div class="shMast">
+        <div class="shBrand">${escapeHtml(s.brandName || 'WEST150')}</div>
+        <div class="shDate">${escapeHtml(dateStr)}</div>
+      </div>
+      <div class="shKicker" style="color:${crimson};font-size:${s.tagSize}px;">${escapeHtml(s.tagText || s.category || '総合')}</div>
+      <div class="shHeadline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text||'#1a1a1a'};${alignStyle}">${headline}</div>
+      ${deck ? `<div class="shDeck" style="font-size:${s.subSize}px;font-family:${bodyFont};${alignStyle}">${parseInlineFormat(deck, crimson)}</div>` : ''}
+      ${metaBlock}
+      ${wm}${lg}
+    </div>`;
+  }
+
+  /* ===== Constructivist ===== */
+  if(s.template === 'construct'){
+    const deck = (s.summary || '').trim();
+    return `<div id="card" class="tpl-construct" style="width:${w}px;height:${h}px;background:${s.bg||'#111'};font-family:${baseFont};">
+      <div class="coShape" style="background:${crimson};"></div>
+      <div class="coShape2" style="border-color:${neon};"></div>
+      <div class="coInner">
+        <div class="coKicker" style="color:${neon};font-size:${s.tagSize}px;">${escapeHtml(s.tagText || 'AGITATE')}</div>
+        <div class="coHeadline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text||'#fff'};${alignStyle}">${headline}</div>
+        ${deck ? `<div class="coDeck" style="font-size:${s.subSize}px;font-family:${bodyFont};${alignStyle}">${parseInlineFormat(deck, neon)}</div>` : ''}
+        ${metaBlock}
+      </div>
+      ${wm}${lg}
+    </div>`;
+  }
+
+  /* ===== Swiss ===== */
+  if(s.template === 'swiss'){
+    const deck = (s.summary || '').trim();
+    return `<div id="card" class="tpl-swiss" style="width:${w}px;height:${h}px;background:${s.bg||'#f2f2f2'};font-family:${baseFont};">
+      <div class="swGrid">
+        <div class="swBar" style="background:${crimson};"></div>
+        <div>
+          <div class="swKicker" style="color:${crimson};font-size:${s.tagSize}px;">${escapeHtml(s.tagText || 'INFO')}</div>
+          <div class="swHeadline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text||'#111'};${alignStyle}">${headline}</div>
+          ${deck ? `<div class="swDeck" style="font-size:${s.subSize}px;font-family:${bodyFont};${alignStyle}">${parseInlineFormat(deck, crimson)}</div>` : ''}
+        </div>
+      </div>
+      ${metaBlock}
+      ${wm}${lg}
+    </div>`;
+  }
+
+
   /* Basic fallback */
   return `<div id="card" class="tpl-basic" style="width:${w}px;height:${h}px;background:${s.bg||'#faf9fc'};color:${s.text||'#1a1a1a'};font-family:${baseFont};">
     <div class="rowTop"><span class="badgeTop">${escapeHtml(s.tagText||s.category||'')}</span>${s.showPageNum!==false?`<span class="pageNum">${pageLabel}</span>`:''}</div>
@@ -2009,10 +2380,13 @@ function renderList(){
 
 function updateTemplateFields(){
   const t = slides[active].template;
-  const needBullets = (t==='politics' || t==='thread' || t==='sources' || t==='axios');
+  const needBullets = (t==='politics' || t==='thread' || t==='sources' || t==='axios' || t==='mb');
   const needSummary = (t==='breaking' || t==='fullbleed' || t==='basic' || t==='cover' || t==='luxe'
     || t==='wire' || t==='ft' || t==='atlantic' || t==='politico' || t==='magazine'
-    || t==='bloomberg' || t==='vox' || t==='economist' || t==='wtimes');
+    || t==='bloomberg' || t==='vox' || t==='economist' || t==='wtimes'
+    || t==='apphoto' || t==='intercept' || t==='propublica' || t==='fa' || t==='nr'
+    || t==='stratechery' || t==='substack' || t==='ig' || t==='telegram' || t==='shimbun'
+    || t==='construct' || t==='swiss');
   $('bulletsField').style.display = needBullets ? '' : 'none';
   $('summaryField').style.display = needSummary ? '' : 'none';
   if($('bulletsField') && t==='sources'){
@@ -2429,6 +2803,96 @@ Array.from(document.querySelectorAll('#layoutMenu .ddItem')).forEach(item => {
       if(slides[active].crimson === '#E50914') slides[active].crimson = '#8b0000';
       if(!slides[active].titleFont) slides[active].titleFont = 'notoserif';
     }
+
+    if(t === 'apphoto'){
+      slides[active].titleSize = 20;
+      slides[active].bg = '#0a0a0a';
+      slides[active].text = '#ffffff';
+    }
+    if(t === 'intercept'){
+      slides[active].tagText = slides[active].tagText || 'INVESTIGATION';
+      slides[active].titleSize = 28;
+      slides[active].bg = '#0f0f0f';
+      slides[active].text = '#f2f2f2';
+      slides[active].crimson = '#e10600';
+    }
+    if(t === 'propublica'){
+      slides[active].tagText = slides[active].tagText || 'INVESTIGATION';
+      slides[active].titleSize = 26;
+      slides[active].bg = '#ffffff';
+      slides[active].text = '#1a1a1a';
+    }
+    if(t === 'fa'){
+      slides[active].tagText = slides[active].tagText || 'ESSAY';
+      slides[active].titleSize = 30;
+      slides[active].bg = '#0b1c2c';
+      slides[active].text = '#f5f0e6';
+      slides[active].neon = '#c4a35a';
+      if(!slides[active].titleFont) slides[active].titleFont = 'notoserif';
+    }
+    if(t === 'nr'){
+      slides[active].tagText = slides[active].tagText || 'OPINION';
+      slides[active].titleSize = 30;
+      slides[active].bg = '#f8f5ef';
+      slides[active].text = '#1c1914';
+      slides[active].crimson = '#6b1c23';
+      if(!slides[active].titleFont) slides[active].titleFont = 'notoserif';
+    }
+    if(t === 'stratechery'){
+      slides[active].tagText = slides[active].tagText || 'ANALYSIS';
+      slides[active].titleSize = 28;
+      slides[active].bg = '#ffffff';
+      slides[active].text = '#222222';
+    }
+    if(t === 'mb'){
+      slides[active].titleSize = 24;
+      slides[active].bg = '#fffaf3';
+      slides[active].text = '#1a1a1a';
+      slides[active].neon = '#ff6b2c';
+      if(!(slides[active].bullets||'').trim()){
+        slides[active].bullets = '첫 번째 브리핑 포인트\n두 번째 브리핑 포인트\n세 번째 브리핑 포인트';
+      }
+    }
+    if(t === 'substack'){
+      slides[active].titleSize = 28;
+      slides[active].bg = '#ffffff';
+      slides[active].text = '#1a1a1a';
+    }
+    if(t === 'ig'){
+      slides[active].titleSize = 28;
+      slides[active].bg = '#111111';
+      slides[active].text = '#ffffff';
+      slides[active].neon = '#ffffff';
+    }
+    if(t === 'telegram'){
+      slides[active].titleSize = 18;
+      slides[active].bg = '#0e1621';
+      slides[active].text = '#e8eef5';
+      slides[active].neon = '#2aabee';
+    }
+    if(t === 'shimbun'){
+      slides[active].titleSize = 26;
+      slides[active].bg = '#f7f4ec';
+      slides[active].text = '#1a1a1a';
+      slides[active].crimson = '#8b0000';
+      if(!slides[active].titleFont) slides[active].titleFont = 'notoserif';
+    }
+    if(t === 'construct'){
+      slides[active].tagText = slides[active].tagText || 'AGITATE';
+      slides[active].titleSize = 30;
+      slides[active].bg = '#111111';
+      slides[active].text = '#ffffff';
+      slides[active].crimson = '#e10600';
+      slides[active].neon = '#f5e642';
+    }
+    if(t === 'swiss'){
+      slides[active].tagText = slides[active].tagText || 'INFO';
+      slides[active].titleSize = 28;
+      slides[active].bg = '#f2f2f2';
+      slides[active].text = '#111111';
+      slides[active].crimson = '#e10600';
+    }
+
     Array.from(document.querySelectorAll('#layoutMenu .ddItem')).forEach(i => i.classList.toggle('active', i===item));
     closeAllDropdowns();
     syncForm(); renderMainCard(); renderList();
