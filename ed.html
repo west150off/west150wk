@@ -42,7 +42,15 @@
   #topbar{display:flex;align-items:center;justify-content:space-between;padding:0 16px;height:52px;background:var(--chrome-panel);border-bottom:1px solid var(--chrome-line);flex:none;z-index:300;}
   #topbar .brand{font-weight:700;font-size:14px;letter-spacing:.03em;display:flex;align-items:center;gap:8px;}
   #topbar .brand .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent);}
-  #topbar .actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end;}
+  #topbar .actions{
+    display:flex;gap:6px;align-items:center;flex-wrap:nowrap;justify-content:flex-end;
+    max-width:min(72vw,900px);overflow-x:auto;overflow-y:hidden;
+    -webkit-overflow-scrolling:touch;scrollbar-width:thin;
+    padding-bottom:2px;
+  }
+  #topbar .actions::-webkit-scrollbar{height:4px;}
+  #topbar .actions::-webkit-scrollbar-thumb{background:#3a3358;border-radius:4px;}
+  #topbar .actions > *{flex:none;}
   button{font-family:inherit;cursor:pointer;border:none;}
   select,input,textarea{font-family:inherit;}
   .btn{padding:8px 14px;border-radius:8px;font-size:12.5px;font-weight:600;background:var(--chrome-btn);color:var(--chrome-text);transition:.15s;white-space:nowrap;}
@@ -879,16 +887,19 @@ function cardMarkup(s, pageIdx, total){
   const sourceStr = s.source || '';
   const metaR = metaRight(s, pageIdx, total);
   const wm = watermarkHtml(s);
+  const align = s.align || 'left';
+  const alignStyle = 'text-align:'+align+';';
+  const tagAlign = align === 'center' ? 'margin-left:auto;margin-right:auto;' : (align === 'right' ? 'margin-left:auto;' : '');
 
   /* ===== A: Politics Insight ===== */
   if(s.template === 'politics'){
     const lines = String(s.bullets||'').split('\n').map(l=>l.trim()).filter(Boolean);
     const bulletsHtml = lines.map(line =>
-      `<div class="bulletItem"><span class="bulletMark" style="background:${neon}"></span><span style="font-size:${s.subSize}px;font-family:${bodyFont}">${parseInlineFormat(line, neon)}</span></div>`
+      `<div class="bulletItem" style="${align==='center'?'justify-content:center;':align==='right'?'justify-content:flex-end;':''}"><span class="bulletMark" style="background:${neon}"></span><span style="font-size:${s.subSize}px;font-family:${bodyFont};${alignStyle}">${parseInlineFormat(line, neon)}</span></div>`
     ).join('');
     return `<div id="card" class="tpl-politics" style="width:${w}px;height:${h}px;background:${s.bg};">
-      <div class="tagYellow" style="background:${neon};font-size:${s.tagSize}px;">${escapeHtml(s.tagText || s.category || 'POLITICS INSIGHT')}</div>
-      <div class="headline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text};">${headline}</div>
+      <div class="tagYellow" style="background:${neon};font-size:${s.tagSize}px;${tagAlign}">${escapeHtml(s.tagText || s.category || 'POLITICS INSIGHT')}</div>
+      <div class="headline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text};${alignStyle}">${headline}</div>
       <div class="bulletBox" style="border-color:${crimson};">
         ${bulletsHtml || '<div class="bulletItem"><span class="bulletMark" style="background:'+neon+'"></span><span>불릿을 입력하세요</span></div>'}
       </div>
@@ -926,9 +937,12 @@ function cardMarkup(s, pageIdx, total){
       ? `<div class="vignette" style="background:${vigLayers.join(',')};"></div>`
       : '';
     const useGlass = !!s.glass;
+    const sumBorder = align === 'right'
+      ? `border-right:3px solid ${neon};border-left:none;padding-right:14px;padding-left:0;`
+      : `border-left:3px solid ${neon};`;
     const bodyInner = `
-        <div class="headline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text};">${headline}</div>
-        <div class="summary" style="font-size:${s.subSize}px;font-family:${bodyFont};border-left-color:${neon};">${parseInlineFormat(s.summary, neon)}</div>
+        <div class="headline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text};${alignStyle}">${headline}</div>
+        <div class="summary" style="font-size:${s.subSize}px;font-family:${bodyFont};${sumBorder}${alignStyle}">${parseInlineFormat(s.summary, neon)}</div>
         <div class="metaRow">
           <span>${escapeHtml(dateStr)}</span>
           <span>${metaR}</span>
@@ -973,9 +987,12 @@ function cardMarkup(s, pageIdx, total){
       scrimLayers.push(`rgba(0,0,0,${ov * 0.55})`);
     }
     const scrimStyle = `background:${scrimLayers.join(',')};`;
+    const sumBorderFb = align === 'right'
+      ? `border-right:3px solid ${neon};border-left:none;padding-right:14px;padding-left:0;`
+      : `border-left:3px solid ${neon};`;
     const fbBody = `
-        <div class="headline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text};">${headline}</div>
-        <div class="summary" style="font-size:${s.subSize}px;font-family:${bodyFont};border-left-color:${neon};">${parseInlineFormat(s.summary, neon)}</div>
+        <div class="headline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text};${alignStyle}">${headline}</div>
+        <div class="summary" style="font-size:${s.subSize}px;font-family:${bodyFont};${sumBorderFb}${alignStyle}">${parseInlineFormat(s.summary, neon)}</div>
         <div class="metaRow">
           <span>${escapeHtml(dateStr)}</span>
           <span>${metaR}</span>
@@ -984,7 +1001,7 @@ function cardMarkup(s, pageIdx, total){
       <div class="fbPhoto" style="${photoStyle}"></div>
       <div class="fbScrim" style="${scrimStyle}"></div>
       <div class="fbContent${useGlass?' glassOn':''}">
-        <div class="tagYellow" style="background:${neon};font-size:${s.tagSize}px;">${escapeHtml(s.tagText || s.category || 'EDITORIAL')}</div>
+        <div class="tagYellow" style="background:${neon};font-size:${s.tagSize}px;${tagAlign}">${escapeHtml(s.tagText || s.category || 'EDITORIAL')}</div>
         <div class="fbSpacer"></div>
         ${useGlass ? `<div class="glassPanel">${fbBody}</div>` : fbBody}
       </div>
