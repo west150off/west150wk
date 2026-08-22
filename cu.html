@@ -491,7 +491,10 @@
         </div>
         <div class="field">
           <label>날짜/부제 라벨</label>
-          <input type="text" id="dateLabel" value="2026.07.29 (수)">
+          <div style="display:flex; gap:6px;">
+            <input type="text" id="dateLabel" value="2026.07.29 (수)" style="flex:1;">
+            <button class="btn small secondary" id="todayBtn" type="button" style="width:auto; white-space:nowrap;">오늘</button>
+          </div>
         </div>
       </div>
       <div class="field">
@@ -536,7 +539,7 @@
       </div>
       <div class="field">
         <label>메인 본문 크기 (<span id="bodySizeVal">16</span>px)</label>
-        <input type="range" id="bodySize" min="11" max="24" value="16">
+        <input type="range" id="bodySize" min="11" max="36" value="16">
       </div>
       <div class="field">
         <label>서브 제목 크기 (<span id="subHeadlineSizeVal">26</span>px)</label>
@@ -692,6 +695,17 @@ function toast(msg){
   setTimeout(()=>t.classList.remove('show'), 1800);
 }
 
+/* ---------- today's date (auto) ---------- */
+function getTodayLabel(){
+  const days = ['일','월','화','수','목','금','토'];
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, '0');
+  const d = String(now.getDate()).padStart(2, '0');
+  const w = days[now.getDay()];
+  return `${y}.${m}.${d} (${w})`;
+}
+
 /* ---------- render ---------- */
 function render(){
   document.getElementById('pHandle').textContent = document.getElementById('handle').value;
@@ -808,6 +822,12 @@ document.getElementById('themeSwatches').addEventListener('click', (e)=>{
 /* ---------- inputs ---------- */
 ['brandName','handle','dateLabel','subLabel','mainCategory','mainTitle','mainBody','mainSource','mainStat','footerText']
   .forEach(id => document.getElementById(id).addEventListener('input', render));
+
+document.getElementById('todayBtn').addEventListener('click', ()=>{
+  document.getElementById('dateLabel').value = getTodayLabel();
+  render();
+  toast('오늘 날짜로 업데이트했어요');
+});
 
 /* ---------- main image upload ---------- */
 document.getElementById('mainImgDrop').addEventListener('click', ()=>{
@@ -1062,6 +1082,7 @@ document.getElementById('resetBtn').addEventListener('click', ()=>{
 });
 
 /* ---------- init ---------- */
+document.getElementById('dateLabel').value = getTodayLabel();
 renderSubPanel();
 render();
 setTimeout(scaleToFit, 100);
