@@ -39,17 +39,13 @@
   html,body{margin:0;height:100%;font-family:'Pretendard Variable','Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:var(--chrome-bg);color:var(--chrome-text);overflow:hidden;}
   #app{display:flex;flex-direction:column;height:100vh;}
 
-  #topbar{display:flex;align-items:center;justify-content:space-between;padding:0 16px;height:52px;background:var(--chrome-panel);border-bottom:1px solid var(--chrome-line);flex:none;z-index:300;}
-  #topbar .brand{font-weight:700;font-size:14px;letter-spacing:.03em;display:flex;align-items:center;gap:8px;}
+  #topbar{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;min-height:52px;height:auto;background:var(--chrome-panel);border-bottom:1px solid var(--chrome-line);flex:none;z-index:300;gap:8px;flex-wrap:wrap;}
+  #topbar .brand{font-weight:700;font-size:14px;letter-spacing:.03em;display:flex;align-items:center;gap:8px;flex:none;}
   #topbar .brand .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent);}
   #topbar .actions{
-    display:flex;gap:6px;align-items:center;flex-wrap:nowrap;justify-content:flex-end;
-    max-width:min(72vw,900px);overflow-x:auto;overflow-y:hidden;
-    -webkit-overflow-scrolling:touch;scrollbar-width:thin;
-    padding-bottom:2px;
+    display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end;
+    overflow:visible;flex:1;min-width:0;
   }
-  #topbar .actions::-webkit-scrollbar{height:4px;}
-  #topbar .actions::-webkit-scrollbar-thumb{background:#3a3358;border-radius:4px;}
   #topbar .actions > *{flex:none;}
   button{font-family:inherit;cursor:pointer;border:none;}
   select,input,textarea{font-family:inherit;}
@@ -63,11 +59,13 @@
   .btn.full{width:100%;}
   .btn:disabled{opacity:.4;cursor:default;}
 
-  .menuWrap{position:relative;}
-  .dropdown{position:absolute;top:calc(100% + 6px);left:0;background:var(--chrome-dropdown);border:1px solid var(--chrome-line);border-radius:10px;padding:6px;display:none;flex-direction:column;min-width:180px;box-shadow:0 14px 34px #0006;z-index:400;}
+  .menuWrap{position:relative;z-index:320;}
+  .dropdown{position:absolute;top:calc(100% + 6px);left:0;background:var(--chrome-dropdown);border:1px solid var(--chrome-line);border-radius:10px;padding:6px;display:none;flex-direction:column;min-width:180px;box-shadow:0 14px 34px #0006;z-index:500;}
   .dropdown.open{display:flex;}
   .dropdown.panelDropdown{padding:14px;width:300px;gap:10px;max-height:78vh;overflow-y:auto;}
-  .dropdown.wide{width:260px;max-height:70vh;overflow-y:auto;}
+  .dropdown.wide{width:280px;max-height:70vh;overflow-y:auto;}
+  /* 오른쪽 끝 메뉴는 좌측으로 펼침 */
+  .menuWrap.alignEnd .dropdown{left:auto;right:0;}
   .ddItem{padding:9px 11px;border-radius:7px;font-size:13px;cursor:pointer;color:var(--chrome-text);display:flex;align-items:center;gap:8px;}
   .ddItem:hover{background:var(--chrome-btn-hover);}
   .ddItem.active{background:var(--accent-soft);color:var(--accent);}
@@ -343,6 +341,154 @@
   #card.tpl-fullbleed .fbContent.glassOn .fbSpacer{ flex:1; }
   #card.tpl-fullbleed .fbContent.glassOn > .tagYellow{ margin-bottom:0; }
 
+  /* ===== TEMPLATE I: Cover ===== */
+  #card.tpl-cover{
+    background:#0a0b0d;padding:0;color:#f5f2ec;
+  }
+  #card.tpl-cover .cvPhoto{
+    position:absolute;inset:0;z-index:0;
+    background-size:cover;background-position:center;background-repeat:no-repeat;
+  }
+  #card.tpl-cover .cvScrim{
+    position:absolute;inset:0;z-index:1;pointer-events:none;
+    background:linear-gradient(180deg,rgba(0,0,0,.5) 0%,rgba(0,0,0,.2) 40%,rgba(0,0,0,.75) 100%);
+  }
+  #card.tpl-cover .cvContent{
+    position:relative;z-index:2;height:100%;
+    padding:28px 28px 26px;display:flex;flex-direction:column;
+  }
+  #card.tpl-cover .cvMast{
+    display:flex;justify-content:space-between;align-items:flex-end;
+    padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.4);
+    font-family:Georgia,'Noto Serif KR',serif;
+  }
+  #card.tpl-cover .cvBrand{
+    font-size:22px;font-weight:700;letter-spacing:-.03em;color:#fff;
+  }
+  #card.tpl-cover .cvEdition{
+    font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:11px;letter-spacing:.16em;opacity:.8;text-transform:uppercase;
+  }
+  #card.tpl-cover .cvKicker{
+    margin-top:18px;
+    font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:11px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;
+    color:#E6FF00;
+  }
+  #card.tpl-cover .headline{
+    margin-top:14px;
+    font-family:Georgia,'Noto Serif KR',serif;
+    font-weight:400;font-size:34px;line-height:1.12;letter-spacing:-.035em;
+    color:#fff;white-space:pre-wrap;word-break:keep-all;
+    text-shadow:0 2px 18px rgba(0,0,0,.4);
+  }
+  #card.tpl-cover .cvSpacer{flex:1;}
+  #card.tpl-cover .cvMeta{
+    display:flex;justify-content:space-between;align-items:center;
+    padding-top:12px;border-top:1px solid rgba(255,255,255,.2);
+    font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+    color:rgba(255,255,255,.65);
+  }
+
+  /* ===== TEMPLATE J: Thread 요약 ===== */
+  #card.tpl-thread{
+    background:#111318;padding:28px 26px 22px;color:#f5f2ec;
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  }
+  #card.tpl-thread .tagYellow{
+    display:inline-block;background:#E6FF00;color:#0a0a0a;
+    font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;
+    padding:6px 12px;margin-bottom:18px;width:fit-content;
+  }
+  #card.tpl-thread .headline{
+    font-family:Georgia,'Noto Serif KR',serif;
+    font-weight:400;font-size:26px;line-height:1.2;letter-spacing:-.025em;
+    color:#fff;margin:0 0 20px;white-space:pre-wrap;word-break:keep-all;
+  }
+  #card.tpl-thread .thList{display:flex;flex-direction:column;gap:12px;flex:1;}
+  #card.tpl-thread .thItem{
+    display:flex;gap:12px;align-items:flex-start;
+  }
+  #card.tpl-thread .thNum{
+    flex:none;width:24px;height:24px;border-radius:50%;
+    background:#E50914;color:#fff;
+    font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:11px;font-weight:800;
+    display:flex;align-items:center;justify-content:center;
+  }
+  #card.tpl-thread .thText{
+    flex:1;min-width:0;
+    font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:14px;line-height:1.45;color:rgba(245,242,236,.92);
+    word-break:keep-all;padding-top:2px;
+  }
+  #card.tpl-thread .metaRow{
+    display:flex;justify-content:space-between;align-items:center;
+    margin-top:18px;padding-top:12px;border-top:1px solid rgba(255,255,255,.12);
+    font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+    color:rgba(255,255,255,.55);
+  }
+
+  /* ===== TEMPLATE K: Source List ===== */
+  #card.tpl-sources{
+    background:#111318;padding:28px 26px 22px;color:#f5f2ec;
+  }
+  #card.tpl-sources .tagYellow{
+    display:inline-block;background:#E6FF00;color:#0a0a0a;
+    font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;
+    padding:6px 12px;margin-bottom:16px;width:fit-content;
+  }
+  #card.tpl-sources .headline{
+    font-family:Georgia,'Noto Serif KR',serif;
+    font-weight:400;font-size:24px;line-height:1.22;letter-spacing:-.02em;
+    color:#fff;margin:0 0 18px;white-space:pre-wrap;word-break:keep-all;
+  }
+  #card.tpl-sources .srcList{display:flex;flex-direction:column;gap:14px;flex:1;}
+  #card.tpl-sources .srcItem{
+    display:flex;gap:12px;align-items:flex-start;
+    padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.08);
+  }
+  #card.tpl-sources .srcItem:last-child{border-bottom:none;padding-bottom:0;}
+  #card.tpl-sources .srcNum{
+    flex:none;
+    font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:14px;font-weight:900;color:#E6FF00;line-height:1.3;
+    min-width:22px;
+  }
+  #card.tpl-sources .srcBody{flex:1;min-width:0;}
+  #card.tpl-sources .srcTitle{
+    font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:13.5px;font-weight:700;line-height:1.4;color:#fff;
+    word-break:keep-all;
+  }
+  #card.tpl-sources .srcUrl{
+    margin-top:4px;
+    font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:11px;color:rgba(255,255,255,.45);word-break:break-all;
+  }
+  #card.tpl-sources .metaRow{
+    display:flex;justify-content:space-between;align-items:center;
+    margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,.12);
+    font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+    color:rgba(255,255,255,.55);
+  }
+
+  /* Logo mark */
+  #card .logoMark{
+    position:absolute;z-index:11;pointer-events:none;
+    max-width:22%;max-height:12%;object-fit:contain;
+    opacity:.85;
+  }
+  #card .logoMark.pos-br{right:14px;bottom:48px;}
+  #card .logoMark.pos-bl{left:14px;bottom:48px;}
+  #card .logoMark.pos-tr{right:14px;top:14px;}
+  #card .logoMark.pos-tl{left:14px;top:14px;}
+
   /* Watermark */
   #card .watermark{
     position:absolute;
@@ -576,6 +722,9 @@
           <div class="ddItem active" data-template="politics"><span class="ic">◆</span>A · Politics Insight</div>
           <div class="ddItem" data-template="breaking"><span class="ic">▣</span>B · Breaking Photo</div>
           <div class="ddItem" data-template="fullbleed"><span class="ic">▣</span>C · Full Bleed Photo</div>
+          <div class="ddItem" data-template="cover"><span class="ic">◈</span>I · Cover</div>
+          <div class="ddItem" data-template="thread"><span class="ic">≡</span>J · Thread 요약</div>
+          <div class="ddItem" data-template="sources"><span class="ic">※</span>K · Source List</div>
           <div class="ddSep"></div>
           <div class="ddLabel">기본</div>
           <div class="ddItem" data-template="basic"><span class="ic">Aa</span>텍스트 기본</div>
@@ -665,6 +814,43 @@
           </div>
           <div class="hint">B·C 템플릿에서 사진 위 글자가 안 보일 때 사용. 저장 호환용 반투명 패널입니다.</div>
         </div>
+      </div>
+
+      <div class="sec">
+        <h3>브랜드 기본값</h3>
+        <div class="field">
+          <label>계정 핸들 (워터마크 기본)</label>
+          <input type="text" id="brandHandle" value="" placeholder="@youraccount">
+        </div>
+        <div class="field">
+          <label>시리즈 / 브랜드명</label>
+          <input type="text" id="brandName" value="" placeholder="X TODAY">
+        </div>
+        <div class="field">
+          <label>로고 이미지</label>
+          <div class="imgPreviewRow">
+            <div class="imgThumb" id="logoThumb"></div>
+            <div style="display:flex;flex-direction:column;gap:5px;flex:1;">
+              <label class="btn small full" id="logoUploadBtn" style="text-align:center;">로고 업로드</label>
+              <input type="file" id="logoUpload" accept="image/*" style="display:none;">
+              <button class="btn ghost small full" id="logoRemove">로고 삭제</button>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label>로고 위치</label>
+          <select id="logoPos">
+            <option value="br">우측 하단</option>
+            <option value="bl">좌측 하단</option>
+            <option value="tr">우측 상단</option>
+            <option value="tl">좌측 상단</option>
+          </select>
+        </div>
+        <div class="row2">
+          <button type="button" class="btn small full" id="brandSaveBtn">기본값 저장</button>
+          <button type="button" class="btn ghost small full" id="brandApplyBtn">불러오기</button>
+        </div>
+        <div class="hint">계정 핸들·로고·브랜드명을 브라우저에 저장합니다. 새 슬라이드에도 적용됩니다.</div>
       </div>
 
       <div class="sec">
@@ -818,7 +1004,7 @@ function formatTzNow(tz){
 }
 
 function defaults(){
-  return {
+  const s = {
     template: 'politics',
     category: '정치',
     tagText: 'POLITICS INSIGHT',
@@ -832,6 +1018,9 @@ function defaults(){
     watermark: '',
     watermarkPos: 'br',
     glass: false,
+    brandName: '',
+    logo: null,
+    logoPos: 'br',
     bg: '#111318',
     text: '#ffffff',
     neon: '#E6FF00',
@@ -854,6 +1043,8 @@ function defaults(){
     blurFill: true,
     vignetteStrength: 25
   };
+  applyBrandToSlide(s);
+  return s;
 }
 
 let slides = [defaults()];
@@ -865,6 +1056,28 @@ function watermarkHtml(s){
   if(!s.watermark || !String(s.watermark).trim()) return '';
   const pos = s.watermarkPos || 'br';
   return `<div class="watermark pos-${pos}" style="font-size:11px;">${escapeHtml(s.watermark)}</div>`;
+}
+function logoHtml(s){
+  if(!s.logo) return '';
+  const pos = s.logoPos || 'br';
+  return `<img class="logoMark pos-${pos}" src="${s.logo}" alt="">`;
+}
+
+const BRAND_KEY = 'cardeditor_brand_defaults_v1';
+function loadBrandDefaults(){
+  try { return JSON.parse(localStorage.getItem(BRAND_KEY) || '{}'); }
+  catch(e){ return {}; }
+}
+function saveBrandDefaults(obj){
+  try { localStorage.setItem(BRAND_KEY, JSON.stringify(obj)); } catch(e){}
+}
+function applyBrandToSlide(s){
+  const b = loadBrandDefaults();
+  if(b.handle && !(s.watermark && String(s.watermark).trim())) s.watermark = b.handle;
+  if(b.brandName && !(s.brandName && String(s.brandName).trim())) s.brandName = b.brandName;
+  if(b.logo && !s.logo) s.logo = b.logo;
+  if(b.logoPos) s.logoPos = b.logoPos;
+  if(b.watermarkPos) s.watermarkPos = b.watermarkPos;
 }
 function metaRight(s, pageIdx, total){
   const parts = [];
@@ -887,6 +1100,7 @@ function cardMarkup(s, pageIdx, total){
   const sourceStr = s.source || '';
   const metaR = metaRight(s, pageIdx, total);
   const wm = watermarkHtml(s);
+  const lg = logoHtml(s);
   const align = s.align || 'left';
   const alignStyle = 'text-align:'+align+';';
   const tagAlign = align === 'center' ? 'margin-left:auto;margin-right:auto;' : (align === 'right' ? 'margin-left:auto;' : '');
@@ -907,7 +1121,7 @@ function cardMarkup(s, pageIdx, total){
         <span>${escapeHtml(dateStr)}</span>
         <span>${metaR}</span>
       </div>
-      ${wm}
+      ${wm}${lg}
     </div>`;
   }
 
@@ -957,7 +1171,7 @@ function cardMarkup(s, pageIdx, total){
       <div class="lower${useGlass?' glassOn':''}">
         ${useGlass ? `<div class="glassPanel">${bodyInner}</div>` : bodyInner}
       </div>
-      ${wm}
+      ${wm}${lg}
     </div>`;
   }
 
@@ -1005,7 +1219,86 @@ function cardMarkup(s, pageIdx, total){
         <div class="fbSpacer"></div>
         ${useGlass ? `<div class="glassPanel">${fbBody}</div>` : fbBody}
       </div>
-      ${wm}
+      ${wm}${lg}
+    </div>`;
+  }
+
+  /* ===== I: Cover ===== */
+  if(s.template === 'cover'){
+    const posMap = {top:'center top', center:'center center', bottom:'center bottom'};
+    const pos = posMap[s.imagePos] || 'center center';
+    const fit = s.imageFit || 'cover';
+    const filt = filterCss(s.imageFilter);
+    const bgSize = fit === 'original' ? 'auto' : fit;
+    let photoStyle = s.image
+      ? `background-image:url('${s.image}');background-size:${bgSize};background-position:${pos};filter:${filt};`
+      : `background:linear-gradient(160deg,#2a2e38,#101218);`;
+    const ov = Math.max(0, Math.min(80, s.imageOverlay || 0)) / 100;
+    const vig = Math.max(0, Math.min(60, s.vignetteStrength || 0));
+    const scrimLayers = [
+      `linear-gradient(180deg,rgba(0,0,0,${0.45+ov*0.3}) 0%,rgba(0,0,0,${0.15+ov*0.2}) 40%,rgba(0,0,0,${0.72+ov*0.2}) 100%)`
+    ];
+    if(vig > 0){
+      scrimLayers.push(`radial-gradient(ellipse at center, transparent ${Math.max(15,55-vig*0.5)}%, rgba(0,0,0,${0.25+vig/100}) 100%)`);
+    }
+    const brand = s.brandName || 'X TODAY';
+    return `<div id="card" class="tpl-cover" style="width:${w}px;height:${h}px;background:${s.bg};">
+      <div class="cvPhoto" style="${photoStyle}"></div>
+      <div class="cvScrim" style="background:${scrimLayers.join(',')};"></div>
+      <div class="cvContent">
+        <div class="cvMast">
+          <div class="cvBrand">${escapeHtml(brand)}</div>
+          <div class="cvEdition">${s.showPageNum!==false ? pageLabel : ''}</div>
+        </div>
+        <div class="cvKicker" style="color:${neon};${alignStyle}">${escapeHtml(s.tagText || s.category || 'COVER')}</div>
+        <div class="headline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text};${alignStyle}">${headline}</div>
+        <div class="cvSpacer"></div>
+        <div class="cvMeta">
+          <span>${escapeHtml(dateStr)}</span>
+          <span>${metaR}</span>
+        </div>
+      </div>
+      ${wm}${lg}
+    </div>`;
+  }
+
+  /* ===== J: Thread 요약 ===== */
+  if(s.template === 'thread'){
+    const lines = String(s.bullets||'').split('\n').map(l=>l.trim()).filter(Boolean);
+    const items = lines.map((line,i) =>
+      `<div class="thItem"><div class="thNum" style="background:${crimson}">${i+1}</div><div class="thText" style="font-size:${s.subSize}px;font-family:${bodyFont};${alignStyle}">${parseInlineFormat(line, neon)}</div></div>`
+    ).join('');
+    return `<div id="card" class="tpl-thread" style="width:${w}px;height:${h}px;background:${s.bg};">
+      <div class="tagYellow" style="background:${neon};font-size:${s.tagSize}px;${tagAlign}">${escapeHtml(s.tagText || 'THREAD')}</div>
+      <div class="headline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text};${alignStyle}">${headline}</div>
+      <div class="thList">${items || '<div class="thItem"><div class="thNum">1</div><div class="thText">요약을 입력하세요</div></div>'}</div>
+      <div class="metaRow"><span>${escapeHtml(dateStr)}</span><span>${metaR}</span></div>
+      ${wm}${lg}
+    </div>`;
+  }
+
+  /* ===== K: Source List ===== */
+  if(s.template === 'sources'){
+    // 한 줄: 제목 | URL  또는 제목만
+    const lines = String(s.bullets||'').split('\n').map(l=>l.trim()).filter(Boolean);
+    const items = lines.map((line,i) => {
+      const parts = line.split('|').map(x=>x.trim());
+      const title = parts[0] || '';
+      const url = parts[1] || '';
+      return `<div class="srcItem">
+        <div class="srcNum">${String(i+1).padStart(2,'0')}</div>
+        <div class="srcBody">
+          <div class="srcTitle" style="font-size:${s.subSize}px;">${parseInlineFormat(title, neon)}</div>
+          ${url ? `<div class="srcUrl">${escapeHtml(url)}</div>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+    return `<div id="card" class="tpl-sources" style="width:${w}px;height:${h}px;background:${s.bg};">
+      <div class="tagYellow" style="background:${neon};font-size:${s.tagSize}px;${tagAlign}">${escapeHtml(s.tagText || 'SOURCES')}</div>
+      <div class="headline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text};${alignStyle}">${headline}</div>
+      <div class="srcList">${items || '<div class="srcItem"><div class="srcNum">01</div><div class="srcBody"><div class="srcTitle">출처를 입력하세요 (제목 | URL)</div></div></div>'}</div>
+      <div class="metaRow"><span>${escapeHtml(dateStr)}</span><span>${metaR}</span></div>
+      ${wm}${lg}
     </div>`;
   }
 
@@ -1017,7 +1310,7 @@ function cardMarkup(s, pageIdx, total){
       <div class="subText" style="font-size:${s.subSize}px;font-family:${bodyFont};">${parseInlineFormat(s.summary || s.bullets, neon)}</div>
     </div>
     <div class="rowBottom"><span class="handle">${escapeHtml(sourceStr)}</span><span></span></div>
-    ${wm}
+    ${wm}${lg}
   </div>`;
 }
 
@@ -1055,8 +1348,20 @@ function renderList(){
 
 function updateTemplateFields(){
   const t = slides[active].template;
-  $('bulletsField').style.display = (t==='politics') ? '' : 'none';
-  $('summaryField').style.display = (t==='breaking' || t==='fullbleed' || t==='basic') ? '' : 'none';
+  const needBullets = (t==='politics' || t==='thread' || t==='sources');
+  const needSummary = (t==='breaking' || t==='fullbleed' || t==='basic' || t==='cover');
+  $('bulletsField').style.display = needBullets ? '' : 'none';
+  $('summaryField').style.display = needSummary ? '' : 'none';
+  if($('bulletsField') && t==='sources'){
+    const lab = $('bulletsField').querySelector('label');
+    if(lab) lab.textContent = '출처 목록 (한 줄: 제목 | URL)';
+  } else if($('bulletsField') && t==='thread'){
+    const lab = $('bulletsField').querySelector('label');
+    if(lab) lab.textContent = '요약 포인트 (한 줄에 하나)';
+  } else if($('bulletsField')){
+    const lab = $('bulletsField').querySelector('label');
+    if(lab) lab.textContent = '불릿 포인트 (한 줄에 하나)';
+  }
 }
 
 function syncForm(){
@@ -1071,6 +1376,11 @@ function syncForm(){
   $('summaryText').value = s.summary || '';
   if($('watermarkText')) $('watermarkText').value = s.watermark || '';
   if($('watermarkPos')) $('watermarkPos').value = s.watermarkPos || 'br';
+  const bd = loadBrandDefaults();
+  if($('brandHandle')) $('brandHandle').value = bd.handle || s.watermark || '';
+  if($('brandName')) $('brandName').value = s.brandName || bd.brandName || '';
+  if($('logoPos')) $('logoPos').value = s.logoPos || bd.logoPos || 'br';
+  if($('logoThumb')) $('logoThumb').style.backgroundImage = (s.logo || bd.logo) ? "url('"+(s.logo||bd.logo)+"')" : 'none';
   const showPN = s.showPageNum !== false;
   if($('pageNumOn')) $('pageNumOn').classList.toggle('active', showPN);
   if($('pageNumOff')) $('pageNumOff').classList.toggle('active', !showPN);
@@ -1154,6 +1464,86 @@ if($('glassOff')) $('glassOff').addEventListener('click', () => {
   slides[active].glass = false;
   $('glassOff').classList.add('active');
   $('glassOn').classList.remove('active');
+  renderMainCard(); renderList();
+});
+
+/* Brand defaults */
+if($('brandName')) $('brandName').addEventListener('input', e => {
+  slides[active].brandName = e.target.value;
+  renderMainCard(); renderList();
+});
+if($('logoPos')) $('logoPos').addEventListener('change', e => {
+  slides[active].logoPos = e.target.value;
+  renderMainCard(); renderList();
+});
+if($('logoUploadBtn')) $('logoUploadBtn').addEventListener('click', () => $('logoUpload') && $('logoUpload').click());
+if($('logoUpload')) $('logoUpload').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = new Image();
+    img.onload = () => {
+      const maxW = 400;
+      const scale = Math.min(1, maxW/img.width);
+      const c = document.createElement('canvas');
+      c.width = Math.round(img.width*scale);
+      c.height = Math.round(img.height*scale);
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+      slides[active].logo = c.toDataURL('image/png');
+      if($('logoThumb')) $('logoThumb').style.backgroundImage = "url('"+slides[active].logo+"')";
+      renderMainCard(); renderList();
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+  e.target.value = '';
+});
+if($('logoRemove')) $('logoRemove').addEventListener('click', () => {
+  slides[active].logo = null;
+  if($('logoThumb')) $('logoThumb').style.backgroundImage = 'none';
+  renderMainCard(); renderList();
+});
+if($('brandSaveBtn')) $('brandSaveBtn').addEventListener('click', () => {
+  const obj = {
+    handle: ($('brandHandle') && $('brandHandle').value) || '',
+    brandName: ($('brandName') && $('brandName').value) || '',
+    logo: slides[active].logo || null,
+    logoPos: ($('logoPos') && $('logoPos').value) || 'br',
+    watermarkPos: ($('watermarkPos') && $('watermarkPos').value) || 'br'
+  };
+  saveBrandDefaults(obj);
+  if(obj.handle){
+    slides[active].watermark = obj.handle;
+    if($('watermarkText')) $('watermarkText').value = obj.handle;
+  }
+  if(obj.brandName) slides[active].brandName = obj.brandName;
+  renderMainCard(); renderList();
+  alert('브랜드 기본값이 저장되었습니다.');
+});
+if($('brandApplyBtn')) $('brandApplyBtn').addEventListener('click', () => {
+  const b = loadBrandDefaults();
+  if(b.handle){
+    slides[active].watermark = b.handle;
+    if($('watermarkText')) $('watermarkText').value = b.handle;
+    if($('brandHandle')) $('brandHandle').value = b.handle;
+  }
+  if(b.brandName){
+    slides[active].brandName = b.brandName;
+    if($('brandName')) $('brandName').value = b.brandName;
+  }
+  if(b.logo){
+    slides[active].logo = b.logo;
+    if($('logoThumb')) $('logoThumb').style.backgroundImage = "url('"+b.logo+"')";
+  }
+  if(b.logoPos){
+    slides[active].logoPos = b.logoPos;
+    if($('logoPos')) $('logoPos').value = b.logoPos;
+  }
+  if(b.watermarkPos){
+    slides[active].watermarkPos = b.watermarkPos;
+    if($('watermarkPos')) $('watermarkPos').value = b.watermarkPos;
+  }
   renderMainCard(); renderList();
 });
 
@@ -1244,6 +1634,28 @@ Array.from(document.querySelectorAll('#layoutMenu .ddItem')).forEach(item => {
     if(t === 'fullbleed'){
       if(!slides[active].tagText || slides[active].tagText === 'POLITICS INSIGHT') slides[active].tagText = 'EDITORIAL';
       slides[active].titleSize = 30;
+    }
+    if(t === 'cover'){
+      if(!slides[active].tagText || slides[active].tagText === 'POLITICS INSIGHT') slides[active].tagText = 'COVER STORY';
+      slides[active].titleSize = 34;
+      if(!slides[active].brandName) {
+        const b = loadBrandDefaults();
+        slides[active].brandName = b.brandName || 'X TODAY';
+      }
+    }
+    if(t === 'thread'){
+      if(!slides[active].tagText || slides[active].tagText === 'POLITICS INSIGHT') slides[active].tagText = 'THREAD';
+      slides[active].titleSize = 26;
+      if(!(slides[active].bullets||'').trim()){
+        slides[active].bullets = '핵심 포인트 하나를 입력하세요\n두 번째 요약 문장\n세 번째 요약 문장';
+      }
+    }
+    if(t === 'sources'){
+      if(!slides[active].tagText || slides[active].tagText === 'POLITICS INSIGHT') slides[active].tagText = 'SOURCES';
+      slides[active].titleSize = 24;
+      if(!(slides[active].bullets||'').trim()){
+        slides[active].bullets = '관련 보도 제목 | https://example.com\n공식 브리핑 자료 | https://example.com/brief';
+      }
     }
     Array.from(document.querySelectorAll('#layoutMenu .ddItem')).forEach(i => i.classList.toggle('active', i===item));
     closeAllDropdowns();
