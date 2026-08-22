@@ -363,11 +363,14 @@
     font-family:Georgia,'Noto Serif KR',serif;
   }
   #card.tpl-cover .cvBrand{
-    font-size:22px;font-weight:700;letter-spacing:-.03em;color:#fff;
+    font-size:15px;font-weight:800;letter-spacing:.06em;color:#fff;
+    font-family:'Pretendard Variable','Pretendard',sans-serif;
+    text-transform:uppercase;
   }
   #card.tpl-cover .cvEdition{
     font-family:'Pretendard Variable','Pretendard',sans-serif;
     font-size:11px;letter-spacing:.16em;opacity:.8;text-transform:uppercase;
+    flex:none;margin-left:12px;
   }
   #card.tpl-cover .cvKicker{
     margin-top:18px;
@@ -712,6 +715,52 @@
             <label>비네팅 강도</label>
             <div class="slider"><input type="range" id="vignetteStrength" min="0" max="60" value="20"><span class="val" id="vignetteStrengthVal">20</span></div>
           </div>
+          <div style="border-top:1px solid var(--chrome-line);margin:8px 0 6px;"></div>
+          <div class="field">
+            <label style="font-weight:700;color:var(--chrome-text);">브랜드 · 로고 · 핸들</label>
+          </div>
+          <div class="field">
+            <label>계정 핸들 (워터마크)</label>
+            <input type="text" id="brandHandle" value="" placeholder="@west150">
+          </div>
+          <div class="field">
+            <label>시리즈 / 브랜드명</label>
+            <input type="text" id="brandName" value="WEST150 DAILY" placeholder="WEST150 DAILY">
+          </div>
+          <div class="field">
+            <label>워터마크 위치</label>
+            <select id="watermarkPosMenu">
+              <option value="br">우측 하단</option>
+              <option value="bl">좌측 하단</option>
+              <option value="tr">우측 상단</option>
+              <option value="tl">좌측 상단</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>로고 이미지</label>
+            <div class="imgPreviewRow">
+              <div class="imgThumb" id="logoThumb"></div>
+              <div style="display:flex;flex-direction:column;gap:5px;flex:1;">
+                <label class="btn small full" id="logoUploadBtn" style="text-align:center;">로고 업로드</label>
+                <input type="file" id="logoUpload" accept="image/*" style="display:none;">
+                <button class="btn ghost small full" id="logoRemove">로고 삭제</button>
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <label>로고 위치</label>
+            <select id="logoPos">
+              <option value="br">우측 하단</option>
+              <option value="bl">좌측 하단</option>
+              <option value="tr">우측 상단</option>
+              <option value="tl">좌측 상단</option>
+            </select>
+          </div>
+          <div class="row2">
+            <button type="button" class="btn small full" id="brandSaveBtn">기본값 저장</button>
+            <button type="button" class="btn ghost small full" id="brandApplyBtn">불러오기</button>
+          </div>
+          <div class="hint">핸들·로고·브랜드명을 저장하면 새 슬라이드에도 적용됩니다.</div>
         </div>
       </div>
 
@@ -814,43 +863,6 @@
           </div>
           <div class="hint">B·C 템플릿에서 사진 위 글자가 안 보일 때 사용. 저장 호환용 반투명 패널입니다.</div>
         </div>
-      </div>
-
-      <div class="sec">
-        <h3>브랜드 기본값</h3>
-        <div class="field">
-          <label>계정 핸들 (워터마크 기본)</label>
-          <input type="text" id="brandHandle" value="" placeholder="@youraccount">
-        </div>
-        <div class="field">
-          <label>시리즈 / 브랜드명</label>
-          <input type="text" id="brandName" value="" placeholder="X TODAY">
-        </div>
-        <div class="field">
-          <label>로고 이미지</label>
-          <div class="imgPreviewRow">
-            <div class="imgThumb" id="logoThumb"></div>
-            <div style="display:flex;flex-direction:column;gap:5px;flex:1;">
-              <label class="btn small full" id="logoUploadBtn" style="text-align:center;">로고 업로드</label>
-              <input type="file" id="logoUpload" accept="image/*" style="display:none;">
-              <button class="btn ghost small full" id="logoRemove">로고 삭제</button>
-            </div>
-          </div>
-        </div>
-        <div class="field">
-          <label>로고 위치</label>
-          <select id="logoPos">
-            <option value="br">우측 하단</option>
-            <option value="bl">좌측 하단</option>
-            <option value="tr">우측 상단</option>
-            <option value="tl">좌측 상단</option>
-          </select>
-        </div>
-        <div class="row2">
-          <button type="button" class="btn small full" id="brandSaveBtn">기본값 저장</button>
-          <button type="button" class="btn ghost small full" id="brandApplyBtn">불러오기</button>
-        </div>
-        <div class="hint">계정 핸들·로고·브랜드명을 브라우저에 저장합니다. 새 슬라이드에도 적용됩니다.</div>
       </div>
 
       <div class="sec">
@@ -1018,7 +1030,7 @@ function defaults(){
     watermark: '',
     watermarkPos: 'br',
     glass: false,
-    brandName: '',
+    brandName: 'WEST150 DAILY',
     logo: null,
     logoPos: 'br',
     bg: '#111318',
@@ -1241,21 +1253,28 @@ function cardMarkup(s, pageIdx, total){
     if(vig > 0){
       scrimLayers.push(`radial-gradient(ellipse at center, transparent ${Math.max(15,55-vig*0.5)}%, rgba(0,0,0,${0.25+vig/100}) 100%)`);
     }
-    const brand = s.brandName || 'X TODAY';
+    const brand = s.brandName || 'WEST150 DAILY';
+    // 페이지 번호는 하단 메타에만 표시 (상단과 중복 방지)
+    const coverMetaRight = (() => {
+      const parts = [];
+      if(s.source) parts.push(escapeHtml(s.source));
+      if(s.showPageNum !== false) parts.push(pageLabel);
+      return parts.join(' · ');
+    })();
     return `<div id="card" class="tpl-cover" style="width:${w}px;height:${h}px;background:${s.bg};">
       <div class="cvPhoto" style="${photoStyle}"></div>
       <div class="cvScrim" style="background:${scrimLayers.join(',')};"></div>
       <div class="cvContent">
         <div class="cvMast">
-          <div class="cvBrand">${escapeHtml(brand)}</div>
-          <div class="cvEdition">${s.showPageNum!==false ? pageLabel : ''}</div>
+          <div class="cvBrand" style="font-size:15px;letter-spacing:.06em;">${escapeHtml(brand)}</div>
+          <div class="cvEdition">CARD NEWS</div>
         </div>
         <div class="cvKicker" style="color:${neon};${alignStyle}">${escapeHtml(s.tagText || s.category || 'COVER')}</div>
         <div class="headline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text};${alignStyle}">${headline}</div>
         <div class="cvSpacer"></div>
         <div class="cvMeta">
           <span>${escapeHtml(dateStr)}</span>
-          <span>${metaR}</span>
+          <span>${coverMetaRight}</span>
         </div>
       </div>
       ${wm}${lg}
@@ -1376,9 +1395,10 @@ function syncForm(){
   $('summaryText').value = s.summary || '';
   if($('watermarkText')) $('watermarkText').value = s.watermark || '';
   if($('watermarkPos')) $('watermarkPos').value = s.watermarkPos || 'br';
+  if($('watermarkPosMenu')) $('watermarkPosMenu').value = s.watermarkPos || 'br';
   const bd = loadBrandDefaults();
-  if($('brandHandle')) $('brandHandle').value = bd.handle || s.watermark || '';
-  if($('brandName')) $('brandName').value = s.brandName || bd.brandName || '';
+  if($('brandHandle')) $('brandHandle').value = s.watermark || bd.handle || '';
+  if($('brandName')) $('brandName').value = s.brandName || bd.brandName || 'WEST150 DAILY';
   if($('logoPos')) $('logoPos').value = s.logoPos || bd.logoPos || 'br';
   if($('logoThumb')) $('logoThumb').style.backgroundImage = (s.logo || bd.logo) ? "url('"+(s.logo||bd.logo)+"')" : 'none';
   const showPN = s.showPageNum !== false;
@@ -1472,6 +1492,16 @@ if($('brandName')) $('brandName').addEventListener('input', e => {
   slides[active].brandName = e.target.value;
   renderMainCard(); renderList();
 });
+if($('brandHandle')) $('brandHandle').addEventListener('input', e => {
+  slides[active].watermark = e.target.value;
+  if($('watermarkText')) $('watermarkText').value = e.target.value;
+  renderMainCard(); renderList();
+});
+if($('watermarkPosMenu')) $('watermarkPosMenu').addEventListener('change', e => {
+  slides[active].watermarkPos = e.target.value;
+  if($('watermarkPos')) $('watermarkPos').value = e.target.value;
+  renderMainCard(); renderList();
+});
 if($('logoPos')) $('logoPos').addEventListener('change', e => {
   slides[active].logoPos = e.target.value;
   renderMainCard(); renderList();
@@ -1507,10 +1537,10 @@ if($('logoRemove')) $('logoRemove').addEventListener('click', () => {
 if($('brandSaveBtn')) $('brandSaveBtn').addEventListener('click', () => {
   const obj = {
     handle: ($('brandHandle') && $('brandHandle').value) || '',
-    brandName: ($('brandName') && $('brandName').value) || '',
+    brandName: ($('brandName') && $('brandName').value) || 'WEST150 DAILY',
     logo: slides[active].logo || null,
     logoPos: ($('logoPos') && $('logoPos').value) || 'br',
-    watermarkPos: ($('watermarkPos') && $('watermarkPos').value) || 'br'
+    watermarkPos: ($('watermarkPosMenu') && $('watermarkPosMenu').value) || ($('watermarkPos') && $('watermarkPos').value) || 'br'
   };
   saveBrandDefaults(obj);
   if(obj.handle){
@@ -1518,6 +1548,7 @@ if($('brandSaveBtn')) $('brandSaveBtn').addEventListener('click', () => {
     if($('watermarkText')) $('watermarkText').value = obj.handle;
   }
   if(obj.brandName) slides[active].brandName = obj.brandName;
+  slides[active].watermarkPos = obj.watermarkPos;
   renderMainCard(); renderList();
   alert('브랜드 기본값이 저장되었습니다.');
 });
@@ -1543,6 +1574,7 @@ if($('brandApplyBtn')) $('brandApplyBtn').addEventListener('click', () => {
   if(b.watermarkPos){
     slides[active].watermarkPos = b.watermarkPos;
     if($('watermarkPos')) $('watermarkPos').value = b.watermarkPos;
+    if($('watermarkPosMenu')) $('watermarkPosMenu').value = b.watermarkPos;
   }
   renderMainCard(); renderList();
 });
@@ -1640,7 +1672,7 @@ Array.from(document.querySelectorAll('#layoutMenu .ddItem')).forEach(item => {
       slides[active].titleSize = 34;
       if(!slides[active].brandName) {
         const b = loadBrandDefaults();
-        slides[active].brandName = b.brandName || 'X TODAY';
+        slides[active].brandName = b.brandName || 'WEST150 DAILY';
       }
     }
     if(t === 'thread'){
