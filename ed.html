@@ -261,7 +261,6 @@
   }
   #card.tpl-fullbleed .fbScrim{
     position:absolute;inset:0;z-index:1;pointer-events:none;
-    background:linear-gradient(180deg, rgba(0,0,0,.35) 0%, rgba(0,0,0,.15) 35%, rgba(0,0,0,.55) 70%, rgba(0,0,0,.88) 100%);
   }
   #card.tpl-fullbleed .fbContent{
     position:relative;z-index:2;
@@ -315,12 +314,12 @@
 
   /* Glass panel — html2canvas 호환 (backdrop-filter 미사용) */
   #card .glassPanel{
-    border:1px solid rgba(255,255,255,.28);
+    border:1px solid rgba(255,255,255,.32);
     border-radius:18px;
-    background:rgba(18,20,24,.62);
+    background:rgba(12,14,18,.78);
     box-shadow:
-      inset 0 1px 0 rgba(255,255,255,.16),
-      0 14px 36px rgba(0,0,0,.28);
+      inset 0 1px 0 rgba(255,255,255,.18),
+      0 14px 36px rgba(0,0,0,.32);
     padding:18px 18px 14px;
   }
   #card .glassPanel .headline{ margin-bottom:10px; }
@@ -1069,7 +1068,7 @@ function defaults(){
     imageFilter: 'none',
     imageOverlay: 0,
     blurFill: true,
-    vignetteStrength: 25
+    vignetteStrength: 12
   };
   applyBrandToSlide(s);
   return s;
@@ -1216,17 +1215,18 @@ function cardMarkup(s, pageIdx, total){
     const useGlass = !!s.glass;
     const ov = Math.max(0, Math.min(80, s.imageOverlay || 0)) / 100;
     const vig = Math.max(0, Math.min(60, s.vignetteStrength || 0));
-    // base editorial gradient + overlay darken + vignette
+    // 글래스 ON이면 전역 어두움을 크게 줄여 사진이 보이게 함 (가독성은 패널이 담당)
+    const g = useGlass ? 0.35 : 1;
     const scrimLayers = [
-      `linear-gradient(180deg, rgba(0,0,0,${0.25+ov*0.35}) 0%, rgba(0,0,0,${0.1+ov*0.2}) 35%, rgba(0,0,0,${0.45+ov*0.3}) 70%, rgba(0,0,0,${0.82+ov*0.15}) 100%)`
+      `linear-gradient(180deg, rgba(0,0,0,${(0.12+ov*0.25)*g}) 0%, rgba(0,0,0,${(0.04+ov*0.12)*g}) 40%, rgba(0,0,0,${(0.22+ov*0.2)*g}) 72%, rgba(0,0,0,${(0.48+ov*0.15)*g}) 100%)`
     ];
     if(vig > 0){
-      const inner = Math.max(15, 55 - vig * 0.5);
-      const outerA = 0.25 + vig / 100;
+      const inner = Math.max(18, 58 - vig * 0.45);
+      const outerA = (0.18 + vig / 120) * g;
       scrimLayers.push(`radial-gradient(ellipse at center, transparent ${inner}%, rgba(0,0,0,${outerA}) 100%)`);
     }
     if(ov > 0.02){
-      scrimLayers.push(`rgba(0,0,0,${ov * 0.55})`);
+      scrimLayers.push(`rgba(0,0,0,${ov * 0.4 * g})`);
     }
     const scrimStyle = `background:${scrimLayers.join(',')};`;
     const sumBorderFb = align === 'right'
