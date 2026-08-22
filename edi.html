@@ -41,6 +41,8 @@
     .check{display:flex;align-items:center;gap:8px;font-size:12px}.check input{width:16px;height:16px}
     .toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#111;color:#fff;padding:10px 14px;border-radius:999px;font-size:12px;opacity:0;pointer-events:none;transition:.2s;z-index:30}.toast.show{opacity:1}
     .mobile-note{display:none}
+    .template-modal{position:fixed;inset:0;background:rgba(15,15,13,.45);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:24px;z-index:50}.template-modal.open{display:flex}.template-panel{width:min(980px,100%);max-height:min(820px,92vh);overflow:auto;background:#fff;border-radius:18px;box-shadow:0 24px 80px rgba(0,0,0,.25);padding:22px}.template-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}.template-title{font-size:18px;font-weight:900;letter-spacing:-.03em}.template-sub{font-size:12px;color:#777;margin-top:4px}.template-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.template-card{border:1px solid #d7d5ce;border-radius:14px;background:#f9f8f4;padding:9px;cursor:pointer;transition:.18s;box-shadow:0 1px 0 rgba(0,0,0,.02)}.template-card:hover{transform:translateY(-3px);box-shadow:0 12px 28px rgba(0,0,0,.12);border-color:#8f8c84}.template-preview{aspect-ratio:4/5;border-radius:9px;overflow:hidden;border:1px solid #e4e4df}.template-preview canvas{width:100%;height:100%;display:block}.template-meta{padding:9px 2px 2px}.template-name{font-size:13px;font-weight:900;letter-spacing:-.02em}.template-cat{display:inline-block;font-size:9px;letter-spacing:.11em;font-weight:800;color:#77746c;margin-right:4px}.template-desc{font-size:11px;color:#777;margin-top:3px;line-height:1.4}@media(max-width:980px){.template-grid{grid-template-columns:repeat(3,1fr)}}@media(max-width:760px){.template-grid{grid-template-columns:repeat(2,1fr)}.template-panel{padding:15px;border-radius:14px}}@media(max-width:480px){.template-grid{grid-template-columns:1fr 1fr;gap:9px}.template-meta{padding:7px 1px 0}.template-name{font-size:12px}.template-desc{font-size:10px}}
+
     @media (max-width:1100px){.workspace{grid-template-columns:190px minmax(320px,1fr) 290px}}
     @media (max-width:820px){
       .app{grid-template-rows:56px 1fr}.workspace{grid-template-columns:1fr;grid-template-rows:44% 56%;overflow:auto}
@@ -57,7 +59,7 @@
       <span class="save-status" id="saveStatus">자동 저장됨</span>
       <button class="btn" id="undoBtn">실행 취소</button>
       <button class="btn" id="redoBtn">다시 실행</button>
-      <button class="btn" id="addCardBtn">+ 카드</button>
+      <button class="btn" id="templatesBtn">템플릿</button><button class="btn" id="addCardBtn">+ 카드</button>
       <button class="btn primary" id="exportBtn">내보내기</button>
     </div>
   </header>
@@ -138,6 +140,16 @@
     </aside>
   </main>
 </div>
+
+<div class="template-modal" id="templateModal" aria-hidden="true">
+  <div class="template-panel">
+    <div class="template-head">
+      <div><div class="template-title">템플릿 선택</div><div class="template-sub">에디토리얼 카드용 기본 레이아웃을 고르고 텍스트와 사진만 바꿔 쓰세요.</div></div>
+      <button class="btn" id="closeTemplatesBtn">닫기</button>
+    </div>
+    <div class="template-grid" id="templateGrid"></div>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -155,6 +167,45 @@ const state={
 };
 
 function uid(prefix='id'){return prefix+Math.random().toString(36).slice(2,9)}
+const TEMPLATES=[
+  {id:'cover',name:'01 / COVER',cat:'EDITORIAL COVER',desc:'대형 헤드라인과 풀블리드 사진을 결합한 뉴스 커버형.',build:()=>{
+    const s=makeTemplateSlide('#f4f1e9',[]);
+    s.elements.push(rect(0,0,W,H,'#f4f1e9'));
+    s.elements.push(imgPlaceholder(420,78,590,790));
+    s.elements.push(rect(70,78,300,2,'#111111'));
+    s.elements.push(tx('kicker','THE DAILY  /  SPECIAL REPORT',72,102,320,24,14,800,'#4f4d47','left',1.1,'프리텐다드'));
+    s.elements.push(tx('headline','시장을 바꾼\n단 하나의 질문',70,185,630,345,98,850,'#111111','left',.92,'프리텐다드'));
+    s.elements.push(tx('subhead','숫자보다 먼저 움직이는 신호를 읽는 법',74,565,560,65,25,500,'#585650','left',1.25,'프리텐다드'));
+    s.elements.push(rect(72,694,120,3,'#111111'));
+    s.elements.push(tx('body','본문을 입력하세요. 첫 장에서는 설명보다 장면과 문제의식을 선명하게 보여줍니다.',74,730,520,155,27,400,'#252420','left',1.5,'RIDI바탕'));
+    s.elements.push(tx('source','SOURCE  /  2026.08.23',74,1214,300,26,13,800,'#68665f','left',1.1,'프리텐다드'));
+    s.elements.push(tx('watermark','EC',944,1190,70,50,26,800,'#111111','right',1,'프리텐다드',.22));
+    s.elements.push(tx('page','01',930,1260,80,34,13,800,'#6b6860','right',1.1,'프리텐다드'));
+    return s;
+  }},
+  {id:'context',name:'02 / CONTEXT',cat:'ANALYSIS PAGE',desc:'작은 kicker, 대형 헤드라인, 긴 호흡의 본문을 위한 분석형.',build:()=>{
+    const s=makeTemplateSlide('#fbfaf7',[]);
+    s.elements.push(rect(72,76,936,1,'#bdbab3'));
+    s.elements.push(tx('kicker','CONTEXT  /  BUSINESS & POLICY',74,98,400,26,14,800,'#6b6861','left',1.1,'프리텐다드'));
+    s.elements.push(tx('headline','왜 지금, 이 변화가\n중요한가',74,154,850,270,82,850,'#171717','left',.98,'RIDI바탕'));
+    s.elements.push(tx('subhead','현상을 설명하는 대신, 그 배경과 다음 움직임을 짚습니다.',76,458,790,70,24,500,'#5a5852','left',1.3,'프리텐다드'));
+    s.elements.push(rect(76,570,120,3,'#171717'));
+    s.elements.push(tx('body','본문을 입력하세요. 첫 문단은 핵심 맥락을 설명하고, 다음 문단에서 데이터와 사례를 연결합니다.\n\n두 번째 문단은 독자가 무엇을 봐야 하는지 알려주는 역할을 합니다. 문장을 길게 끌기보다 문단 사이에 충분한 여백을 두세요.',76,622,620,465,27,400,'#292824','left',1.62,'RIDI바탕'));
+    s.elements.push(imgPlaceholder(760,620,245,305));
+    s.elements.push(tx('caption','PHOTO / CAPTION\n출처를 짧게 표기하세요.',760,947,245,75,13,600,'#77736c','left',1.35,'프리텐다드'));
+    s.elements.push(rect(760,1055,245,1,'#c9c6be'));
+    s.elements.push(tx('source','WORDS  /  SOURCE NAME',76,1210,350,26,13,800,'#6d6962','left',1.1,'프리텐다드'));
+    s.elements.push(tx('page','02',960,1206,45,30,13,800,'#171717','right',1.1,'프리텐다드'));
+    s.elements.push(tx('watermark','EDITORIAL',760,1112,245,30,12,700,'#8a867f','left',1.1,'프리텐다드',.55));
+    return s;
+  }}
+];
+function makeTemplateSlide(bg,elements){return {id:uid('s'),bg,elements}}
+function applyTemplate(templateId){const t=TEMPLATES.find(x=>x.id===templateId);if(!t)return;const slide=t.build();state.slides.splice(state.current+1,0,slide);state.current=state.current+1;state.selectedId=slide.elements.find(e=>e.role==='headline')?.id||slide.elements[0]?.id||null;commit();closeTemplates();toast(t.name+' 템플릿을 추가했습니다.')}
+function renderTemplates(){const grid=document.getElementById('templateGrid');grid.innerHTML='';TEMPLATES.forEach(t=>{const d=document.createElement('div');d.className='template-card';d.innerHTML=`<div class="template-preview"><canvas width="324" height="405"></canvas></div><div class="template-meta"><div class="template-name">${t.name}</div><div class="template-desc"><span class="template-cat">${t.cat}</span> ${t.desc}</div></div>`;d.addEventListener('click',()=>applyTemplate(t.id));grid.appendChild(d);drawSlide(d.querySelector('canvas'),t.build(),324/1080)})}
+function openTemplates(){document.getElementById('templateModal').classList.add('open');document.getElementById('templateModal').setAttribute('aria-hidden','false');renderTemplates()}
+function closeTemplates(){document.getElementById('templateModal').classList.remove('open');document.getElementById('templateModal').setAttribute('aria-hidden','true')}
+
 function makeSlide(n){
   return {id:uid('s'), bg:'#ffffff', elements:[
     {id:uid('t'),type:'text',role:'headline',text:'뉴스의 핵심을\n한 장에 담다',x:84,y:110,w:900,h:260,font:'프리텐다드',size:84,weight:800,color:'#111111',align:'left',lineHeight:1.05,rotation:0,opacity:1},
@@ -195,7 +246,17 @@ function drawSlide(canvas,slide,scale=1){
 function wrapText(ctx,text,maxWidth){const lines=[];for(const p of String(text||'').split('\n')){if(!p){lines.push('');continue}let line='';for(const ch of p){const test=line+ch;if(ctx.measureText(test).width>maxWidth&&line){lines.push(line);line=ch}else line=test}lines.push(line)}return lines}
 function drawElement(ctx,el,thumb=false){
   ctx.save();ctx.translate(el.x+el.w/2,el.y+el.h/2);ctx.rotate((el.rotation||0)*Math.PI/180);ctx.translate(-el.w/2,-el.h/2);ctx.globalAlpha=el.opacity??1;
-  if(el.type==='image'){if(el.img){ctx.filter=`brightness(${el.brightness||100}%) contrast(${el.contrast||100}%) saturate(${el.saturation||100}%) grayscale(${el.grayscale||0}%) blur(${el.blur||0}px)`;coverImage(ctx,el.img,0,0,el.w,el.h);ctx.filter='none'}else{ctx.fillStyle='#e8e8e3';ctx.fillRect(0,0,el.w,el.h);ctx.fillStyle='#999';ctx.font='24px sans-serif';ctx.fillText('사진을 추가하세요',24,48)}}else{ctx.font=`${el.weight||400} ${el.size||32}px ${FONT_STACKS[el.font]||FONT_STACKS['프리텐다드']}`;ctx.fillStyle=el.color||'#111';ctx.textAlign=el.align||'left';ctx.textBaseline='top';const lh=(el.size||32)*(el.lineHeight||1.25);const lines=wrapText(ctx,el.text||'',el.w);let y=0;for(const line of lines){let tx=el.align==='center'?el.w/2:el.align==='right'?el.w:0;ctx.fillText(line,tx,y);y+=lh}}
+  if(el.type==='shape'){
+    ctx.fillStyle=el.fill||'#111';
+    if((el.radius||0)>0){const r=Math.min(el.radius,el.w/2,el.h/2);ctx.beginPath();ctx.moveTo(r,0);ctx.arcTo(el.w,0,el.w,el.h,r);ctx.arcTo(el.w,el.h,0,el.h,r);ctx.arcTo(0,el.h,0,0,r);ctx.arcTo(0,0,el.w,0,r);ctx.closePath();ctx.fill();}
+    else ctx.fillRect(0,0,el.w,el.h);
+    if(el.stroke){ctx.strokeStyle=el.stroke;ctx.lineWidth=el.strokeWidth||1;ctx.stroke();}
+  } else if(el.type==='image'){
+    if(el.img){ctx.filter=`brightness(${el.brightness||100}%) contrast(${el.contrast||100}%) saturate(${el.saturation||100}%) grayscale(${el.grayscale||0}%) blur(${el.blur||0}px)`;coverImage(ctx,el.img,0,0,el.w,el.h);ctx.filter='none'}
+    else{ctx.fillStyle='#dcdad3';ctx.fillRect(0,0,el.w,el.h);ctx.fillStyle='#7e7b74';ctx.font='600 22px sans-serif';ctx.fillText('PHOTO / REPLACE',24,42);ctx.fillStyle='#a4a19a';ctx.fillRect(24,64,110,2);}
+  } else {
+    ctx.font=`${el.weight||400} ${el.size||32}px ${FONT_STACKS[el.font]||FONT_STACKS['프리텐다드']}`;ctx.fillStyle=el.color||'#111';ctx.textAlign=el.align||'left';ctx.textBaseline='top';const lh=(el.size||32)*(el.lineHeight||1.25);const lines=wrapText(ctx,el.text||'',el.w);let y=0;for(const line of lines){let tx=el.align==='center'?el.w/2:el.align==='right'?el.w:0;ctx.fillText(line,tx,y);y+=lh}
+  }
   ctx.restore();
 }
 function coverImage(ctx,img,x,y,w,h){const ar=img.width/img.height,tar=w/h;let dw=w,dh=h;if(ar>tar)dw=h*ar;else dh=w/ar;ctx.drawImage(img,x+(w-dw)/2,y+(h-dh)/2,dw,dh)}
@@ -250,6 +311,7 @@ async function exportMenu(){
 function downloadBlob(blob,name){const a=document.createElement('a');const url=URL.createObjectURL(blob);a.href=url;a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(url);a.remove()},1000);toast('파일 저장 준비 완료')}
 async function saveToIOS(c){const blob=await new Promise(r=>c.toBlob(r,'image/jpeg',.95));const file=new File([blob],`editorial-card-${state.current+1}.jpg`,{type:'image/jpeg'});if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:'Editorial Card'});toast('공유 메뉴에서 사진에 저장하세요.')}catch(e){toast('저장이 취소되었습니다.')}}else{downloadBlob(blob,file.name);toast('iPhone에서는 공유/다운로드 메뉴로 저장하세요.')}}
 
+document.getElementById('templatesBtn').onclick=openTemplates;document.getElementById('closeTemplatesBtn').onclick=closeTemplates;document.getElementById('templateModal').addEventListener('click',e=>{if(e.target.id==='templateModal')closeTemplates()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeTemplates()});
 window.addEventListener('resize',()=>{if(window.innerWidth<900)fitCanvas()});
 load(); if(!state.selectedId)state.selectedId=currentSlide().elements[0]?.id||null;renderAll();setTimeout(fitCanvas,60);save();
 </script>
