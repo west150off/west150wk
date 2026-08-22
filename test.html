@@ -3,850 +3,779 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PRESS ROOM — WEST150 Editorial Desk</title>
+<title>X TODAY 큐레이션 편집기</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Source+Serif+4:opsz,wght@8..60,400..700&family=Barlow+Condensed:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Serif+KR:wght@400;500;700;900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700;900&family=Pretendard:wght@400;500;600;700&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
-/* ==========================================================
-   PRESS ROOM — a desk for six editorial voices, not one theme.
-   Every "Edition" below is a real print convention: broadsheet
-   nameplate, tabloid fold, wire teletype, salmon financial
-   stock. Structure encodes the genre; it isn't decoration.
-   ========================================================== */
-:root{
-  --ui-bg:#0d0d0d; --ui-panel:#141414; --ui-border:#262626;
-  --ui-text:#e4e2dc; --ui-muted:#8a8680; --ui-accent:#ffffff;
-  --canvas-w:1080px; --canvas-h:1350px;
-}
-*{box-sizing:border-box;margin:0;padding:0;}
-html,body{min-height:100%;}
-body{
-  font-family:'Barlow Condensed',sans-serif;
-  background:var(--ui-bg); color:var(--ui-text);
-  min-height:100vh; min-height:100dvh;
-  display:flex; overflow:auto;
-}
-button{cursor:pointer;border:none;background:none;font-family:inherit;color:inherit;}
-input,select,textarea{font-family:inherit;outline:none;}
-::-webkit-scrollbar{width:6px;height:6px;}
-::-webkit-scrollbar-track{background:var(--ui-bg);}
-::-webkit-scrollbar-thumb{background:var(--ui-border);border-radius:3px;}
+  @font-face {
+    font-family: 'Pretendard';
+    src: local('Pretendard');
+  }
+  :root{
+    --bg-app:#0d0d0f;
+    --panel:#17171a;
+    --panel-2:#1e1e22;
+    --line:#2a2a2f;
+    --text:#e7e2d6;
+    --text-dim:#8d897f;
+    --card-bg:#0a0a0b;
+    --cream:#f2ede1;
+    --gold:#c9a961;
+    --gold-dim:#8f7a49;
+    --maroon:#7a1d24;
+    --maroon-bright:#a3272f;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg-app);
+    color:var(--text);
+    font-family:'Pretendard',sans-serif;
+    min-height:100vh;
+  }
+  .app{
+    display:grid;
+    grid-template-columns:380px 1fr;
+    min-height:100vh;
+  }
+  @media (max-width:900px){
+    .app{grid-template-columns:1fr;}
+    .preview-col{order:-1;}
+  }
 
-#app{display:flex;width:100%;min-height:100vh;min-height:100dvh;}
+  /* ---------- Left panel ---------- */
+  .panel{
+    background:var(--panel);
+    border-right:1px solid var(--line);
+    padding:20px 18px 100px;
+    overflow-y:auto;
+    max-height:100vh;
+  }
+  @media (max-width:900px){ .panel{max-height:none;} }
+  .brand{
+    display:flex; align-items:center; gap:8px;
+    margin-bottom:18px;
+  }
+  .brand .dot{width:10px;height:10px;border-radius:50%;background:var(--maroon-bright);}
+  .brand h1{
+    font-size:14px; letter-spacing:.12em; margin:0;
+    font-family:'Oswald',sans-serif; text-transform:uppercase; color:var(--gold);
+  }
+  .section{
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:14px;
+    margin-bottom:14px;
+  }
+  .section h2{
+    font-size:12px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--gold); margin:0 0 12px; font-family:'Oswald',sans-serif; font-weight:600;
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .field{margin-bottom:10px;}
+  .field label{
+    display:block; font-size:11px; color:var(--text-dim); margin-bottom:5px;
+    letter-spacing:.02em;
+  }
+  .field input[type="text"],
+  .field input[type="number"],
+  .field textarea,
+  .field select{
+    width:100%;
+    background:#0e0e10;
+    border:1px solid var(--line);
+    color:var(--text);
+    border-radius:6px;
+    padding:8px 9px;
+    font-size:13px;
+    font-family:inherit;
+    resize:vertical;
+  }
+  .field textarea{min-height:56px; line-height:1.4;}
+  .field input:focus, .field textarea:focus, .field select:focus{
+    outline:none; border-color:var(--gold-dim);
+  }
+  .row2{display:grid; grid-template-columns:1fr 1fr; gap:8px;}
+  .row3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;}
 
-/* ---------- Left: the desk ---------- */
-#editor-panel{
-  width:400px; min-width:400px; background:var(--ui-panel);
-  border-right:1px solid var(--ui-border);
-  display:flex; flex-direction:column; z-index:10;
-}
-.panel-header{padding:22px 24px;border-bottom:1px solid var(--ui-border);}
-.panel-header .masthead-mark{
-  font-family:'Fraunces',serif; font-weight:900; font-size:20px;
-  letter-spacing:0.5px;
-}
-.panel-header .masthead-sub{
-  font-size:11px; color:var(--ui-muted); letter-spacing:1.5px;
-  text-transform:uppercase; margin-top:4px;
-}
-.panel-content{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:28px;}
-.panel-footer{padding:18px 24px;border-top:1px solid var(--ui-border);display:flex;gap:10px;background:var(--ui-panel);}
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:6px;
+    background:var(--maroon); color:#f2ede1;
+    border:none; border-radius:6px;
+    padding:9px 12px; font-size:12.5px; font-weight:600;
+    cursor:pointer; font-family:'Pretendard',sans-serif;
+    transition:background .15s;
+    width:100%;
+  }
+  .btn:hover{background:var(--maroon-bright);}
+  .btn.secondary{
+    background:#26262b; color:var(--text);
+    border:1px solid var(--line);
+  }
+  .btn.secondary:hover{background:#2f2f35;}
+  .btn.ghost{
+    background:transparent; border:1px dashed var(--line); color:var(--text-dim);
+  }
+  .btn.small{padding:6px 9px; font-size:11.5px;}
+  .btn.danger{background:transparent; color:#c96a6a; border:1px solid #4a2323;}
+  .btn.danger:hover{background:#241414;}
 
-.control-group{display:flex;flex-direction:column;gap:14px;}
-.control-group-title{
-  font-size:11px;font-weight:700;letter-spacing:2px;color:var(--ui-muted);
-  text-transform:uppercase;border-bottom:1px solid var(--ui-border);padding-bottom:8px;
-}
-.control-row{display:flex;flex-direction:column;gap:6px;}
-.control-row.horizontal{flex-direction:row;align-items:center;gap:10px;}
-.control-row.horizontal>*{flex:1;}
-label{font-size:10px;font-weight:600;color:var(--ui-muted);text-transform:uppercase;letter-spacing:0.6px;}
-input[type="text"],select,textarea{
-  background:var(--ui-bg);border:1px solid var(--ui-border);color:var(--ui-text);
-  padding:9px 11px;font-size:13px;border-radius:2px;width:100%;transition:border-color .2s;
-  font-family:'Source Serif 4',serif;
-}
-input:focus,select:focus,textarea:focus{border-color:var(--ui-accent);}
-textarea{resize:vertical;min-height:64px;}
-input[type="range"]{-webkit-appearance:none;width:100%;background:transparent;}
-input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;height:12px;width:12px;border-radius:50%;background:var(--ui-accent);cursor:pointer;margin-top:-5px;}
-input[type="range"]::-webkit-slider-runnable-track{width:100%;height:2px;background:var(--ui-border);}
+  .imgdrop{
+    border:1px dashed var(--line);
+    border-radius:6px;
+    padding:10px;
+    text-align:center;
+    font-size:11.5px;
+    color:var(--text-dim);
+    cursor:pointer;
+    background:#0e0e10;
+  }
+  .imgdrop:hover{border-color:var(--gold-dim);}
+  .imgdrop.has-img{color:var(--gold);}
+  .hidden-file{display:none;}
 
-.btn{
-  background:var(--ui-bg);color:var(--ui-text);border:1px solid var(--ui-border);
-  padding:12px 16px;font-size:11px;font-weight:700;text-transform:uppercase;
-  letter-spacing:1.2px;border-radius:2px;transition:all .2s;text-align:center;
-  font-family:'Barlow Condensed',sans-serif;
-}
-.btn:hover{border-color:var(--ui-accent);background:#1a1a1a;}
-.btn-primary{background:var(--ui-text);color:var(--ui-bg);border-color:var(--ui-text);}
-.btn-primary:hover{background:#cfccc4;border-color:#cfccc4;}
-.btn-icon{padding:8px;font-size:14px;display:flex;align-items:center;justify-content:center;}
+  .story-block{
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:12px;
+    margin-bottom:10px;
+    background:#141417;
+  }
+  .story-block .story-head{
+    display:flex; justify-content:space-between; align-items:center;
+    margin-bottom:10px;
+  }
+  .story-block .story-head span{
+    font-size:11px; color:var(--gold-dim); font-family:'Oswald',sans-serif; letter-spacing:.06em;
+  }
 
-.layout-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.layout-btn{
-  padding:14px 8px;border:1px solid var(--ui-border);background:var(--ui-bg);
-  color:var(--ui-muted);font-size:10.5px;text-transform:uppercase;letter-spacing:0.6px;
-  border-radius:2px;transition:all .2s;line-height:1.3;
-}
-.layout-btn.active,.layout-btn:hover{border-color:var(--ui-accent);color:var(--ui-accent);}
+  .theme-swatches{display:flex; gap:8px; flex-wrap:wrap;}
+  .swatch{
+    width:38px;height:38px;border-radius:8px;cursor:pointer;
+    border:2px solid transparent; position:relative; flex:none;
+  }
+  .swatch.active{border-color:var(--gold);}
+  .swatch span{
+    position:absolute; bottom:-16px; left:50%; transform:translateX(-50%);
+    font-size:9px; color:var(--text-dim); white-space:nowrap;
+  }
 
-.file-upload{position:relative;overflow:hidden;display:inline-block;width:100%;}
-.file-upload input[type="file"]{position:absolute;font-size:100px;opacity:0;right:0;top:0;cursor:pointer;}
+  .divider{height:1px;background:var(--line); margin:14px 0;}
 
-.thumb-card{
-  width:64px;height:80px;background:#fff;border:2px solid transparent;cursor:pointer;
-  position:relative;flex-shrink:0;opacity:0.5;transition:all .2s;
-  display:flex;align-items:center;justify-content:center;font-size:10px;color:#000;
-  font-weight:bold;overflow:hidden;font-family:'Barlow Condensed',sans-serif;
-}
-.thumb-card.active{border-color:var(--ui-accent);opacity:1;}
-.thumb-card:hover{opacity:1;}
+  .footer-actions{
+    position:sticky; bottom:0; left:0; right:0;
+    background:var(--panel);
+    padding-top:12px; margin-top:6px;
+    display:flex; flex-direction:column; gap:8px;
+  }
 
-/* ---------- Right: the stone (workspace) ---------- */
-#workspace{flex:1;display:flex;flex-direction:column;background:#050505;position:relative;}
-#canvas-wrapper{flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:40px;position:relative;}
-#card-strip{
-  height:116px;border-top:1px solid var(--ui-border);background:var(--ui-panel);
-  display:flex;align-items:center;padding:0 24px;gap:16px;overflow-x:auto;
-}
+  /* ---------- Right preview column ---------- */
+  .preview-col{
+    display:flex; align-items:flex-start; justify-content:center;
+    padding:40px 24px;
+    overflow:auto;
+  }
+  .canvas-wrap{
+    transform-origin:top center;
+  }
 
-@media (max-width:1024px){
-  #app{flex-direction:column;height:auto;}
-  #editor-panel{width:100%;min-width:0;border-right:none;border-bottom:1px solid var(--ui-border);height:auto;max-height:60vh;max-height:60dvh;}
-  #workspace{height:auto;min-height:60vh;min-height:60dvh;}
-}
-@media (max-width:640px){
-  #editor-panel{max-height:50vh;max-height:50dvh;}
-  #workspace{min-height:50vh;min-height:50dvh;}
-}
+  #card{
+    width:1000px;
+    background:var(--card-bg);
+    color:var(--cream);
+    position:relative;
+    padding:56px 60px 40px;
+    font-family:'Pretendard',sans-serif;
+  }
+  #card.serif-heavy .headline{font-family:'Noto Serif KR',serif;}
 
-/* ==========================================================
-   THE CANVAS — every card is a page pulled off the same press.
-   ========================================================== */
-#canvas{
-  width:var(--canvas-w); height:var(--canvas-h);
-  background:var(--bg); color:var(--ink);
-  position:relative; transform-origin:center center;
-  box-shadow:0 20px 50px rgba(0,0,0,.55); overflow:hidden;
-  font-family:var(--f-body);
-}
-.page{width:100%;height:100%;position:relative;}
-.ed-img-wrap{position:absolute;overflow:hidden;}
-.ed-img{width:100%;height:100%;object-fit:cover;}
+  .masthead-top{
+    display:flex; justify-content:flex-end; margin-bottom:10px;
+  }
+  .masthead-handle{
+    font-size:13px; color:var(--text-dim); letter-spacing:.02em;
+  }
+  .masthead{
+    text-align:center;
+    font-family:'Noto Serif KR',serif;
+    font-weight:900;
+    letter-spacing:.06em;
+    color:var(--cream);
+    margin:0 0 18px;
+    line-height:1;
+    white-space:nowrap;
+  }
+  .masthead-rule{
+    border:none; border-top:1px solid var(--maroon-bright);
+    margin:0 0 14px;
+  }
+  .masthead-sub{
+    text-align:center;
+    font-size:15px;
+    color:var(--text-dim);
+    letter-spacing:.03em;
+    margin:0 0 30px;
+    font-family:'Pretendard',sans-serif;
+  }
+  .masthead-sub b{color:var(--cream); font-weight:600;}
 
-/* Shared editorial vocabulary */
-.eyebrow{
-  font-family:var(--f-util); text-transform:uppercase; letter-spacing:3px;
-  font-weight:700; font-size:16px;
-}
-.rule{height:1px;background:var(--ink);}
-.rule-thick{height:3px;background:var(--ink);}
-.rule-accent{height:5px;background:var(--accent);}
-.byline-block{
-  font-family:var(--f-util); text-transform:uppercase; letter-spacing:1.6px;
-  font-size:15px; font-weight:600; display:flex; justify-content:space-between; color:var(--ink);
-  opacity:.85;
-}
-.folio{
-  position:absolute; font-family:var(--f-util); font-size:12px; font-weight:700;
-  letter-spacing:1.5px; text-transform:uppercase; color:var(--ink); opacity:.65;
-}
+  .main-story{
+    display:grid;
+    grid-template-columns:1fr 420px;
+    gap:36px;
+    align-items:center;
+    padding-bottom:36px;
+    border-bottom:1px solid var(--maroon-bright);
+    margin-bottom:36px;
+  }
+  .eyebrow{
+    font-family:'Oswald',sans-serif;
+    font-size:14px;
+    letter-spacing:.14em;
+    color:var(--maroon-bright);
+    font-weight:600;
+    margin-bottom:10px;
+    text-transform:uppercase;
+  }
+  .headline{
+    font-family:'Noto Serif KR',serif;
+    font-weight:900;
+    font-size:52px;
+    line-height:1.18;
+    color:var(--cream);
+    margin:0 0 16px;
+    white-space:pre-wrap;
+  }
+  .body-text{
+    font-size:16px;
+    line-height:1.65;
+    color:#cfc9ba;
+    margin:0 0 16px;
+    white-space:pre-wrap;
+  }
+  .source-tag{
+    font-size:13px;
+    color:var(--text-dim);
+  }
+  .source-tag b{color:var(--gold); font-weight:600;}
 
-/* ---------------------------------------------------------
-   01 — BROADSHEET FRONT (The Times register)
-   --------------------------------------------------------- */
-.tp-01{padding:64px 72px 56px;display:flex;flex-direction:column;}
-.tp-01 .masthead{text-align:center;padding-bottom:20px;}
-.tp-01 .masthead .section-name{
-  font-family:var(--f-display); font-weight:900; font-size:56px;
-  letter-spacing:0.5px; line-height:1;
-}
-.tp-01 .masthead .meta-row{
-  display:flex; justify-content:space-between; font-family:var(--f-util);
-  font-size:14px; letter-spacing:1.5px; text-transform:uppercase; margin-top:10px;
-}
-.tp-01 .story{padding-top:28px;}
-.tp-01 .eyebrow{color:var(--accent); margin-bottom:14px;}
-.tp-01 .headline{
-  font-family:var(--f-display); font-weight:800; font-size:var(--sz-h1);
-  line-height:0.98; letter-spacing:-0.01em; word-break:keep-all; margin-bottom:18px;
-}
-.tp-01 .dek{
-  font-family:var(--f-body); font-style:italic; font-weight:400; font-size:26px;
-  line-height:1.3; margin-bottom:20px; color:var(--ink); opacity:.85;
-}
-.tp-01 .byline-block{padding:14px 0; border-top:1px solid var(--ink); border-bottom:1px solid var(--ink); margin-bottom:22px;}
-.tp-01 .photo{position:relative; flex:1; min-height:280px;}
-.tp-01 .caption{
-  font-family:var(--f-body); font-style:italic; font-size:15px; line-height:1.4;
-  padding-top:10px; opacity:.75;
-}
+  .art-box{
+    aspect-ratio:1/1;
+    border-radius:4px;
+    overflow:hidden;
+    position:relative;
+    background:#111113;
+  }
+  .art-box img{
+    width:100%; height:100%; object-fit:cover; display:block;
+  }
+  .art-box .art-placeholder{
+    width:100%; height:100%;
+    display:flex; align-items:center; justify-content:center;
+    color:#3d3d42; font-size:13px; text-align:center; padding:20px;
+  }
+  .art-box .stat-overlay{
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Noto Serif KR',serif;
+    font-weight:900;
+    font-size:110px;
+    color:rgba(242,237,225,.9);
+    text-shadow:0 4px 24px rgba(0,0,0,.6);
+    pointer-events:none;
+  }
 
-/* ---------------------------------------------------------
-   02 — TABLOID COVER (The Post register)
-   --------------------------------------------------------- */
-.tp-02{position:relative;}
-.tp-02 .cover-photo{position:absolute; inset:0;}
-.tp-02 .scrim{position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0) 30%, rgba(0,0,0,.9) 100%);}
-.tp-02 .kicker-band{
-  position:relative; z-index:5; background:var(--accent); color:var(--bg);
-  padding:16px 40px; display:flex; justify-content:space-between; align-items:center;
-  font-family:var(--f-util); font-weight:800; font-size:20px; letter-spacing:2px;
-}
-.tp-02 .cover-body{position:absolute; left:0; right:0; bottom:0; z-index:5; padding:0 40px 40px;}
-.tp-02 .headline{
-  font-family:var(--f-display); font-weight:900; font-size:var(--sz-h2);
-  line-height:0.86; letter-spacing:-0.02em; text-transform:uppercase; color:#fff;
-  word-break:keep-all; text-shadow:0 4px 24px rgba(0,0,0,.5); margin-bottom:14px;
-}
-.tp-02 .dek{
-  font-family:var(--f-body); font-size:24px; color:#f2f0ea; opacity:.92; line-height:1.35; margin-bottom:20px;
-}
-.tp-02 .fold-rule{height:8px; display:flex; flex-direction:column; gap:2px; margin-bottom:20px;}
-.tp-02 .fold-rule div:first-child{height:1px; background:#fff; opacity:.5;}
-.tp-02 .fold-rule div:last-child{height:3px; background:#fff; opacity:.85;}
-.tp-02 .byline-block{color:#fff; opacity:.85; border:none;}
+  .sub-grid{
+    display:grid;
+    gap:0;
+  }
+  .sub-story{
+    padding:0 30px;
+    position:relative;
+  }
+  .sub-story:not(:first-child){
+    border-left:1px solid var(--line);
+  }
+  .sub-story:first-child{padding-left:0;}
+  .sub-story:last-child{padding-right:0;}
+  .sub-headline{
+    font-family:'Noto Serif KR',serif;
+    font-weight:800;
+    font-size:26px;
+    line-height:1.28;
+    color:var(--cream);
+    margin:0 0 12px;
+  }
+  .sub-body{
+    font-size:13.5px;
+    line-height:1.6;
+    color:#bdb7a8;
+    margin:0 0 12px;
+    white-space:pre-wrap;
+  }
+  .sub-source{
+    font-size:12px; color:var(--text-dim); margin-bottom:14px;
+  }
+  .sub-art{
+    width:100%;
+    aspect-ratio:16/10;
+    border-radius:3px;
+    overflow:hidden;
+    background:#111113;
+  }
+  .sub-art img{width:100%; height:100%; object-fit:cover; display:block;}
+  .sub-art .art-placeholder{
+    width:100%; height:100%; display:flex; align-items:center; justify-content:center;
+    color:#3d3d42; font-size:11px;
+  }
 
-/* ---------------------------------------------------------
-   03 — FEATURE SPREAD (drop cap + pull quote)
-   --------------------------------------------------------- */
-.tp-03{padding:64px 68px;display:flex;flex-direction:column;}
-.tp-03 .eyebrow{color:var(--accent); margin-bottom:16px;}
-.tp-03 .headline{
-  font-family:var(--f-display); font-style:italic; font-weight:600; font-size:var(--sz-h3);
-  line-height:1.05; margin-bottom:18px; word-break:keep-all;
-}
-.tp-03 .byline-block{margin-bottom:24px; padding-bottom:16px; border-bottom:1px solid var(--ink);}
-.tp-03 .spread{display:flex; gap:32px; flex:1;}
-.tp-03 .lede-col{flex:1.3;}
-.tp-03 .lede{font-family:var(--f-body); font-size:22px; line-height:1.55;}
-.tp-03 .lede.has-dropcap::first-letter{
-  font-family:var(--f-display); font-weight:800; font-size:4.6em; line-height:0.78;
-  float:left; padding:6px 10px 0 0; color:var(--accent);
-}
-.tp-03 .side-col{flex:1; display:flex; flex-direction:column; gap:20px;}
-.tp-03 .pull-quote{
-  border-left:4px solid var(--accent); padding:6px 0 6px 22px;
-  font-family:var(--f-display); font-style:italic; font-weight:600; font-size:30px; line-height:1.25;
-}
-.tp-03 .photo-sq{position:relative; aspect-ratio:1/1; overflow:hidden;}
-.tp-03 .caption{font-family:var(--f-util); font-size:13px; letter-spacing:.4px; opacity:.65; margin-top:8px;}
+  .card-footer{
+    margin-top:40px;
+    padding-top:16px;
+    border-top:1px solid var(--line);
+    text-align:right;
+    font-size:11.5px;
+    color:#5a564d;
+  }
 
-/* ---------------------------------------------------------
-   04 — WIRE BULLETIN (teletype breaking news)
-   --------------------------------------------------------- */
-.tp-04{padding:0; display:flex; flex-direction:column;}
-.tp-04 .flag{
-  background:var(--accent); color:var(--bg); padding:22px 60px;
-  font-family:var(--f-display); font-weight:900; font-size:40px; letter-spacing:1px;
-  text-transform:uppercase;
-}
-.tp-04 .wire-meta{
-  font-family:'IBM Plex Mono',monospace; font-size:15px; letter-spacing:0.5px;
-  padding:22px 60px 0; opacity:.7; display:flex; justify-content:space-between;
-}
-.tp-04 .body-zone{padding:24px 60px 60px; flex:1; display:flex; flex-direction:column; justify-content:center;}
-.tp-04 .headline{
-  font-family:var(--f-display); font-weight:800; font-size:var(--sz-h2);
-  line-height:0.95; letter-spacing:-0.01em; margin-bottom:28px; word-break:keep-all;
-}
-.tp-04 .lede{font-family:'IBM Plex Mono',monospace; font-size:19px; line-height:1.6; opacity:.85; max-width:88%;}
-.tp-04 .ticker{
-  margin-top:auto; border-top:1px dashed var(--ink); padding-top:16px;
-  font-family:'IBM Plex Mono',monospace; font-size:14px; letter-spacing:1px;
-  display:flex; justify-content:space-between; opacity:.6;
-}
+  /* Theme variants */
+  #card.theme-crimson{ --maroon-bright:#a3272f; --gold:#c9a961; }
+  #card.theme-midnight{ --maroon-bright:#3a5a8c; --gold:#9fb8d9; }
+  #card.theme-emerald{ --maroon-bright:#2f6b4f; --gold:#a7c9a0; }
+  #card.theme-amber{ --maroon-bright:#a3661f; --gold:#e0b667; }
 
-/* ---------------------------------------------------------
-   05 — DATA DESK (the number is the headline)
-   --------------------------------------------------------- */
-.tp-05{padding:64px 72px; display:flex; flex-direction:column; justify-content:space-between;}
-.tp-05 .top-row{display:flex; justify-content:space-between; align-items:baseline;}
-.tp-05 .eyebrow{color:var(--accent);}
-.tp-05 .stat{
-  font-family:var(--f-display); font-weight:800; font-size:300px; line-height:0.78;
-  letter-spacing:-0.04em; color:var(--accent); margin:24px 0 6px;
-}
-.tp-05 .stat-label{
-  font-family:var(--f-util); font-weight:700; font-size:34px; letter-spacing:1px;
-  text-transform:uppercase; margin-bottom:26px;
-}
-.tp-05 .lede{font-family:var(--f-body); font-size:24px; line-height:1.5; max-width:640px;}
-.tp-05 .source{
-  font-family:var(--f-util); font-size:14px; letter-spacing:1.4px; text-transform:uppercase;
-  border-top:1px solid var(--ink); padding-top:16px; opacity:.7;
-}
+  .toast{
+    position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
+    background:#1e1e22; border:1px solid var(--gold-dim); color:var(--cream);
+    padding:10px 18px; border-radius:8px; font-size:13px; z-index:999;
+    opacity:0; pointer-events:none; transition:opacity .25s;
+  }
+  .toast.show{opacity:1;}
 
-/* ---------------------------------------------------------
-   06 — OPINION / COLUMN (the signature voice)
-   --------------------------------------------------------- */
-.tp-06{padding:72px; display:flex; flex-direction:column; align-items:center; text-align:center; justify-content:center;}
-.tp-06 .eyebrow{color:var(--accent); margin-bottom:22px;}
-.tp-06 .byline-name{
-  font-family:var(--f-display); font-weight:700; font-size:24px; letter-spacing:.5px; margin-bottom:6px;
-}
-.tp-06 .dateline{font-family:var(--f-util); font-size:14px; letter-spacing:1.6px; text-transform:uppercase; opacity:.6; margin-bottom:34px;}
-.tp-06 .headline{
-  font-family:var(--f-display); font-style:italic; font-weight:600; font-size:var(--sz-h3);
-  line-height:1.12; max-width:88%; margin-bottom:36px; word-break:keep-all;
-}
-.tp-06 .quote-mark{font-family:var(--f-display); font-size:90px; line-height:0.4; color:var(--accent); margin-bottom:6px;}
-.tp-06 .pull-quote{
-  font-family:var(--f-body); font-style:italic; font-size:26px; line-height:1.45; max-width:82%; margin-bottom:36px;
-}
-.tp-06 .sig-rule{width:80px; margin-bottom:16px;}
+  .zoom-controls{display:flex; gap:6px; margin-top:8px;}
+  .zoom-controls .btn{flex:1;}
+
+  ::-webkit-scrollbar{width:8px; height:8px;}
+  ::-webkit-scrollbar-thumb{background:#33333a; border-radius:4px;}
 </style>
 </head>
 <body>
 
-<div id="app">
-  <aside id="editor-panel">
-    <div class="panel-header">
-      <div class="masthead-mark">PRESS ROOM</div>
-      <div class="masthead-sub">Editorial Card Desk — WEST150</div>
+<div class="app">
+  <!-- ===================== LEFT PANEL ===================== -->
+  <div class="panel">
+    <div class="brand">
+      <div class="dot"></div>
+      <h1>X TODAY 큐레이션 편집기</h1>
     </div>
 
-    <div class="panel-content">
-
-      <div class="control-group">
-        <div class="control-group-title">지면 (Layout)</div>
-        <div class="layout-grid">
-          <button class="layout-btn" data-layout="1">01 브로드시트<br>Front Page</button>
-          <button class="layout-btn" data-layout="2">02 타블로이드<br>Cover</button>
-          <button class="layout-btn" data-layout="3">03 피처 스프레드<br>Drop Cap</button>
-          <button class="layout-btn" data-layout="4">04 와이어 속보<br>Bulletin</button>
-          <button class="layout-btn" data-layout="5">05 데이터 데스크<br>The Number</button>
-          <button class="layout-btn" data-layout="6">06 칼럼<br>Opinion</button>
-        </div>
+    <div class="section">
+      <h2>테마</h2>
+      <div class="theme-swatches" id="themeSwatches">
+        <div class="swatch active" data-theme="theme-crimson" style="background:linear-gradient(135deg,#0d0d0f,#a3272f)"><span>크림슨</span></div>
+        <div class="swatch" data-theme="theme-midnight" style="background:linear-gradient(135deg,#0d0d0f,#3a5a8c)"><span>미드나잇</span></div>
+        <div class="swatch" data-theme="theme-emerald" style="background:linear-gradient(135deg,#0d0d0f,#2f6b4f)"><span>에메랄드</span></div>
+        <div class="swatch" data-theme="theme-amber" style="background:linear-gradient(135deg,#0d0d0f,#a3661f)"><span>앰버</span></div>
       </div>
-
-      <div class="control-group">
-        <div class="control-group-title">에디션 (Edition — 팔레트+서체)</div>
-        <div class="control-row">
-          <select data-group="typography" data-key="edition">
-            <option value="broadsheet">브로드시트 클래식 — 크림지 · 딥레드</option>
-            <option value="midnight">미드나잇 에디션 — 잉크블랙 · 크림슨</option>
-            <option value="tabloid">타블로이드 레드 — 블랙 · 시그널레드</option>
-            <option value="finance">파이낸셜 데스크 — 살몬지 · 그린</option>
-            <option value="ivory">아이보리 위클리 — 화이트 · 네이비</option>
-          </select>
-        </div>
-        <div class="control-row horizontal">
-          <div class="control-row">
-            <label>본문 언어체</label>
-            <select data-group="typography" data-key="script">
-              <option value="en">영문 세리프 (Fraunces)</option>
-              <option value="krserif">한글 명조 (Noto Serif KR)</option>
-              <option value="krsans">한글 고딕 (Noto Sans KR)</option>
-            </select>
-          </div>
-          <div class="control-row">
-            <label>정렬</label>
-            <select data-group="typography" data-key="align">
-              <option value="left">왼쪽</option>
-              <option value="center">가운데</option>
-            </select>
-          </div>
-        </div>
-        <div class="control-row">
-          <label>헤드라인 크기</label>
-          <input type="range" data-group="typography" data-key="headlineScale" min="0.6" max="1.6" step="0.05" value="1">
-        </div>
-      </div>
-
-      <div class="control-group">
-        <div class="control-group-title">기사 (Content)</div>
-        <div class="control-row" data-field="section">
-          <label>섹션 / 마스트헤드명</label>
-          <input type="text" data-group="content" data-key="section" placeholder="예: WEST150 DAILY">
-        </div>
-        <div class="control-row" data-field="edition">
-          <label>발행 정보</label>
-          <input type="text" data-group="content" data-key="edition" placeholder="예: VOL. I — NO. 42">
-        </div>
-        <div class="control-row" data-field="kicker">
-          <label>킥커 / 섹션 태그</label>
-          <input type="text" data-group="content" data-key="kicker" placeholder="예: WORLD DESK, BREAKING">
-        </div>
-        <div class="control-row">
-          <label>헤드라인</label>
-          <textarea data-group="content" data-key="headline" placeholder="주 헤드라인"></textarea>
-        </div>
-        <div class="control-row" data-field="dek">
-          <label>데크 (부제)</label>
-          <textarea data-group="content" data-key="dek" placeholder="헤드라인을 풀어주는 한 문장"></textarea>
-        </div>
-        <div class="control-row horizontal" data-field="byline">
-          <div class="control-row">
-            <label>바이라인</label>
-            <input type="text" data-group="content" data-key="byline" placeholder="기자명">
-          </div>
-          <div class="control-row" data-field="dateline">
-            <label>데이트라인</label>
-            <input type="text" data-group="content" data-key="dateline" placeholder="발신지">
-          </div>
-        </div>
-        <div class="control-row">
-          <label>날짜</label>
-          <input type="text" data-group="content" data-key="date" placeholder="2026.08.22">
-        </div>
-        <div class="control-row" data-field="lede">
-          <label>리드 문단</label>
-          <textarea data-group="content" data-key="lede" placeholder="기사 첫 문단"></textarea>
-        </div>
-        <div class="control-row" data-field="pullquote">
-          <label>풀쿼트</label>
-          <textarea data-group="content" data-key="pullquote" placeholder="강조 인용문"></textarea>
-        </div>
-        <div class="control-row" data-field="caption">
-          <label>사진 캡션</label>
-          <input type="text" data-group="content" data-key="caption" placeholder="사진 설명">
-        </div>
-        <div class="control-row horizontal" data-field="stat">
-          <div class="control-row">
-            <label>수치</label>
-            <input type="text" data-group="content" data-key="stat" placeholder="예: 73%">
-          </div>
-          <div class="control-row" data-field="statLabel">
-            <label>수치 라벨</label>
-            <input type="text" data-group="content" data-key="statLabel" placeholder="예: OF READERS">
-          </div>
-        </div>
-      </div>
-
-      <div class="control-group">
-        <div class="control-group-title">브랜드</div>
-        <div class="control-row horizontal">
-          <label><input type="checkbox" data-group="brand" data-key="showFolio"> 폴리오(페이지) 표시</label>
-        </div>
-      </div>
-
-      <div class="control-group">
-        <div class="control-group-title">사진</div>
-        <div class="control-row">
-          <div class="file-upload btn">사진 업로드
-            <input type="file" id="image-upload" accept="image/*">
-          </div>
-        </div>
-        <div class="control-row"><button class="btn" id="btn-remove-image">사진 제거</button></div>
-        <div class="control-row horizontal">
-          <div class="control-row"><label>Pos X</label><input type="range" data-group="image" data-key="posX" min="-100" max="100" value="0"></div>
-          <div class="control-row"><label>Pos Y</label><input type="range" data-group="image" data-key="posY" min="-100" max="100" value="0"></div>
-        </div>
-        <div class="control-row horizontal">
-          <div class="control-row"><label>Zoom</label><input type="range" data-group="image" data-key="zoom" min="1" max="3" step="0.1" value="1"></div>
-          <div class="control-row"><label>흑백</label><input type="range" data-group="image" data-key="grayscale" min="0" max="100" value="0"></div>
-        </div>
-        <div class="control-row horizontal">
-          <div class="control-row"><label>밝기</label><input type="range" data-group="image" data-key="brightness" min="0" max="200" value="100"></div>
-          <div class="control-row"><label>대비</label><input type="range" data-group="image" data-key="contrast" min="0" max="200" value="100"></div>
-        </div>
-      </div>
-
     </div>
 
-    <div class="panel-footer">
-      <button class="btn" id="btn-random">랜덤 에디션</button>
-      <button class="btn btn-primary" style="flex:1;" id="btn-export">카드 내보내기</button>
+    <div class="section">
+      <h2>마스트헤드</h2>
+      <div class="field">
+        <label>매체명</label>
+        <input type="text" id="brandName" value="X TODAY">
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>계정 핸들</label>
+          <input type="text" id="handle" value="@트루스소셜">
+        </div>
+        <div class="field">
+          <label>날짜/부제 라벨</label>
+          <input type="text" id="dateLabel" value="2026.07.29 (수)">
+        </div>
+      </div>
+      <div class="field">
+        <label>부제 (강조는 **텍스트**)</label>
+        <input type="text" id="subLabel" value="오늘의 **X** 큐레이션">
+      </div>
     </div>
-  </aside>
 
-  <main id="workspace">
-    <div id="canvas-wrapper"><div id="canvas"></div></div>
-    <div id="card-strip">
-      <button class="btn btn-icon" id="btn-add-card" title="Add Card">+</button>
-      <div style="flex:1"></div>
-      <button class="btn" id="btn-export-all">전체 내보내기</button>
+    <div class="section">
+      <h2>메인 스토리</h2>
+      <div class="field">
+        <label>카테고리</label>
+        <input type="text" id="mainCategory" value="US POLITICS">
+      </div>
+      <div class="field">
+        <label>제목</label>
+        <textarea id="mainTitle">CNN도 인정…
+사진 신분증
+지지 80%</textarea>
+      </div>
+      <div class="field">
+        <label>본문</label>
+        <textarea id="mainBody">CNN도 미국인 80%(민주당원 62% 포함)가 사진 신분증 의무화를 지지한다는 사실을 인정했다.</textarea>
+      </div>
+      <div class="field">
+        <label>출처</label>
+        <input type="text" id="mainSource" value="@EricLDaugh">
+      </div>
+      <div class="field">
+        <label>배경 이미지</label>
+        <div class="imgdrop" id="mainImgDrop">클릭해서 이미지 업로드</div>
+        <input type="file" accept="image/*" class="hidden-file" id="mainImgFile">
+        <div class="zoom-controls" id="mainZoomWrap" style="display:none;">
+          <button class="btn small secondary" data-zoom="mainImg" data-dir="out">－</button>
+          <button class="btn small secondary" data-zoom="mainImg" data-dir="in">＋</button>
+          <button class="btn small danger" data-zoom="mainImg" data-dir="remove">삭제</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>큰 강조 숫자 (선택, 비우면 표시 안 함)</label>
+        <input type="text" id="mainStat" value="80%">
+      </div>
     </div>
-  </main>
+
+    <div class="section">
+      <h2>서브 스토리 <button class="btn small secondary" id="addSubBtn" style="width:auto;">+ 추가</button></h2>
+      <div id="subStoriesWrap"></div>
+    </div>
+
+    <div class="section">
+      <h2>푸터</h2>
+      <div class="field">
+        <label>안내 문구</label>
+        <input type="text" id="footerText" value="개인 제작 뉴스 큐레이션입니다.">
+      </div>
+    </div>
+
+    <div class="footer-actions">
+      <button class="btn" id="exportBtn">📥 PNG로 저장</button>
+      <button class="btn secondary" id="resetBtn">초기화</button>
+    </div>
+  </div>
+
+  <!-- ===================== RIGHT PREVIEW ===================== -->
+  <div class="preview-col">
+    <div class="canvas-wrap" id="canvasWrap">
+      <div id="card" class="theme-crimson">
+        <div class="masthead-top"><span class="masthead-handle" id="pHandle">@트루스소셜</span></div>
+        <h1 class="masthead" id="pBrand" style="font-size:88px;">X TODAY</h1>
+        <hr class="masthead-rule">
+        <p class="masthead-sub" id="pSub"><span id="pDate">2026.07.29 (수)</span> &nbsp;|&nbsp; <span id="pSubLabel">오늘의 <b>X</b> 큐레이션</span></p>
+
+        <div class="main-story">
+          <div>
+            <div class="eyebrow" id="pMainCat">US POLITICS</div>
+            <h2 class="headline" id="pMainTitle">CNN도 인정…
+사진 신분증
+지지 80%</h2>
+            <p class="body-text" id="pMainBody">CNN도 미국인 80%(민주당원 62% 포함)가 사진 신분증 의무화를 지지한다는 사실을 인정했다.</p>
+            <p class="source-tag">출처: <b id="pMainSource">@EricLDaugh</b></p>
+          </div>
+          <div class="art-box" id="mainImg">
+            <div class="art-placeholder">이미지를 업로드하세요</div>
+            <div class="stat-overlay" id="pMainStat">80%</div>
+          </div>
+        </div>
+
+        <div class="sub-grid" id="subGrid"></div>
+
+        <div class="card-footer" id="pFooter">개인 제작 뉴스 큐레이션입니다.</div>
+      </div>
+    </div>
+  </div>
 </div>
 
+<div class="toast" id="toast"></div>
+
 <script>
-/* =========================================================
-   PRESS ROOM ENGINE
-   ========================================================= */
-const createDefaultCard = (id) => ({
-  id,
-  layout: 1,
-  content: {
-    section: 'WEST150 DAILY',
-    edition: 'VOL. I — NO. 01',
-    kicker: 'WORLD DESK',
-    headline: 'THE RULES\nHAVE CHANGED.',
-    dek: 'A new grammar for editorial cards, built on the conventions of the printed page.',
-    byline: 'JANE DOH',
-    dateline: 'SEOUL',
-    date: '2026.08.22',
-    lede: 'In an increasingly crowded feed, the discipline of the front page — hierarchy, restraint, a single clear thesis — reads as relief rather than nostalgia.',
-    pullquote: '"Structure is what makes a page trustworthy."',
-    caption: 'A press run in progress.',
-    stat: '73%',
-    statLabel: 'OF READERS'
+let subStories = [
+  {
+    id: 's1',
+    category: '',
+    title: '트럼프-젤렌스키\n백악관 회동',
+    body: '두 정상이 우크라이나 방공망 강화와 종전 협상 재개를 논의했고, 젤렌스키는 애국심 표하며 린지 그레이엄 별세에 조의를 표했다.',
+    source: 'Fox News',
+    img: null, imgZoom: 1
   },
-  typography: {
-    edition: 'broadsheet',
-    script: 'en',
-    align: 'left',
-    headlineScale: 1
-  },
-  image: { url:'', posX:0, posY:0, zoom:1, grayscale:0, brightness:100, contrast:100 },
-  brand: { showFolio: true }
-});
-
-const state = { cards: [createDefaultCard(Date.now())], activeId: 0 };
-
-const els = {
-  canvasWrapper: document.getElementById('canvas-wrapper'),
-  canvas: document.getElementById('canvas'),
-  strip: document.getElementById('card-strip'),
-  inputs: document.querySelectorAll('[data-group]'),
-  layoutBtns: document.querySelectorAll('.layout-btn'),
-  imageUpload: document.getElementById('image-upload'),
-  btnRemoveImage: document.getElementById('btn-remove-image'),
-  btnAddCard: document.getElementById('btn-add-card'),
-  btnRandom: document.getElementById('btn-random'),
-  btnExport: document.getElementById('btn-export'),
-  btnExportAll: document.getElementById('btn-export-all'),
-  fieldRows: document.querySelectorAll('[data-field]')
-};
-
-// Which optional content fields actually render on each layout.
-// (kicker / headline / date are core and always shown.)
-const FIELD_LAYOUTS = {
-  section:   [1,6],
-  edition:   [1],
-  dek:       [1,2],
-  byline:    [1,2,3,6],
-  dateline:  [1,3,6],
-  lede:      [3,4,5],
-  pullquote: [3,6],
-  caption:   [1,3],
-  stat:      [5],
-  statLabel: [5]
-};
-
-// Curated editions: each bundles a palette AND an accent — a real
-// front page never lets you mix-and-match ink and paper freely.
-const EDITIONS = {
-  broadsheet:{bg:'#F3EEE0', ink:'#181410', accent:'#8C1F28'},
-  midnight:  {bg:'#131313', ink:'#F2EEE3', accent:'#D6483F'},
-  tabloid:   {bg:'#0A0A0A', ink:'#FFFFFF', accent:'#E11B22'},
-  finance:   {bg:'#F3E1CE', ink:'#16222C', accent:'#0F5C3F'},
-  ivory:     {bg:'#FDFCF9', ink:'#141414', accent:'#1B3A6B'}
-};
-
-const SCRIPTS = {
-  en:      { display:"'Fraunces', serif",        body:"'Source Serif 4', serif",  util:"'Barlow Condensed', sans-serif" },
-  krserif: { display:"'Noto Serif KR', serif",    body:"'Noto Serif KR', serif",   util:"'Noto Sans KR', sans-serif" },
-  krsans:  { display:"'Noto Sans KR', sans-serif",body:"'Noto Sans KR', sans-serif",util:"'Noto Sans KR', sans-serif" }
-};
-
-const escapeHtml = (text) => {
-  if (!text) return '';
-  return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-};
-const fmt = (text) => text ? escapeHtml(text).replace(/\n/g,'<br>') : '';
-const plain = (text) => escapeHtml(text || '');
-
-const imgHtml = (img, extraStyle='') => {
-  if (!img.url) return '';
-  const style = `transform:scale(${img.zoom}) translate(${img.posX}%, ${img.posY}%);
-    filter:grayscale(${img.grayscale}%) brightness(${img.brightness}%) contrast(${img.contrast}%);${extraStyle}`;
-  return `<div class="ed-img-wrap" style="position:absolute;inset:0;"><img src="${img.url}" class="ed-img" style="${style}"></div>`;
-};
-
-const buildCard = (card, index) => {
-  const c = card.content, t = card.typography, img = card.image;
-  const folio = card.brand.showFolio
-    ? `<div class="folio" style="bottom:24px; right:40px;">${String(index+1).padStart(2,'0')} · ${plain(c.section) || 'PRESS ROOM'}</div>`
-    : '';
-
-  let body = '';
-  switch(parseInt(card.layout)){
-    case 1: // BROADSHEET FRONT
-      body = `
-        <div class="page tp-01">
-          <div class="masthead">
-            <div class="section-name">${plain(c.section)}</div>
-            <div class="rule-thick" style="margin-top:10px;"></div>
-            <div class="meta-row"><span>${plain(c.edition)}</span><span>${plain(c.date)}</span></div>
-            <div class="rule" style="margin-top:6px;"></div>
-          </div>
-          <div class="story">
-            ${c.kicker ? `<div class="eyebrow">${plain(c.kicker)}</div>` : ''}
-            <div class="headline">${fmt(c.headline)}</div>
-            ${c.dek ? `<div class="dek">${fmt(c.dek)}</div>` : ''}
-            <div class="byline-block"><span>BY ${plain(c.byline).toUpperCase()}</span><span>${plain(c.dateline).toUpperCase()}</span></div>
-          </div>
-          <div class="photo">${img.url ? imgHtml(img) : `<div style="width:100%;height:100%;background:var(--ink);opacity:.08;"></div>`}</div>
-          ${c.caption ? `<div class="caption">${fmt(c.caption)}</div>` : ''}
-        </div>`;
-      break;
-
-    case 2: // TABLOID COVER
-      body = `
-        <div class="page tp-02">
-          <div class="cover-photo">${img.url ? imgHtml(img) : `<div style="width:100%;height:100%;background:var(--ink);"></div>`}</div>
-          <div class="scrim"></div>
-          <div class="kicker-band"><span>${plain(c.kicker) || 'BREAKING'}</span><span>${plain(c.date)}</span></div>
-          <div class="cover-body">
-            <div class="fold-rule"><div></div><div></div></div>
-            <div class="headline">${fmt(c.headline)}</div>
-            ${c.dek ? `<div class="dek">${fmt(c.dek)}</div>` : ''}
-            <div class="byline-block"><span>BY ${plain(c.byline).toUpperCase()}</span><span>${plain(c.dateline).toUpperCase()}</span></div>
-          </div>
-        </div>`;
-      break;
-
-    case 3: // FEATURE SPREAD
-      body = `
-        <div class="page tp-03">
-          ${c.kicker ? `<div class="eyebrow">${plain(c.kicker)}</div>` : ''}
-          <div class="headline">${fmt(c.headline)}</div>
-          <div class="byline-block"><span>BY ${plain(c.byline).toUpperCase()}</span><span>${plain(c.dateline).toUpperCase()} · ${plain(c.date)}</span></div>
-          <div class="spread">
-            <div class="lede-col">
-              <div class="lede has-dropcap">${fmt(c.lede)}</div>
-            </div>
-            <div class="side-col">
-              ${c.pullquote ? `<div class="pull-quote">${fmt(c.pullquote)}</div>` : ''}
-              <div class="photo-sq">
-                ${img.url ? imgHtml(img) : `<div style="width:100%;height:100%;background:var(--ink);opacity:.08;"></div>`}
-              </div>
-              ${c.caption ? `<div class="caption">${fmt(c.caption)}</div>` : ''}
-            </div>
-          </div>
-        </div>`;
-      break;
-
-    case 4: // WIRE BULLETIN
-      body = `
-        <div class="page tp-04">
-          <div class="flag">${plain(c.kicker) || 'BREAKING'}</div>
-          <div class="wire-meta"><span>WEST150 WIRE</span><span>${plain(c.date)} · ${plain(c.dateline)}</span></div>
-          <div class="body-zone">
-            <div class="headline">${fmt(c.headline)}</div>
-            <div class="lede">${fmt(c.lede)}</div>
-            <div class="ticker"><span>DEVELOPING</span><span>MORE TO FOLLOW</span></div>
-          </div>
-        </div>`;
-      break;
-
-    case 5: // DATA DESK
-      body = `
-        <div class="page tp-05">
-          <div class="top-row">
-            <div class="eyebrow">${plain(c.kicker) || 'DATA DESK'}</div>
-            <div class="eyebrow" style="color:var(--ink);opacity:.6;">${plain(c.date)}</div>
-          </div>
-          <div>
-            <div class="stat">${plain(c.stat)}</div>
-            <div class="stat-label">${plain(c.statLabel)}</div>
-            <div class="lede">${fmt(c.headline)}</div>
-          </div>
-          <div class="source">SOURCE — ${plain(c.dateline) || plain(c.byline)}</div>
-        </div>`;
-      break;
-
-    case 6: // OPINION / COLUMN
-      body = `
-        <div class="page tp-06">
-          ${c.kicker ? `<div class="eyebrow">${plain(c.kicker)}</div>` : ''}
-          <div class="byline-name">${plain(c.byline).toUpperCase()}</div>
-          <div class="dateline">${plain(c.dateline)} · ${plain(c.date)}</div>
-          <div class="headline">${fmt(c.headline)}</div>
-          ${c.pullquote ? `<div class="quote-mark">&ldquo;</div><div class="pull-quote">${fmt(c.pullquote)}</div>` : ''}
-          <div class="rule sig-rule"></div>
-          <div class="eyebrow" style="opacity:.6;">${plain(c.section)}</div>
-        </div>`;
-      break;
+  {
+    id: 's2',
+    category: '',
+    title: '랜드 폴 "파우치,\n위증하면 사면도 무효"',
+    body: '폴 상원의원은 내일 청문회에서 파우치가 위증할 경우 바이든의 사전 사면이 그를 보호하지 못한다고 밝혔다.',
+    source: '@EricLDaugh',
+    img: null, imgZoom: 1
   }
-  return body + folio;
-};
+];
+let mainImgData = { src: null, zoom: 1, x: 50, y: 50 };
+let idCounter = 3;
 
-const renderCanvas = () => {
-  const card = state.cards[state.activeId];
-  const t = card.typography;
-  const ed = EDITIONS[t.edition] || EDITIONS.broadsheet;
-  const sc = SCRIPTS[t.script] || SCRIPTS.en;
+function escapeHtml(str){
+  return (str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function applyBold(str){
+  return escapeHtml(str).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+}
+function nl2br(str){
+  return escapeHtml(str).split('\n').join('<br>');
+}
 
-  let h1=112, h2=118, h3=64;
-  if (card.layout==2) h2 = 128;
-  if (card.layout==4) h2 = 96;
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 1800);
+}
 
-  els.canvas.style.setProperty('--bg', ed.bg);
-  els.canvas.style.setProperty('--ink', ed.ink);
-  els.canvas.style.setProperty('--accent', ed.accent);
-  els.canvas.style.setProperty('--f-display', sc.display);
-  els.canvas.style.setProperty('--f-body', sc.body);
-  els.canvas.style.setProperty('--f-util', sc.util);
-  els.canvas.style.setProperty('--sz-h1', `${h1*t.headlineScale}px`);
-  els.canvas.style.setProperty('--sz-h2', `${h2*t.headlineScale}px`);
-  els.canvas.style.setProperty('--sz-h3', `${h3*t.headlineScale}px`);
-  els.canvas.style.textAlign = t.align === 'center' ? 'center' : 'left';
+/* ---------- render ---------- */
+function render(){
+  document.getElementById('pHandle').textContent = document.getElementById('handle').value;
+  document.getElementById('pBrand').textContent = document.getElementById('brandName').value;
+  document.getElementById('pDate').textContent = document.getElementById('dateLabel').value;
+  document.getElementById('pSubLabel').innerHTML = applyBold(document.getElementById('subLabel').value);
+  document.getElementById('pMainCat').textContent = document.getElementById('mainCategory').value;
+  document.getElementById('pMainTitle').innerHTML = nl2br(document.getElementById('mainTitle').value);
+  document.getElementById('pMainBody').textContent = document.getElementById('mainBody').value;
+  document.getElementById('pMainSource').textContent = document.getElementById('mainSource').value;
 
-  els.canvas.innerHTML = buildCard(card, state.activeId);
-};
+  const statVal = document.getElementById('mainStat').value.trim();
+  const statEl = document.getElementById('pMainStat');
+  statEl.textContent = statVal;
+  statEl.style.display = statVal ? 'flex' : 'none';
 
-const renderEditor = () => {
-  const card = state.cards[state.activeId];
-  els.inputs.forEach(input => {
-    const group = input.getAttribute('data-group');
-    const key = input.getAttribute('data-key');
-    if (input.type === 'checkbox') input.checked = card[group][key];
-    else input.value = card[group][key];
-  });
-  els.layoutBtns.forEach(btn => {
-    btn.classList.toggle('active', parseInt(btn.getAttribute('data-layout')) === parseInt(card.layout));
-  });
-  els.fieldRows.forEach(row => {
-    const f = row.getAttribute('data-field');
-    const layouts = FIELD_LAYOUTS[f] || [];
-    row.style.display = layouts.includes(parseInt(card.layout)) ? 'flex' : 'none';
-  });
-};
+  // main image
+  const mainImgBox = document.getElementById('mainImg');
+  const ph = mainImgBox.querySelector('.art-placeholder');
+  let img = mainImgBox.querySelector('img');
+  if(mainImgData.src){
+    if(!img){
+      img = document.createElement('img');
+      mainImgBox.insertBefore(img, mainImgBox.firstChild);
+    }
+    img.src = mainImgData.src;
+    img.style.transform = `scale(${mainImgData.zoom})`;
+    if(ph) ph.style.display='none';
+  } else {
+    if(img) img.remove();
+    if(ph) ph.style.display='flex';
+  }
 
-const renderStrip = () => {
-  els.strip.querySelectorAll('.thumb-card').forEach(t => t.remove());
-  state.cards.forEach((card, index) => {
-    const thumb = document.createElement('div');
-    thumb.className = `thumb-card ${index === state.activeId ? 'active' : ''}`;
-    thumb.innerHTML = `
-      ${index+1}
-      <div style="position:absolute;top:2px;right:2px;display:${state.cards.length>1?'block':'none'}">
-        <button class="btn-icon" onclick="deleteCard(${index})" style="color:#ff4a4a;font-size:10px;padding:2px;">×</button>
+  // footer
+  document.getElementById('pFooter').textContent = document.getElementById('footerText').value;
+
+  // sub grid columns
+  const grid = document.getElementById('subGrid');
+  const n = subStories.length;
+  grid.style.gridTemplateColumns = n > 0 ? `repeat(${Math.min(n,3)}, 1fr)` : '1fr';
+  grid.innerHTML = '';
+  subStories.forEach(s=>{
+    const div = document.createElement('div');
+    div.className = 'sub-story';
+    div.innerHTML = `
+      ${s.category ? `<div class="eyebrow" style="font-size:11px;">${escapeHtml(s.category)}</div>` : ''}
+      <h3 class="sub-headline">${nl2br(s.title)}</h3>
+      <p class="sub-body">${escapeHtml(s.body)}</p>
+      ${s.source ? `<p class="sub-source">출처: ${escapeHtml(s.source)}</p>` : ''}
+      <div class="sub-art">
+        ${s.img ? `<img src="${s.img}" style="transform:scale(${s.imgZoom||1})">` : `<div class="art-placeholder">이미지 없음</div>`}
       </div>
-      <div style="position:absolute;bottom:2px;right:2px;">
-        <button class="btn-icon" onclick="duplicateCard(${index})" style="color:#666;font-size:10px;padding:2px;">⎘</button>
-      </div>`;
-    thumb.onclick = (e) => { if (e.target.tagName !== 'BUTTON') { state.activeId = index; updateAll(); } };
-    els.strip.insertBefore(thumb, els.btnAddCard);
+    `;
+    grid.appendChild(div);
   });
-};
 
-const updateAll = () => { renderEditor(); renderCanvas(); renderStrip(); };
+  scaleToFit();
+}
 
-els.inputs.forEach(input => {
-  input.addEventListener('input', (e) => {
-    const group = e.target.getAttribute('data-group');
-    const key = e.target.getAttribute('data-key');
-    const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
-    state.cards[state.activeId][group][key] = value;
-    renderCanvas();
-  });
+function scaleToFit(){
+  const wrap = document.getElementById('canvasWrap');
+  const card = document.getElementById('card');
+  const available = Math.min(window.innerWidth * (window.innerWidth <= 900 ? 0.92 : 0.6), 1000);
+  const scale = Math.min(1, available / 1000);
+  wrap.style.transform = `scale(${scale})`;
+  wrap.style.marginBottom = (card.offsetHeight * (scale - 1)) + 'px';
+}
+window.addEventListener('resize', scaleToFit);
+
+/* ---------- theme ---------- */
+document.getElementById('themeSwatches').addEventListener('click', (e)=>{
+  const sw = e.target.closest('.swatch');
+  if(!sw) return;
+  document.querySelectorAll('.swatch').forEach(s=>s.classList.remove('active'));
+  sw.classList.add('active');
+  const card = document.getElementById('card');
+  card.className = sw.dataset.theme;
 });
 
-els.layoutBtns.forEach(btn => {
-  btn.addEventListener('click', (e) => {
-    const layoutId = parseInt(e.currentTarget.getAttribute('data-layout'));
-    state.cards[state.activeId].layout = layoutId;
-    updateAll();
-  });
-});
+/* ---------- inputs ---------- */
+['brandName','handle','dateLabel','subLabel','mainCategory','mainTitle','mainBody','mainSource','mainStat','footerText']
+  .forEach(id => document.getElementById(id).addEventListener('input', render));
 
-els.imageUpload.addEventListener('change', (e) => {
+/* ---------- main image upload ---------- */
+document.getElementById('mainImgDrop').addEventListener('click', ()=>{
+  document.getElementById('mainImgFile').click();
+});
+document.getElementById('mainImgFile').addEventListener('change', (e)=>{
   const file = e.target.files[0];
-  if (!file) return;
+  if(!file) return;
   const reader = new FileReader();
-  reader.onload = (event) => {
-    const img = state.cards[state.activeId].image;
-    img.url = event.target.result; img.zoom = 1; img.posX = 0; img.posY = 0;
-    updateAll();
+  reader.onload = (ev)=>{
+    mainImgData.src = ev.target.result;
+    mainImgData.zoom = 1;
+    document.getElementById('mainImgDrop').textContent = '✓ ' + file.name;
+    document.getElementById('mainImgDrop').classList.add('has-img');
+    document.getElementById('mainZoomWrap').style.display = 'flex';
+    render();
   };
   reader.readAsDataURL(file);
 });
-
-els.btnRemoveImage.addEventListener('click', () => {
-  state.cards[state.activeId].image.url = '';
-  updateAll();
-});
-
-els.btnAddCard.addEventListener('click', () => {
-  state.cards.push(createDefaultCard(Date.now()));
-  state.activeId = state.cards.length - 1;
-  updateAll();
-});
-
-window.deleteCard = (index) => {
-  if (state.cards.length <= 1) return;
-  state.cards.splice(index, 1);
-  if (state.activeId >= state.cards.length) state.activeId = state.cards.length - 1;
-  updateAll();
-};
-
-window.duplicateCard = (index) => {
-  const newCard = JSON.parse(JSON.stringify(state.cards[index]));
-  newCard.id = Date.now();
-  state.cards.splice(index+1, 0, newCard);
-  state.activeId = index+1;
-  updateAll();
-};
-
-els.btnRandom.addEventListener('click', () => {
-  const card = state.cards[state.activeId];
-  card.layout = Math.floor(Math.random()*6)+1;
-  const editionKeys = Object.keys(EDITIONS);
-  card.typography.edition = editionKeys[Math.floor(Math.random()*editionKeys.length)];
-  const aligns = ['left','center'];
-  card.typography.align = aligns[Math.floor(Math.random()*aligns.length)];
-  card.typography.headlineScale = (Math.random()*(1.3-0.85)+0.85).toFixed(2);
-  updateAll();
-});
-
-const updateCanvasScale = () => {
-  const pw = els.canvasWrapper.clientWidth - 80;
-  const ph = els.canvasWrapper.clientHeight - 80;
-  const scale = Math.min(pw/1080, ph/1350);
-  els.canvas.style.transform = `scale(${scale})`;
-};
-window.addEventListener('resize', updateCanvasScale);
-if (window.ResizeObserver) new ResizeObserver(() => updateCanvasScale()).observe(els.canvasWrapper);
-
-/* ---------------- Export ---------------- */
-const downloadURI = (uri, name) => {
-  const link = document.createElement('a');
-  link.download = name; link.href = uri;
-  document.body.appendChild(link); link.click(); document.body.removeChild(link);
-};
-
-const exportCanvas = async (filename) => {
-  const currentTransform = els.canvas.style.transform;
-  els.canvas.style.transform = 'scale(1)';
-  try {
-    const canvas = await html2canvas(els.canvas, { scale:1, useCORS:true, backgroundColor:null, logging:false });
-    downloadURI(canvas.toDataURL('image/png'), filename);
-  } catch (err) {
-    console.error('Export failed:', err);
-    alert('내보내기에 실패했습니다. 콘솔을 확인해주세요.');
-  } finally {
-    els.canvas.style.transform = currentTransform;
+document.getElementById('mainZoomWrap').addEventListener('click', (e)=>{
+  const btn = e.target.closest('button');
+  if(!btn) return;
+  const dir = btn.dataset.dir;
+  if(dir === 'in') mainImgData.zoom = Math.min(3, mainImgData.zoom + 0.1);
+  else if(dir === 'out') mainImgData.zoom = Math.max(1, mainImgData.zoom - 0.1);
+  else if(dir === 'remove'){
+    mainImgData.src = null; mainImgData.zoom = 1;
+    document.getElementById('mainImgDrop').textContent = '클릭해서 이미지 업로드';
+    document.getElementById('mainImgDrop').classList.remove('has-img');
+    document.getElementById('mainImgFile').value = '';
+    document.getElementById('mainZoomWrap').style.display = 'none';
   }
-};
-
-els.btnExport.addEventListener('click', async () => {
-  els.btnExport.textContent = '내보내는 중...';
-  await exportCanvas(`PRESSROOM_${String(state.activeId+1).padStart(2,'0')}.png`);
-  els.btnExport.textContent = '카드 내보내기';
+  render();
 });
 
-els.btnExportAll.addEventListener('click', async () => {
-  els.btnExportAll.textContent = '내보내는 중...';
-  const originalId = state.activeId;
-  for (let i=0; i<state.cards.length; i++) {
-    state.activeId = i; renderCanvas();
-    await new Promise(r => setTimeout(r, 300));
-    await exportCanvas(`PRESSROOM_${String(i+1).padStart(2,'0')}.png`);
+/* ---------- sub stories ---------- */
+function renderSubPanel(){
+  const wrap = document.getElementById('subStoriesWrap');
+  wrap.innerHTML = '';
+  subStories.forEach((s, idx)=>{
+    const block = document.createElement('div');
+    block.className = 'story-block';
+    block.innerHTML = `
+      <div class="story-head">
+        <span>스토리 ${idx+1}</span>
+        <button class="btn small danger" data-remove="${s.id}" style="width:auto;">삭제</button>
+      </div>
+      <div class="field">
+        <label>카테고리 (선택)</label>
+        <input type="text" data-field="category" data-id="${s.id}" value="${escapeHtml(s.category)}">
+      </div>
+      <div class="field">
+        <label>제목</label>
+        <textarea data-field="title" data-id="${s.id}">${s.title}</textarea>
+      </div>
+      <div class="field">
+        <label>본문</label>
+        <textarea data-field="body" data-id="${s.id}">${s.body}</textarea>
+      </div>
+      <div class="field">
+        <label>출처 (선택)</label>
+        <input type="text" data-field="source" data-id="${s.id}" value="${escapeHtml(s.source)}">
+      </div>
+      <div class="field">
+        <label>이미지</label>
+        <div class="imgdrop ${s.img ? 'has-img' : ''}" data-imgdrop="${s.id}">${s.img ? '✓ 이미지 업로드됨' : '클릭해서 이미지 업로드'}</div>
+        <input type="file" accept="image/*" class="hidden-file" data-imgfile="${s.id}">
+        ${s.img ? `<div class="zoom-controls">
+          <button class="btn small secondary" data-subzoom="${s.id}" data-dir="out">－</button>
+          <button class="btn small secondary" data-subzoom="${s.id}" data-dir="in">＋</button>
+          <button class="btn small danger" data-subzoom="${s.id}" data-dir="remove">삭제</button>
+        </div>` : ''}
+      </div>
+    `;
+    wrap.appendChild(block);
+  });
+
+  wrap.querySelectorAll('[data-field]').forEach(el=>{
+    el.addEventListener('input', (e)=>{
+      const s = subStories.find(x=>x.id === e.target.dataset.id);
+      if(s) s[e.target.dataset.field] = e.target.value;
+      render();
+    });
+  });
+  wrap.querySelectorAll('[data-remove]').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      subStories = subStories.filter(x=>x.id !== e.target.dataset.remove);
+      renderSubPanel(); render();
+    });
+  });
+  wrap.querySelectorAll('[data-imgdrop]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      wrap.querySelector(`[data-imgfile="${el.dataset.imgdrop}"]`).click();
+    });
+  });
+  wrap.querySelectorAll('[data-imgfile]').forEach(el=>{
+    el.addEventListener('change', (e)=>{
+      const file = e.target.files[0];
+      if(!file) return;
+      const id = e.target.dataset.imgfile;
+      const reader = new FileReader();
+      reader.onload = (ev)=>{
+        const s = subStories.find(x=>x.id === id);
+        if(s){ s.img = ev.target.result; s.imgZoom = 1; }
+        renderSubPanel(); render();
+      };
+      reader.readAsDataURL(file);
+    });
+  });
+  wrap.querySelectorAll('[data-subzoom]').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      const id = e.target.dataset.subzoom;
+      const dir = e.target.dataset.dir;
+      const s = subStories.find(x=>x.id === id);
+      if(!s) return;
+      if(dir === 'in') s.imgZoom = Math.min(3, (s.imgZoom||1) + 0.1);
+      else if(dir === 'out') s.imgZoom = Math.max(1, (s.imgZoom||1) - 0.1);
+      else if(dir === 'remove'){ s.img = null; s.imgZoom = 1; }
+      renderSubPanel(); render();
+    });
+  });
+}
+
+document.getElementById('addSubBtn').addEventListener('click', ()=>{
+  if(subStories.length >= 4){ toast('서브 스토리는 최대 4개까지 추가할 수 있어요'); return; }
+  subStories.push({
+    id: 's' + (idCounter++),
+    category: '', title: '새 스토리 제목', body: '본문을 입력하세요.', source: '',
+    img: null, imgZoom: 1
+  });
+  renderSubPanel(); render();
+});
+
+/* ---------- export ---------- */
+document.getElementById('exportBtn').addEventListener('click', async ()=>{
+  const card = document.getElementById('card');
+  const wrap = document.getElementById('canvasWrap');
+  const prevTransform = wrap.style.transform;
+  wrap.style.transform = 'none';
+  toast('이미지 생성 중...');
+  try{
+    const canvas = await html2canvas(card, { backgroundColor: null, scale: 2, useCORS: true });
+    const link = document.createElement('a');
+    link.download = `x-today-${Date.now()}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    toast('저장 완료!');
+  }catch(err){
+    toast('저장 중 오류가 발생했어요');
+    console.error(err);
   }
-  state.activeId = originalId; updateAll();
-  els.btnExportAll.textContent = '전체 내보내기';
+  wrap.style.transform = prevTransform;
 });
 
-/* ---------------- Init ---------------- */
-updateCanvasScale();
-updateAll();
+document.getElementById('resetBtn').addEventListener('click', ()=>{
+  if(!confirm('모든 내용을 초기화할까요?')) return;
+  location.reload();
+});
+
+/* ---------- init ---------- */
+renderSubPanel();
+render();
+setTimeout(scaleToFit, 100);
 </script>
 </body>
 </html>
