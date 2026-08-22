@@ -32,6 +32,10 @@
     --gold-dim:#8f7a49;
     --maroon:#7a1d24;
     --maroon-bright:#a3272f;
+    --headline-size:52px;
+    --body-size:16px;
+    --sub-headline-size:26px;
+    --sub-body-size:13.5px;
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
@@ -269,7 +273,7 @@
   .headline{
     font-family:var(--headline-font, 'Noto Serif KR', serif);
     font-weight:900;
-    font-size:52px;
+    font-size:var(--headline-size, 52px);
     line-height:1.18;
     color:var(--cream);
     margin:0 0 16px;
@@ -277,9 +281,9 @@
   }
   .body-text{
     font-family:var(--body-font, 'Pretendard', sans-serif);
-    font-size:16px;
+    font-size:var(--body-size, 16px);
     line-height:1.65;
-    color:#cfc9ba;
+    color:var(--body-color, #cfc9ba);
     margin:0 0 16px;
     white-space:pre-wrap;
   }
@@ -294,15 +298,13 @@
     border-radius:4px;
     overflow:hidden;
     position:relative;
-    background:#111113;
-  }
-  .art-box img{
-    width:100%; height:100%; object-fit:cover; display:block;
+    background-color:var(--art-bg, #111113);
+    background-repeat:no-repeat;
   }
   .art-box .art-placeholder{
     width:100%; height:100%;
     display:flex; align-items:center; justify-content:center;
-    color:#3d3d42; font-size:13px; text-align:center; padding:20px;
+    color:var(--placeholder-color, #3d3d42); font-size:13px; text-align:center; padding:20px;
   }
   .art-box .stat-overlay{
     position:absolute; inset:0;
@@ -310,8 +312,9 @@
     font-family:'Noto Serif KR',serif;
     font-weight:900;
     font-size:110px;
-    color:rgba(242,237,225,.9);
-    text-shadow:0 4px 24px rgba(0,0,0,.6);
+    color:var(--cream);
+    opacity:.92;
+    text-shadow:0 4px 24px rgba(0,0,0,.5);
     pointer-events:none;
   }
 
@@ -324,23 +327,23 @@
     position:relative;
   }
   .sub-story:not(:first-child){
-    border-left:1px solid var(--line);
+    border-left:1px solid var(--card-line, var(--line));
   }
   .sub-story:first-child{padding-left:0;}
   .sub-story:last-child{padding-right:0;}
   .sub-headline{
     font-family:var(--headline-font, 'Noto Serif KR', serif);
     font-weight:800;
-    font-size:26px;
+    font-size:var(--sub-headline-size, 26px);
     line-height:1.28;
     color:var(--cream);
     margin:0 0 12px;
   }
   .sub-body{
     font-family:var(--body-font, 'Pretendard', sans-serif);
-    font-size:13.5px;
+    font-size:var(--sub-body-size, 13.5px);
     line-height:1.6;
-    color:#bdb7a8;
+    color:var(--subbody-color, #bdb7a8);
     margin:0 0 12px;
     white-space:pre-wrap;
   }
@@ -352,28 +355,74 @@
     aspect-ratio:16/10;
     border-radius:3px;
     overflow:hidden;
-    background:#111113;
+    background-color:var(--art-bg, #111113);
+    background-repeat:no-repeat;
   }
-  .sub-art img{width:100%; height:100%; object-fit:cover; display:block;}
   .sub-art .art-placeholder{
     width:100%; height:100%; display:flex; align-items:center; justify-content:center;
-    color:#3d3d42; font-size:11px;
+    color:var(--placeholder-color, #3d3d42); font-size:11px;
   }
 
   .card-footer{
     margin-top:40px;
     padding-top:16px;
-    border-top:1px solid var(--line);
+    border-top:1px solid var(--card-line, var(--line));
     text-align:right;
     font-size:11.5px;
-    color:#5a564d;
+    color:var(--footer-color, #5a564d);
   }
 
-  /* Theme variants */
-  #card.theme-crimson{ --maroon-bright:#a3272f; --gold:#c9a961; }
-  #card.theme-midnight{ --maroon-bright:#3a5a8c; --gold:#9fb8d9; }
-  #card.theme-emerald{ --maroon-bright:#2f6b4f; --gold:#a7c9a0; }
-  #card.theme-amber{ --maroon-bright:#a3661f; --gold:#e0b667; }
+  /* Theme variants: dark family */
+  #card.theme-crimson{
+    --card-bg:#0a0a0b; --cream:#f2ede1; --text-dim:#8d897f;
+    --body-color:#cfc9ba; --subbody-color:#bdb7a8; --footer-color:#5a564d;
+    --art-bg:#111113; --placeholder-color:#3d3d42; --card-line:#2a2a2f;
+    --maroon-bright:#a3272f; --gold:#c9a961;
+  }
+  #card.theme-midnight{
+    --card-bg:#0a0a0d; --cream:#eef1f6; --text-dim:#818793;
+    --body-color:#c6ccd6; --subbody-color:#aab0bc; --footer-color:#565b66;
+    --art-bg:#111319; --placeholder-color:#3d4048; --card-line:#262933;
+    --maroon-bright:#3a5a8c; --gold:#9fb8d9;
+  }
+  #card.theme-emerald{
+    --card-bg:#080c0a; --cream:#eef3ed; --text-dim:#7f9187;
+    --body-color:#c4d0c6; --subbody-color:#a9b8ab; --footer-color:#535f55;
+    --art-bg:#0e1512; --placeholder-color:#3a423d; --card-line:#242f28;
+    --maroon-bright:#2f6b4f; --gold:#a7c9a0;
+  }
+  #card.theme-amber{
+    --card-bg:#0c0a08; --cream:#f4eee3; --text-dim:#8f8474;
+    --body-color:#d1c4ac; --subbody-color:#b8ab92; --footer-color:#5f5646;
+    --art-bg:#161210; --placeholder-color:#443b30; --card-line:#2f2a22;
+    --maroon-bright:#a3661f; --gold:#e0b667;
+  }
+
+  /* Theme variants: light family */
+  #card.theme-ivory{
+    --card-bg:#f6f0e2; --cream:#2b2620; --text-dim:#948a72;
+    --body-color:#4a4238; --subbody-color:#5c5346; --footer-color:#a49a80;
+    --art-bg:#eae1c9; --placeholder-color:#c2b795; --card-line:#ddd1b0;
+    --maroon-bright:#a3272f; --gold:#8a5a2b;
+  }
+  #card.theme-blush{
+    --card-bg:#f8ecec; --cream:#3a2020; --text-dim:#a17a7a;
+    --body-color:#5c3a3a; --subbody-color:#6e4848; --footer-color:#b08f8f;
+    --art-bg:#f0dcdc; --placeholder-color:#d2adad; --card-line:#e6cbcb;
+    --maroon-bright:#b23a4a; --gold:#c48a3f;
+  }
+  #card.theme-sky{
+    --card-bg:#eef3f8; --cream:#1e2b38; --text-dim:#7d92a3;
+    --body-color:#33475a; --subbody-color:#46596b; --footer-color:#96a8b8;
+    --art-bg:#dde8f0; --placeholder-color:#aec2d1; --card-line:#cddbe6;
+    --maroon-bright:#2e6ba8; --gold:#3f8f7a;
+  }
+  #card.theme-sage{
+    --card-bg:#eef2ea; --cream:#1f2e1c; --text-dim:#82927a;
+    --body-color:#374a30; --subbody-color:#48593f; --footer-color:#96a68d;
+    --art-bg:#dfe8d8; --placeholder-color:#b4c4a8; --card-line:#d1ddc6;
+    --maroon-bright:#4a7a3a; --gold:#a3762c;
+  }
 
   mark.hl{
     background:var(--gold); color:#1a1408; padding:.02em .18em; border-radius:2px;
@@ -421,7 +470,12 @@
         <div class="swatch" data-theme="theme-midnight" style="background:linear-gradient(135deg,#0d0d0f,#3a5a8c)"><span>미드나잇</span></div>
         <div class="swatch" data-theme="theme-emerald" style="background:linear-gradient(135deg,#0d0d0f,#2f6b4f)"><span>에메랄드</span></div>
         <div class="swatch" data-theme="theme-amber" style="background:linear-gradient(135deg,#0d0d0f,#a3661f)"><span>앰버</span></div>
+        <div class="swatch" data-theme="theme-ivory" style="background:linear-gradient(135deg,#f6f0e2,#a3272f)"><span>아이보리</span></div>
+        <div class="swatch" data-theme="theme-blush" style="background:linear-gradient(135deg,#f8ecec,#b23a4a)"><span>블러쉬</span></div>
+        <div class="swatch" data-theme="theme-sky" style="background:linear-gradient(135deg,#eef3f8,#2e6ba8)"><span>스카이</span></div>
+        <div class="swatch" data-theme="theme-sage" style="background:linear-gradient(135deg,#eef2ea,#4a7a3a)"><span>세이지</span></div>
       </div>
+      <div class="fieldHint" style="margin-top:20px;">밝은 테마를 선택하면 글꼴 색상도 자동으로 어울리게 바뀝니다.</div>
     </div>
 
     <div class="section" id="sectionMasthead">
@@ -475,6 +529,23 @@
         </select>
       </div>
       <div class="fieldHint">제목·본문 폰트는 카드 전체(메인+서브 스토리)에 적용됩니다.</div>
+      <div class="divider"></div>
+      <div class="field">
+        <label>메인 제목 크기 (<span id="headlineSizeVal">52</span>px)</label>
+        <input type="range" id="headlineSize" min="28" max="80" value="52">
+      </div>
+      <div class="field">
+        <label>메인 본문 크기 (<span id="bodySizeVal">16</span>px)</label>
+        <input type="range" id="bodySize" min="11" max="24" value="16">
+      </div>
+      <div class="field">
+        <label>서브 제목 크기 (<span id="subHeadlineSizeVal">26</span>px)</label>
+        <input type="range" id="subHeadlineSize" min="16" max="42" value="26">
+      </div>
+      <div class="field">
+        <label>서브 본문 크기 (<span id="subBodySizeVal">13.5</span>px)</label>
+        <input type="range" id="subBodySize" min="10" max="20" step="0.5" value="13.5">
+      </div>
     </div>
 
     <div class="section" id="sectionMain">
@@ -507,6 +578,16 @@
           <button class="btn small secondary" data-zoom="mainImg" data-dir="out">－</button>
           <button class="btn small secondary" data-zoom="mainImg" data-dir="in">＋</button>
           <button class="btn small danger" data-zoom="mainImg" data-dir="remove">삭제</button>
+        </div>
+        <div id="mainPosWrap" style="display:none; margin-top:8px;">
+          <div class="field" style="margin-bottom:6px;">
+            <label>가로 위치</label>
+            <input type="range" id="mainPosX" min="0" max="100" value="50">
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <label>세로 위치</label>
+            <input type="range" id="mainPosY" min="0" max="100" value="50">
+          </div>
         </div>
       </div>
       <div class="field">
@@ -576,7 +657,7 @@ let subStories = [
     title: '트럼프-젤렌스키\n백악관 회동',
     body: '두 정상이 우크라이나 방공망 강화와 종전 협상 재개를 논의했고, 젤렌스키는 애국심 표하며 린지 그레이엄 별세에 조의를 표했다.',
     source: 'Fox News',
-    img: null, imgZoom: 1
+    img: null, imgZoom: 1, imgX: 50, imgY: 50
   },
   {
     id: 's2',
@@ -584,7 +665,7 @@ let subStories = [
     title: '랜드 폴 "파우치,\n위증하면 사면도 무효"',
     body: '폴 상원의원은 내일 청문회에서 파우치가 위증할 경우 바이든의 사전 사면이 그를 보호하지 못한다고 밝혔다.',
     source: '@EricLDaugh',
-    img: null, imgZoom: 1
+    img: null, imgZoom: 1, imgX: 50, imgY: 50
   }
 ];
 let mainImgData = { src: null, zoom: 1, x: 50, y: 50 };
@@ -624,28 +705,29 @@ function render(){
 
   const headlineFont = document.getElementById('headlineFont').value;
   const bodyFont = document.getElementById('bodyFont').value;
-  document.getElementById('card').style.setProperty('--headline-font', headlineFont);
-  document.getElementById('card').style.setProperty('--body-font', bodyFont);
+  const card = document.getElementById('card');
+  card.style.setProperty('--headline-font', headlineFont);
+  card.style.setProperty('--body-font', bodyFont);
+  card.style.setProperty('--headline-size', document.getElementById('headlineSize').value + 'px');
+  card.style.setProperty('--body-size', document.getElementById('bodySize').value + 'px');
+  card.style.setProperty('--sub-headline-size', document.getElementById('subHeadlineSize').value + 'px');
+  card.style.setProperty('--sub-body-size', document.getElementById('subBodySize').value + 'px');
 
   const statVal = document.getElementById('mainStat').value.trim();
   const statEl = document.getElementById('pMainStat');
   statEl.textContent = statVal;
   statEl.style.display = statVal ? 'flex' : 'none';
 
-  // main image
+  // main image — background-image with cover fit so it always fills the box properly
   const mainImgBox = document.getElementById('mainImg');
   const ph = mainImgBox.querySelector('.art-placeholder');
-  let img = mainImgBox.querySelector('img');
   if(mainImgData.src){
-    if(!img){
-      img = document.createElement('img');
-      mainImgBox.insertBefore(img, mainImgBox.firstChild);
-    }
-    img.src = mainImgData.src;
-    img.style.transform = `scale(${mainImgData.zoom})`;
+    mainImgBox.style.backgroundImage = `url(${mainImgData.src})`;
+    mainImgBox.style.backgroundSize = `${100 * mainImgData.zoom}%`;
+    mainImgBox.style.backgroundPosition = `${mainImgData.x}% ${mainImgData.y}%`;
     if(ph) ph.style.display='none';
   } else {
-    if(img) img.remove();
+    mainImgBox.style.backgroundImage = 'none';
     if(ph) ph.style.display='flex';
   }
 
@@ -665,8 +747,8 @@ function render(){
       <h3 class="sub-headline">${formatRich(s.title, true)}</h3>
       <p class="sub-body">${formatRich(s.body, false)}</p>
       ${s.source ? `<p class="sub-source">출처: ${escapeHtml(s.source)}</p>` : ''}
-      <div class="sub-art">
-        ${s.img ? `<img src="${s.img}" style="transform:scale(${s.imgZoom||1})">` : `<div class="art-placeholder">이미지 없음</div>`}
+      <div class="sub-art" ${s.img ? `style="background-image:url(${s.img});background-size:${100*(s.imgZoom||1)}%;background-position:${s.imgX||50}% ${s.imgY||50}%;"` : ''}>
+        ${s.img ? '' : `<div class="art-placeholder">이미지 없음</div>`}
       </div>
     `;
     grid.appendChild(div);
@@ -699,6 +781,20 @@ document.getElementById('panelMenu').addEventListener('click', (e)=>{
 document.getElementById('headlineFont').addEventListener('change', render);
 document.getElementById('bodyFont').addEventListener('change', render);
 
+/* ---------- font size sliders ---------- */
+const sizeSliders = [
+  ['headlineSize','headlineSizeVal'],
+  ['bodySize','bodySizeVal'],
+  ['subHeadlineSize','subHeadlineSizeVal'],
+  ['subBodySize','subBodySizeVal']
+];
+sizeSliders.forEach(([sliderId, labelId])=>{
+  document.getElementById(sliderId).addEventListener('input', (e)=>{
+    document.getElementById(labelId).textContent = e.target.value;
+    render();
+  });
+});
+
 /* ---------- theme ---------- */
 document.getElementById('themeSwatches').addEventListener('click', (e)=>{
   const sw = e.target.closest('.swatch');
@@ -724,9 +820,13 @@ document.getElementById('mainImgFile').addEventListener('change', (e)=>{
   reader.onload = (ev)=>{
     mainImgData.src = ev.target.result;
     mainImgData.zoom = 1;
+    mainImgData.x = 50; mainImgData.y = 50;
+    document.getElementById('mainPosX').value = 50;
+    document.getElementById('mainPosY').value = 50;
     document.getElementById('mainImgDrop').textContent = '✓ ' + file.name;
     document.getElementById('mainImgDrop').classList.add('has-img');
     document.getElementById('mainZoomWrap').style.display = 'flex';
+    document.getElementById('mainPosWrap').style.display = 'block';
     render();
   };
   reader.readAsDataURL(file);
@@ -739,12 +839,22 @@ document.getElementById('mainZoomWrap').addEventListener('click', (e)=>{
   else if(dir === 'out') mainImgData.zoom = Math.max(1, mainImgData.zoom - 0.1);
   else if(dir === 'remove'){
     mainImgData.src = null; mainImgData.zoom = 1;
+    mainImgData.x = 50; mainImgData.y = 50;
+    document.getElementById('mainPosX').value = 50;
+    document.getElementById('mainPosY').value = 50;
     document.getElementById('mainImgDrop').textContent = '클릭해서 이미지 업로드';
     document.getElementById('mainImgDrop').classList.remove('has-img');
     document.getElementById('mainImgFile').value = '';
     document.getElementById('mainZoomWrap').style.display = 'none';
+    document.getElementById('mainPosWrap').style.display = 'none';
   }
   render();
+});
+document.getElementById('mainPosX').addEventListener('input', (e)=>{
+  mainImgData.x = Number(e.target.value); render();
+});
+document.getElementById('mainPosY').addEventListener('input', (e)=>{
+  mainImgData.y = Number(e.target.value); render();
 });
 
 /* ---------- sub stories ---------- */
@@ -785,6 +895,16 @@ function renderSubPanel(){
           <button class="btn small secondary" data-subzoom="${s.id}" data-dir="out">－</button>
           <button class="btn small secondary" data-subzoom="${s.id}" data-dir="in">＋</button>
           <button class="btn small danger" data-subzoom="${s.id}" data-dir="remove">삭제</button>
+        </div>
+        <div style="margin-top:8px;">
+          <div class="field" style="margin-bottom:6px;">
+            <label>가로 위치</label>
+            <input type="range" data-subposx="${s.id}" min="0" max="100" value="${s.imgX||50}">
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <label>세로 위치</label>
+            <input type="range" data-subposy="${s.id}" min="0" max="100" value="${s.imgY||50}">
+          </div>
         </div>` : ''}
       </div>
     `;
@@ -817,7 +937,7 @@ function renderSubPanel(){
       const reader = new FileReader();
       reader.onload = (ev)=>{
         const s = subStories.find(x=>x.id === id);
-        if(s){ s.img = ev.target.result; s.imgZoom = 1; }
+        if(s){ s.img = ev.target.result; s.imgZoom = 1; s.imgX = 50; s.imgY = 50; }
         renderSubPanel(); render();
       };
       reader.readAsDataURL(file);
@@ -831,8 +951,20 @@ function renderSubPanel(){
       if(!s) return;
       if(dir === 'in') s.imgZoom = Math.min(3, (s.imgZoom||1) + 0.1);
       else if(dir === 'out') s.imgZoom = Math.max(1, (s.imgZoom||1) - 0.1);
-      else if(dir === 'remove'){ s.img = null; s.imgZoom = 1; }
+      else if(dir === 'remove'){ s.img = null; s.imgZoom = 1; s.imgX = 50; s.imgY = 50; }
       renderSubPanel(); render();
+    });
+  });
+  wrap.querySelectorAll('[data-subposx]').forEach(el=>{
+    el.addEventListener('input', (e)=>{
+      const s = subStories.find(x=>x.id === e.target.dataset.subposx);
+      if(s){ s.imgX = Number(e.target.value); render(); }
+    });
+  });
+  wrap.querySelectorAll('[data-subposy]').forEach(el=>{
+    el.addEventListener('input', (e)=>{
+      const s = subStories.find(x=>x.id === e.target.dataset.subposy);
+      if(s){ s.imgY = Number(e.target.value); render(); }
     });
   });
 }
@@ -842,30 +974,86 @@ document.getElementById('addSubBtn').addEventListener('click', ()=>{
   subStories.push({
     id: 's' + (idCounter++),
     category: '', title: '새 스토리 제목', body: '본문을 입력하세요.', source: '',
-    img: null, imgZoom: 1
+    img: null, imgZoom: 1, imgX: 50, imgY: 50
   });
   renderSubPanel(); render();
 });
 
-/* ---------- export ---------- */
+/* ---------- export (iOS / Mac Safari safe) ---------- */
+function isIOSDevice(){
+  return /iP(hone|ad|od)/.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+}
+function isSafariBrowser(){
+  return /^((?!chrome|android|crios|fxios).)*safari/i.test(navigator.userAgent);
+}
+
 document.getElementById('exportBtn').addEventListener('click', async ()=>{
   const card = document.getElementById('card');
   const wrap = document.getElementById('canvasWrap');
   const prevTransform = wrap.style.transform;
   wrap.style.transform = 'none';
   toast('이미지 생성 중...');
+
+  let canvas;
   try{
-    const canvas = await html2canvas(card, { backgroundColor: null, scale: 2, useCORS: true });
-    const link = document.createElement('a');
-    link.download = `x-today-${Date.now()}.png`;
-    link.href = canvas.toDataURL('image/png');
-    link.click();
-    toast('저장 완료!');
+    canvas = await html2canvas(card, { backgroundColor: null, scale: 2, useCORS: true });
   }catch(err){
     toast('저장 중 오류가 발생했어요');
     console.error(err);
+    wrap.style.transform = prevTransform;
+    return;
   }
   wrap.style.transform = prevTransform;
+
+  const filename = `x-today-${Date.now()}.png`;
+
+  canvas.toBlob(async (blob)=>{
+    if(!blob){
+      toast('저장 중 오류가 발생했어요');
+      return;
+    }
+
+    // 1) iPhone/iPad/Mac: try the native share sheet first — this is the most
+    //    reliable way to save an image to Photos from Safari.
+    if(navigator.canShare && window.File){
+      try{
+        const file = new File([blob], filename, { type: 'image/png' });
+        if(navigator.canShare({ files: [file] })){
+          await navigator.share({ files: [file], title: filename });
+          toast('공유 시트에서 "이미지 저장"을 선택하세요');
+          return;
+        }
+      }catch(shareErr){
+        if(shareErr && shareErr.name === 'AbortError'){
+          // user cancelled the share sheet — don't fall through with a duplicate download
+          return;
+        }
+        // otherwise fall through to the other methods below
+      }
+    }
+
+    const blobUrl = URL.createObjectURL(blob);
+
+    // 2) Standard download link — works on desktop Chrome/Firefox/Edge and modern Mac browsers.
+    const link = document.createElement('a');
+    link.download = filename;
+    link.href = blobUrl;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    // 3) iOS Safari / Mac Safari often ignore the download attribute, so also open
+    //    the image in a new tab so the user can long-press (or right-click) → save.
+    if(isIOSDevice() || isSafariBrowser()){
+      window.open(blobUrl, '_blank');
+      toast('새 탭에서 이미지를 길게 눌러 "사진에 저장"하세요');
+    } else {
+      toast('저장 완료!');
+    }
+
+    setTimeout(()=>URL.revokeObjectURL(blobUrl), 60000);
+  }, 'image/png');
 });
 
 document.getElementById('resetBtn').addEventListener('click', ()=>{
