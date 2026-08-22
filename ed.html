@@ -1,1757 +1,580 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Editorial Studio — Expanded</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800;900&family=Nanum+Myeongjo:wght@400;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/TetraTheta/RIDIBatang-subset/dist/style/RIDIBatang-subset-web.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<style>
-:root{--bg:#101218;--panel:#171a21;--panel2:#1d212a;--line:#303642;--text:#f5f6fa;--sub:#9da4b3;--accent:#b88a49;--paper:#f4f0e8;--ink:#1a1816;--danger:#ff6f86}
-*{box-sizing:border-box}
-html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-family:Pretendard Variable,Pretendard,Noto Sans KR,sans-serif}
-body{overflow:hidden}
-button,input,textarea,select{font:inherit}
-button{cursor:pointer;border:0}
-.app{height:100vh;display:grid;grid-template-columns:220px minmax(560px,1fr) 410px;grid-template-rows:56px 1fr}
-.topbar{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:1px solid var(--line);background:#0d0f14}
-.brand{display:flex;align-items:center;gap:10px;font-weight:800}.brand i{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 18px #b88a4966}
-.top-actions{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
-.btn{background:#252a34;color:#f4f6f9;border:1px solid #363d49;border-radius:8px;padding:8px 11px;font-size:12px;font-weight:700}
-.btn:hover{background:#2d333e}.btn.primary{background:var(--accent);border-color:var(--accent);color:#111}.btn.ghost{background:transparent;color:var(--sub)}
-.left,.right{background:var(--panel);min-height:0;overflow:auto}.left{border-right:1px solid var(--line);padding:14px 12px}.right{border-left:1px solid var(--line)}
-.section-title{font-size:10px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--sub);margin:0 4px 9px}
-.pages{display:flex;flex-direction:column;gap:9px}.thumb{background:#000;border:1px solid #2f3540;border-radius:9px;padding:7px;color:#ccd2dc;text-align:left}.thumb.active{border-color:var(--accent);box-shadow:0 0 0 2px #b88a4922}
-.thumb .num{font-size:9px;color:var(--sub);font-weight:800}.thumb .mini{height:154px;overflow:hidden;background:#eee;border-radius:6px;position:relative}.thumb .mini-inner{position:absolute;inset:0;transform:scale(.34);transform-origin:top left;width:294%;height:294%;pointer-events:none}.thumb-head{display:flex;justify-content:space-between;align-items:center}.thumb-delete{background:transparent;color:#7f8795;border:1px solid #3a404b;border-radius:5px;width:21px;height:19px}.thumb-delete:hover{color:var(--danger);border-color:var(--danger)}.thumb .name{font-size:10px;font-weight:800;margin-top:6px}
-.addPage{width:100%;margin-top:9px}.page-actions{display:grid;gap:6px}.limit{font-size:10px;color:var(--sub);line-height:1.45;margin:8px 4px 0}.hr{border-top:1px solid var(--line);margin:14px 0}
-.stage{min-width:0;min-height:0;overflow:auto;background:radial-gradient(circle at 50% 25%,#29242f 0,#15171c 58%,#0e1014 100%);display:flex;align-items:center;justify-content:center;padding:30px}.stage-inner{display:flex;flex-direction:column;align-items:center;gap:11px}.card-shadow{box-shadow:0 28px 70px #0009}.toolbar{display:flex;gap:7px;align-items:center}.zoom{font-size:11px;color:var(--sub);min-width:46px;text-align:center}
-.card{width:640px;height:800px;position:relative;overflow:hidden;background:var(--paper);color:var(--ink);font-family:Pretendard Variable,Pretendard,sans-serif}
-.card.dark{background:#111;color:#f4f1ea}.card,.card *{box-sizing:border-box}
-.paper{position:absolute;inset:0;padding:46px}
-.photo{position:absolute;overflow:hidden}.photo img{width:100%;height:100%;object-fit:cover;display:block;transform-origin:center;filter:var(--filter)}.photo::after{content:"";position:absolute;inset:0;background:var(--overlay,transparent);pointer-events:none}
-.photo.cover{inset:0}.photo.top{left:0;top:0;width:100%;height:54%}.photo.bottom{left:0;right:0;bottom:0;height:40%}.photo.inset{left:48px;right:48px;top:50px;height:48%;border-radius:4px}.photo.side{right:0;top:0;width:46%;height:100%}.photo.side-left{left:0;top:0;width:46%;height:100%}.photo.centered{left:48px;right:48px;top:50%;height:46%;transform:translateY(-50%);border-radius:4px}.photo.none{display:none}
-.rule{height:1px;background:currentColor;opacity:.25}.eyebrow{font-size:14px;letter-spacing:.14em;text-transform:uppercase;font-weight:800}.accent-bar{width:54px;height:4px;background:var(--accent);margin:12px 0}.title{font-size:58px;line-height:1.06;font-weight:800;letter-spacing:-.05em;white-space:pre-wrap;word-break:keep-all}.deck{margin-top:18px;font-size:20px;line-height:1.55;white-space:pre-wrap;word-break:keep-all}.byline{margin-top:18px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;opacity:.68}.folio{position:absolute;left:46px;right:46px;bottom:26px;display:flex;justify-content:space-between;font-size:10px;letter-spacing:.12em;opacity:.55}
-.contentLayer{position:absolute;z-index:20;left:var(--x);top:var(--y);width:var(--w);cursor:move}.contentLayer.selected{outline:1px dashed var(--accent);outline-offset:7px}
-.contentLayer .resize{display:none;position:absolute;right:-6px;bottom:-6px;width:10px;height:10px;background:var(--accent);border-radius:2px;cursor:nwse-resize}.contentLayer.selected .resize{display:block}
-.cover-layout .shade{position:absolute;inset:0;background:linear-gradient(90deg,#000b,transparent 70%)}.cover-layout .contentLayer{color:#fff}.cover-layout .title{font-size:72px}.cover-layout .deck{max-width:72%}
-.feature-layout .featureImage{left:48px;right:48px;top:46px;height:43%}.feature-layout .contentLayer{top:57%;left:48px}.feature-layout .contentLayer .bodyStack{margin-top:22px}
-.interview-layout{background:#e9dfd0}.interview-layout .interviewImage{right:0;top:0;width:49%;height:100%}.interview-layout .interviewPaper{left:0;top:0;right:49%;bottom:0;padding:58px 38px;position:absolute}.interview-layout .quote{font-family:Nanum Myeongjo,serif;font-size:28px;line-height:1.5;margin-top:26px}.interview-layout .qmark{font-family:Georgia,serif;font-size:76px;line-height:.4;color:var(--accent)}
-.data-layout .dataPaper{position:absolute;inset:0;padding:46px}.data-layout .header{display:flex;justify-content:space-between}.data-layout .dataTitle{font-size:45px;line-height:1.05;font-weight:900}.statGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:25px}.stat{padding:14px;border:1px solid #1d1b1924;background:#fff8;border-radius:8px}.stat .v{font-size:34px;font-weight:900}.stat .l{margin-top:4px;font-size:10px;opacity:.65}
-.bodyStack{display:flex;flex-direction:column;gap:12px}.block{font-size:14px;line-height:1.5}.block .blockTitle{font-size:10px;font-weight:900;letter-spacing:.08em;color:var(--accent);text-transform:uppercase;margin-bottom:5px}.block.summary{padding:13px;border:1px solid var(--accent);background:color-mix(in srgb,var(--accent) 8%,transparent);border-radius:9px}.block.quote{font-family:Nanum Myeongjo,serif;font-size:22px;line-height:1.5}.block.quote .author{margin-top:7px;font-family:inherit;font-size:11px;opacity:.55}.listItem{display:flex;gap:8px;margin-bottom:6px}.listNum{width:18px;height:18px;display:flex;align-items:center;justify-content:center;flex:none;border-radius:50%;background:var(--accent);color:#111;font-size:9px;font-weight:900}.timelineItem{display:flex;gap:10px}.timelineDot{width:10px;height:10px;margin-top:5px;flex:none;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 15%,transparent)}.timelineBody{flex:1}.timelineDate{font-size:10px;font-weight:900;color:var(--accent)}.qaItem{padding:10px 12px;border-radius:10px;background:#00000007;border:1px solid #00000010}.qaQ{font-weight:900}.qaA{margin-top:5px;opacity:.75}.compare{display:grid;grid-template-columns:1fr 1fr;gap:8px}.compareBox{padding:10px;border-radius:8px;background:#00000007;border:1px solid #0000000c}.compareBox.ac{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 8%,transparent)}.factItem{display:flex;gap:8px;margin-bottom:6px}.factBadge{width:22px;height:22px;display:flex;align-items:center;justify-content:center;border-radius:6px;color:#fff;font-size:11px;font-weight:900;flex:none}.sourceList{display:flex;flex-direction:column;gap:9px}.sourceItem{display:grid;grid-template-columns:22px 1fr;gap:8px}.sourceNo{font-weight:900;font-size:14px}.sourceTitle{font-weight:800;line-height:1.35}.sourceMeta{font-size:10px;opacity:.55;margin-top:2px}.sourceUrl{font-size:9px;opacity:.45;margin-top:2px;word-break:break-all}.sourceTag{display:inline-block;font-size:9px;font-weight:900;padding:2px 6px;border-radius:999px;color:#fff;background:var(--accent);margin-bottom:3px}
-.watermark{position:absolute;z-index:70;font-size:13px;font-weight:800;pointer-events:none;opacity:.7}.wm-tl{left:28px;top:28px}.wm-tr{right:28px;top:28px}.wm-bl{left:28px;bottom:28px}.wm-br{right:28px;bottom:28px}.wm-center{left:50%;top:50%;transform:translate(-50%,-50%)}.wm-custom{left:var(--wmx);top:var(--wmy);transform:translate(-50%,-50%)}
-.selectionBox{position:absolute;z-index:100;pointer-events:none;border:1px dashed var(--accent);display:none}.selectionBox.show{display:block}
-.right-tabs{display:flex;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--panel);z-index:5}.tab{flex:1;padding:12px 4px;background:transparent;color:var(--sub);font-size:10px;font-weight:900}.tab.active{color:#fff;border-bottom:2px solid var(--accent)}
-.panel{padding:15px}.panel[hidden]{display:none}.field{margin-bottom:12px}.label{font-size:10px;color:var(--sub);margin-bottom:6px;display:block;font-weight:800}.input,.select,.textarea{width:100%;background:#10131a;color:#eef1f5;border:1px solid var(--line);border-radius:7px;padding:8px 9px;font-size:11px}.textarea{min-height:76px;resize:vertical;line-height:1.5}.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.rangeRow{display:grid;grid-template-columns:1fr 42px;gap:8px;align-items:center}.range{width:100%;accent-color:var(--accent)}.rangeVal{font-size:10px;color:var(--sub);text-align:right}.seg{display:flex;border:1px solid var(--line);border-radius:7px;overflow:hidden}.seg button{flex:1;padding:7px 3px;background:#10131a;color:var(--sub);font-size:10px}.seg button.active{background:var(--accent);color:#111}.note{font-size:9px;color:var(--sub);line-height:1.5}
-.stack{display:flex;flex-direction:column;gap:6px}.stackItem{display:grid;grid-template-columns:22px 1fr auto;gap:7px;align-items:center;padding:8px;background:#10131a;border:1px solid var(--line);border-radius:7px}.stackItem.active{border-color:var(--accent);background:#b88a4914}.stackNum{font-size:9px;color:var(--sub);font-weight:900}.stackName{font-size:10px;font-weight:800}.stackActions{display:flex;gap:3px}.iconBtn{background:#20252e;color:#cbd1db;border:1px solid #343b46;border-radius:5px;width:22px;height:22px;font-size:10px}.iconBtn:hover{border-color:var(--accent)}
-.sourceEditor{display:flex;flex-direction:column;gap:8px}.sourceCard{border:1px solid var(--line);border-radius:8px;background:#10131a;padding:9px}.sourceCardHead{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}.sourceCardTitle{font-size:10px;font-weight:900}.sourceFields{display:grid;gap:6px}.sourceMiniRow{display:grid;grid-template-columns:1fr 90px;gap:6px}
-.empty{padding:18px 8px;text-align:center;color:var(--sub);font-size:10px}
-.exporting .selected,.exporting .resize,.exporting .selectionBox{display:none!important}
-@media(max-width:1100px){.app{grid-template-columns:190px minmax(450px,1fr) 350px}.card{width:520px;height:650px}.title{font-size:48px}.cover-layout .title{font-size:58px}}
-@media(max-width:860px){body{overflow:auto}.app{height:auto;min-height:100vh;grid-template-columns:1fr;grid-template-rows:56px auto auto auto}.topbar{position:sticky;top:0;z-index:100}.left{order:2;border:0}.stage{order:1;min-height:76vh}.right{order:3;border:0}.card{width:min(86vw,520px);height:calc(min(86vw,520px)*1.25)}}
-
-/* ===== PREMIUM EDITORIAL SKIN ===== */
-.card{
-  background:#f1ede4;
-  box-shadow:0 0 0 1px rgba(18,16,13,.10), inset 0 0 0 1px rgba(255,255,255,.28);
-}
-.card::before{
-  content:"";position:absolute;inset:18px;border:1px solid rgba(28,24,18,.11);
-  pointer-events:none;z-index:2;
-}
-.card.dark{background:#11100e;color:#efe9de;box-shadow:0 0 0 1px rgba(255,255,255,.08),inset 0 0 0 1px rgba(255,255,255,.02)}
-.card.dark::before{border-color:rgba(255,255,255,.10)}
-.card .eyebrow{font-size:11px;letter-spacing:.24em;font-weight:700;opacity:.62}
-.card .accent-bar{width:38px;height:2px;margin:16px 0 18px}
-.card .title{
-  font-family:RIDIBatang-subset,Nanum Myeongjo,serif!important;
-  font-weight:400;
-  letter-spacing:-.055em;
-  line-height:1.13;
-}
-.card .deck{font-size:16px;line-height:1.75;letter-spacing:-.018em;max-width:82%}
-.card .byline{font-size:9px;letter-spacing:.15em;margin-top:18px}
-.cover-layout .title{font-size:68px;line-height:1.06;font-weight:400;max-width:86%;text-shadow:0 2px 18px rgba(0,0,0,.25)}
-.cover-layout .deck{font-size:17px;line-height:1.72}
-.cover-layout .contentLayer{left:54px!important;top:118px!important;width:520px!important}
-.cover-layout .shade{background:
-  linear-gradient(90deg,rgba(0,0,0,.74) 0%,rgba(0,0,0,.34) 52%,rgba(0,0,0,.02) 100%),
-  linear-gradient(0deg,rgba(0,0,0,.18),transparent 42%)}
-.feature-layout{background:#f1ede4}
-.feature-layout .featureImage{left:44px;right:44px;top:42px;height:42%;border-radius:1px}
-.feature-layout .contentLayer{left:46px!important;top:53%!important;width:548px!important}
-.feature-layout .contentLayer::before{content:"";display:block;position:absolute;left:0;top:-22px;width:100%;height:1px;background:currentColor;opacity:.12}
-.feature-layout .bodyStack{gap:14px}
-.feature-layout .bodyStack::before{content:"";display:block;width:100%;height:1px;background:currentColor;opacity:.10;margin-bottom:2px}
-.interview-layout{background:#e5dccd}
-.interview-layout .interviewPaper{padding:55px 40px 50px 42px}
-.interview-layout .interviewPaper::before{content:"";position:absolute;left:40px;right:40px;top:34px;height:1px;background:#2b261f33}
-.interview-layout .interviewPaper .title{
-  font-size:34px!important;line-height:1.12;margin-top:20px;
-}
-.interview-layout .interviewPaper .deck{font-size:15px;line-height:1.7;max-width:100%;margin-bottom:22px}
-.interview-layout .quote{font-family:RIDIBatang-subset,Nanum Myeongjo,serif;font-size:26px;line-height:1.62}
-.interview-layout .qmark{color:#a77948;font-size:86px}
-.data-layout .dataPaper{padding:42px 46px}
-.data-layout .dataTitle{
-  font-family:RIDIBatang-subset,Nanum Myeongjo,serif!important;
-  font-weight:400;font-size:48px;letter-spacing:-.045em
-}
-.data-layout .statGrid{gap:0;margin-top:28px;border-top:1px solid #1b181433;border-bottom:1px solid #1b181433}
-.data-layout .stat{border:0;border-radius:0;background:transparent;padding:16px 15px 16px 0;border-right:1px solid #1b181422}
-.data-layout .stat:nth-child(even){padding-left:16px;border-right:0}
-.data-layout .stat .v{font-family:RIDIBatang-subset,Nanum Myeongjo,serif;font-weight:400;font-size:38px}
-.data-layout .stat .l{font-size:9px;letter-spacing:.08em;text-transform:uppercase}
-.block{letter-spacing:-.012em}
-.block.summary{
-  border:0;border-top:1px solid currentColor;border-bottom:1px solid currentColor;
-  border-radius:0;background:transparent;padding:13px 0;
-}
-.block.summary .blockTitle{font-size:9px;letter-spacing:.18em;margin-bottom:8px}
-.block.quote{font-size:24px;line-height:1.6}
-.qaItem{border-radius:0;background:transparent;border:0;border-top:1px solid rgba(20,18,15,.12);padding:10px 0}
-.compareBox{border-radius:0;padding:12px;border:1px solid rgba(20,18,15,.12);background:transparent}
-.compareBox.ac{border-color:var(--accent);background:transparent}
-.sourceList{gap:0;border-top:1px solid currentColor}
-.sourceItem{padding:10px 0;border-bottom:1px solid rgba(20,18,15,.12)}
-.sourceTag{border-radius:0;background:transparent;color:var(--accent);padding:0;font-size:8px;letter-spacing:.12em;text-transform:uppercase}
-.sourceTitle{font-family:RIDIBatang-subset,Nanum Myeongjo,serif;font-weight:400;font-size:13px}
-.sourceMeta,.sourceUrl{font-family:Pretendard Variable,Pretendard,sans-serif}
-.folio{left:46px;right:46px;bottom:25px;font-size:8px;letter-spacing:.2em}
-.watermark{font-family:Pretendard Variable,Pretendard,sans-serif;font-size:9px;letter-spacing:.18em;text-transform:uppercase}
-.fitArea{transform-origin:top left;will-change:transform}
-.contentLayer{overflow:visible}
-
-/* ============================================================
-   NEWS MAGAZINE EDITORIAL SYSTEM
-   ============================================================ */
-.card{
-  --ink:#181713;
-  --paper:#f5f1e8;
-  --muted:#6e6a62;
-  --hair:#1a181422;
-  --red:#9d2e27;
-  background:var(--paper)!important;
-  color:var(--ink)!important;
-  border-radius:0;
-  box-shadow:0 0 0 1px #0002, 0 24px 60px #0008;
-  letter-spacing:-.015em;
-}
-.card.dark{
-  --ink:#ece7dc;
-  --paper:#171614;
-  --muted:#aaa398;
-  --hair:#ffffff22;
-}
-.card::before{
-  inset:22px;
-  border:0;
-  border-top:2px solid currentColor;
-  border-bottom:1px solid currentColor;
-  opacity:.75;
-  z-index:3;
-}
-.card::after{
-  content:"";
-  position:absolute;
-  left:22px; right:22px; bottom:46px;
-  border-top:1px solid currentColor;
-  opacity:.18;
-  z-index:3;
-}
-.card .eyebrow{
-  font-family:Pretendard Variable,Pretendard,sans-serif!important;
-  font-size:8px!important;
-  letter-spacing:.24em!important;
-  text-transform:uppercase;
-  font-weight:800;
-  color:var(--muted);
-}
-.card .accent-bar{
-  width:26px;height:2px;margin:11px 0 15px;background:var(--red)!important;
-}
-.card .title,
-.cover-layout .title,
-.feature-layout .title,
-.data-layout .dataTitle,
-.interview-layout .interviewPaper .title{
-  font-family:RIDIBatang-subset,Nanum Myeongjo,serif!important;
-  font-weight:400!important;
-  letter-spacing:-.065em!important;
-  color:var(--ink)!important;
-}
-.card .deck{
-  font-family:Pretendard Variable,Pretendard,Noto Sans KR,sans-serif!important;
-  color:var(--ink);
-  font-size:13px!important;
-  line-height:1.72!important;
-  letter-spacing:-.02em!important;
-}
-.card .byline{
-  font-size:8px!important;
-  letter-spacing:.17em!important;
-  color:var(--muted)!important;
-}
-.card .folio{
-  font-size:7px!important;
-  letter-spacing:.18em!important;
-  color:var(--muted)!important;
-  bottom:29px!important;
-}
-.card .contentLayer{
-  overflow:visible;
-}
-.card .contentLayer::after{
-  content:"";
-  display:block;
-  position:absolute;
-  left:0; right:0;
-  margin-top:13px;
-  border-bottom:1px solid currentColor;
-  opacity:.12;
-}
-.card .bodyStack{
-  gap:13px!important;
-}
-.card .block{
-  color:var(--ink);
-  font-family:Pretendard Variable,Pretendard,Noto Sans KR,sans-serif;
-  font-size:11.5px;
-  line-height:1.7;
-}
-.card .blockTitle{
-  font-size:7px!important;
-  letter-spacing:.18em!important;
-  color:var(--red)!important;
-  margin-bottom:6px!important;
-}
-.card .block.summary{
-  border:0!important;
-  border-left:3px solid var(--red)!important;
-  border-radius:0!important;
-  padding:8px 10px!important;
-  background:rgba(157,46,39,.045)!important;
-}
-.card .block.quote{
-  font-family:RIDIBatang-subset,Nanum Myeongjo,serif!important;
-  font-size:17px!important;
-  line-height:1.65!important;
-  padding-top:5px;
-}
-.card .block.quote .qmark{
-  color:var(--red)!important;
-  font-family:Georgia,serif!important;
-}
-.card .author{
-  font-family:Pretendard Variable,Pretendard,sans-serif!important;
-  font-size:8px!important;
-  letter-spacing:.06em!important;
-  color:var(--muted)!important;
-}
-.card .listItem{gap:7px!important;margin-bottom:4px!important}
-.card .listNum{
-  width:17px!important;height:17px!important;
-  border-radius:0!important;
-  background:var(--ink)!important;
-  color:var(--paper)!important;
-  font-family:Pretendard Variable,Pretendard,sans-serif;
-}
-.card .timelineItem{gap:8px!important}
-.card .timelineDot{
-  width:7px!important;height:7px!important;
-  margin-top:6px!important;
-  background:var(--red)!important;
-  box-shadow:none!important;
-}
-.card .timelineDate{
-  font-size:8px!important;
-  letter-spacing:.12em;
-  color:var(--red)!important;
-}
-.card .qaItem{
-  border-top:1px solid var(--hair)!important;
-  padding:8px 0!important;
-  background:transparent!important;
-  border-radius:0!important;
-}
-.card .qaQ{font-family:RIDIBatang-subset,Nanum Myeongjo,serif;font-weight:400}
-.card .qaA{font-size:.94em;color:var(--muted)!important}
-.card .factBadge{
-  border-radius:0!important;
-  width:18px!important;height:18px!important;
-  font-size:8px!important;
-}
-.card .compare{gap:0!important}
-.card .compareBox{
-  border:0!important;
-  border-top:1px solid var(--hair)!important;
-  border-radius:0!important;
-  padding:8px 0!important;
-  background:transparent!important;
-}
-.card .compareBox.ac{border-top:2px solid var(--red)!important}
-.card .managedSources{margin-top:8px}.card .sourceList{
-  border-top:1px solid currentColor!important;
-}
-.card .sourceItem{
-  grid-template-columns:18px 1fr!important;
-  gap:6px!important;
-  padding:7px 0!important;
-  border-bottom:1px solid var(--hair)!important;
-}
-.card .sourceNo{font-size:9px!important;color:var(--muted)}
-.card .sourceTag{
-  font-size:6px!important;
-  letter-spacing:.12em!important;
-  color:var(--red)!important;
-  background:transparent!important;
-}
-.card .sourceTitle{
-  font-family:Pretendard Variable,Pretendard,sans-serif!important;
-  font-size:10px!important;
-  font-weight:750!important;
-}
-.card .sourceMeta{
-  font-size:7.5px!important;
-  color:var(--muted)!important;
-}
-.card .sourceUrl{
-  font-size:6.5px!important;
-  color:var(--muted)!important;
-}
-.photo{
-  border-radius:0!important;
-}
-.photo img{
-  filter:contrast(1.03) saturate(.88);
-}
-.cover-layout .shade{
-  background:
-    linear-gradient(90deg,rgba(0,0,0,.82) 0%,rgba(0,0,0,.48) 46%,rgba(0,0,0,.03) 100%),
-    linear-gradient(0deg,rgba(0,0,0,.4),transparent 60%)!important;
-}
-.cover-layout .contentLayer{
-  left:55px!important;
-  top:118px!important;
-  width:470px!important;
-}
-.cover-layout .contentLayer::before{
-  content:"";
-  position:absolute;
-  left:0;top:-26px;
-  width:32px;height:3px;background:var(--red);
-}
-.cover-layout .contentLayer::after{display:none}
-.cover-layout .title{
-  color:#fff!important;
-  font-size:61px!important;
-  line-height:1.06!important;
-  text-shadow:0 2px 18px #0008;
-  max-width:430px;
-}
-.cover-layout .deck{
-  color:#f2eee7!important;
-  font-size:13px!important;
-  max-width:340px;
-}
-.cover-layout .eyebrow{color:#ddd7cb!important}
-.cover-layout .byline{color:#c8c0b4!important}
-.cover-layout .accent-bar{background:#c24a42!important}
-.cover-layout .bodyStack{display:none}
-
-.feature-layout .featureImage{
-  left:45px!important;right:45px!important;top:40px!important;height:250px!important;
-}
-.feature-layout .contentLayer{
-  left:45px!important;top:313px!important;width:550px!important;
-}
-.feature-layout .contentLayer::before{
-  content:"";
-  position:absolute;left:0;right:0;top:-12px;border-top:1px solid currentColor;opacity:.28;
-}
-.feature-layout .contentLayer::after{display:none}
-.feature-layout .title{
-  font-size:42px!important;
-  line-height:1.12!important;
-  max-width:520px;
-}
-.feature-layout .deck{
-  max-width:430px;
-  margin-top:12px!important;
-}
-.feature-layout .bodyStack{
-  display:grid!important;
-  grid-template-columns:1fr 1fr;
-  column-gap:24px;
-  align-items:start;
-  margin-top:19px!important;
-}
-.feature-layout .bodyStack > .block{
-  min-width:0;
-}
-.feature-layout .bodyStack > .block:first-child{
-  grid-column:1 / -1;
-  padding-bottom:4px;
-  border-bottom:1px solid var(--hair);
-}
-.feature-layout .bodyStack > .block:not(:first-child){
-  break-inside:avoid;
-}
-
-.interview-layout .interviewImage{
-  width:46%!important;
-  filter:grayscale(.1);
-}
-.interview-layout .interviewPaper{
-  left:0!important;right:46%!important;
-  padding:56px 30px 50px 42px!important;
-}
-.interview-layout .interviewPaper::before{
-  left:42px!important;right:30px!important;top:38px!important;
-  border-top:2px solid currentColor!important;
-}
-.interview-layout .interviewPaper .title{
-  font-size:30px!important;line-height:1.12!important;
-  margin-top:22px;
-}
-.interview-layout .interviewPaper .deck{
-  font-size:12px!important;line-height:1.65!important;
-}
-.interview-layout .quote{
-  font-size:19px!important;line-height:1.62!important;
-  margin-top:20px!important;
-}
-.interview-layout .quote::after{
-  content:"";
-  display:block;margin-top:14px;border-bottom:1px solid currentColor;opacity:.15;
-}
-
-.data-layout .dataPaper{padding:42px 45px!important}
-.data-layout .header{
-  border-bottom:2px solid currentColor;
-  padding-bottom:12px;
-}
-.data-layout .dataTitle{
-  font-size:44px!important;
-  line-height:1.05!important;
-}
-.data-layout .deck{font-size:12px!important;max-width:440px}
-.data-layout .statGrid{
-  gap:0!important;
-  grid-template-columns:repeat(4,1fr)!important;
-  border-top:0!important;
-  border-bottom:1px solid var(--hair)!important;
-}
-.data-layout .stat{
-  padding:14px 12px 14px 0!important;
-  border-right:1px solid var(--hair)!important;
-  border-radius:0!important;
-}
-.data-layout .stat:last-child{border-right:0!important;padding-left:12px!important}
-.data-layout .stat:nth-child(even){padding-left:12px!important}
-.data-layout .stat .v{
-  font-size:29px!important;
-  font-family:RIDIBatang-subset,Nanum Myeongjo,serif!important;
-}
-.data-layout .stat .l{
-  font-size:7px!important;
-  line-height:1.35;
-  letter-spacing:.08em;
-}
-.data-layout .bodyStack{margin-top:16px!important}
-.data-layout .block.summary{
-  border-left:0!important;
-  border-top:1px solid currentColor!important;
-  border-bottom:1px solid currentColor!important;
-  background:transparent!important;
-}
-
-.watermark{
-  font-size:7px!important;
-  letter-spacing:.2em!important;
-  font-weight:800!important;
-}
-
-/* =========================================================
-   WEST150 DAILY — NEWS BRAND EDITORIAL VISUAL SYSTEM
-   ========================================================= */
-
-:root{
-  --news-paper:#f3eee4;
-  --news-paper-2:#ece6da;
-  --news-ink:#171715;
-  --news-muted:#777168;
-  --news-rule:#201f1b;
-  --news-red:#9f302a;
-  --news-red-soft:#9f302a18;
-  --news-white:#f4f0e8;
-}
-
-.card{
-  width:640px!important;
-  height:800px!important;
-  overflow:hidden!important;
-  border-radius:0!important;
-  background:var(--news-paper)!important;
-  color:var(--news-ink)!important;
-  box-shadow:0 32px 80px rgba(0,0,0,.45),0 0 0 1px rgba(0,0,0,.20)!important;
-  font-family:Pretendard Variable,Pretendard,Noto Sans KR,sans-serif!important;
-  position:relative!important;
-}
-.card.dark{
-  background:#171716!important;
-  color:#f0ece4!important;
-}
-
-/* page frame — not decorative, editorial registration */
-.card::before{
-  content:"";
-  position:absolute;
-  left:26px; right:26px; top:24px;
-  height:calc(100% - 48px);
-  border-top:1.5px solid currentColor;
-  border-bottom:1px solid currentColor;
-  opacity:.72;
-  pointer-events:none;
-  z-index:100;
-}
-.card::after{
-  content:"";
-  position:absolute;
-  left:26px; right:26px; bottom:52px;
-  border-top:1px solid currentColor;
-  opacity:.18;
-  pointer-events:none;
-  z-index:100;
-}
-
-/* masthead / folio */
-.card .eyebrow{
-  font-family:Pretendard Variable,Pretendard,sans-serif!important;
-  font-size:8px!important;
-  font-weight:800!important;
-  letter-spacing:.24em!important;
-  text-transform:uppercase!important;
-  color:var(--news-muted)!important;
-  opacity:1!important;
-}
-.card.dark .eyebrow{color:#a7a198!important}
-
-.card .folio{
-  left:42px!important;
-  right:42px!important;
-  bottom:29px!important;
-  font-family:Pretendard Variable,Pretendard,sans-serif!important;
-  font-size:7px!important;
-  font-weight:700!important;
-  letter-spacing:.18em!important;
-  color:var(--news-muted)!important;
-  opacity:1!important;
-  z-index:110!important;
-}
-.card.dark .folio{color:#aaa39a!important}
-
-.card .accent-bar{
-  width:34px!important;
-  height:3px!important;
-  margin:13px 0 17px!important;
-  background:var(--news-red)!important;
-  border-radius:0!important;
-}
-
-/* headline system */
-.card .title,
-.cover-layout .title,
-.feature-layout .title,
-.data-layout .dataTitle,
-.interview-layout .interviewPaper .title{
-  font-family:RIDIBatang-subset,Nanum Myeongjo,serif!important;
-  font-weight:400!important;
-  letter-spacing:-.065em!important;
-  color:var(--news-ink)!important;
-  text-shadow:none!important;
-}
-.card.dark .title,
-.card.dark .dataTitle{color:#f2ede4!important}
-
-.card .deck{
-  font-family:Pretendard Variable,Pretendard,sans-serif!important;
-  font-size:13px!important;
-  line-height:1.72!important;
-  letter-spacing:-.025em!important;
-  color:var(--news-ink)!important;
-  opacity:1!important;
-}
-.card.dark .deck{color:#ddd6cb!important}
-
-.card .byline{
-  font-family:Pretendard Variable,Pretendard,sans-serif!important;
-  font-size:8px!important;
-  font-weight:700!important;
-  letter-spacing:.16em!important;
-  color:var(--news-muted)!important;
-  opacity:1!important;
-}
-
-/* =========================================================
-   COVER — newspaper/magazine front page
-   ========================================================= */
-.cover-layout .photo{
-  inset:0!important;
-  border-radius:0!important;
-}
-.cover-layout .shade{
-  background:
-    linear-gradient(90deg,rgba(0,0,0,.88) 0%,rgba(0,0,0,.54) 42%,rgba(0,0,0,.12) 73%,rgba(0,0,0,.03) 100%),
-    linear-gradient(0deg,rgba(0,0,0,.42),transparent 46%)!important;
-}
-.cover-layout .contentLayer{
-  left:var(--x)!important;
-  top:var(--y)!important;
-  width:var(--w)!important;
-  color:#fff!important;
-}
-.cover-layout .contentLayer::before{
-  content:"";
-  position:absolute;
-  left:0;top:-32px;
-  width:45px;height:3px;
-  background:#c5483f;
-}
-.cover-layout .contentLayer::after{display:none!important}
-.cover-layout .eyebrow{color:#ddd5c9!important}
-.cover-layout .accent-bar{background:#c5483f!important}
-.cover-layout .title{
-  font-size:var(--title-size,61px);
-  line-height:1.045!important;
-  max-width:500px!important;
-  color:#fff!important;
-  letter-spacing:-.07em!important;
-}
-.cover-layout .deck{
-  margin-top:20px!important;
-  max-width:390px!important;
-  font-size:14px!important;
-  line-height:1.72!important;
-  color:#f3eee5!important;
-}
-.cover-layout .byline{color:#c7bfb3!important}
-.cover-layout .bodyStack{display:none!important}
-.cover-layout .folio{color:#d2c9bd!important}
-
-/* cover bottom kicker, generated visually */
-.cover-layout .contentLayer .eyebrow::after{
-  content:"  /  " attr(data-tone-label);
-  color:#c5483f;
-  font-size:7px;
-  letter-spacing:.18em;
-}
-
-/* =========================================================
-   FEATURE — real editorial grid
-   ========================================================= */
-.feature-layout{
-  background:var(--news-paper)!important;
-}
-.feature-layout .featureImage{
-  left:45px!important;
-  right:45px!important;
-  top:42px!important;
-  height:248px!important;
-}
-.feature-layout .contentLayer{
-  left:var(--x)!important;
-  top:var(--y)!important;
-  width:var(--w)!important;
-  color:var(--news-ink)!important;
-}
-.feature-layout .contentLayer::before{
-  content:"";
-  position:absolute;
-  left:0;right:0;top:-15px;
-  border-top:1.5px solid currentColor;
-  opacity:.80;
-}
-.feature-layout .contentLayer::after{display:none!important}
-.feature-layout .title{
-  font-size:var(--title-size,43px);
-  line-height:1.10!important;
-  max-width:530px!important;
-}
-.feature-layout .deck{
-  max-width:465px!important;
-  margin-top:13px!important;
-  font-size:12.5px!important;
-}
-.feature-layout .bodyStack{
-  display:grid!important;
-  grid-template-columns:1fr 1fr!important;
-  column-gap:25px!important;
-  align-items:start!important;
-  margin-top:20px!important;
-}
-.feature-layout .bodyStack::before{
-  content:"";
-  grid-column:1/-1;
-  display:block;
-  height:1px;
-  background:currentColor;
-  opacity:.16;
-  margin-bottom:-3px;
-}
-.feature-layout .block{
-  font-size:11px!important;
-  line-height:1.72!important;
-}
-.feature-layout .block:first-child{
-  grid-column:1/-1!important;
-  padding-bottom:6px!important;
-  border-bottom:1px solid currentColor!important;
-  border-color:rgba(30,28,24,.14)!important;
-}
-
-/* =========================================================
-   INTERVIEW — profile spread
-   ========================================================= */
-.interview-layout{
-  background:#e5ddd0!important;
-  color:#26221d!important;
-}
-.interview-layout .interviewImage{
-  right:0!important;
-  top:0!important;
-  width:45%!important;
-  height:100%!important;
-}
-.interview-layout .interviewPaper{
-  left:0!important;
-  right:45%!important;
-  top:0!important;
-  bottom:0!important;
-  padding:58px 28px 50px 43px!important;
-}
-.interview-layout .interviewPaper::before{
-  left:43px!important;
-  right:28px!important;
-  top:34px!important;
-  border-top:2px solid currentColor!important;
-  opacity:.75!important;
-}
-.interview-layout .interviewPaper::after{
-  content:"INTERVIEW";
-  position:absolute;
-  left:43px; bottom:51px;
-  font:700 7px/1 Pretendard Variable,Pretendard,sans-serif;
-  letter-spacing:.18em;
-  color:#777066;
-}
-.interview-layout .interviewPaper .title{
-  margin-top:22px!important;
-  font-size:var(--title-size,30px);
-  line-height:1.10!important;
-}
-.interview-layout .interviewPaper .deck{
-  font-size:11.5px!important;
-  line-height:1.7!important;
-  max-width:100%!important;
-}
-.interview-layout .quote{
-  margin-top:21px!important;
-  font-size:19px!important;
-  line-height:1.60!important;
-  font-family:RIDIBatang-subset,Nanum Myeongjo,serif!important;
-  padding-top:5px!important;
-}
-.interview-layout .qmark{
-  font-size:82px!important;
-  color:var(--news-red)!important;
-}
-.interview-layout .quote::after{
-  content:"";
-  display:block;
-  margin-top:16px;
-  border-bottom:1px solid rgba(30,27,22,.18);
-}
-.interview-layout .byline{
-  margin-top:14px!important;
-}
-
-/* =========================================================
-   DATA — business journal / index page
-   ========================================================= */
-.data-layout{
-  background:var(--news-paper)!important;
-}
-.data-layout .dataPaper{
-  inset:0!important;
-  padding:43px 45px!important;
-}
-.data-layout .header{
-  border-top:2px solid currentColor!important;
-  border-bottom:1px solid currentColor!important;
-  padding:10px 0 12px!important;
-}
-.data-layout .dataTitle{
-  font-size:var(--title-size,45px);
-  line-height:1.0!important;
-}
-.data-layout .deck{
-  margin-top:15px!important;
-  max-width:455px!important;
-  font-size:12px!important;
-}
-.data-layout .statGrid{
-  grid-template-columns:repeat(4,1fr)!important;
-  gap:0!important;
-  margin-top:21px!important;
-  border-top:1px solid currentColor!important;
-  border-bottom:1px solid currentColor!important;
-}
-.data-layout .stat{
-  min-width:0!important;
-  padding:14px 11px 13px 0!important;
-  border:0!important;
-  border-right:1px solid currentColor!important;
-  border-radius:0!important;
-  background:transparent!important;
-}
-.data-layout .stat + .stat{padding-left:11px!important}
-.data-layout .stat:last-child{border-right:0!important}
-.data-layout .stat .v{
-  font-family:RIDIBatang-subset,Nanum Myeongjo,serif!important;
-  font-size:27px!important;
-  font-weight:400!important;
-}
-.data-layout .stat .l{
-  margin-top:6px!important;
-  font-size:7px!important;
-  letter-spacing:.10em!important;
-  text-transform:uppercase!important;
-  line-height:1.35!important;
-}
-.data-layout .bodyStack{
-  margin-top:18px!important;
-}
-
-/* =========================================================
-   CONTENT BLOCKS — editorial, not UI cards
-   ========================================================= */
-.card .bodyStack{gap:11px!important}
-.card .block{
-  font-size:11px!important;
-  line-height:1.72!important;
-  color:var(--news-ink)!important;
-}
-.card.dark .block{color:#e5dfd5!important}
-.card .blockTitle{
-  font-size:7px!important;
-  font-weight:800!important;
-  letter-spacing:.18em!important;
-  text-transform:uppercase!important;
-  color:var(--news-red)!important;
-  margin-bottom:6px!important;
-}
-.card .block.summary{
-  border:0!important;
-  border-left:3px solid var(--news-red)!important;
-  border-radius:0!important;
-  background:transparent!important;
-  padding:6px 12px!important;
-}
-.card .block.quote{
-  font-family:RIDIBatang-subset,Nanum Myeongjo,serif!important;
-  font-size:17px!important;
-  line-height:1.62!important;
-}
-.card .qmark{color:var(--news-red)!important}
-.card .author{
-  font-family:Pretendard Variable,Pretendard,sans-serif!important;
-  font-size:8px!important;
-  font-weight:700!important;
-  letter-spacing:.05em!important;
-  color:var(--news-muted)!important;
-}
-.card .listItem{margin-bottom:4px!important}
-.card .listNum{
-  border-radius:0!important;
-  background:var(--news-ink)!important;
-  color:var(--news-paper)!important;
-}
-.card .timelineDot{
-  background:var(--news-red)!important;
-  box-shadow:none!important;
-}
-.card .timelineDate{
-  font-size:7px!important;
-  letter-spacing:.14em!important;
-  color:var(--news-red)!important;
-}
-.card .qaItem{
-  background:transparent!important;
-  border:0!important;
-  border-top:1px solid currentColor!important;
-  border-radius:0!important;
-  padding:8px 0!important;
-  opacity:.85;
-}
-.card .qaQ{
-  font-family:RIDIBatang-subset,Nanum Myeongjo,serif!important;
-  font-weight:400!important;
-}
-.card .qaA{
-  color:var(--news-muted)!important;
-  margin-top:4px!important;
-}
-.card .compare{gap:12px!important}
-.card .compareBox{
-  border:0!important;
-  border-top:1px solid currentColor!important;
-  border-radius:0!important;
-  background:transparent!important;
-  padding:8px 0!important;
-}
-.card .compareBox.ac{
-  border-top:2px solid var(--news-red)!important;
-  background:transparent!important;
-}
-.card .factItem{border-bottom:1px solid currentColor;padding:5px 0}
-.card .factBadge{border-radius:0!important}
-
-/* source rail */
-.card .sourceList{
-  border-top:1px solid currentColor!important;
-}
-.card .sourceItem{
-  grid-template-columns:18px 1fr!important;
-  gap:7px!important;
-  padding:7px 0!important;
-  border-bottom:1px solid currentColor!important;
-}
-.card .sourceNo{
-  font-size:8px!important;
-  color:var(--news-muted)!important;
-}
-.card .sourceTag{
-  background:transparent!important;
-  color:var(--news-red)!important;
-  font-size:6px!important;
-  letter-spacing:.13em!important;
-  padding:0!important;
-}
-.card .sourceTitle{
-  font-family:Pretendard Variable,Pretendard,sans-serif!important;
-  font-size:9.5px!important;
-  font-weight:800!important;
-}
-.card .sourceMeta{
-  color:var(--news-muted)!important;
-  font-size:7px!important;
-}
-.card .sourceUrl{
-  color:var(--news-muted)!important;
-  font-size:6px!important;
-}
-
-/* image is editorial photography, never card-ui */
-.card .photo,
-.card .featureImage,
-.card .interviewImage{
-  border-radius:0!important;
-}
-.card .photo img{
-  filter:contrast(1.04) saturate(.88)!important;
-}
-.card .featureImage::after{
-  content:"";
-  position:absolute;left:0;bottom:0;right:0;height:34px;
-  background:linear-gradient(transparent,rgba(0,0,0,.12));
-}
-
-/* final micro-details */
-.watermark{
-  font-size:7px!important;
-  letter-spacing:.20em!important;
-  text-transform:uppercase!important;
-  font-weight:800!important;
-}
-
-/* PHOTO LAYOUT CONTROLS — actually applied to the canvas */
-.card .photo.coverPhoto,
-.card .photo.featurePhoto,
-.card .photo.interviewPhoto,
-.card .photo.dataPhoto{border-radius:0!important}
-
-.cover-layout .photo.coverPhoto.full{inset:0!important}
-.cover-layout .photo.coverPhoto.top{left:0!important;right:0!important;top:0!important;width:100%!important;height:54%!important}
-.cover-layout .photo.coverPhoto.bottom{left:0!important;right:0!important;bottom:0!important;top:auto!important;width:100%!important;height:42%!important}
-.cover-layout .photo.coverPhoto.inset{left:44px!important;right:44px!important;top:44px!important;width:auto!important;height:47%!important}
-.cover-layout .photo.coverPhoto.side{right:0!important;left:auto!important;top:0!important;width:47%!important;height:100%!important}
-.cover-layout .photo.coverPhoto.side-left{left:0!important;right:auto!important;top:0!important;width:47%!important;height:100%!important}
-.cover-layout .photo.coverPhoto.centered{left:52px!important;right:52px!important;top:50%!important;width:auto!important;height:46%!important;transform:translateY(-50%)!important}
-.cover-layout .photo.coverPhoto.none{display:none!important}
-
-.feature-layout .photo.featurePhoto.full{inset:0!important}
-.feature-layout .photo.featurePhoto.top{left:45px!important;right:45px!important;top:42px!important;width:auto!important;height:248px!important}
-.feature-layout .photo.featurePhoto.bottom{left:45px!important;right:45px!important;top:auto!important;bottom:0!important;width:auto!important;height:250px!important}
-.feature-layout .photo.featurePhoto.inset{left:45px!important;right:45px!important;top:42px!important;width:auto!important;height:300px!important}
-.feature-layout .photo.featurePhoto.side{right:0!important;left:auto!important;top:0!important;width:43%!important;height:100%!important}
-.feature-layout .photo.featurePhoto.side-left{left:0!important;right:auto!important;top:0!important;width:43%!important;height:100%!important}
-.feature-layout .photo.featurePhoto.centered{left:65px!important;right:65px!important;top:50%!important;width:auto!important;height:360px!important;transform:translateY(-50%)!important}
-.feature-layout .photo.featurePhoto.none{display:none!important}
-
-.interview-layout .photo.interviewPhoto.full{inset:0!important}
-.interview-layout .photo.interviewPhoto.top{left:0!important;right:0!important;top:0!important;width:100%!important;height:48%!important}
-.interview-layout .photo.interviewPhoto.bottom{left:0!important;right:0!important;bottom:0!important;top:auto!important;width:100%!important;height:48%!important}
-.interview-layout .photo.interviewPhoto.inset{left:34px!important;right:34px!important;top:38px!important;width:auto!important;height:48%!important}
-.interview-layout .photo.interviewPhoto.side{right:0!important;left:auto!important;top:0!important;width:45%!important;height:100%!important}
-.interview-layout .photo.interviewPhoto.side-left{left:0!important;right:auto!important;top:0!important;width:45%!important;height:100%!important}
-.interview-layout .photo.interviewPhoto.centered{left:52px!important;right:52px!important;top:50%!important;width:auto!important;height:46%!important;transform:translateY(-50%)!important}
-.interview-layout .photo.interviewPhoto.none{display:none!important}
-
-.data-layout .photo.dataPhoto.full{inset:0!important}
-.data-layout .photo.dataPhoto.top{left:45px!important;right:45px!important;top:40px!important;width:auto!important;height:250px!important}
-.data-layout .photo.dataPhoto.bottom{left:45px!important;right:45px!important;bottom:0!important;top:auto!important;width:auto!important;height:245px!important}
-.data-layout .photo.dataPhoto.inset{left:45px!important;right:45px!important;top:38px!important;width:auto!important;height:255px!important}
-.data-layout .photo.dataPhoto.side{right:0!important;left:auto!important;top:0!important;width:42%!important;height:100%!important}
-.data-layout .photo.dataPhoto.side-left{left:0!important;right:auto!important;top:0!important;width:42%!important;height:100%!important}
-.data-layout .photo.dataPhoto.centered{left:65px!important;right:65px!important;top:50%!important;width:auto!important;height:360px!important;transform:translateY(-50%)!important}
-.data-layout .photo.dataPhoto.none{display:none!important}
-
-/* Functional photo layout map — selector-specific so template skins cannot override it */
-.card .photo.full{inset:0!important;width:auto!important;height:auto!important;left:0!important;right:0!important;top:0!important;bottom:0!important;transform:none!important}
-.card .photo.top{left:0!important;right:0!important;top:0!important;bottom:auto!important;width:100%!important;height:54%!important;transform:none!important}
-.card .photo.bottom{left:0!important;right:0!important;top:auto!important;bottom:0!important;width:100%!important;height:40%!important;transform:none!important}
-.card .photo.inset{left:48px!important;right:48px!important;top:48px!important;bottom:auto!important;width:auto!important;height:48%!important;transform:none!important}
-.card .photo.side{left:auto!important;right:0!important;top:0!important;bottom:0!important;width:46%!important;height:100%!important;transform:none!important}
-.card .photo.side-left{left:0!important;right:auto!important;top:0!important;bottom:0!important;width:46%!important;height:100%!important;transform:none!important}
-.card .photo.centered{left:48px!important;right:48px!important;top:50%!important;bottom:auto!important;width:auto!important;height:46%!important;transform:translateY(-50%)!important}
-.card .photo.none{display:none!important}
-.cover-layout .photo:not(.full){inset:auto!important}
-.cover-layout .photo.top{left:0!important;right:0!important;top:0!important;width:100%!important;height:54%!important}
-.cover-layout .photo.bottom{left:0!important;right:0!important;bottom:0!important;top:auto!important;width:100%!important;height:40%!important}
-.cover-layout .photo.inset{left:48px!important;right:48px!important;top:48px!important;width:auto!important;height:48%!important}
-.cover-layout .photo.side{right:0!important;left:auto!important;top:0!important;width:46%!important;height:100%!important}
-.cover-layout .photo.side-left{left:0!important;right:auto!important;top:0!important;width:46%!important;height:100%!important}
-.cover-layout .photo.centered{left:48px!important;right:48px!important;top:50%!important;width:auto!important;height:46%!important;transform:translateY(-50%)!important}
-
-/* FINAL LIVE TYPOGRAPHY OVERRIDES — sliders always win */
-.contentLayer .title,.cover-layout .contentLayer .title,.feature-layout .contentLayer .title{font-size:var(--title-size,58px)!important;}
-.interview-layout .interviewPaper .title{font-size:var(--title-size,32px)!important;}
-.data-layout .dataTitle{font-size:var(--title-size,45px)!important;}
-.contentLayer .block,.feature-layout .contentLayer .block{font-size:var(--body-size,14px)!important;}
-.interview-layout .interviewPaper .block,.data-layout .dataPaper .block{font-size:var(--body-size,14px)!important;}
-.block.quote{font-size:calc(var(--body-size,14px) * 1.45)!important;}
-
-.card .sourceRail{
-  position:absolute;left:45px;right:45px;bottom:66px;
-  max-height:118px;overflow:hidden;
-  z-index:55;
-}
-.sourceRail .sourceList{
-  font-family:Pretendard Variable,Pretendard,sans-serif!important;
-  border-top:1px solid currentColor!important;
-}
-.sourceRail .sourceItem{
-  padding:5px 0!important;
-  grid-template-columns:16px 1fr!important;
-}
-.sourceRail .sourceTitle{font-size:8.5px!important}
-.sourceRail .sourceMeta{font-size:6.8px!important}
-.sourceRail .sourceUrl{font-size:5.8px!important}
-.sourceRail .sourceTag{font-size:5.5px!important}
-
-/* responsive preview sizing */
-.stage{
-  overflow:auto;
-}
-.stage-inner{
-  min-width:0;
-  min-height:0;
-}
-#cardWrap{
-  transform-origin:center center;
-}
-
-/* Editorial tone skins — the selected article type is visually meaningful */
-.card.tone-breaking .eyebrow,.card.tone-politics .eyebrow,.card.tone-world .eyebrow{color:#a12e27!important}
-.card.tone-breaking .accent-bar{background:#b21f24!important;width:52px!important}
-.card.tone-breaking .title{font-family:Pretendard Variable,Pretendard,sans-serif!important;font-weight:900!important;letter-spacing:-.055em!important}
-.card.tone-breaking .deck{font-weight:700!important}
-.card.tone-politics .accent-bar{background:#2c4e72!important}
-.card.tone-world .accent-bar{background:#6d3d2c!important}
-.card.tone-business .accent-bar,.card.tone-economy .accent-bar{background:#8b6c37!important}
-.card.tone-business .dataTitle,.card.tone-economy .dataTitle{font-family:Pretendard Variable,Pretendard,sans-serif!important;font-weight:800!important;letter-spacing:-.055em!important}
-.card.tone-culture .accent-bar{background:#7b3f61!important}
-.card.tone-faith .accent-bar{background:#6f5a3b!important}
-.card.tone-faith .title{font-family:RIDIBatang-subset,Nanum Myeongjo,serif!important;font-weight:400!important}
-.card.tone-society .accent-bar{background:#575757!important}
-.card.tone-technology .accent-bar{background:#315f86!important}
-.card.tone-feature .accent-bar{width:46px!important;background:#8f6c45!important}
-.card.tone-analysis .accent-bar{width:22px!important;background:#3e3c38!important}
-.card.tone-analysis .title{font-family:RIDIBatang-subset,Nanum Myeongjo,serif!important}
-.card.tone-opinion .accent-bar{background:#6d6a62!important}
-.card.tone-opinion .title{font-family:RIDIBatang-subset,Nanum Myeongjo,serif!important}
-.card.tone-interview .accent-bar{background:#9a6e44!important}
-.card.tone-profile .accent-bar{background:#8c673f!important}
-.card.tone-factcheck .accent-bar{background:#2e7d32!important}
-.card.tone-factcheck .block.summary{border-left-color:#2e7d32!important}
-.card.tone-explainer .accent-bar{background:#4b6680!important}
-.card.tone-data .accent-bar{background:#49433b!important}
-.card.tone-review .accent-bar{background:#7c4f4f!important}
-
-.card .editorialSlug{
-  position:absolute;
-  left:45px;
-  top:29px;
-  z-index:104;
-  font:800 7px/1 Pretendard Variable,Pretendard,sans-serif;
-  letter-spacing:.20em;
-  text-transform:uppercase;
-  color:var(--news-red);
-}
-.card.dark .editorialSlug{color:#c5483f}
-.card.tone-breaking .editorialSlug{
-  font-size:8px;
-  background:#b21f24;
-  color:#fff;
-  padding:5px 7px;
-  letter-spacing:.12em;
-}
-.card.tone-factcheck .editorialSlug{
-  border:1px solid #2e7d32;
-  color:#2e7d32;
-  padding:4px 6px;
-}
-.card.tone-opinion .editorialSlug,
-.card.tone-analysis .editorialSlug{
-  font-family:RIDIBatang-subset,Nanum Myeongjo,serif;
-  letter-spacing:.08em;
-}
-.card.tone-data .editorialSlug{
-  font-variant-numeric:tabular-nums;
-}
-
-/* Strong editorial-tone differentiation */
-.card.tone-breaking .title{
-  font-family:Pretendard Variable,Pretendard,sans-serif!important;
-  font-weight:900!important;
-  letter-spacing:-.065em!important;
-}
-.card.tone-news .title{font-size:1em}
-.card.tone-politics .title{
-  font-family:RIDIBatang-subset,Nanum Myeongjo,serif!important;
-  font-weight:400!important;
-}
-.card.tone-world .title{font-size:1.02em}
-.card.tone-business .title,
-.card.tone-economy .title,
-.card.tone-data .title{
-  font-family:Pretendard Variable,Pretendard,sans-serif!important;
-  font-weight:800!important;
-  letter-spacing:-.055em!important;
-}
-.card.tone-culture .title,
-.card.tone-faith .title,
-.card.tone-analysis .title,
-.card.tone-review .title{
-  font-family:RIDIBatang-subset,Nanum Myeongjo,serif!important;
-}
-.card.tone-opinion .title{
-  font-family:RIDIBatang-subset,Nanum Myeongjo,serif!important;
-  font-size:1.04em!important;
-}
-.card.tone-interview .title,
-.card.tone-profile .title{
-  font-family:RIDIBatang-subset,Nanum Myeongjo,serif!important;
-}
-.card.tone-factcheck .title{
-  font-family:Pretendard Variable,Pretendard,sans-serif!important;
-  font-weight:900!important;
-}
-.card.tone-explainer .title{
-  font-family:Pretendard Variable,Pretendard,sans-serif!important;
-  font-weight:700!important;
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Card Editor - Apple Style</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&family=Noto+Sans+KR:wght@400;500;700&family=Roboto:wght@400;700&family=Montserrat:wght@500;700&family=Oswald:wght@500;700&family=Lora:wght@400;700&family=Poppins:wght@500;700&family=Source+Sans+3:wght@400;600&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', sans-serif; }
+    .apple-bg { background: #f5f5f7; }
+    .card-shadow { box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25); }
+    input[type=range] { accent-color: #0071e3; }
+  </style>
 </head>
-<body>
-<div class="app">
-<header class="topbar">
-  <div class="brand"><i></i>EDITORIAL STUDIO</div>
-  <div class="top-actions">
-    <button class="btn ghost" id="undo">↶</button><button class="btn ghost" id="redo">↷</button>
-    <button class="btn" id="duplicatePage">페이지 복제</button>
-    <button class="btn" id="saveJson">프로젝트 저장</button>
-    <label class="btn"><input id="loadJson" type="file" accept="application/json" hidden>불러오기</label>
-    <button class="btn" id="exportPng">현재 PNG</button><button class="btn primary" id="exportZip">전체 PNG ZIP</button>
-  </div>
-</header>
+<body class="apple-bg min-h-screen">
+  <div id="root"></div>
 
-<aside class="left">
-  <div class="section-title">Cards</div>
-  <div class="pages" id="pages"></div>
-  <div class="page-actions">
-    <button class="btn addPage" id="addPage">+ 카드 추가</button>
-    <button class="btn ghost addPage" id="resetPages">4장 프리셋</button>
-  </div>
-  <div class="limit">카드마다 템플릿·사진·텍스트·블록·출처가 독립적으로 저장됩니다.</div>
-  <div class="hr"></div>
-  <div class="section-title">Page</div>
-  <div class="field"><select class="select" id="pageTemplate"><option value="cover">Cover</option><option value="feature">Feature</option><option value="interview">Interview</option><option value="data">Data / Closing</option></select></div>
-  <div class="field"><label class="label">페이지 순서</label><div class="row"><button class="btn" id="movePageUp">↑ 위로</button><button class="btn" id="movePageDown">↓ 아래</button></div></div>
-</aside>
+  <script type="text/babel">
+    const { useState, useRef, useEffect } = React;
 
-<main class="stage">
-  <div class="stage-inner">
-    <div class="card-shadow" id="cardWrap"><div id="card"></div></div>
-    <div class="toolbar">
-      <button class="btn" id="zoomOut">−</button><span class="zoom" id="zoomLabel">100%</span><button class="btn" id="zoomIn">＋</button><button class="btn" id="fitScreen">맞춤</button>
-    </div>
-    <div class="note">WEST150 DAILY · EDITORIAL EDITION</div>
-  </div>
-</main>
+    const freeFonts = [
+      { name: 'Inter', value: 'Inter' },
+      { name: 'Playfair Display', value: 'Playfair Display' },
+      { name: 'Noto Sans KR', value: 'Noto Sans KR' },
+      { name: 'Roboto', value: 'Roboto' },
+      { name: 'Montserrat', value: 'Montserrat' },
+      { name: 'Oswald', value: 'Oswald' },
+      { name: 'Lora', value: 'Lora' },
+      { name: 'Poppins', value: 'Poppins' },
+      { name: 'Source Sans 3', value: 'Source Sans 3' },
+      { name: 'Merriweather', value: 'Merriweather' },
+    ];
 
-<aside class="right">
-  <div class="right-tabs">
-    <button class="tab active" data-tab="card">카드</button>
-    <button class="tab" data-tab="blocks">블록</button>
-    <button class="tab" data-tab="source">출처</button>
-    <button class="tab" data-tab="photo">사진</button>
-    <button class="tab" data-tab="type">타입</button>
-  </div>
+    const defaultTexts = {
+      category: { content: 'WORLD NEWS', fontSize: 13, fontFamily: 'Inter', color: '#ffffff', bold: true, highlight: null },
+      live: { content: 'LIVE UPDATE', fontSize: 12, fontFamily: 'Inter', color: '#ff3b30', bold: true, highlight: null },
+      title: { content: 'Hurricane Lala\nhits Hawaii', fontSize: 52, fontFamily: 'Playfair Display', color: '#ffffff', bold: true, highlight: null },
+      description: { content: 'Hurricane Lala is battering Hawaii with heavy rain and strong winds, prompting flood warnings and emergency rescues across the islands.', fontSize: 15, fontFamily: 'Inter', color: '#e5e5e5', bold: false, highlight: null },
+      source: { content: 'SOURCE: REUTERS', fontSize: 11, fontFamily: 'Inter', color: '#ff3b30', bold: true, highlight: null },
+      brand: { content: 'WEST150DAILY', fontSize: 11, fontFamily: 'Inter', color: '#ffffff', bold: true, highlight: null },
+    };
 
-  <section class="panel" data-panel="card">
-    <div class="field"><label class="label">상단 라벨</label><input class="input" id="eyebrow"></div>
-    <div class="field"><label class="label">제목</label><textarea class="textarea" id="title"></textarea></div>
-    <div class="field"><label class="label">리드 / 부제</label><textarea class="textarea" id="deck"></textarea></div>
-    <div class="field"><label class="label">작성자 / 메타</label><input class="input" id="byline"></div>
-    <div class="field"><label class="label">텍스트 블록 위치</label><div class="row">
-      <div><div class="rangeRow"><input class="range" id="contentX" type="range" min="20" max="560" value="48"><span class="rangeVal" id="contentXVal">48</span></div></div>
-      <div><div class="rangeRow"><input class="range" id="contentY" type="range" min="30" max="680" value="130"><span class="rangeVal" id="contentYVal">130</span></div></div>
-    </div></div>
-    <div class="field"><label class="label">텍스트 폭</label><div class="rangeRow"><input class="range" id="contentW" type="range" min="240" max="560" value="520"><span class="rangeVal" id="contentWVal">520</span></div></div>
-    <div class="field"><label class="label">빠른 배치</label><div class="seg" id="presetPos"><button data-v="top">상단</button><button data-v="middle" class="active">중앙</button><button data-v="bottom">하단</button></div></div>
-    <div class="field"><label class="label">기사 성격</label><div class="note" id="toneHint" style="margin-bottom:6px"></div><select class="select" id="editorialTone">
-<option value="breaking">Breaking / 속보</option>
-<option value="news">News / 일반뉴스</option>
-<option value="politics">Politics / 정치</option>
-<option value="world">World / 국제</option>
-<option value="business">Business / 경제</option>
-<option value="economy">Economy / 경제분석</option>
-<option value="culture">Culture / 문화</option>
-<option value="faith">Faith / 신앙·종교</option>
-<option value="society">Society / 사회</option>
-<option value="technology">Technology / 기술</option>
-<option value="feature">Feature / 기획</option>
-<option value="analysis">Analysis / 심층분석</option>
-<option value="opinion">Opinion / 오피니언</option>
-<option value="interview">Interview / 인터뷰</option>
-<option value="profile">Profile / 인물</option>
-<option value="factcheck">Fact Check / 팩트체크</option>
-<option value="explainer">Explainer / 해설</option>
-<option value="data">Data / 데이터</option>
-<option value="review">Review / 리뷰</option>
-</select></div>
-    <div class="field"><label class="label">페이지 스타일</label><div class="seg" id="themeSeg"><button data-v="light">Light</button><button data-v="dark">Dark</button></div></div>
-    <div class="row"><div class="field"><label class="label">포인트색</label><input class="input" type="text" id="accentHex" value="#B88A49"></div><div class="field"><label class="label">페이지 번호</label><input class="input" id="folioRight"></div></div>
-    <div class="field"><label class="label">워터마크</label><input class="input" id="wmText"></div>
-  </section>
+    const createNewCard = () => ({
+      id: Date.now() + Math.random(),
+      layout: 'news',
+      backgroundImage: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=1200&q=80',
+      overlayOpacity: 0.55,
+      texts: JSON.parse(JSON.stringify(defaultTexts)),
+    });
 
-  <section class="panel" data-panel="blocks" hidden>
-    <div class="field"><label class="label">콘텐츠 블록 스택</label><div id="blockStack" class="stack"></div></div>
-    <div class="row"><button class="btn" id="addBlock">+ 블록</button><button class="btn" id="duplicateBlock">복제</button></div>
-    <div class="row" style="margin-top:6px"><button class="btn" id="blockUp">↑</button><button class="btn" id="blockDown">↓</button></div>
-    <div class="field" style="margin-top:10px"><label class="label">블록 종류</label>
-      <select class="select" id="blockType">
-        <option value="text">텍스트</option><option value="summary">핵심 요약</option><option value="list">번호 리스트</option><option value="timeline">타임라인</option><option value="quote">인용문</option><option value="qa">Q&A</option><option value="factlist">팩트체크</option><option value="compare">원문 / 번역</option><option value="sources">출처</option><option value="stats">숫자 통계</option><option value="chart">막대 그래프</option>
-      </select>
-    </div>
-    <div class="field"><label class="label">블록 제목</label><input class="input" id="blockTitle"></div>
-    <div class="field"><label class="label">블록 내용</label><textarea class="textarea" id="blockData"></textarea><div class="note" id="blockHint"></div></div>
-    <div class="field"><label class="label">블록 글자 크기</label><div class="rangeRow"><input class="range" id="blockSize" type="range" min="10" max="28" value="14"><span class="rangeVal" id="blockSizeVal">14</span></div></div>
-  </section>
+    function App() {
+      const [cards, setCards] = useState([createNewCard()]);
+      const [selectedId, setSelectedId] = useState(cards[0].id);
+      const [activeTab, setActiveTab] = useState('layout');
+      const [selectedTextKey, setSelectedTextKey] = useState('title');
+      const previewRef = useRef(null);
 
-  <section class="panel" data-panel="source" hidden>
-    <div class="field"><label class="label">출처 관리</label><div class="note">여기서 추가한 출처는 선택된 카드의 출처 블록으로 실제 표시됩니다. 제목·설명·URL·유형을 수정하면 캔버스에도 즉시 반영됩니다.</div></div>
-    <div id="sourceEditor" class="sourceEditor"></div>
-    <button class="btn primary" id="addSource" style="width:100%;margin-top:7px">+ 출처 추가 / 카드에 표시</button>
-  </section>
+      const selectedCard = cards.find(c => c.id === selectedId) || cards[0];
 
-  <section class="panel" data-panel="photo" hidden>
-    <div class="field"><div id="imgPreview" style="height:140px;border-radius:8px;background:#0d0f14 center/cover no-repeat;border:1px solid var(--line)"></div></div>
-    <div class="row"><label class="btn" style="text-align:center"><input id="photoUpload" type="file" accept="image/*" hidden>사진 업로드</label><button class="btn" id="removePhoto">삭제</button></div>
-    <div class="field" style="margin-top:10px"><label class="label">레이아웃</label><div class="seg" id="photoLayout"><button data-v="full">풀</button><button data-v="top">상단</button><button data-v="bottom">하단</button><button data-v="inset">인셋</button><button data-v="side">사이드</button><button data-v="side-left">사이드↔</button><button data-v="centered">중앙</button><button data-v="none">없음</button></div></div>
-    <div class="row"><div class="field"><label class="label">초점 X</label><div class="rangeRow"><input class="range" id="photoX" type="range" min="0" max="100" value="50"><span class="rangeVal" id="photoXVal">50</span></div></div><div class="field"><label class="label">초점 Y</label><div class="rangeRow"><input class="range" id="photoY" type="range" min="0" max="100" value="50"><span class="rangeVal" id="photoYVal">50</span></div></div></div>
-    <div class="field"><label class="label">확대</label><div class="rangeRow"><input class="range" id="photoScale" type="range" min="60" max="180" value="100"><span class="rangeVal" id="photoScaleVal">100</span></div></div>
-    <div class="row"><div class="field"><label class="label">밝기</label><div class="rangeRow"><input class="range" id="brightness" type="range" min="60" max="140" value="100"><span class="rangeVal" id="brightnessVal">100</span></div></div><div class="field"><label class="label">대비</label><div class="rangeRow"><input class="range" id="contrast" type="range" min="60" max="150" value="100"><span class="rangeVal" id="contrastVal">100</span></div></div></div>
-  </section>
+      const updateCard = (updates) => {
+        setCards(prev => prev.map(c => c.id === selectedId ? { ...c, ...updates } : c));
+      };
 
-  <section class="panel" data-panel="type" hidden>
-    <div class="field"><label class="label">기본 글꼴</label><select class="select" id="baseFont"><option value="Pretendard Variable">Pretendard</option><option value="RIDIBatang-subset">리디바탕</option><option value="Noto Sans KR">Noto Sans KR</option><option value="Nanum Myeongjo">나눔명조</option><option value="Georgia">Georgia</option></select></div>
-    <div class="row"><div class="field"><label class="label">제목 글꼴</label><select class="select" id="titleFont"><option value="">기본 글꼴</option><option value="RIDIBatang-subset">리디바탕</option><option value="Nanum Myeongjo">나눔명조</option><option value="Pretendard Variable">Pretendard</option></select></div>
-    <div class="field"><label class="label">제목 크기</label><div class="rangeRow"><input class="range" id="titleSize" type="range" min="28" max="96" value="58"><span class="rangeVal" id="titleSizeVal">58</span></div></div><div class="field"><label class="label">본문 크기</label><div class="rangeRow"><input class="range" id="bodySize" type="range" min="9" max="24" value="14"><span class="rangeVal" id="bodySizeVal">14</span></div></div><div class="field"><label class="label">굵기</label><select class="select" id="titleWeight"><option value="400">Regular</option><option value="500">Medium</option><option value="600">SemiBold</option><option value="700">Bold</option><option value="800" selected>ExtraBold</option><option value="900">Black</option></select></div></div>
-    <div class="row"><div class="field"><label class="label">자간</label><div class="rangeRow"><input class="range" id="letterSpacing" type="range" min="-4" max="12" value="0"><span class="rangeVal" id="letterSpacingVal">0</span></div></div><div class="field"><label class="label">행간</label><div class="rangeRow"><input class="range" id="lineHeight" type="range" min="90" max="170" value="106"><span class="rangeVal" id="lineHeightVal">1.06</span></div></div></div>
-    <div class="row"><div class="field"><label class="label">글자색</label><input class="input" id="textColor" value="#1A1816"></div><div class="field"><label class="label">정렬</label><div class="seg" id="alignSeg"><button data-v="left">좌</button><button data-v="center">중</button><button data-v="right">우</button></div></div></div>
-  </section>
-</aside>
-</div>
+      const updateText = (key, field, value) => {
+        setCards(prev => prev.map(c => {
+          if (c.id !== selectedId) return c;
+          return {
+            ...c,
+            texts: {
+              ...c.texts,
+              [key]: { ...c.texts[key], [field]: value }
+            }
+          };
+        }));
+      };
 
-<script>
-'use strict';
-const $=id=>document.getElementById(id);
-const uid=()=>Math.random().toString(36).slice(2)+Date.now().toString(36);
-const clone=o=>JSON.parse(JSON.stringify(o));
-const storageKey='editorial-studio-expanded-v2';
+      const addCard = () => {
+        const newCard = createNewCard();
+        setCards([...cards, newCard]);
+        setSelectedId(newCard.id);
+      };
 
-const toneLabels={"breaking": "BREAKING", "news": "NEWS", "politics": "POLITICS", "world": "WORLD", "business": "BUSINESS", "economy": "ECONOMY", "culture": "CULTURE", "faith": "FAITH", "society": "SOCIETY", "technology": "TECHNOLOGY", "feature": "FEATURE", "analysis": "ANALYSIS", "opinion": "OPINION", "interview": "INTERVIEW", "profile": "PROFILE", "factcheck": "FACT CHECK", "explainer": "EXPLAINER", "data": "DATA", "review": "REVIEW"};
-const toneHints={"breaking": "속도와 긴급성이 우선인 속보형. 짧은 헤드라인과 강한 정보 위계.", "news": "기본 뉴스 리포트. 사실·출처·정보 위계를 균형 있게 구성.", "politics": "정치 기사. 제도·인물·발언 정보가 선명하게 보이는 구조.", "world": "국제 기사. 장소·기관·사건 정보와 사진 중심의 구성.", "business": "기업·산업 뉴스. 숫자와 지표를 강조.", "economy": "경제 분석. 수치·맥락·해설의 계층을 강조.", "culture": "문화 기사. 이미지와 세리프 헤드라인을 강조.", "faith": "신앙·종교 기사. 차분한 세리프와 인용 중심.", "society": "사회 기사. 팩트와 사람의 맥락을 균형 있게.", "technology": "기술 기사. 구조화된 정보와 데이터 강조.", "feature": "기획 기사. 큰 사진과 긴 호흡의 헤드라인.", "analysis": "심층분석. 긴 제목과 본문 계층, 해설 중심.", "opinion": "오피니언. 강한 제목과 인용/주장 중심.", "interview": "인터뷰. 인물·발언 중심.", "profile": "인물 소개. 사진과 약력 중심.", "factcheck": "팩트체크. 판정과 근거를 최우선.", "explainer": "해설 기사. 복잡한 내용을 단계적으로 풀어내는 구조.", "data": "데이터 기사. 숫자·차트·지표 중심.", "review": "리뷰. 평가·인용·핵심 포인트 중심."};
-const blockHints={
- text:'일반 본문. 줄바꿈으로 문단을 나눕니다.',
- summary:'핵심 결론을 짧고 강하게 정리합니다.',
- list:'한 줄에 하나. 번호가 자동으로 붙습니다.',
- timeline:'날짜 | 설명 형식으로 한 줄씩 입력합니다.',
- quote:'첫 줄=인용문, 둘째 줄=발언자(선택).',
- qa:'질문 | 답변 형식으로 한 줄씩 입력합니다.',
- factlist:'판정 | 내용 형식. 판정은 사실/부분/거짓/미확인.',
- compare:'원문과 번역을 === 로 구분합니다.',
- sources:'관리형 출처는 출처 탭에서 추가합니다. 직접 입력할 때는 제목 | 설명 | URL | 유형 형식.', stats:'값 | 라벨 형식으로 한 줄씩 입력합니다. 예: 72 | 응답률', chart:'항목 | 숫자 형식으로 입력합니다. 예: 정치 | 72'
-};
+      const duplicateCard = (id) => {
+        const original = cards.find(c => c.id === id);
+        const newCard = {
+          ...JSON.parse(JSON.stringify(original)),
+          id: Date.now() + Math.random()
+        };
+        setCards([...cards, newCard]);
+        setSelectedId(newCard.id);
+      };
 
-function makeBlock(type='text', data=''){
-  return {id:uid(),type,title:'',data,size:14};
-}
-function makeSource(over={}){ return Object.assign({id:uid(),title:'원문 기사',desc:'',url:'',type:'언론'},over); }
+      const deleteCard = (id) => {
+        if (cards.length <= 1) {
+          alert('최소 1개의 카드는 필요합니다.');
+          return;
+        }
+        const newCards = cards.filter(c => c.id !== id);
+        setCards(newCards);
+        if (selectedId === id) setSelectedId(newCards[0].id);
+      };
 
-const base={
-  eyebrow:'EDITORIAL / 2026',
-  title:'도시의 새로운 장면',
-  deck:'사람과 공간, 그리고 우리가 선택하는 삶의 방식에 관한 이야기.',
-  byline:'WORDS BY EDITORIAL TEAM',
-  body:'',
-  theme:'light',accent:'#B88A49',textColor:'#1A1816',
-  baseFont:'Pretendard Variable',titleFont:'RIDIBatang-subset',titleSize:58,titleWeight:800,bodySize:14,letterSpacing:0,lineHeight:1.06,align:'left',
-  contentX:48,contentY:130,contentW:520,
-  photo:null,photoLayout:'full',photoX:50,photoY:50,photoScale:100,brightness:100,contrast:100,
-  wmText:'@editorial',wmPos:'br',wmX:94,wmY:94,
-  folioRight:'01 / 04',editorialTone:'news',activeBlock:0,
-  blocks:[makeBlock('text','새로운 변화는 거창한 선언보다 일상의 작은 선택에서 시작된다.우리는 지금 이전과는 다른 속도로 움직이는 도시를 마주하고 있다.')],
-  sources:[makeSource({title:'Editorial Archive',url:'https://example.com',type:'기타'})]
-};
+      const downloadCard = async () => {
+        if (!previewRef.current) return;
+        try {
+          const canvas = await html2canvas(previewRef.current, {
+            scale: 3,
+            useCORS: true,
+            allowTaint: true,
+            backgroundColor: null,
+            logging: false,
+          });
+          const link = document.createElement('a');
+          link.download = `card-${Date.now()}.png`;
+          link.href = canvas.toDataURL('image/png', 1.0);
+          link.click();
+        } catch (err) {
+          alert('저장 중 오류가 발생했습니다. 이미지를 CORS 허용된 URL로 바꿔보세요.');
+          console.error(err);
+        }
+      };
 
-function page(template,over={}){
-  const p=clone(base);
-  p.id=uid();p.template=template;Object.assign(p,over);p.titleFont=p.titleFont||'RIDIBatang-subset';
-  return p;
-}
-function defaultPages(){
-  return [
-    page('cover',{title:'도시의\새로운 장면',deck:'사람과 공간, 그리고 우리가 선택하는 삶의 방식.',theme:'dark',textColor:'#FFFFFF',accent:'#D0A36A',folioRight:'01 / 04'}),
-    page('feature',{editorialTone:'feature',title:'변화는\일상에서 시작된다',deck:'새로운 도시의 풍경과 그 안에서 살아가는 사람들의 이야기.',folioRight:'02 / 04',blocks:[makeBlock('summary','변화는 작은 선택의 누적에서 시작된다.'),makeBlock('text','우리가 주목한 것은 거대한 트렌드보다 사람들의 일상 속 변화였다.')] }),
-    page('interview',{editorialTone:'interview',title:'사람을 이해하면\장면이 달라집니다',deck:'브랜드와 공간을 바라보는 디자이너의 시선.',textColor:'#382C21',accent:'#A87947',folioRight:'03 / 04',blocks:[makeBlock('quote','좋은 디자인은 사람을 먼저 이해하는 데서 시작됩니다.\김 디자이너'),makeBlock('text','공간이 달라지면 사람의 행동도 달라진다고 그는 말한다.')] }),
-    page('data',{title:'2026\Editorial Index',deck:'올해 우리가 주목할 변화의 숫자.',folioRight:'04 / 04',blocks:[makeBlock('summary','새로운 독자 · 새로운 공간 · 새로운 리듬')],sources:[makeSource({title:'Editorial Research',desc:'2026 프로젝트 집계',url:'https://example.com/research',type:'통계'})]})
-  ];
-}
-let pages=defaultPages(),active=0,zoom=1,history=[],future=[],selectedLayer=null,dragState=null;
+      // 카드 미리보기 렌더링
+      const renderCard = (card, isPreview = true) => {
+        const t = card.texts;
+        const layout = card.layout;
 
-function current(){return pages[active]}
-function snapshot(){history.push(clone(pages));if(history.length>50)history.shift();future=[]}
-function restore(arr){pages=clone(arr);active=Math.min(active,pages.length-1);selectedLayer=null;render()}
-function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
-function hexRgba(hex,a){let h=(hex||'#000').replace('#','');if(h.length===3)h=h.split('').map(x=>x+x).join('');const n=parseInt(h,16);return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${a})`}
-function font(s){return `'${s.baseFont}',Pretendard,Noto Sans KR,sans-serif`}
-function titleFont(s){return `'${s.titleFont||s.baseFont||'Pretendard Variable'}',RIDIBatang-subset,Pretendard,Noto Sans KR,sans-serif`}
-function photoHtml(s,layout){
-  if(!s.photo)return '';
-  const pos=`${s.photoX}% ${s.photoY}%`, scale=s.photoScale/100, f=`brightness(${s.brightness}%) contrast(${s.contrast}%)`;
-  return `<div class="photo ${layout}" style="--filter:${f}"><img src="${s.photo}" style="object-position:${pos};transform:scale(${scale})"></div>`;
-}
-function parseLines(v){return String(v||'').split(/\n/).map(x=>x.trim()).filter(Boolean)}
-function renderBlock(b,s){
-  const fs=(b.size!=null?b.size:(s.bodySize||14));
-  const style=`font-size:${fs}px;letter-spacing:${s.letterSpacing}px;line-height:${s.lineHeight};`;
-  const data=parseLines(b.data);
-  if(b.type==='summary')return `<div class="block summary" style="${style}">${b.title?`<div class="blockTitle">${esc(b.title)}</div>`:''}${esc(b.data).replace(/\n/g,'<br>')}</div>`;
-  if(b.type==='text')return `<div class="block" style="${style}">${esc(b.data).replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>')}</div>`;
-  if(b.type==='list')return `<div class="block" style="${style}">${data.map((x,i)=>`<div class="listItem"><span class="listNum">${i+1}</span><span>${esc(x)}</span></div>`).join('')}</div>`;
-  if(b.type==='timeline')return `<div class="block" style="${style}">${data.map(x=>{const p=x.split('|');return `<div class="timelineItem"><span class="timelineDot"></span><div class="timelineBody"><div class="timelineDate">${esc((p[0]||'').trim())}</div><div>${esc((p[1]||'').trim())}</div></div></div>`}).join('')}</div>`;
-  if(b.type==='quote'){const q=data[0]||'',a=data[1]||'';return `<div class="block quote" style="${style}"><div class="qmark">“</div>${esc(q)}${a?`<div class="author">— ${esc(a)}</div>`:''}</div>`}
-  if(b.type==='qa')return `<div class="block" style="${style}">${data.map(x=>{const p=x.split('|');return `<div class="qaItem"><div class="qaQ">${esc((p[0]||'').trim())}</div><div class="qaA">${esc((p[1]||'').trim())}</div></div>`}).join('')}</div>`;
-  if(b.type==='factlist')return `<div class="block" style="${style}">${data.map(x=>{const p=x.split('|');const t=(p[0]||'').trim();const body=(p[1]||'').trim();const m=t==='거짓'||t==='false'?'❌':t==='부분'?'~':t==='미확인'?'?':'✓';const c=t==='거짓'||t==='false'?'#c62828':t==='부분'?'#ef6c00':t==='미확인'?'#607d8b':'#2e7d32';return `<div class="factItem"><span class="factBadge" style="background:${c}">${m}</span><span>${esc(body)}</span></div>`}).join('')}</div>`;
-  if(b.type==='compare'){const parts=String(b.data||'').split(/\n?===\n?/);return `<div class="block compare" style="${style}"><div class="compareBox">${esc(parts[0]||'').replace(/\n/g,'<br>')}</div><div class="compareBox ac">${esc(parts[1]||'').replace(/\n/g,'<br>')}</div></div>`}
-  if(b.type==='sources')return (b.data&&b.data.trim())?renderSourcesFromText(b.data,s):renderSourcesFromModel(s);
-  if(b.type==='stats'){
-    return `<div class="block" style="${style}"><div class="statGrid" style="margin-top:0;grid-template-columns:repeat(2,1fr);">${data.map(x=>{
-      const p=x.split('|'),v=(p[0]||'').trim(),l=(p[1]||'').trim();
-      return `<div class="stat"><div class="v">${esc(v)}</div><div class="l">${esc(l)}</div></div>`;
-    }).join('')}</div></div>`;
-  }
-  if(b.type==='chart'){
-    const vals=data.map(x=>{const p=x.split('|');return {label:(p[0]||'').trim(),value:Number(p[1])||0}}),max=Math.max(1,...vals.map(x=>x.value));
-    return `<div class="block" style="${style}">${vals.map(x=>`<div style="display:grid;grid-template-columns:60px 1fr 28px;gap:7px;align-items:center;margin:5px 0;"><span style="font-size:9px;">${esc(x.label)}</span><span style="height:8px;background:#00000012;overflow:hidden;"><i style="display:block;height:100%;width:${Math.max(3,Math.round(x.value/max*100))}%;background:${s.accent};"></i></span><b style="font-size:9px;text-align:right;">${x.value}</b></div>`).join('')}</div>`;
-  }
+        return (
+          <div
+            ref={isPreview ? previewRef : null}
+            className="relative w-full aspect-[3/4] max-w-[380px] mx-auto overflow-hidden rounded-2xl card-shadow bg-black"
+            style={{ fontFamily: 'Inter' }}
+          >
+            {/* 배경 이미지 */}
+            <div
+              className="absolute inset-0 bg-cover bg-center"
+              style={{ backgroundImage: `url(${card.backgroundImage})` }}
+            />
+            {/* 어두운 오버레이 */}
+            <div
+              className="absolute inset-0"
+              style={{ background: `linear-gradient(to bottom, rgba(0,0,0,${card.overlayOpacity * 0.4}) 0%, rgba(0,0,0,${card.overlayOpacity}) 60%, rgba(0,0,0,0.92) 100%)` }}
+            />
 
-  return '';
-}
-function renderSourcesFromText(data,s){
-  const lines=parseLines(data);if(!lines.length)return '';
-  return `<div class="sourceList">${lines.map((l,i)=>{const p=l.split('|');const title=(p[0]||'').trim(),desc=(p[1]||'').trim(),url=(p[2]||'').trim(),type=(p[3]||'기타').trim();return `<div class="sourceItem"><div class="sourceNo">${i+1}</div><div><span class="sourceTag">${esc(type)}</span><div class="sourceTitle">${esc(title)}</div>${desc?`<div class="sourceMeta">${esc(desc)}</div>`:''}${url?`<div class="sourceUrl">${esc(url)}</div>`:''}</div></div>`}).join('')}</div>`;
-}
+            {/* 콘텐츠 */}
+            <div className="relative h-full flex flex-col p-6 text-white">
+              {/* 상단 */}
+              <div className="flex items-center gap-3 mb-auto">
+                <span
+                  style={{
+                    fontSize: t.category.fontSize,
+                    fontFamily: t.category.fontFamily,
+                    color: t.category.color,
+                    fontWeight: t.category.bold ? 700 : 400,
+                    backgroundColor: t.category.highlight || 'transparent',
+                    padding: t.category.highlight ? '2px 6px' : 0,
+                    borderRadius: 4
+                  }}
+                >
+                  {t.category.content}
+                </span>
+                <div className="w-8 h-0.5 bg-red-500" />
+              </div>
 
+              {/* 중간/하단 텍스트 영역 */}
+              <div className={`mt-auto ${layout === 'center' ? 'text-center' : ''}`}>
+                <div
+                  className="mb-2"
+                  style={{
+                    fontSize: t.live.fontSize,
+                    fontFamily: t.live.fontFamily,
+                    color: t.live.color,
+                    fontWeight: t.live.bold ? 700 : 400,
+                    backgroundColor: t.live.highlight || 'transparent',
+                    display: 'inline-block',
+                    padding: t.live.highlight ? '2px 6px' : 0,
+                    borderRadius: 4
+                  }}
+                >
+                  {t.live.content}
+                </div>
 
-function renderSourcesFromModel(s){
-  const list=(s.sources||[]).filter(x=>x && x.title && String(x.title).trim());
-  if(!list.length)return '';
-  return `<div class="sourceList managedSources">${list.map((src,i)=>{
-    const type=src.type||'기타';
-    return `<div class="sourceItem">
-      <div class="sourceNo">${i+1}</div>
-      <div>
-        <span class="sourceTag">${esc(type)}</span>
-        <div class="sourceTitle">${esc(src.title)}</div>
-        ${src.desc?`<div class="sourceMeta">${esc(src.desc)}</div>`:''}
-        ${src.url?`<div class="sourceUrl">${esc(src.url)}</div>`:''}
-      </div>
-    </div>`;
-  }).join('')}</div>`;
-}
-function renderSourceManager(s){
-  const lines=s.sources||[];
-  if(!lines.length)return '<div class="empty">등록된 출처가 없습니다.</div>';
-  return lines.map((src,i)=>`<div class="sourceCard" data-source="${src.id}">
-    <div class="sourceCardHead"><div class="sourceCardTitle">출처 ${i+1}</div><div class="stackActions"><button class="iconBtn" data-src-up="${i}">↑</button><button class="iconBtn" data-src-down="${i}">↓</button><button class="iconBtn" data-src-del="${i}">×</button></div></div>
-    <div class="sourceFields">
-      <input class="input src-title" placeholder="제목" value="${esc(src.title)}">
-      <div class="sourceMiniRow"><input class="input src-desc" placeholder="설명 / 날짜" value="${esc(src.desc)}"><select class="select src-type"><option ${src.type==='官方'||src.type==='공식'?'selected':''}>공식</option><option ${src.type==='언론'?'selected':''}>언론</option><option ${src.type==='통계'?'selected':''}>통계</option><option ${src.type==='법령'?'selected':''}>법령</option><option ${src.type==='기타'?'selected':''}>기타</option></select></div>
-      <input class="input src-url" placeholder="URL" value="${esc(src.url)}">
-    </div></div>`).join('');
-}
-function contentLayerHtml(s){
-  const x=s.contentX,y=s.contentY,w=s.contentW;
-  const common=`<div class="eyebrow" data-tone-label="${esc(toneLabels[s.editorialTone||'news']||'NEWS')}">${esc(s.eyebrow)}</div><div class="accent-bar"></div><div class="title" style="font-size:${s.titleSize}px;font-weight:${s.titleWeight};letter-spacing:${s.letterSpacing}px;line-height:${s.lineHeight};font-family:${titleFont(s)}">${esc(s.title)}</div><div class="deck" style="text-align:${s.align};">${esc(s.deck)}</div><div class="byline" style="text-align:${s.align};">${esc(s.byline)}</div>`;
-  const body=s.blocks.map(b=>renderBlock(b,s)).join('');
-  return `<div class="contentLayer ${selectedLayer==='content'?'selected':''}" data-layer="content" style="--x:${x}px;--y:${y}px;--w:${w}px;--title-size:${s.titleSize}px;--body-size:${s.bodySize||14}px;text-align:${s.align};font-family:${font(s)}"><div class="fitArea">${common}<div class="bodyStack" style="margin-top:18px">${body}</div></div><span class="resize"></span></div>`;
-}
-function normalizedPhotoLayout(s, fallback='full'){
-  const valid=['full','top','bottom','inset','side','side-left','centered','none'];
-  return valid.includes(s.photoLayout) ? s.photoLayout : fallback;
-}
-function photoForTemplate(s, fallback='full', extraClass=''){
-  const layout=normalizedPhotoLayout(s,fallback);
-  if(layout==='none' || !s.photo) return '';
-  return photoHtml(s, `${layout}${extraClass ? ' '+extraClass : ''}`);
-}
-function cardMarkup(s){
-  const dark=s.theme==='dark', cls=`card ${dark?'dark ':''}${s.template}-layout tone-${s.editorialTone||'news'}`;
-  const layout=normalizedPhotoLayout(s,'full');
-  let html='';
-  if(s.template==='cover'){
-    html=photoForTemplate(s,'full','coverPhoto')+'<div class="shade"></div>'+contentLayerHtml(s)
-  }
-  else if(s.template==='feature'){
-    html=photoForTemplate(s,'top','featurePhoto')+contentLayerHtml(s)
-  }
-  else if(s.template==='interview'){
-    html=photoForTemplate(s,'side','interviewPhoto')+`<div class="interviewPaper" style="--title-size:${s.titleSize}px;--body-size:${s.bodySize||14}px"><div class="eyebrow">${esc(s.eyebrow)}</div><div class="title" style="font-size:32px;font-weight:${s.titleWeight};font-family:${titleFont(s)}">${esc(s.title)}</div><div class="deck">${esc(s.deck)}</div>${s.blocks.map(b=>renderBlock(b,s)).join('')}</div>`;
-  } else {
-    const dataPhoto = layout==='none' ? '' : photoForTemplate(s,'top','dataPhoto');
-    html=`${dataPhoto}<div class="dataPaper" style="--title-size:${s.titleSize}px;--body-size:${s.bodySize||14}px"><div class="header"><div><div class="eyebrow">${esc(s.eyebrow)}</div><div class="dataTitle" style="font-family:${titleFont(s)}">${esc(s.title)}</div></div><div class="byline">${esc(s.folioRight)}</div></div><div class="deck">${esc(s.deck)}</div><div class="statGrid"><div class="stat"><div class="v">72%</div><div class="l">새로운 프로젝트</div></div><div class="stat"><div class="v">4.8</div><div class="l">평균 만족도</div></div><div class="stat"><div class="v">18</div><div class="l">취재 지역</div></div><div class="stat"><div class="v">36</div><div class="l">참여 인터뷰</div></div></div><div class="bodyStack" style="margin-top:22px">${s.blocks.map(b=>renderBlock(b,s)).join('')}</div></div>`;
-  }
-  const wm=s.wmText?`<div class="watermark wm-${s.wmPos}" style="color:${s.theme==='dark'?'#fff':s.textColor}">${esc(s.wmText)}</div>`:'';
-  const folio=`<div class="folio"><span>EDITORIAL</span><span>${esc(s.folioRight)}</span></div>`;
-  const managedSources=(s.sources&&s.sources.length)?`<div class="sourceRail">${renderSourcesFromModel(s)}</div>`:'';
-  const editorialSlug=`<div class="editorialSlug">${esc(toneLabels[s.editorialTone||'news']||'NEWS')}</div>`;
-  return `<div id="card" class="${cls}" data-photo-layout="${esc(layout)}" style="--accent:${s.accent};color:${s.textColor};background:${dark?'#111':'#f4f0e8'}">${html}${editorialSlug}${managedSources}${folio}${wm}</div>`;
-}
-function renderCard(){
-  const s=current();
-  s.editorialTone=s.editorialTone||'news';
-  const cardHtml=cardMarkup(s);
-  $('cardWrap').innerHTML=cardHtml;
-  $('card').style.transform=`scale(${zoom})`;
-  $('zoomLabel').textContent=Math.round(zoom*100)+'%';
-  const card=$('card');
-  if(card){
-    card.dataset.editorialTone=s.editorialTone;
-    card.dataset.template=s.template;
-    card.dataset.articleKind=s.editorialTone;card.dataset.toneLabel=toneLabels[s.editorialTone]||'NEWS';
-  }
-  bindCanvasDrag();
-  requestAnimationFrame(autoFitRenderedText);
-}
-function autoFitRenderedText(){
-  const card=$('card'); if(!card)return;
-  const s=current();
-  const fitBox=(host,maxH)=>{
-    if(!host)return;
-    const inner=host.querySelector('.fitArea')||host;
-    inner.style.transform='scale(1)';
-    inner.style.width='100%';
-    const natural=inner.scrollHeight||inner.getBoundingClientRect().height;
-    if(natural>maxH){
-      const scale=Math.max(.68, Math.min(1,maxH/natural));
-      inner.style.transform=`scale(${scale})`;
-      inner.style.width=`${100/scale}%`;
+                <h1
+                  className="leading-tight mb-4 whitespace-pre-line"
+                  style={{
+                    fontSize: t.title.fontSize,
+                    fontFamily: t.title.fontFamily,
+                    color: t.title.color,
+                    fontWeight: t.title.bold ? 700 : 400,
+                    backgroundColor: t.title.highlight || 'transparent',
+                    padding: t.title.highlight ? '4px 8px' : 0,
+                    borderRadius: 6
+                  }}
+                >
+                  {t.title.content}
+                </h1>
+
+                <div className="w-10 h-0.5 bg-red-500 mb-4" />
+
+                <p
+                  className="mb-6 leading-relaxed"
+                  style={{
+                    fontSize: t.description.fontSize,
+                    fontFamily: t.description.fontFamily,
+                    color: t.description.color,
+                    fontWeight: t.description.bold ? 700 : 400,
+                    backgroundColor: t.description.highlight || 'transparent',
+                    padding: t.description.highlight ? '4px 6px' : 0,
+                    borderRadius: 4
+                  }}
+                >
+                  {t.description.content}
+                </p>
+
+                <div className="flex justify-between items-center text-xs tracking-wider">
+                  <span
+                    style={{
+                      fontSize: t.source.fontSize,
+                      fontFamily: t.source.fontFamily,
+                      color: t.source.color,
+                      fontWeight: t.source.bold ? 700 : 400,
+                    }}
+                  >
+                    {t.source.content}
+                  </span>
+                  <span
+                    style={{
+                      fontSize: t.brand.fontSize,
+                      fontFamily: t.brand.fontFamily,
+                      color: t.brand.color,
+                      fontWeight: t.brand.bold ? 700 : 400,
+                    }}
+                  >
+                    {t.brand.content}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      };
+
+      const tabs = [
+        { id: 'layout', label: '레이아웃' },
+        { id: 'text', label: '텍스트' },
+        { id: 'image', label: '이미지' },
+        { id: 'style', label: '스타일' },
+        { id: 'export', label: '내보내기' },
+      ];
+
+      return (
+        <div className="min-h-screen flex flex-col">
+          {/* ===== 상단 메뉴 ===== */}
+          <header className="bg-white/80 backdrop-blur-xl border-b border-gray-200/80 sticky top-0 z-50">
+            <div className="max-w-[1600px] mx-auto px-6 h-14 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-sm">C</div>
+                <span className="font-semibold text-gray-900">Card Editor</span>
+              </div>
+
+              <nav className="flex items-center gap-1 bg-gray-100/80 p-1 rounded-full">
+                {tabs.map(tab => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`px-5 py-1.5 rounded-full text-sm font-medium transition-all ${
+                      activeTab === tab.id
+                        ? 'bg-white text-gray-900 shadow-sm'
+                        : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </nav>
+
+              <button
+                onClick={downloadCard}
+                className="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-full transition"
+              >
+                저장하기
+              </button>
+            </div>
+          </header>
+
+          {/* ===== 본문 ===== */}
+          <div className="flex-1 flex max-w-[1600px] mx-auto w-full">
+            {/* 왼쪽 패널 - 카드 목록 */}
+            <aside className="w-64 border-r border-gray-200/80 bg-white/50 p-4 flex flex-col">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-sm font-semibold text-gray-700">내 카드</h2>
+                <button
+                  onClick={addCard}
+                  className="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center text-lg hover:bg-blue-700"
+                >
+                  +
+                </button>
+              </div>
+
+              <div className="space-y-3 overflow-y-auto flex-1">
+                {cards.map(card => (
+                  <div
+                    key={card.id}
+                    onClick={() => setSelectedId(card.id)}
+                    className={`relative group rounded-xl overflow-hidden cursor-pointer border-2 transition ${
+                      selectedId === card.id ? 'border-blue-500' : 'border-transparent hover:border-gray-300'
+                    }`}
+                  >
+                    <div className="aspect-[3/4] bg-gray-200 relative">
+                      <div
+                        className="absolute inset-0 bg-cover bg-center opacity-80"
+                        style={{ backgroundImage: `url(${card.backgroundImage})` }}
+                      />
+                      <div className="absolute inset-0 bg-black/40" />
+                      <div className="absolute bottom-2 left-2 right-2 text-white text-xs font-medium truncate">
+                        {card.texts.title.content.split('\n')[0]}
+                      </div>
+                    </div>
+
+                    {/* 복제 / 삭제 버튼 */}
+                    <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition">
+                      <button
+                        onClick={(e) => { e.stopPropagation(); duplicateCard(card.id); }}
+                        className="w-7 h-7 bg-white/90 rounded-full text-xs flex items-center justify-center hover:bg-white"
+                        title="복제"
+                      >
+                        ⧉
+                      </button>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); deleteCard(card.id); }}
+                        className="w-7 h-7 bg-white/90 rounded-full text-xs flex items-center justify-center hover:bg-red-100 text-red-600"
+                        title="삭제"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </aside>
+
+            {/* 가운데 - 미리보기 */}
+            <main className="flex-1 flex items-center justify-center p-8 bg-gradient-to-b from-gray-50 to-gray-100">
+              {renderCard(selectedCard)}
+            </main>
+
+            {/* 오른쪽 패널 - 기능 설정 */}
+            <aside className="w-80 border-l border-gray-200/80 bg-white/70 backdrop-blur p-5 overflow-y-auto">
+              {/* ===== 레이아웃 탭 ===== */}
+              {activeTab === 'layout' && (
+                <div className="space-y-4">
+                  <h3 className="font-semibold text-gray-900 mb-3">레이아웃 선택</h3>
+                  <div className="grid grid-cols-2 gap-3">
+                    {[
+                      { id: 'news', name: '뉴스형' },
+                      { id: 'big-title', name: '큰 타이틀' },
+                      { id: 'bottom', name: '하단 텍스트' },
+                      { id: 'center', name: '중앙 집중' },
+                    ].map(l => (
+                      <button
+                        key={l.id}
+                        onClick={() => updateCard({ layout: l.id })}
+                        className={`p-4 rounded-xl border-2 text-sm font-medium transition ${
+                          selectedCard.layout === l.id
+                            ? 'border-blue-500 bg-blue-50 text-blue-700'
+                            : 'border-gray-200 hover:border-gray-300'
+                        }`}
+                      >
+                        {l.name}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="text-xs text-gray-500 mt-4">
+                    * 현재는 뉴스형 레이아웃이 기본으로 적용됩니다. 다른 레이아웃도 동일한 요소를 사용합니다.
+                  </p>
+                </div>
+              )}
+
+              {/* ===== 텍스트 탭 ===== */}
+              {activeTab === 'text' && (
+                <div className="space-y-5">
+                  <h3 className="font-semibold text-gray-900">텍스트 편집</h3>
+
+                  {/* 텍스트 선택 */}
+                  <div>
+                    <label className="text-xs font-medium text-gray-500 mb-1 block">편집할 텍스트</label>
+                    <select
+                      value={selectedTextKey}
+                      onChange={(e) => setSelectedTextKey(e.target.value)}
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white"
+                    >
+                      <option value="category">카테고리</option>
+                      <option value="live">라이브 태그</option>
+                      <option value="title">타이틀</option>
+                      <option value="description">설명</option>
+                      <option value="source">출처</option>
+                      <option value="brand">브랜드</option>
+                    </select>
+                  </div>
+
+                  {/* 내용 */}
+                  <div>
+                    <label className="text-xs font-medium text-gray-500 mb-1 block">내용</label>
+                    <textarea
+                      value={selectedCard.texts[selectedTextKey].content}
+                      onChange={(e) => updateText(selectedTextKey, 'content', e.target.value)}
+                      rows={selectedTextKey === 'title' || selectedTextKey === 'description' ? 3 : 2}
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm resize-none"
+                    />
+                  </div>
+
+                  {/* 글꼴 */}
+                  <div>
+                    <label className="text-xs font-medium text-gray-500 mb-1 block">글꼴</label>
+                    <select
+                      value={selectedCard.texts[selectedTextKey].fontFamily}
+                      onChange={(e) => updateText(selectedTextKey, 'fontFamily', e.target.value)}
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm"
+                    >
+                      {freeFonts.map(f => (
+                        <option key={f.value} value={f.value} style={{ fontFamily: f.value }}>
+                          {f.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* 크기 슬라이더 */}
+                  <div>
+                    <div className="flex justify-between text-xs font-medium text-gray-500 mb-1">
+                      <span>크기</span>
+                      <span>{selectedCard.texts[selectedTextKey].fontSize}px</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="10"
+                      max="80"
+                      value={selectedCard.texts[selectedTextKey].fontSize}
+                      onChange={(e) => updateText(selectedTextKey, 'fontSize', Number(e.target.value))}
+                      className="w-full"
+                    />
+                  </div>
+
+                  {/* 강조 */}
+                  <div className="space-y-3">
+                    <label className="text-xs font-medium text-gray-500 block">강조</label>
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => updateText(selectedTextKey, 'bold', !selectedCard.texts[selectedTextKey].bold)}
+                        className={`px-4 py-1.5 rounded-lg text-sm font-bold border ${
+                          selectedCard.texts[selectedTextKey].bold
+                            ? 'bg-gray-900 text-white border-gray-900'
+                            : 'bg-white border-gray-200'
+                        }`}
+                      >
+                        B
+                      </button>
+
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-gray-500">글자색</span>
+                        <input
+                          type="color"
+                          value={selectedCard.texts[selectedTextKey].color}
+                          onChange={(e) => updateText(selectedTextKey, 'color', e.target.value)}
+                          className="w-8 h-8 rounded cursor-pointer border-0"
+                        />
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-gray-500">하이라이트</span>
+                        <input
+                          type="color"
+                          value={selectedCard.texts[selectedTextKey].highlight || '#000000'}
+                          onChange={(e) => updateText(selectedTextKey, 'highlight', e.target.value)}
+                          className="w-8 h-8 rounded cursor-pointer border-0"
+                        />
+                        <button
+                          onClick={() => updateText(selectedTextKey, 'highlight', null)}
+                          className="text-xs text-gray-400 hover:text-gray-600"
+                        >
+                          제거
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* ===== 이미지 탭 ===== */}
+              {activeTab === 'image' && (
+                <div className="space-y-5">
+                  <h3 className="font-semibold text-gray-900">배경 이미지</h3>
+                  <div>
+                    <label className="text-xs font-medium text-gray-500 mb-1 block">이미지 URL</label>
+                    <input
+                      type="text"
+                      value={selectedCard.backgroundImage}
+                      onChange={(e) => updateCard({ backgroundImage: e.target.value })}
+                      placeholder="https://..."
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-medium text-gray-500 mb-1 block">파일 업로드</label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                          const url = URL.createObjectURL(file);
+                          updateCard({ backgroundImage: url });
+                        }
+                      }}
+                      className="w-full text-sm"
+                    />
+                  </div>
+                  <div>
+                    <div className="flex justify-between text-xs font-medium text-gray-500 mb-1">
+                      <span>오버레이 어두움</span>
+                      <span>{Math.round(selectedCard.overlayOpacity * 100)}%</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="0.2"
+                      max="0.9"
+                      step="0.05"
+                      value={selectedCard.overlayOpacity}
+                      onChange={(e) => updateCard({ overlayOpacity: Number(e.target.value) })}
+                      className="w-full"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* ===== 스타일 탭 ===== */}
+              {activeTab === 'style' && (
+                <div className="space-y-4">
+                  <h3 className="font-semibold text-gray-900">추가 스타일</h3>
+                  <p className="text-sm text-gray-500">
+                    현재 버전에서는 텍스트와 이미지 설정이 주요 스타일 컨트롤입니다.
+                    더 필요한 옵션이 있으면 말씀해 주세요.
+                  </p>
+                </div>
+              )}
+
+              {/* ===== 내보내기 탭 ===== */}
+              {activeTab === 'export' && (
+                <div className="space-y-5">
+                  <h3 className="font-semibold text-gray-900">내보내기</h3>
+                  <p className="text-sm text-gray-600">
+                    iPhone과 MacBook에서 선명하게 저장되도록 3배 해상도로 내보냅니다.
+                  </p>
+                  <button
+                    onClick={downloadCard}
+                    className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition"
+                  >
+                    PNG로 저장하기
+                  </button>
+                  <p className="text-xs text-gray-400">
+                    * 외부 이미지 URL을 사용할 경우 CORS 문제가 발생할 수 있습니다.  
+                    가능하면 직접 업로드한 이미지를 사용하세요.
+                  </p>
+                </div>
+              )}
+            </aside>
+          </div>
+        </div>
+      );
     }
-  };
-  if(s.template==='cover') fitBox(card.querySelector('.contentLayer'), card.clientHeight-s.contentY-75);
-  if(s.template==='feature') fitBox(card.querySelector('.contentLayer'), card.clientHeight-s.contentY-55);
-  if(s.template==='interview') fitBox(card.querySelector('.interviewPaper'), card.querySelector('.interviewPaper')?.clientHeight-35||500);
-  if(s.template==='data') fitBox(card.querySelector('.dataPaper'), card.querySelector('.dataPaper')?.clientHeight-45||700);
-}
 
-function renderThumbs(){const old=active;const el=$('pages');el.innerHTML=pages.map((p,i)=>`<div class="thumb ${i===old?'active':''}" data-i="${i}"><div class="thumb-head"><span class="num">${String(i+1).padStart(2,'0')}</span><button class="thumb-delete" data-del="${i}">×</button></div><div class="mini"><div class="mini-inner" id="mini-${i}"></div></div><div class="name">${['Cover','Feature','Interview','Data / Closing'][i]||'Editorial'}</div></div>`).join('');pages.forEach((p,i)=>{active=i;const m=$('mini-'+i);m.innerHTML=cardMarkup(p).replace(' id="card"','');});active=old;
-  el.querySelectorAll('.thumb').forEach(t=>t.onclick=()=>{active=+t.dataset.i;selectedLayer=null;render()});
-  el.querySelectorAll('[data-del]').forEach(b=>b.onclick=e=>{e.stopPropagation();deletePage(+b.dataset.del)});
-}
-function renderStack(){
-  const s=current(),wrap=$('blockStack');if(!wrap)return;
-  wrap.innerHTML=s.blocks.map((b,i)=>`<div class="stackItem ${i===s.activeBlock?'active':''}" data-bi="${i}"><span class="stackNum">${String(i+1).padStart(2,'0')}</span><span class="stackName">${esc(b.title||blockName(b.type))}</span><span class="stackActions"><button class="iconBtn" data-bdup="${i}">+</button><button class="iconBtn" data-bdel="${i}">×</button></span></div>`).join('');
-  wrap.querySelectorAll('.stackItem').forEach(r=>r.onclick=e=>{if(e.target.closest('button'))return;s.activeBlock=+r.dataset.bi;render()});
-  wrap.querySelectorAll('[data-bdup]').forEach(b=>b.onclick=e=>{e.stopPropagation();snapshot();const i=+b.dataset.bdup;s.blocks.splice(i+1,0,clone(s.blocks[i]));s.blocks[i+1].id=uid();s.activeBlock=i+1;render()});
-  wrap.querySelectorAll('[data-bdel]').forEach(b=>b.onclick=e=>{e.stopPropagation();snapshot();const i=+b.dataset.bdel;s.blocks.splice(i,1);if(!s.blocks.length)s.blocks=[makeBlock('text','')];s.activeBlock=Math.min(s.activeBlock,s.blocks.length-1);render()});
-}
-function blockName(t){return {text:'텍스트',summary:'핵심 요약',list:'번호 리스트',timeline:'타임라인',quote:'인용문',qa:'Q&A',factlist:'팩트체크',compare:'원문 / 번역',sources:'출처',stats:'숫자 통계',chart:'막대 그래프'}[t]||'블록'}
-function renderSources(){
-  const s=current();
-  $('sourceEditor').innerHTML=renderSourceManager(s);
-  document.querySelectorAll('[data-source]').forEach(card=>{
-    const i=s.sources.findIndex(x=>x.id===card.dataset.source);
-    if(i<0)return;
-    card.querySelector('.src-title').oninput=e=>{s.sources[i].title=e.target.value;renderCard();renderThumbs()};
-    card.querySelector('.src-desc').oninput=e=>{s.sources[i].desc=e.target.value;renderCard()};
-    card.querySelector('.src-url').oninput=e=>{s.sources[i].url=e.target.value;renderCard()};
-    card.querySelector('.src-type').onchange=e=>{s.sources[i].type=e.target.value;renderSources();renderCard()};
-  });
-  document.querySelectorAll('[data-src-up]').forEach(b=>b.onclick=()=>moveSource(+b.dataset.srcUp,-1));
-  document.querySelectorAll('[data-src-down]').forEach(b=>b.onclick=()=>moveSource(+b.dataset.srcDown,1));
-  document.querySelectorAll('[data-src-del]').forEach(b=>b.onclick=()=>{
-    snapshot();
-    s.sources.splice(+b.dataset.srcDel,1);
-    renderSources(); renderCard(); renderThumbs();
-  });
-}
-function moveSource(i,d){snapshot();const s=current(),j=i+d;if(j<0||j>=s.sources.length)return;[s.sources[i],s.sources[j]]=[s.sources[j],s.sources[i]];renderSources();renderCard();renderThumbs()}
-function syncForm(){
-  const s=current();$('pageTemplate').value=s.template;$('eyebrow').value=s.eyebrow;$('title').value=s.title;$('deck').value=s.deck;$('byline').value=s.byline;$('contentX').value=s.contentX;$('contentY').value=s.contentY;$('contentW').value=s.contentW;
-  $('contentXVal').textContent=s.contentX;$('contentYVal').textContent=s.contentY;$('contentWVal').textContent=s.contentW;$('editorialTone').value=s.editorialTone||'news';if($('toneHint'))$('toneHint').textContent=toneHints[s.editorialTone||'news']||'';$('themeSeg').querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.v===s.theme));$('accentHex').value=s.accent;$('folioRight').value=s.folioRight;$('wmText').value=s.wmText;
-  $('imgPreview').style.backgroundImage=s.photo?`url("${s.photo}")`:'none';$('photoX').value=s.photoX;$('photoY').value=s.photoY;$('photoScale').value=s.photoScale;$('brightness').value=s.brightness;$('contrast').value=s.contrast;$('photoXVal').textContent=s.photoX;$('photoYVal').textContent=s.photoY;$('photoScaleVal').textContent=s.photoScale;$('brightnessVal').textContent=s.brightness;$('contrastVal').textContent=s.contrast;
-  $('photoLayout').querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.v===s.photoLayout));$('baseFont').value=s.baseFont;$('titleFont').value=s.titleFont||'';$('titleSize').value=s.titleSize;$('titleSizeVal').textContent=s.titleSize;$('bodySize').value=s.bodySize||14;$('bodySizeVal').textContent=s.bodySize||14;$('titleWeight').value=s.titleWeight;$('letterSpacing').value=s.letterSpacing;$('letterSpacingVal').textContent=s.letterSpacing;$('lineHeight').value=Math.round(s.lineHeight*100);$('lineHeightVal').textContent=s.lineHeight.toFixed(2);$('textColor').value=s.textColor;
-  $('alignSeg').querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.v===s.align));const b=activeBlock();$('blockType').value=b.type;$('blockTitle').value=b.title||'';$('blockData').value=b.data||'';$('blockSize').value=b.size||14;$('blockSizeVal').textContent=b.size||14;$('blockHint').textContent=blockHints[b.type]||'';
-}
-function render(){renderCard();renderThumbs();renderStack();renderSources();syncForm()}
-function updateText(key,val,commit=false){if(commit)snapshot();current()[key]=val;render()}
-function bindInput(id,key,parse=v=>v){
-  $(id).addEventListener('input',e=>{
-    const s=current();
-    s[key]=parse(e.target.value);
-    const card=$('card');
-    const layer=card?.querySelector('.contentLayer');
-    if(id==='contentX'||id==='contentY'||id==='contentW'){
-      if(layer){
-        layer.style.setProperty('--x',s.contentX+'px');
-        layer.style.setProperty('--y',s.contentY+'px');
-        layer.style.setProperty('--w',s.contentW+'px');
-      }
-    }else if(id==='titleSize'){
-      if(layer)layer.style.setProperty('--title-size',s.titleSize+'px');
-      const extra=card?.querySelectorAll('.interviewPaper,.dataPaper');
-      extra?.forEach(el=>el.style.setProperty('--title-size',s.titleSize+'px'));
-    }else if(id==='bodySize'){
-      if(layer)layer.style.setProperty('--body-size',s.bodySize+'px');
-      const extra=card?.querySelectorAll('.interviewPaper,.dataPaper');
-      extra?.forEach(el=>el.style.setProperty('--body-size',s.bodySize+'px'));
-      /* bodySize controls the entire editorial body layer, not just the selected block */
-      card?.querySelectorAll('.contentLayer .deck,.contentLayer .byline').forEach(el=>{
-        if(el.classList.contains('deck')) el.style.fontSize=Math.max(11,s.bodySize*.95)+'px';
-      });
-    }else{
-      renderCard();
-      renderThumbs();
-    }
-    syncForm();
-  })
-}
-
-function addPage(){snapshot();const p=page('feature',{title:'새 에디토리얼 카드',folioRight:`${pages.length+1} / ${pages.length+1}`});p.blocks=[makeBlock('summary','핵심 메시지를 입력하세요.')];pages.push(p);active=pages.length-1;normalizeFolios();render()}
-function duplicatePage(){snapshot();const p=clone(current());p.id=uid();p.blocks=(p.blocks||[]).map(b=>Object.assign({},b,{id:uid()}));p.sources=(p.sources||[]).map(s=>Object.assign({},s,{id:uid()}));pages.splice(active+1,0,p);active++;normalizeFolios();render()}
-function deletePage(i){if(pages.length<=1){alert('최소 1장의 카드는 남겨야 합니다.');return}snapshot();pages.splice(i,1);active=Math.min(active,pages.length-1);normalizeFolios();render()}
-function normalizeFolios(){pages.forEach((p,i)=>p.folioRight=`${String(i+1).padStart(2,'0')} / ${String(pages.length).padStart(2,'0')}`)}
-function movePage(d){snapshot();const j=active+d;if(j<0||j>=pages.length)return;[pages[active],pages[j]]=[pages[j],pages[active]];active=j;normalizeFolios();render()}
-function addBlock(){snapshot();const s=current();const b=makeBlock('summary','핵심 요약을 입력하세요.');s.blocks.splice(s.activeBlock+1,0,b);s.activeBlock++;render()}
-function duplicateBlock(){snapshot();const s=current(),b=s.blocks[s.activeBlock];s.blocks.splice(s.activeBlock+1,0,Object.assign({},clone(b),{id:uid()}));s.activeBlock++;render()}
-function moveBlock(d){snapshot();const s=current(),i=s.activeBlock,j=i+d;if(j<0||j>=s.blocks.length)return;[s.blocks[i],s.blocks[j]]=[s.blocks[j],s.blocks[i]];s.activeBlock=j;render()}
-
-function bindCanvasDrag(){
- const card=$('card'),layer=card?.querySelector('.contentLayer');if(!layer)return;
- layer.onpointerdown=e=>{
-   if(e.target.classList.contains('resize'))return;
-   snapshot();
-   selectedLayer='content';
-   const s=current();
-   dragState={sx:e.clientX,sy:e.clientY,x:s.contentX,y:s.contentY,el:layer};
-   layer.classList.add('selected');
-   layer.setPointerCapture(e.pointerId);
-   e.preventDefault();
- };
- layer.onpointermove=e=>{
-   if(!dragState)return;
-   const k=dragState,s=current();
-   s.contentX=Math.max(0,Math.min(590,k.x+(e.clientX-k.sx)/zoom));
-   s.contentY=Math.max(20,Math.min(720,k.y+(e.clientY-k.sy)/zoom));
-   layer.style.setProperty('--x',s.contentX+'px');
-   layer.style.setProperty('--y',s.contentY+'px');
-   const xVal=$('contentXVal'),yVal=$('contentYVal');
-   if(xVal)xVal.textContent=Math.round(s.contentX);
-   if(yVal)yVal.textContent=Math.round(s.contentY);
-   const xRange=$('contentX'),yRange=$('contentY');
-   if(xRange)xRange.value=s.contentX;
-   if(yRange)yRange.value=s.contentY;
-   e.preventDefault();
- };
- const end=()=>{dragState=null};
- layer.onpointerup=end;layer.onpointercancel=end;layer.onclick=()=>{selectedLayer='content';layer.classList.add('selected')};
-}
-// Canvas click handler must be delegated because #card is rebuilt on every render.
-document.addEventListener('click',e=>{
-  const card=e.target.closest('#card');
-  if(card && e.target===card){selectedLayer=null;const layer=card.querySelector('.contentLayer');if(layer)layer.classList.remove('selected');}
-});
-document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===t));document.querySelectorAll('.panel').forEach(p=>p.hidden=p.dataset.panel!==t.dataset.tab)});
-
-bindInput('eyebrow','eyebrow');bindInput('title','title');bindInput('deck','deck');bindInput('byline','byline');bindInput('contentX','contentX',Number);bindInput('contentY','contentY',Number);bindInput('contentW','contentW',Number);
-bindInput('photoX','photoX',Number);bindInput('photoY','photoY',Number);bindInput('photoScale','photoScale',Number);bindInput('brightness','brightness',Number);bindInput('contrast','contrast',Number);
-bindInput('titleSize','titleSize',Number);bindInput('bodySize','bodySize',Number);bindInput('titleWeight','titleWeight',Number);bindInput('letterSpacing','letterSpacing',Number);bindInput('lineHeight','lineHeight',v=>Number(v)/100);
-bindInput('accentHex','accentHex');$('editorialTone').addEventListener('change',e=>{snapshot();current().editorialTone=e.target.value;render()});bindInput('folioRight','folioRight');bindInput('wmText','wmText');bindInput('textColor','textColor');bindInput('baseFont','baseFont');bindInput('titleFont','titleFont');
-
-const blockSamples={
-  text:'본문 내용을 입력하세요.\n두 번째 문단을 입력하세요.',
-  summary:'이 기사의 핵심 결론을 한 문장으로 정리하세요.',
-  list:'첫 번째 핵심 내용\n두 번째 핵심 내용\n세 번째 핵심 내용',
-  timeline:'2026.08 | 첫 번째 사건\n2026.09 | 두 번째 사건\n2026.10 | 다음 단계',
-  quote:'인상적인 인용문을 입력하세요.\n발언자 이름',
-  qa:'질문을 입력하세요 | 답변을 입력하세요.\n두 번째 질문 | 두 번째 답변',
-  factlist:'사실 | 공식 자료로 확인된 내용\n부분 | 맥락 일부가 빠진 주장\n거짓 | 확인 결과 사실과 다름',
-  compare:'원문 또는 기존 내용\n===\n번역 또는 새로운 내용',
-  sources:''
-};
-function activeBlock(){
-  const s=current();
-  if(!Array.isArray(s.blocks)||!s.blocks.length)s.blocks=[makeBlock('text','')];
-  s.activeBlock=Math.max(0,Math.min(Number(s.activeBlock)||0,s.blocks.length-1));
-  return s.blocks[s.activeBlock];
-}
-$('blockData').addEventListener('input',e=>{
-  const b=activeBlock();
-  b.data=e.target.value;
-  renderCard();
-  renderStack();
-});
-$('blockSize').addEventListener('input',e=>{
-  const b=activeBlock();
-  b.size=Number(e.target.value)||14;
-  $('blockSizeVal').textContent=b.size;
-  renderCard();
-  renderStack();
-});
-$('blockType').addEventListener('change',e=>{
-  snapshot();
-  const b=activeBlock();
-  const next=e.target.value;
-  b.type=next;
-  if(!(b.data||'').trim()) b.data=blockSamples[next]||'';
-  if(next==='sources') b.data='';
-  b.title=b.title||'';
-  render();
-});
-$('blockTitle').addEventListener('input',e=>{
-  activeBlock().title=e.target.value;
-  renderCard();
-  renderStack();
-});
-$('addBlock').onclick=addBlock;
-$('duplicateBlock').onclick=duplicateBlock;
-$('blockUp').onclick=()=>moveBlock(-1);
-$('blockDown').onclick=()=>moveBlock(1);
-
-document.querySelectorAll('#themeSeg button').forEach(b=>b.onclick=()=>{snapshot();current().theme=b.dataset.v;render()});
-document.querySelectorAll('#alignSeg button').forEach(b=>b.onclick=()=>{snapshot();current().align=b.dataset.v;render()});
-document.querySelectorAll('#photoLayout button').forEach(b=>b.onclick=()=>{
-  if(current().photoLayout===b.dataset.v)return;
-  snapshot();
-  current().photoLayout=b.dataset.v;
-  render();
-});
-document.querySelectorAll('#presetPos button').forEach(b=>b.onclick=()=>{snapshot();current().contentY=b.dataset.v==='top'?80:b.dataset.v==='middle'?290:520;render()});
-$('pageTemplate').onchange=e=>{snapshot();current().template=e.target.value;render()};
-$('addSource').onclick=()=>{
-  snapshot();
-  const s=current();
-  const newSource=makeSource({title:'새 출처'});
-  s.sources.push(newSource);
-  let idx=s.blocks.findIndex(b=>b.type==='sources');
-  if(idx<0){
-    s.blocks.push(makeBlock('sources',''));
-    idx=s.blocks.length-1;
-  } else {
-    s.blocks[idx].data='';
-  }
-  s.activeBlock=idx;
-  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab==='source'));
-  document.querySelectorAll('.panel').forEach(panel=>panel.hidden=panel.dataset.panel!=='source');
-  render();
-};
-$('photoUpload').onchange=e=>{const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=()=>{snapshot();current().photo=r.result;render()};r.readAsDataURL(f)};
-$('removePhoto').onclick=()=>{snapshot();current().photo=null;render()};
-$('addPage').onclick=addPage;$('duplicatePage').onclick=duplicatePage;$('resetPages').onclick=()=>{snapshot();pages=defaultPages();active=0;normalizeFolios();render()};$('movePageUp').onclick=()=>movePage(-1);$('movePageDown').onclick=()=>movePage(1);
-$('zoomIn').onclick=()=>{zoom=Math.min(1.5,zoom+.1);render()};$('zoomOut').onclick=()=>{zoom=Math.max(.55,zoom-.1);render()};function fitPreviewToStage(){
-  const stage=document.querySelector('.stage');
-  const stageInner=document.querySelector('.stage-inner');
-  const card=$('card');
-  if(!stage||!stageInner||!card)return;
-  const stageRect=stage.getBoundingClientRect();
-  const toolbar=document.querySelector('.toolbar');
-  const note=document.querySelector('.stage-inner .note');
-  const toolbarH=toolbar?toolbar.getBoundingClientRect().height:34;
-  const noteH=note?note.getBoundingClientRect().height:18;
-  const padX=54, padY=42, extraY=toolbarH+noteH+26;
-  const availableW=Math.max(240,stageRect.width-padX*2);
-  const availableH=Math.max(240,stageRect.height-padY*2-extraY);
-  const baseW=card.clientWidth||640;
-  const baseH=card.clientHeight||800;
-  zoom=Math.max(.42,Math.min(1.15,availableW/baseW,availableH/baseH));
-  renderCard();
-  $('zoomLabel').textContent=Math.round(zoom*100)+'%';
-}
-$('fitScreen').onclick=fitPreviewToStage;
-
-$('undo').onclick=()=>{if(!history.length)return;future.push(clone(pages));restore(history.pop())};
-$('redo').onclick=()=>{if(!future.length)return;history.push(clone(pages));restore(future.pop())};
-
-$('saveJson').onclick=()=>{const blob=new Blob([JSON.stringify({version:2,pages},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='editorial-studio-project.json';a.click()};
-$('loadJson').onchange=e=>{const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);if(!Array.isArray(x.pages)||!x.pages.length)throw 0;snapshot();pages=x.pages.slice(0,12);pages.forEach(p=>{p.blocks=p.blocks?.length?p.blocks:[makeBlock('text',p.body||'')];p.sources=p.sources||[];p.activeBlock=Math.min(p.activeBlock||0,p.blocks.length-1)});active=0;normalizeFolios();render()}catch(err){alert('프로젝트 파일을 읽을 수 없습니다.')}};r.readAsText(f)};
-
-async function exportOne(i){const old=active;active=i;renderCard();document.body.classList.add('exporting');await new Promise(r=>setTimeout(r,100));const canvas=await html2canvas($('card'),{scale:3,useCORS:true,backgroundColor:null});document.body.classList.remove('exporting');active=old;render();return canvas.toDataURL('image/png')}
-$('exportPng').onclick=async()=>{const d=await exportOne(active),a=document.createElement('a');a.href=d;a.download=`editorial-${String(active+1).padStart(2,'0')}.png`;a.click()};
-$('exportZip').onclick=async()=>{const z=new JSZip();for(let i=0;i<pages.length;i++){const d=await exportOne(i);z.file(`editorial-${String(i+1).padStart(2,'0')}.png`,d.split(',')[1],{base64:true})}const blob=await z.generateAsync({type:'blob'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='editorial-studio-cards.zip';a.click()};
-
-window.addEventListener('keydown',e=>{
- const mod=e.ctrlKey||e.metaKey;
- if(mod&&e.key.toLowerCase()==='z'){e.preventDefault();$('undo').click()}
- if(mod&&(e.key.toLowerCase()==='y'||(e.key.toLowerCase()==='z'&&e.shiftKey))){e.preventDefault();$('redo').click()}
- if(e.key==='Delete'&&document.activeElement?.tagName!=='INPUT'&&document.activeElement?.tagName!=='TEXTAREA'){const s=current();if(s.blocks.length>1){snapshot();s.blocks.splice(s.activeBlock,1);s.activeBlock=Math.min(s.activeBlock,s.blocks.length-1);render()}}
-});
-try{const saved=JSON.parse(localStorage.getItem(storageKey)||'null');if(saved?.pages?.length)pages=saved.pages.slice(0,12)}catch(_){}
-render();
-requestAnimationFrame(fitPreviewToStage);
-window.addEventListener('resize',()=>requestAnimationFrame(fitPreviewToStage));
-if(window.ResizeObserver){
-  const ro=new ResizeObserver(()=>requestAnimationFrame(fitPreviewToStage));
-  const stageEl=document.querySelector('.stage');
-  if(stageEl)ro.observe(stageEl);
-}
-</script>
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
 </body>
 </html>
