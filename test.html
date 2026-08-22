@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PRESS ROOM — WEST150 Editorial Desk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Source+Serif+4:opsz,wght@8..60,400..700&family=Barlow+Condensed:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Serif+KR:wght@400;500;700;900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+/* ==========================================================
+   PRESS ROOM — a desk for six editorial voices, not one theme.
+   Every "Edition" below is a real print convention: broadsheet
+   nameplate, tabloid fold, wire teletype, salmon financial
+   stock. Structure encodes the genre; it isn't decoration.
+   ========================================================== */
+:root{
+  --ui-bg:#0d0d0d; --ui-panel:#141414; --ui-border:#262626;
+  --ui-text:#e4e2dc; --ui-muted:#8a8680; --ui-accent:#ffffff;
+  --canvas-w:1080px; --canvas-h:1350px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{min-height:100%;}
+body{
+  font-family:'Barlow Condensed',sans-serif;
+  background:var(--ui-bg); color:var(--ui-text);
+  min-height:100vh; min-height:100dvh;
+  display:flex; overflow:auto;
+}
+button{cursor:pointer;border:none;background:none;font-family:inherit;color:inherit;}
+input,select,textarea{font-family:inherit;outline:none;}
+::-webkit-scrollbar{width:6px;height:6px;}
+::-webkit-scrollbar-track{background:var(--ui-bg);}
+::-webkit-scrollbar-thumb{background:var(--ui-border);border-radius:3px;}
+
+#app{display:flex;width:100%;min-height:100vh;min-height:100dvh;}
+
+/* ---------- Left: the desk ---------- */
+#editor-panel{
+  width:400px; min-width:400px; background:var(--ui-panel);
+  border-right:1px solid var(--ui-border);
+  display:flex; flex-direction:column; z-index:10;
+}
+.panel-header{padding:22px 24px;border-bottom:1px solid var(--ui-border);}
+.panel-header .masthead-mark{
+  font-family:'Fraunces',serif; font-weight:900; font-size:20px;
+  letter-spacing:0.5px;
+}
+.panel-header .masthead-sub{
+  font-size:11px; color:var(--ui-muted); letter-spacing:1.5px;
+  text-transform:uppercase; margin-top:4px;
+}
+.panel-content{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:28px;}
+.panel-footer{padding:18px 24px;border-top:1px solid var(--ui-border);display:flex;gap:10px;background:var(--ui-panel);}
+
+.control-group{display:flex;flex-direction:column;gap:14px;}
+.control-group-title{
+  font-size:11px;font-weight:700;letter-spacing:2px;color:var(--ui-muted);
+  text-transform:uppercase;border-bottom:1px solid var(--ui-border);padding-bottom:8px;
+}
+.control-row{display:flex;flex-direction:column;gap:6px;}
+.control-row.horizontal{flex-direction:row;align-items:center;gap:10px;}
+.control-row.horizontal>*{flex:1;}
+label{font-size:10px;font-weight:600;color:var(--ui-muted);text-transform:uppercase;letter-spacing:0.6px;}
+input[type="text"],select,textarea{
+  background:var(--ui-bg);border:1px solid var(--ui-border);color:var(--ui-text);
+  padding:9px 11px;font-size:13px;border-radius:2px;width:100%;transition:border-color .2s;
+  font-family:'Source Serif 4',serif;
+}
+input:focus,select:focus,textarea:focus{border-color:var(--ui-accent);}
+textarea{resize:vertical;min-height:64px;}
+input[type="range"]{-webkit-appearance:none;width:100%;background:transparent;}
+input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;height:12px;width:12px;border-radius:50%;background:var(--ui-accent);cursor:pointer;margin-top:-5px;}
+input[type="range"]::-webkit-slider-runnable-track{width:100%;height:2px;background:var(--ui-border);}
+
+.btn{
+  background:var(--ui-bg);color:var(--ui-text);border:1px solid var(--ui-border);
+  padding:12px 16px;font-size:11px;font-weight:700;text-transform:uppercase;
+  letter-spacing:1.2px;border-radius:2px;transition:all .2s;text-align:center;
+  font-family:'Barlow Condensed',sans-serif;
+}
+.btn:hover{border-color:var(--ui-accent);background:#1a1a1a;}
+.btn-primary{background:var(--ui-text);color:var(--ui-bg);border-color:var(--ui-text);}
+.btn-primary:hover{background:#cfccc4;border-color:#cfccc4;}
+.btn-icon{padding:8px;font-size:14px;display:flex;align-items:center;justify-content:center;}
+
+.layout-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.layout-btn{
+  padding:14px 8px;border:1px solid var(--ui-border);background:var(--ui-bg);
+  color:var(--ui-muted);font-size:10.5px;text-transform:uppercase;letter-spacing:0.6px;
+  border-radius:2px;transition:all .2s;line-height:1.3;
+}
+.layout-btn.active,.layout-btn:hover{border-color:var(--ui-accent);color:var(--ui-accent);}
+
+.file-upload{position:relative;overflow:hidden;display:inline-block;width:100%;}
+.file-upload input[type="file"]{position:absolute;font-size:100px;opacity:0;right:0;top:0;cursor:pointer;}
+
+.thumb-card{
+  width:64px;height:80px;background:#fff;border:2px solid transparent;cursor:pointer;
+  position:relative;flex-shrink:0;opacity:0.5;transition:all .2s;
+  display:flex;align-items:center;justify-content:center;font-size:10px;color:#000;
+  font-weight:bold;overflow:hidden;font-family:'Barlow Condensed',sans-serif;
+}
+.thumb-card.active{border-color:var(--ui-accent);opacity:1;}
+.thumb-card:hover{opacity:1;}
+
+/* ---------- Right: the stone (workspace) ---------- */
+#workspace{flex:1;display:flex;flex-direction:column;background:#050505;position:relative;}
+#canvas-wrapper{flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:40px;position:relative;}
+#card-strip{
+  height:116px;border-top:1px solid var(--ui-border);background:var(--ui-panel);
+  display:flex;align-items:center;padding:0 24px;gap:16px;overflow-x:auto;
+}
+
+@media (max-width:1024px){
+  #app{flex-direction:column;height:auto;}
+  #editor-panel{width:100%;min-width:0;border-right:none;border-bottom:1px solid var(--ui-border);height:auto;max-height:60vh;max-height:60dvh;}
+  #workspace{height:auto;min-height:60vh;min-height:60dvh;}
+}
+@media (max-width:640px){
+  #editor-panel{max-height:50vh;max-height:50dvh;}
+  #workspace{min-height:50vh;min-height:50dvh;}
+}
+
+/* ==========================================================
+   THE CANVAS — every card is a page pulled off the same press.
+   ========================================================== */
+#canvas{
+  width:var(--canvas-w); height:var(--canvas-h);
+  background:var(--bg); color:var(--ink);
+  position:relative; transform-origin:center center;
+  box-shadow:0 20px 50px rgba(0,0,0,.55); overflow:hidden;
+  font-family:var(--f-body);
+}
+.page{width:100%;height:100%;position:relative;}
+.ed-img-wrap{position:absolute;overflow:hidden;}
+.ed-img{width:100%;height:100%;object-fit:cover;}
+
+/* Shared editorial vocabulary */
+.eyebrow{
+  font-family:var(--f-util); text-transform:uppercase; letter-spacing:3px;
+  font-weight:700; font-size:16px;
+}
+.rule{height:1px;background:var(--ink);}
+.rule-thick{height:3px;background:var(--ink);}
+.rule-accent{height:5px;background:var(--accent);}
+.byline-block{
+  font-family:var(--f-util); text-transform:uppercase; letter-spacing:1.6px;
+  font-size:15px; font-weight:600; display:flex; justify-content:space-between; color:var(--ink);
+  opacity:.85;
+}
+.folio{
+  position:absolute; font-family:var(--f-util); font-size:12px; font-weight:700;
+  letter-spacing:1.5px; text-transform:uppercase; color:var(--ink); opacity:.65;
+}
+
+/* ---------------------------------------------------------
+   01 — BROADSHEET FRONT (The Times register)
+   --------------------------------------------------------- */
+.tp-01{padding:64px 72px 56px;display:flex;flex-direction:column;}
+.tp-01 .masthead{text-align:center;padding-bottom:20px;}
+.tp-01 .masthead .section-name{
+  font-family:var(--f-display); font-weight:900; font-size:56px;
+  letter-spacing:0.5px; line-height:1;
+}
+.tp-01 .masthead .meta-row{
+  display:flex; justify-content:space-between; font-family:var(--f-util);
+  font-size:14px; letter-spacing:1.5px; text-transform:uppercase; margin-top:10px;
+}
+.tp-01 .story{padding-top:28px;}
+.tp-01 .eyebrow{color:var(--accent); margin-bottom:14px;}
+.tp-01 .headline{
+  font-family:var(--f-display); font-weight:800; font-size:var(--sz-h1);
+  line-height:0.98; letter-spacing:-0.01em; word-break:keep-all; margin-bottom:18px;
+}
+.tp-01 .dek{
+  font-family:var(--f-body); font-style:italic; font-weight:400; font-size:26px;
+  line-height:1.3; margin-bottom:20px; color:var(--ink); opacity:.85;
+}
+.tp-01 .byline-block{padding:14px 0; border-top:1px solid var(--ink); border-bottom:1px solid var(--ink); margin-bottom:22px;}
+.tp-01 .photo{position:relative; flex:1; min-height:280px;}
+.tp-01 .caption{
+  font-family:var(--f-body); font-style:italic; font-size:15px; line-height:1.4;
+  padding-top:10px; opacity:.75;
+}
+
+/* ---------------------------------------------------------
+   02 — TABLOID COVER (The Post register)
+   --------------------------------------------------------- */
+.tp-02{position:relative;}
+.tp-02 .cover-photo{position:absolute; inset:0;}
+.tp-02 .scrim{position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0) 30%, rgba(0,0,0,.9) 100%);}
+.tp-02 .kicker-band{
+  position:relative; z-index:5; background:var(--accent); color:var(--bg);
+  padding:16px 40px; display:flex; justify-content:space-between; align-items:center;
+  font-family:var(--f-util); font-weight:800; font-size:20px; letter-spacing:2px;
+}
+.tp-02 .cover-body{position:absolute; left:0; right:0; bottom:0; z-index:5; padding:0 40px 40px;}
+.tp-02 .headline{
+  font-family:var(--f-display); font-weight:900; font-size:var(--sz-h2);
+  line-height:0.86; letter-spacing:-0.02em; text-transform:uppercase; color:#fff;
+  word-break:keep-all; text-shadow:0 4px 24px rgba(0,0,0,.5); margin-bottom:14px;
+}
+.tp-02 .dek{
+  font-family:var(--f-body); font-size:24px; color:#f2f0ea; opacity:.92; line-height:1.35; margin-bottom:20px;
+}
+.tp-02 .fold-rule{height:8px; display:flex; flex-direction:column; gap:2px; margin-bottom:20px;}
+.tp-02 .fold-rule div:first-child{height:1px; background:#fff; opacity:.5;}
+.tp-02 .fold-rule div:last-child{height:3px; background:#fff; opacity:.85;}
+.tp-02 .byline-block{color:#fff; opacity:.85; border:none;}
+
+/* ---------------------------------------------------------
+   03 — FEATURE SPREAD (drop cap + pull quote)
+   --------------------------------------------------------- */
+.tp-03{padding:64px 68px;display:flex;flex-direction:column;}
+.tp-03 .eyebrow{color:var(--accent); margin-bottom:16px;}
+.tp-03 .headline{
+  font-family:var(--f-display); font-style:italic; font-weight:600; font-size:var(--sz-h3);
+  line-height:1.05; margin-bottom:18px; word-break:keep-all;
+}
+.tp-03 .byline-block{margin-bottom:24px; padding-bottom:16px; border-bottom:1px solid var(--ink);}
+.tp-03 .spread{display:flex; gap:32px; flex:1;}
+.tp-03 .lede-col{flex:1.3;}
+.tp-03 .lede{font-family:var(--f-body); font-size:22px; line-height:1.55;}
+.tp-03 .lede.has-dropcap::first-letter{
+  font-family:var(--f-display); font-weight:800; font-size:4.6em; line-height:0.78;
+  float:left; padding:6px 10px 0 0; color:var(--accent);
+}
+.tp-03 .side-col{flex:1; display:flex; flex-direction:column; gap:20px;}
+.tp-03 .pull-quote{
+  border-left:4px solid var(--accent); padding:6px 0 6px 22px;
+  font-family:var(--f-display); font-style:italic; font-weight:600; font-size:30px; line-height:1.25;
+}
+.tp-03 .photo-sq{position:relative; aspect-ratio:1/1; overflow:hidden;}
+.tp-03 .caption{font-family:var(--f-util); font-size:13px; letter-spacing:.4px; opacity:.65; margin-top:8px;}
+
+/* ---------------------------------------------------------
+   04 — WIRE BULLETIN (teletype breaking news)
+   --------------------------------------------------------- */
+.tp-04{padding:0; display:flex; flex-direction:column;}
+.tp-04 .flag{
+  background:var(--accent); color:var(--bg); padding:22px 60px;
+  font-family:var(--f-display); font-weight:900; font-size:40px; letter-spacing:1px;
+  text-transform:uppercase;
+}
+.tp-04 .wire-meta{
+  font-family:'IBM Plex Mono',monospace; font-size:15px; letter-spacing:0.5px;
+  padding:22px 60px 0; opacity:.7; display:flex; justify-content:space-between;
+}
+.tp-04 .body-zone{padding:24px 60px 60px; flex:1; display:flex; flex-direction:column; justify-content:center;}
+.tp-04 .headline{
+  font-family:var(--f-display); font-weight:800; font-size:var(--sz-h2);
+  line-height:0.95; letter-spacing:-0.01em; margin-bottom:28px; word-break:keep-all;
+}
+.tp-04 .lede{font-family:'IBM Plex Mono',monospace; font-size:19px; line-height:1.6; opacity:.85; max-width:88%;}
+.tp-04 .ticker{
+  margin-top:auto; border-top:1px dashed var(--ink); padding-top:16px;
+  font-family:'IBM Plex Mono',monospace; font-size:14px; letter-spacing:1px;
+  display:flex; justify-content:space-between; opacity:.6;
+}
+
+/* ---------------------------------------------------------
+   05 — DATA DESK (the number is the headline)
+   --------------------------------------------------------- */
+.tp-05{padding:64px 72px; display:flex; flex-direction:column; justify-content:space-between;}
+.tp-05 .top-row{display:flex; justify-content:space-between; align-items:baseline;}
+.tp-05 .eyebrow{color:var(--accent);}
+.tp-05 .stat{
+  font-family:var(--f-display); font-weight:800; font-size:300px; line-height:0.78;
+  letter-spacing:-0.04em; color:var(--accent); margin:24px 0 6px;
+}
+.tp-05 .stat-label{
+  font-family:var(--f-util); font-weight:700; font-size:34px; letter-spacing:1px;
+  text-transform:uppercase; margin-bottom:26px;
+}
+.tp-05 .lede{font-family:var(--f-body); font-size:24px; line-height:1.5; max-width:640px;}
+.tp-05 .source{
+  font-family:var(--f-util); font-size:14px; letter-spacing:1.4px; text-transform:uppercase;
+  border-top:1px solid var(--ink); padding-top:16px; opacity:.7;
+}
+
+/* ---------------------------------------------------------
+   06 — OPINION / COLUMN (the signature voice)
+   --------------------------------------------------------- */
+.tp-06{padding:72px; display:flex; flex-direction:column; align-items:center; text-align:center; justify-content:center;}
+.tp-06 .eyebrow{color:var(--accent); margin-bottom:22px;}
+.tp-06 .byline-name{
+  font-family:var(--f-display); font-weight:700; font-size:24px; letter-spacing:.5px; margin-bottom:6px;
+}
+.tp-06 .dateline{font-family:var(--f-util); font-size:14px; letter-spacing:1.6px; text-transform:uppercase; opacity:.6; margin-bottom:34px;}
+.tp-06 .headline{
+  font-family:var(--f-display); font-style:italic; font-weight:600; font-size:var(--sz-h3);
+  line-height:1.12; max-width:88%; margin-bottom:36px; word-break:keep-all;
+}
+.tp-06 .quote-mark{font-family:var(--f-display); font-size:90px; line-height:0.4; color:var(--accent); margin-bottom:6px;}
+.tp-06 .pull-quote{
+  font-family:var(--f-body); font-style:italic; font-size:26px; line-height:1.45; max-width:82%; margin-bottom:36px;
+}
+.tp-06 .sig-rule{width:80px; margin-bottom:16px;}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <aside id="editor-panel">
+    <div class="panel-header">
+      <div class="masthead-mark">PRESS ROOM</div>
+      <div class="masthead-sub">Editorial Card Desk — WEST150</div>
+    </div>
+
+    <div class="panel-content">
+
+      <div class="control-group">
+        <div class="control-group-title">지면 (Layout)</div>
+        <div class="layout-grid">
+          <button class="layout-btn" data-layout="1">01 브로드시트<br>Front Page</button>
+          <button class="layout-btn" data-layout="2">02 타블로이드<br>Cover</button>
+          <button class="layout-btn" data-layout="3">03 피처 스프레드<br>Drop Cap</button>
+          <button class="layout-btn" data-layout="4">04 와이어 속보<br>Bulletin</button>
+          <button class="layout-btn" data-layout="5">05 데이터 데스크<br>The Number</button>
+          <button class="layout-btn" data-layout="6">06 칼럼<br>Opinion</button>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <div class="control-group-title">에디션 (Edition — 팔레트+서체)</div>
+        <div class="control-row">
+          <select data-group="typography" data-key="edition">
+            <option value="broadsheet">브로드시트 클래식 — 크림지 · 딥레드</option>
+            <option value="midnight">미드나잇 에디션 — 잉크블랙 · 크림슨</option>
+            <option value="tabloid">타블로이드 레드 — 블랙 · 시그널레드</option>
+            <option value="finance">파이낸셜 데스크 — 살몬지 · 그린</option>
+            <option value="ivory">아이보리 위클리 — 화이트 · 네이비</option>
+          </select>
+        </div>
+        <div class="control-row horizontal">
+          <div class="control-row">
+            <label>본문 언어체</label>
+            <select data-group="typography" data-key="script">
+              <option value="en">영문 세리프 (Fraunces)</option>
+              <option value="krserif">한글 명조 (Noto Serif KR)</option>
+              <option value="krsans">한글 고딕 (Noto Sans KR)</option>
+            </select>
+          </div>
+          <div class="control-row">
+            <label>정렬</label>
+            <select data-group="typography" data-key="align">
+              <option value="left">왼쪽</option>
+              <option value="center">가운데</option>
+            </select>
+          </div>
+        </div>
+        <div class="control-row">
+          <label>헤드라인 크기</label>
+          <input type="range" data-group="typography" data-key="headlineScale" min="0.6" max="1.6" step="0.05" value="1">
+        </div>
+      </div>
+
+      <div class="control-group">
+        <div class="control-group-title">기사 (Content)</div>
+        <div class="control-row" data-field="section">
+          <label>섹션 / 마스트헤드명</label>
+          <input type="text" data-group="content" data-key="section" placeholder="예: WEST150 DAILY">
+        </div>
+        <div class="control-row" data-field="edition">
+          <label>발행 정보</label>
+          <input type="text" data-group="content" data-key="edition" placeholder="예: VOL. I — NO. 42">
+        </div>
+        <div class="control-row" data-field="kicker">
+          <label>킥커 / 섹션 태그</label>
+          <input type="text" data-group="content" data-key="kicker" placeholder="예: WORLD DESK, BREAKING">
+        </div>
+        <div class="control-row">
+          <label>헤드라인</label>
+          <textarea data-group="content" data-key="headline" placeholder="주 헤드라인"></textarea>
+        </div>
+        <div class="control-row" data-field="dek">
+          <label>데크 (부제)</label>
+          <textarea data-group="content" data-key="dek" placeholder="헤드라인을 풀어주는 한 문장"></textarea>
+        </div>
+        <div class="control-row horizontal" data-field="byline">
+          <div class="control-row">
+            <label>바이라인</label>
+            <input type="text" data-group="content" data-key="byline" placeholder="기자명">
+          </div>
+          <div class="control-row" data-field="dateline">
+            <label>데이트라인</label>
+            <input type="text" data-group="content" data-key="dateline" placeholder="발신지">
+          </div>
+        </div>
+        <div class="control-row">
+          <label>날짜</label>
+          <input type="text" data-group="content" data-key="date" placeholder="2026.08.22">
+        </div>
+        <div class="control-row" data-field="lede">
+          <label>리드 문단</label>
+          <textarea data-group="content" data-key="lede" placeholder="기사 첫 문단"></textarea>
+        </div>
+        <div class="control-row" data-field="pullquote">
+          <label>풀쿼트</label>
+          <textarea data-group="content" data-key="pullquote" placeholder="강조 인용문"></textarea>
+        </div>
+        <div class="control-row" data-field="caption">
+          <label>사진 캡션</label>
+          <input type="text" data-group="content" data-key="caption" placeholder="사진 설명">
+        </div>
+        <div class="control-row horizontal" data-field="stat">
+          <div class="control-row">
+            <label>수치</label>
+            <input type="text" data-group="content" data-key="stat" placeholder="예: 73%">
+          </div>
+          <div class="control-row" data-field="statLabel">
+            <label>수치 라벨</label>
+            <input type="text" data-group="content" data-key="statLabel" placeholder="예: OF READERS">
+          </div>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <div class="control-group-title">브랜드</div>
+        <div class="control-row horizontal">
+          <label><input type="checkbox" data-group="brand" data-key="showFolio"> 폴리오(페이지) 표시</label>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <div class="control-group-title">사진</div>
+        <div class="control-row">
+          <div class="file-upload btn">사진 업로드
+            <input type="file" id="image-upload" accept="image/*">
+          </div>
+        </div>
+        <div class="control-row"><button class="btn" id="btn-remove-image">사진 제거</button></div>
+        <div class="control-row horizontal">
+          <div class="control-row"><label>Pos X</label><input type="range" data-group="image" data-key="posX" min="-100" max="100" value="0"></div>
+          <div class="control-row"><label>Pos Y</label><input type="range" data-group="image" data-key="posY" min="-100" max="100" value="0"></div>
+        </div>
+        <div class="control-row horizontal">
+          <div class="control-row"><label>Zoom</label><input type="range" data-group="image" data-key="zoom" min="1" max="3" step="0.1" value="1"></div>
+          <div class="control-row"><label>흑백</label><input type="range" data-group="image" data-key="grayscale" min="0" max="100" value="0"></div>
+        </div>
+        <div class="control-row horizontal">
+          <div class="control-row"><label>밝기</label><input type="range" data-group="image" data-key="brightness" min="0" max="200" value="100"></div>
+          <div class="control-row"><label>대비</label><input type="range" data-group="image" data-key="contrast" min="0" max="200" value="100"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="panel-footer">
+      <button class="btn" id="btn-random">랜덤 에디션</button>
+      <button class="btn btn-primary" style="flex:1;" id="btn-export">카드 내보내기</button>
+    </div>
+  </aside>
+
+  <main id="workspace">
+    <div id="canvas-wrapper"><div id="canvas"></div></div>
+    <div id="card-strip">
+      <button class="btn btn-icon" id="btn-add-card" title="Add Card">+</button>
+      <div style="flex:1"></div>
+      <button class="btn" id="btn-export-all">전체 내보내기</button>
+    </div>
+  </main>
+</div>
+
+<script>
+/* =========================================================
+   PRESS ROOM ENGINE
+   ========================================================= */
+const createDefaultCard = (id) => ({
+  id,
+  layout: 1,
+  content: {
+    section: 'WEST150 DAILY',
+    edition: 'VOL. I — NO. 01',
+    kicker: 'WORLD DESK',
+    headline: 'THE RULES\nHAVE CHANGED.',
+    dek: 'A new grammar for editorial cards, built on the conventions of the printed page.',
+    byline: 'JANE DOH',
+    dateline: 'SEOUL',
+    date: '2026.08.22',
+    lede: 'In an increasingly crowded feed, the discipline of the front page — hierarchy, restraint, a single clear thesis — reads as relief rather than nostalgia.',
+    pullquote: '"Structure is what makes a page trustworthy."',
+    caption: 'A press run in progress.',
+    stat: '73%',
+    statLabel: 'OF READERS'
+  },
+  typography: {
+    edition: 'broadsheet',
+    script: 'en',
+    align: 'left',
+    headlineScale: 1
+  },
+  image: { url:'', posX:0, posY:0, zoom:1, grayscale:0, brightness:100, contrast:100 },
+  brand: { showFolio: true }
+});
+
+const state = { cards: [createDefaultCard(Date.now())], activeId: 0 };
+
+const els = {
+  canvasWrapper: document.getElementById('canvas-wrapper'),
+  canvas: document.getElementById('canvas'),
+  strip: document.getElementById('card-strip'),
+  inputs: document.querySelectorAll('[data-group]'),
+  layoutBtns: document.querySelectorAll('.layout-btn'),
+  imageUpload: document.getElementById('image-upload'),
+  btnRemoveImage: document.getElementById('btn-remove-image'),
+  btnAddCard: document.getElementById('btn-add-card'),
+  btnRandom: document.getElementById('btn-random'),
+  btnExport: document.getElementById('btn-export'),
+  btnExportAll: document.getElementById('btn-export-all'),
+  fieldRows: document.querySelectorAll('[data-field]')
+};
+
+// Which optional content fields actually render on each layout.
+// (kicker / headline / date are core and always shown.)
+const FIELD_LAYOUTS = {
+  section:   [1,6],
+  edition:   [1],
+  dek:       [1,2],
+  byline:    [1,2,3,6],
+  dateline:  [1,3,6],
+  lede:      [3,4,5],
+  pullquote: [3,6],
+  caption:   [1,3],
+  stat:      [5],
+  statLabel: [5]
+};
+
+// Curated editions: each bundles a palette AND an accent — a real
+// front page never lets you mix-and-match ink and paper freely.
+const EDITIONS = {
+  broadsheet:{bg:'#F3EEE0', ink:'#181410', accent:'#8C1F28'},
+  midnight:  {bg:'#131313', ink:'#F2EEE3', accent:'#D6483F'},
+  tabloid:   {bg:'#0A0A0A', ink:'#FFFFFF', accent:'#E11B22'},
+  finance:   {bg:'#F3E1CE', ink:'#16222C', accent:'#0F5C3F'},
+  ivory:     {bg:'#FDFCF9', ink:'#141414', accent:'#1B3A6B'}
+};
+
+const SCRIPTS = {
+  en:      { display:"'Fraunces', serif",        body:"'Source Serif 4', serif",  util:"'Barlow Condensed', sans-serif" },
+  krserif: { display:"'Noto Serif KR', serif",    body:"'Noto Serif KR', serif",   util:"'Noto Sans KR', sans-serif" },
+  krsans:  { display:"'Noto Sans KR', sans-serif",body:"'Noto Sans KR', sans-serif",util:"'Noto Sans KR', sans-serif" }
+};
+
+const escapeHtml = (text) => {
+  if (!text) return '';
+  return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+};
+const fmt = (text) => text ? escapeHtml(text).replace(/\n/g,'<br>') : '';
+const plain = (text) => escapeHtml(text || '');
+
+const imgHtml = (img, extraStyle='') => {
+  if (!img.url) return '';
+  const style = `transform:scale(${img.zoom}) translate(${img.posX}%, ${img.posY}%);
+    filter:grayscale(${img.grayscale}%) brightness(${img.brightness}%) contrast(${img.contrast}%);${extraStyle}`;
+  return `<div class="ed-img-wrap" style="position:absolute;inset:0;"><img src="${img.url}" class="ed-img" style="${style}"></div>`;
+};
+
+const buildCard = (card, index) => {
+  const c = card.content, t = card.typography, img = card.image;
+  const folio = card.brand.showFolio
+    ? `<div class="folio" style="bottom:24px; right:40px;">${String(index+1).padStart(2,'0')} · ${plain(c.section) || 'PRESS ROOM'}</div>`
+    : '';
+
+  let body = '';
+  switch(parseInt(card.layout)){
+    case 1: // BROADSHEET FRONT
+      body = `
+        <div class="page tp-01">
+          <div class="masthead">
+            <div class="section-name">${plain(c.section)}</div>
+            <div class="rule-thick" style="margin-top:10px;"></div>
+            <div class="meta-row"><span>${plain(c.edition)}</span><span>${plain(c.date)}</span></div>
+            <div class="rule" style="margin-top:6px;"></div>
+          </div>
+          <div class="story">
+            ${c.kicker ? `<div class="eyebrow">${plain(c.kicker)}</div>` : ''}
+            <div class="headline">${fmt(c.headline)}</div>
+            ${c.dek ? `<div class="dek">${fmt(c.dek)}</div>` : ''}
+            <div class="byline-block"><span>BY ${plain(c.byline).toUpperCase()}</span><span>${plain(c.dateline).toUpperCase()}</span></div>
+          </div>
+          <div class="photo">${img.url ? imgHtml(img) : `<div style="width:100%;height:100%;background:var(--ink);opacity:.08;"></div>`}</div>
+          ${c.caption ? `<div class="caption">${fmt(c.caption)}</div>` : ''}
+        </div>`;
+      break;
+
+    case 2: // TABLOID COVER
+      body = `
+        <div class="page tp-02">
+          <div class="cover-photo">${img.url ? imgHtml(img) : `<div style="width:100%;height:100%;background:var(--ink);"></div>`}</div>
+          <div class="scrim"></div>
+          <div class="kicker-band"><span>${plain(c.kicker) || 'BREAKING'}</span><span>${plain(c.date)}</span></div>
+          <div class="cover-body">
+            <div class="fold-rule"><div></div><div></div></div>
+            <div class="headline">${fmt(c.headline)}</div>
+            ${c.dek ? `<div class="dek">${fmt(c.dek)}</div>` : ''}
+            <div class="byline-block"><span>BY ${plain(c.byline).toUpperCase()}</span><span>${plain(c.dateline).toUpperCase()}</span></div>
+          </div>
+        </div>`;
+      break;
+
+    case 3: // FEATURE SPREAD
+      body = `
+        <div class="page tp-03">
+          ${c.kicker ? `<div class="eyebrow">${plain(c.kicker)}</div>` : ''}
+          <div class="headline">${fmt(c.headline)}</div>
+          <div class="byline-block"><span>BY ${plain(c.byline).toUpperCase()}</span><span>${plain(c.dateline).toUpperCase()} · ${plain(c.date)}</span></div>
+          <div class="spread">
+            <div class="lede-col">
+              <div class="lede has-dropcap">${fmt(c.lede)}</div>
+            </div>
+            <div class="side-col">
+              ${c.pullquote ? `<div class="pull-quote">${fmt(c.pullquote)}</div>` : ''}
+              <div class="photo-sq">
+                ${img.url ? imgHtml(img) : `<div style="width:100%;height:100%;background:var(--ink);opacity:.08;"></div>`}
+              </div>
+              ${c.caption ? `<div class="caption">${fmt(c.caption)}</div>` : ''}
+            </div>
+          </div>
+        </div>`;
+      break;
+
+    case 4: // WIRE BULLETIN
+      body = `
+        <div class="page tp-04">
+          <div class="flag">${plain(c.kicker) || 'BREAKING'}</div>
+          <div class="wire-meta"><span>WEST150 WIRE</span><span>${plain(c.date)} · ${plain(c.dateline)}</span></div>
+          <div class="body-zone">
+            <div class="headline">${fmt(c.headline)}</div>
+            <div class="lede">${fmt(c.lede)}</div>
+            <div class="ticker"><span>DEVELOPING</span><span>MORE TO FOLLOW</span></div>
+          </div>
+        </div>`;
+      break;
+
+    case 5: // DATA DESK
+      body = `
+        <div class="page tp-05">
+          <div class="top-row">
+            <div class="eyebrow">${plain(c.kicker) || 'DATA DESK'}</div>
+            <div class="eyebrow" style="color:var(--ink);opacity:.6;">${plain(c.date)}</div>
+          </div>
+          <div>
+            <div class="stat">${plain(c.stat)}</div>
+            <div class="stat-label">${plain(c.statLabel)}</div>
+            <div class="lede">${fmt(c.headline)}</div>
+          </div>
+          <div class="source">SOURCE — ${plain(c.dateline) || plain(c.byline)}</div>
+        </div>`;
+      break;
+
+    case 6: // OPINION / COLUMN
+      body = `
+        <div class="page tp-06">
+          ${c.kicker ? `<div class="eyebrow">${plain(c.kicker)}</div>` : ''}
+          <div class="byline-name">${plain(c.byline).toUpperCase()}</div>
+          <div class="dateline">${plain(c.dateline)} · ${plain(c.date)}</div>
+          <div class="headline">${fmt(c.headline)}</div>
+          ${c.pullquote ? `<div class="quote-mark">&ldquo;</div><div class="pull-quote">${fmt(c.pullquote)}</div>` : ''}
+          <div class="rule sig-rule"></div>
+          <div class="eyebrow" style="opacity:.6;">${plain(c.section)}</div>
+        </div>`;
+      break;
+  }
+  return body + folio;
+};
+
+const renderCanvas = () => {
+  const card = state.cards[state.activeId];
+  const t = card.typography;
+  const ed = EDITIONS[t.edition] || EDITIONS.broadsheet;
+  const sc = SCRIPTS[t.script] || SCRIPTS.en;
+
+  let h1=112, h2=118, h3=64;
+  if (card.layout==2) h2 = 128;
+  if (card.layout==4) h2 = 96;
+
+  els.canvas.style.setProperty('--bg', ed.bg);
+  els.canvas.style.setProperty('--ink', ed.ink);
+  els.canvas.style.setProperty('--accent', ed.accent);
+  els.canvas.style.setProperty('--f-display', sc.display);
+  els.canvas.style.setProperty('--f-body', sc.body);
+  els.canvas.style.setProperty('--f-util', sc.util);
+  els.canvas.style.setProperty('--sz-h1', `${h1*t.headlineScale}px`);
+  els.canvas.style.setProperty('--sz-h2', `${h2*t.headlineScale}px`);
+  els.canvas.style.setProperty('--sz-h3', `${h3*t.headlineScale}px`);
+  els.canvas.style.textAlign = t.align === 'center' ? 'center' : 'left';
+
+  els.canvas.innerHTML = buildCard(card, state.activeId);
+};
+
+const renderEditor = () => {
+  const card = state.cards[state.activeId];
+  els.inputs.forEach(input => {
+    const group = input.getAttribute('data-group');
+    const key = input.getAttribute('data-key');
+    if (input.type === 'checkbox') input.checked = card[group][key];
+    else input.value = card[group][key];
+  });
+  els.layoutBtns.forEach(btn => {
+    btn.classList.toggle('active', parseInt(btn.getAttribute('data-layout')) === parseInt(card.layout));
+  });
+  els.fieldRows.forEach(row => {
+    const f = row.getAttribute('data-field');
+    const layouts = FIELD_LAYOUTS[f] || [];
+    row.style.display = layouts.includes(parseInt(card.layout)) ? 'flex' : 'none';
+  });
+};
+
+const renderStrip = () => {
+  els.strip.querySelectorAll('.thumb-card').forEach(t => t.remove());
+  state.cards.forEach((card, index) => {
+    const thumb = document.createElement('div');
+    thumb.className = `thumb-card ${index === state.activeId ? 'active' : ''}`;
+    thumb.innerHTML = `
+      ${index+1}
+      <div style="position:absolute;top:2px;right:2px;display:${state.cards.length>1?'block':'none'}">
+        <button class="btn-icon" onclick="deleteCard(${index})" style="color:#ff4a4a;font-size:10px;padding:2px;">×</button>
+      </div>
+      <div style="position:absolute;bottom:2px;right:2px;">
+        <button class="btn-icon" onclick="duplicateCard(${index})" style="color:#666;font-size:10px;padding:2px;">⎘</button>
+      </div>`;
+    thumb.onclick = (e) => { if (e.target.tagName !== 'BUTTON') { state.activeId = index; updateAll(); } };
+    els.strip.insertBefore(thumb, els.btnAddCard);
+  });
+};
+
+const updateAll = () => { renderEditor(); renderCanvas(); renderStrip(); };
+
+els.inputs.forEach(input => {
+  input.addEventListener('input', (e) => {
+    const group = e.target.getAttribute('data-group');
+    const key = e.target.getAttribute('data-key');
+    const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
+    state.cards[state.activeId][group][key] = value;
+    renderCanvas();
+  });
+});
+
+els.layoutBtns.forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    const layoutId = parseInt(e.currentTarget.getAttribute('data-layout'));
+    state.cards[state.activeId].layout = layoutId;
+    updateAll();
+  });
+});
+
+els.imageUpload.addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (event) => {
+    const img = state.cards[state.activeId].image;
+    img.url = event.target.result; img.zoom = 1; img.posX = 0; img.posY = 0;
+    updateAll();
+  };
+  reader.readAsDataURL(file);
+});
+
+els.btnRemoveImage.addEventListener('click', () => {
+  state.cards[state.activeId].image.url = '';
+  updateAll();
+});
+
+els.btnAddCard.addEventListener('click', () => {
+  state.cards.push(createDefaultCard(Date.now()));
+  state.activeId = state.cards.length - 1;
+  updateAll();
+});
+
+window.deleteCard = (index) => {
+  if (state.cards.length <= 1) return;
+  state.cards.splice(index, 1);
+  if (state.activeId >= state.cards.length) state.activeId = state.cards.length - 1;
+  updateAll();
+};
+
+window.duplicateCard = (index) => {
+  const newCard = JSON.parse(JSON.stringify(state.cards[index]));
+  newCard.id = Date.now();
+  state.cards.splice(index+1, 0, newCard);
+  state.activeId = index+1;
+  updateAll();
+};
+
+els.btnRandom.addEventListener('click', () => {
+  const card = state.cards[state.activeId];
+  card.layout = Math.floor(Math.random()*6)+1;
+  const editionKeys = Object.keys(EDITIONS);
+  card.typography.edition = editionKeys[Math.floor(Math.random()*editionKeys.length)];
+  const aligns = ['left','center'];
+  card.typography.align = aligns[Math.floor(Math.random()*aligns.length)];
+  card.typography.headlineScale = (Math.random()*(1.3-0.85)+0.85).toFixed(2);
+  updateAll();
+});
+
+const updateCanvasScale = () => {
+  const pw = els.canvasWrapper.clientWidth - 80;
+  const ph = els.canvasWrapper.clientHeight - 80;
+  const scale = Math.min(pw/1080, ph/1350);
+  els.canvas.style.transform = `scale(${scale})`;
+};
+window.addEventListener('resize', updateCanvasScale);
+if (window.ResizeObserver) new ResizeObserver(() => updateCanvasScale()).observe(els.canvasWrapper);
+
+/* ---------------- Export ---------------- */
+const downloadURI = (uri, name) => {
+  const link = document.createElement('a');
+  link.download = name; link.href = uri;
+  document.body.appendChild(link); link.click(); document.body.removeChild(link);
+};
+
+const exportCanvas = async (filename) => {
+  const currentTransform = els.canvas.style.transform;
+  els.canvas.style.transform = 'scale(1)';
+  try {
+    const canvas = await html2canvas(els.canvas, { scale:1, useCORS:true, backgroundColor:null, logging:false });
+    downloadURI(canvas.toDataURL('image/png'), filename);
+  } catch (err) {
+    console.error('Export failed:', err);
+    alert('내보내기에 실패했습니다. 콘솔을 확인해주세요.');
+  } finally {
+    els.canvas.style.transform = currentTransform;
+  }
+};
+
+els.btnExport.addEventListener('click', async () => {
+  els.btnExport.textContent = '내보내는 중...';
+  await exportCanvas(`PRESSROOM_${String(state.activeId+1).padStart(2,'0')}.png`);
+  els.btnExport.textContent = '카드 내보내기';
+});
+
+els.btnExportAll.addEventListener('click', async () => {
+  els.btnExportAll.textContent = '내보내는 중...';
+  const originalId = state.activeId;
+  for (let i=0; i<state.cards.length; i++) {
+    state.activeId = i; renderCanvas();
+    await new Promise(r => setTimeout(r, 300));
+    await exportCanvas(`PRESSROOM_${String(i+1).padStart(2,'0')}.png`);
+  }
+  state.activeId = originalId; updateAll();
+  els.btnExportAll.textContent = '전체 내보내기';
+});
+
+/* ---------------- Init ---------------- */
+updateCanvasScale();
+updateAll();
+</script>
+</body>
+</html>
