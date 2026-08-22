@@ -243,6 +243,88 @@
     color:rgba(255,255,255,.55);
   }
 
+  /* ===== TEMPLATE C: Full Bleed Editorial ===== */
+  #card.tpl-fullbleed{
+    background:#0a0b0d;
+    padding:0;
+    color:#f5f2ec;
+  }
+  #card.tpl-fullbleed .fbPhoto{
+    position:absolute;inset:0;z-index:0;
+    background-size:cover;background-position:center;background-repeat:no-repeat;
+  }
+  #card.tpl-fullbleed .fbScrim{
+    position:absolute;inset:0;z-index:1;pointer-events:none;
+    background:linear-gradient(180deg, rgba(0,0,0,.35) 0%, rgba(0,0,0,.15) 35%, rgba(0,0,0,.55) 70%, rgba(0,0,0,.88) 100%);
+  }
+  #card.tpl-fullbleed .fbContent{
+    position:relative;z-index:2;
+    height:100%;
+    padding:26px 28px 24px;
+    display:flex;flex-direction:column;
+  }
+  #card.tpl-fullbleed .tagYellow{
+    display:inline-block;
+    background:#E6FF00;
+    color:#0a0a0a;
+    font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:11px;font-weight:800;
+    letter-spacing:.14em;text-transform:uppercase;
+    padding:7px 14px;width:fit-content;
+  }
+  #card.tpl-fullbleed .fbSpacer{flex:1;}
+  #card.tpl-fullbleed .headline{
+    font-family:Georgia,'Noto Serif KR','Nanum Myeongjo',serif;
+    font-weight:400;
+    font-size:30px;
+    line-height:1.15;
+    letter-spacing:-.03em;
+    color:#fff;
+    margin:0 0 14px;
+    white-space:pre-wrap;word-break:keep-all;
+    text-shadow:0 2px 16px rgba(0,0,0,.45);
+  }
+  #card.tpl-fullbleed .summary{
+    font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:13.5px;
+    line-height:1.55;
+    color:rgba(245,242,236,.9);
+    padding-left:14px;
+    border-left:3px solid #E6FF00;
+    white-space:pre-wrap;word-break:keep-all;
+    margin-bottom:16px;
+  }
+  #card.tpl-fullbleed .metaRow{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding-top:12px;
+    border-top:1px solid rgba(255,255,255,.18);
+    font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:11px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:rgba(255,255,255,.6);
+  }
+
+  /* Watermark */
+  #card .watermark{
+    position:absolute;
+    z-index:10;
+    pointer-events:none;
+    font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-weight:700;
+    letter-spacing:.04em;
+    opacity:.55;
+    color:#fff;
+    text-shadow:0 1px 4px rgba(0,0,0,.5);
+    white-space:nowrap;
+  }
+  #card .watermark.pos-br{right:16px;bottom:14px;}
+  #card .watermark.pos-bl{left:16px;bottom:14px;}
+  #card .watermark.pos-tr{right:16px;top:14px;}
+  #card .watermark.pos-tl{left:16px;top:14px;}
+
   /* Generic fallback card */
   #card.tpl-basic{
     padding:28px 26px 24px;
@@ -457,6 +539,7 @@
           <div class="ddLabel">프리미엄 에디토리얼</div>
           <div class="ddItem active" data-template="politics"><span class="ic">◆</span>A · Politics Insight</div>
           <div class="ddItem" data-template="breaking"><span class="ic">▣</span>B · Breaking Photo</div>
+          <div class="ddItem" data-template="fullbleed"><span class="ic">▣</span>C · Full Bleed Photo</div>
           <div class="ddSep"></div>
           <div class="ddLabel">기본</div>
           <div class="ddItem" data-template="basic"><span class="ic">Aa</span>텍스트 기본</div>
@@ -534,8 +617,39 @@
           <input type="text" id="sourceText" value="Source: Newsroom" placeholder="Source: 연합뉴스">
         </div>
         <div class="field">
-          <label>날짜</label>
+          <label>날짜 · 시간대</label>
+          <div class="row2" style="margin-bottom:6px;">
+            <select id="tzSelect" style="flex:1;">
+              <option value="KR">한국 (KST)</option>
+              <option value="US-E">미국 동부 (ET)</option>
+              <option value="US-C">미국 중부 (CT)</option>
+              <option value="US-M">미국 산지 (MT)</option>
+              <option value="US-P">미국 서부 (PT)</option>
+            </select>
+            <button type="button" class="btn small" id="tzNowBtn" style="flex:none;">지금 넣기</button>
+          </div>
           <input type="text" id="dateText" value="" placeholder="2026.08.23">
+          <div class="hint">시간대 선택 후 「지금 넣기」를 누르면 해당 지역 시각이 입력됩니다.</div>
+        </div>
+        <div class="field">
+          <label>페이지 번호</label>
+          <div class="formatRow">
+            <button type="button" class="formatBtn active" id="pageNumOn">표시</button>
+            <button type="button" class="formatBtn" id="pageNumOff">숨김</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>워터마크 (내 계정)</label>
+          <input type="text" id="watermarkText" value="" placeholder="@youraccount">
+        </div>
+        <div class="field">
+          <label>워터마크 위치</label>
+          <select id="watermarkPos">
+            <option value="br">우측 하단</option>
+            <option value="bl">좌측 하단</option>
+            <option value="tr">우측 상단</option>
+            <option value="tl">좌측 상단</option>
+          </select>
         </div>
       </div>
 
@@ -671,6 +785,24 @@ function todayStr(){
   return y+'.'+m+'.'+day;
 }
 
+function formatTzNow(tz){
+  const d = new Date();
+  const opts = { year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', hour12:false };
+  let timeZone = 'Asia/Seoul';
+  let label = 'KST';
+  if(tz === 'US-E'){ timeZone = 'America/New_York'; label = 'ET'; }
+  else if(tz === 'US-C'){ timeZone = 'America/Chicago'; label = 'CT'; }
+  else if(tz === 'US-M'){ timeZone = 'America/Denver'; label = 'MT'; }
+  else if(tz === 'US-P'){ timeZone = 'America/Los_Angeles'; label = 'PT'; }
+  try {
+    const parts = new Intl.DateTimeFormat('en-CA', { ...opts, timeZone }).formatToParts(d);
+    const get = t => (parts.find(p => p.type === t) || {}).value || '';
+    return get('year')+'.'+get('month')+'.'+get('day')+' '+get('hour')+':'+get('minute')+' '+label;
+  } catch(e){
+    return todayStr() + ' ' + label;
+  }
+}
+
 function defaults(){
   return {
     template: 'politics',
@@ -681,6 +813,10 @@ function defaults(){
     summary: '새 법안 통과 직후 여야 원내대표가 긴급 브리핑을 갖고 향후 일정을 설명했다.',
     source: 'Source: Newsroom',
     date: todayStr(),
+    tz: 'KR',
+    showPageNum: true,
+    watermark: '',
+    watermarkPos: 'br',
     bg: '#111318',
     text: '#ffffff',
     neon: '#E6FF00',
@@ -710,6 +846,18 @@ let active = 0;
 
 function fontCss(key){ return FONTS[key] || FONTS.pretendard; }
 
+function watermarkHtml(s){
+  if(!s.watermark || !String(s.watermark).trim()) return '';
+  const pos = s.watermarkPos || 'br';
+  return `<div class="watermark pos-${pos}" style="font-size:11px;">${escapeHtml(s.watermark)}</div>`;
+}
+function metaRight(s, pageIdx, total){
+  const parts = [];
+  if(s.source) parts.push(escapeHtml(s.source));
+  if(s.showPageNum !== false) parts.push(String(pageIdx+1).padStart(2,'0')+' / '+String(total).padStart(2,'0'));
+  return parts.join(' · ') || '';
+}
+
 function cardMarkup(s, pageIdx, total){
   const w = s.cardWidth || 480;
   const h = s.cardHeight || 480;
@@ -722,6 +870,8 @@ function cardMarkup(s, pageIdx, total){
   const pageLabel = String(pageIdx+1).padStart(2,'0') + ' / ' + String(total).padStart(2,'0');
   const dateStr = s.date || '';
   const sourceStr = s.source || '';
+  const metaR = metaRight(s, pageIdx, total);
+  const wm = watermarkHtml(s);
 
   /* ===== A: Politics Insight ===== */
   if(s.template === 'politics'){
@@ -737,8 +887,9 @@ function cardMarkup(s, pageIdx, total){
       </div>
       <div class="metaRow">
         <span>${escapeHtml(dateStr)}</span>
-        <span>${escapeHtml(sourceStr)}</span>
+        <span>${metaR}</span>
       </div>
+      ${wm}
     </div>`;
   }
 
@@ -770,20 +921,49 @@ function cardMarkup(s, pageIdx, total){
         <div class="summary" style="font-size:${s.subSize}px;font-family:${bodyFont};border-left-color:${neon};">${parseInlineFormat(s.summary, neon)}</div>
         <div class="metaRow">
           <span>${escapeHtml(dateStr)}</span>
-          <span>${escapeHtml(sourceStr)}</span>
+          <span>${metaR}</span>
         </div>
       </div>
+      ${wm}
+    </div>`;
+  }
+
+  /* ===== C: Full Bleed Photo ===== */
+  if(s.template === 'fullbleed'){
+    const posMap = {top:'center top', center:'center center', bottom:'center bottom'};
+    const pos = posMap[s.imagePos] || 'center center';
+    const fit = s.imageFit || 'cover';
+    const filt = filterCss(s.imageFilter);
+    const bgSize = fit === 'original' ? 'auto' : fit;
+    let photoStyle = s.image
+      ? `background-image:url('${s.image}');background-size:${bgSize};background-position:${pos};filter:${filt};`
+      : `background:linear-gradient(160deg,#2a2e38,#12141a);`;
+    return `<div id="card" class="tpl-fullbleed" style="width:${w}px;height:${h}px;background:${s.bg};">
+      <div class="fbPhoto" style="${photoStyle}"></div>
+      <div class="fbScrim"></div>
+      <div class="fbContent">
+        <div class="tagYellow" style="background:${neon};font-size:${s.tagSize}px;">${escapeHtml(s.tagText || s.category || 'EDITORIAL')}</div>
+        <div class="fbSpacer"></div>
+        <div class="headline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text};">${headline}</div>
+        <div class="summary" style="font-size:${s.subSize}px;font-family:${bodyFont};border-left-color:${neon};">${parseInlineFormat(s.summary, neon)}</div>
+        <div class="metaRow">
+          <span>${escapeHtml(dateStr)}</span>
+          <span>${metaR}</span>
+        </div>
+      </div>
+      ${wm}
     </div>`;
   }
 
   /* Basic fallback */
   return `<div id="card" class="tpl-basic" style="width:${w}px;height:${h}px;background:${s.bg||'#faf9fc'};color:${s.text||'#1a1a1a'};font-family:${baseFont};">
-    <div class="rowTop"><span class="badgeTop">${escapeHtml(s.tagText||s.category||'')}</span><span class="pageNum">${pageLabel}</span></div>
+    <div class="rowTop"><span class="badgeTop">${escapeHtml(s.tagText||s.category||'')}</span>${s.showPageNum!==false?`<span class="pageNum">${pageLabel}</span>`:''}</div>
     <div class="frame" style="text-align:${s.align||'left'};">
       <div class="titleText" style="font-size:${s.titleSize}px;font-family:${titleFont};">${headline}</div>
       <div class="subText" style="font-size:${s.subSize}px;font-family:${bodyFont};">${parseInlineFormat(s.summary || s.bullets, neon)}</div>
     </div>
     <div class="rowBottom"><span class="handle">${escapeHtml(sourceStr)}</span><span></span></div>
+    ${wm}
   </div>`;
 }
 
@@ -822,7 +1002,7 @@ function renderList(){
 function updateTemplateFields(){
   const t = slides[active].template;
   $('bulletsField').style.display = (t==='politics') ? '' : 'none';
-  $('summaryField').style.display = (t==='breaking' || t==='basic') ? '' : 'none';
+  $('summaryField').style.display = (t==='breaking' || t==='fullbleed' || t==='basic') ? '' : 'none';
 }
 
 function syncForm(){
@@ -831,9 +1011,15 @@ function syncForm(){
   $('tagText').value = s.tagText || '';
   $('sourceText').value = s.source || '';
   $('dateText').value = s.date || '';
+  if($('tzSelect')) $('tzSelect').value = s.tz || 'KR';
   $('titleText').value = s.title || '';
   $('bulletsText').value = s.bullets || '';
   $('summaryText').value = s.summary || '';
+  if($('watermarkText')) $('watermarkText').value = s.watermark || '';
+  if($('watermarkPos')) $('watermarkPos').value = s.watermarkPos || 'br';
+  const showPN = s.showPageNum !== false;
+  if($('pageNumOn')) $('pageNumOn').classList.toggle('active', showPN);
+  if($('pageNumOff')) $('pageNumOff').classList.toggle('active', !showPN);
   $('bgColor').value = s.bg; $('bgColorHex').textContent = s.bg;
   $('textColor').value = s.text; $('textColorHex').textContent = s.text;
   $('neonColor').value = s.neon; $('neonColorHex').textContent = s.neon;
@@ -872,6 +1058,34 @@ bindText('dateText','date');
 bindText('titleText','title');
 bindText('bulletsText','bullets');
 bindText('summaryText','summary');
+if($('watermarkText')) bindText('watermarkText','watermark');
+if($('watermarkPos')) $('watermarkPos').addEventListener('change', e => {
+  slides[active].watermarkPos = e.target.value;
+  renderMainCard(); renderList();
+});
+if($('tzSelect')) $('tzSelect').addEventListener('change', e => {
+  slides[active].tz = e.target.value;
+});
+if($('tzNowBtn')) $('tzNowBtn').addEventListener('click', () => {
+  const tz = ($('tzSelect') && $('tzSelect').value) || 'KR';
+  slides[active].tz = tz;
+  const val = formatTzNow(tz);
+  slides[active].date = val;
+  $('dateText').value = val;
+  renderMainCard(); renderList();
+});
+if($('pageNumOn')) $('pageNumOn').addEventListener('click', () => {
+  slides[active].showPageNum = true;
+  $('pageNumOn').classList.add('active');
+  $('pageNumOff').classList.remove('active');
+  renderMainCard(); renderList();
+});
+if($('pageNumOff')) $('pageNumOff').addEventListener('click', () => {
+  slides[active].showPageNum = false;
+  $('pageNumOff').classList.add('active');
+  $('pageNumOn').classList.remove('active');
+  renderMainCard(); renderList();
+});
 
 $('categorySelect').addEventListener('change', e => {
   slides[active].category = e.target.value;
@@ -946,12 +1160,16 @@ Array.from(document.querySelectorAll('#layoutMenu .ddItem')).forEach(item => {
     const t = item.dataset.template;
     slides[active].template = t;
     if(t === 'politics'){
-      if(!slides[active].tagText || slides[active].tagText === 'BREAKING ISSUE') slides[active].tagText = 'POLITICS INSIGHT';
+      if(!slides[active].tagText || slides[active].tagText === 'BREAKING ISSUE' || slides[active].tagText === 'EDITORIAL') slides[active].tagText = 'POLITICS INSIGHT';
       slides[active].titleSize = 32;
     }
     if(t === 'breaking'){
-      if(!slides[active].tagText || slides[active].tagText === 'POLITICS INSIGHT') slides[active].tagText = 'BREAKING ISSUE';
+      if(!slides[active].tagText || slides[active].tagText === 'POLITICS INSIGHT' || slides[active].tagText === 'EDITORIAL') slides[active].tagText = 'BREAKING ISSUE';
       slides[active].titleSize = 26;
+    }
+    if(t === 'fullbleed'){
+      if(!slides[active].tagText || slides[active].tagText === 'POLITICS INSIGHT') slides[active].tagText = 'EDITORIAL';
+      slides[active].titleSize = 30;
     }
     Array.from(document.querySelectorAll('#layoutMenu .ddItem')).forEach(i => i.classList.toggle('active', i===item));
     closeAllDropdowns();
@@ -998,7 +1216,7 @@ $('imageUpload').addEventListener('change', e => {
       canvas.height = Math.round(img.height*scale);
       canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);
       slides[active].image = canvas.toDataURL('image/jpeg', 0.88);
-      if(slides[active].template === 'politics') slides[active].template = 'breaking';
+      if(slides[active].template === 'politics' || slides[active].template === 'basic') slides[active].template = 'breaking';
       syncForm(); renderMainCard(); renderList();
     };
     img.src = ev.target.result;
