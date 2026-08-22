@@ -999,11 +999,12 @@ document.getElementById('addSubBtn').addEventListener('click', ()=>{
   renderSubPanel(); render();
 });
 
-/* ---------- export (iOS / Mac Safari safe) ---------- */
+/* ---------- export (stable PNG save) ---------- */
 function isIOSDevice(){
   return /iP(hone|ad|od)/.test(navigator.userAgent) ||
     (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 }
+
 function isSafariBrowser(){
   return /^((?!chrome|android|crios|fxios).)*safari/i.test(navigator.userAgent);
 }
@@ -1014,90 +1015,100 @@ document.getElementById('exportBtn').addEventListener('click', async ()=>{
   const exportBtn = document.getElementById('exportBtn');
   const prevTransform = wrap.style.transform;
 
-  if(exportBtn.disabled) return; // 저장 진행 중 중복 클릭 방지
+  if(exportBtn.disabled) return;
   exportBtn.disabled = true;
   wrap.style.transform = 'none';
   toast('이미지 생성 중...');
 
+  let blobUrl = null;
+
   try{
-    // 웹폰트가 완전히 로드되기 전에 캡처하면 글자가 기본 폰트로 깨져 보일 수 있음
+    // 1) html2canvas가 실제로 로드되어 있는지 먼저 확인
+    if(typeof window.html2canvas !== 'function'){
+      throw new Error('html2canvas 라이브러리를 불러오지 못했습니다.');
+    }
+
+    // 2) 웹폰트 로딩 완료 후 캡처
     if(document.fonts && document.fonts.ready){
       await document.fonts.ready;
     }
 
-    const canvas = await html2canvas(card, {
+    // 3) 브라우저 화면용 transform을 제거한 상태에서 카드 자체를 캡처
+    const canvas = await window.html2canvas(card, {
       backgroundColor: null,
       scale: 2,
       useCORS: true,
-      allowTaint: true,
+      allowTaint: false,
       imageTimeout: 15000,
-      logging: false
+      logging: false,
+      removeContainer: true
     });
 
-    wrap.style.transform = prevTransform;
+    if(!canvas || !canvas.width || !canvas.height){
+      throw new Error('PNG로 변환할 캔버스를 생성하지 못했습니다.');
+    }
+
+    // 4) Blob 생성 실패를 확실히 감지
+    const blob = await new Promise((resolve, reject)=>{
+      canvas.toBlob((result)=>{
+        if(result && result.size > 0){
+          resolve(result);
+        }else{
+          reject(new Error('PNG Blob 생성에 실패했습니다.'));
+        }
+      }, 'image/png');
+    });
 
     const filename = `x-today-${Date.now()}.png`;
+    blobUrl = URL.createObjectURL(blob);
 
-    // canvas.toBlob이 실패(특히 canvas가 오염된 경우 SecurityError)해도
-    // 반드시 이 catch로 잡히도록 Promise로 감쌈 — 이전 코드는 이 예외가
-    // 잡히지 않아 아무 반응 없이 "저장이 안 되는" 현상의 원인이었음
-    const blob = await new Promise((resolve, reject)=>{
-      try{
-        canvas.toBlob((b)=>{
-          if(b) resolve(b);
-          else reject(new Error('canvas.toBlob이 빈 결과를 반환했습니다'));
-        }, 'image/png');
-      }catch(toBlobErr){
-        reject(toBlobErr);
-      }
-    });
-
-    // 1) iPhone/iPad/Mac: try the native share sheet first — this is the most
-    //    reliable way to save an image to Photos from Safari.
-    let shared = false;
-    if(navigator.canShare && window.File){
+    // 5) iOS/iPadOS는 공유 시트에서 사진 저장을 유도
+    if(isIOSDevice() && navigator.share && navigator.canShare && window.File){
       try{
         const file = new File([blob], filename, { type: 'image/png' });
         if(navigator.canShare({ files: [file] })){
           await navigator.share({ files: [file], title: filename });
           toast('공유 시트에서 "이미지 저장"을 선택하세요');
-          shared = true;
+          return;
         }
       }catch(shareErr){
-        if(shareErr && shareErr.name === 'AbortError'){
-          // user cancelled the share sheet — don't fall through with a duplicate download
-          shared = true;
+        // 사용자가 공유창을 닫은 경우에도 오류로 처리하지 않고 계속 진행
+        if(shareErr && shareErr.name !== 'AbortError'){
+          console.warn('공유 저장 경로 실패:', shareErr);
         }
-        // otherwise fall through to the other methods below
       }
     }
-    if(shared){ exportBtn.disabled = false; return; }
 
-    const blobUrl = URL.createObjectURL(blob);
-
-    // 2) Standard download link — works on desktop Chrome/Firefox/Edge and modern Mac browsers.
+    // 6) Chrome/Edge/Firefox 등 데스크톱은 일반 다운로드를 우선 사용
     const link = document.createElement('a');
-    link.download = filename;
     link.href = blobUrl;
+    link.download = filename;
+    link.style.display = 'none';
     document.body.appendChild(link);
     link.click();
-    document.body.removeChild(link);
+    link.remove();
 
-    // 3) iOS Safari / Mac Safari often ignore the download attribute, so also open
-    //    the image in a new tab so the user can long-press (or right-click) → save.
-    if(isIOSDevice() || isSafariBrowser()){
-      window.open(blobUrl, '_blank');
-      toast('새 탭에서 이미지를 길게 눌러 "사진에 저장"하세요');
-    } else {
+    // 7) Safari가 download 속성을 무시하면 새 탭에서 직접 저장할 수 있게 제공
+    if(isSafariBrowser()){
+      setTimeout(()=>{
+        try{ window.open(blobUrl, '_blank'); }catch(openErr){
+          console.warn('Safari 새 탭 열기 실패:', openErr);
+        }
+      }, 0);
+      toast('다운로드가 시작되지 않으면 새 탭의 이미지를 저장하세요');
+    }else{
       toast('저장 완료!');
     }
 
-    setTimeout(()=>URL.revokeObjectURL(blobUrl), 60000);
+    setTimeout(()=>{
+      if(blobUrl) URL.revokeObjectURL(blobUrl);
+      blobUrl = null;
+    }, 60000);
   }catch(err){
     console.error('PNG 저장 오류:', err);
-    toast('저장 중 오류가 발생했어요 (F12 콘솔을 확인해주세요)');
-    wrap.style.transform = prevTransform;
+    toast('저장 중 오류가 발생했어요. F12 콘솔을 확인해주세요.');
   }finally{
+    wrap.style.transform = prevTransform;
     exportBtn.disabled = false;
   }
 });
