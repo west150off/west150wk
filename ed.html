@@ -1,17 +1,13 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Card Editor</title>
-<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&family=Noto+Sans+KR:wght@400;500;700&family=Roboto:wght@400;700&family=Montserrat:wght@500;700&family=Oswald:wght@500;700&family=Lora:wght@400;700&family=Poppins:wght@500;700&family=Source+Sans+3:wght@400;600&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Card Editor Pro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=IBM+Plex+Sans+KR:wght@400;600;700&family=Black+Han+Sans&family=Do+Hyeon&family=Jua&family=Gaegu:wght@400;700&family=Nanum+Myeongjo:wght@400;700;800&family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css" />
 <style>
   @font-face {
     font-family: 'RIDIBatang';
@@ -19,994 +15,1177 @@
     font-weight: normal;
     font-display: swap;
   }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+  :root, [data-editor-theme="dark"]{
+    --chrome-bg:#12101a;
+    --chrome-panel:#1a1628;
+    --chrome-line:#2e2842;
+    --chrome-text:#ece8f5;
+    --chrome-sub:#9a92b5;
+    --chrome-input:#0e0b16;
+    --chrome-btn:#2a2440;
+    --chrome-btn-hover:#3a3260;
+    --chrome-dropdown:#221c36;
+    --chrome-stage:#0c0a12;
+    --accent:#8b6cff;
+    --accent-soft:#8b6cff28;
+    --danger:#ff5c7a;
+    --success:#3ecf8e;
+  }
+  [data-editor-theme="light"]{
+    --chrome-bg:#ebe8f2;
+    --chrome-panel:#ffffff;
+    --chrome-line:#ddd6ea;
+    --chrome-text:#1a1528;
+    --chrome-sub:#6b6580;
+    --chrome-input:#f5f2fa;
+    --chrome-btn:#ebe6f5;
+    --chrome-btn-hover:#ddd5f0;
+    --chrome-dropdown:#ffffff;
+    --chrome-stage:#e4e0ec;
+    --accent:#6c4aff;
+    --accent-soft:#6c4aff22;
+    --danger:#e03d5c;
+    --success:#2aad6e;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;height:100%;font-family:'Pretendard Variable','Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:var(--chrome-bg);color:var(--chrome-text);overflow:hidden;}
+  #app{display:flex;flex-direction:column;height:100vh;}
 
-  /* ---------- Reset ---------- */
-  *, *::before, *::after { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; }
-  button, input, select, textarea { font: inherit; color: inherit; }
-  button { cursor: pointer; }
-  ul { list-style: none; margin: 0; padding: 0; }
-  img { max-width: 100%; display: block; }
+  /* Topbar */
+  #topbar{display:flex;align-items:center;justify-content:space-between;padding:0 16px;height:52px;background:var(--chrome-panel);border-bottom:1px solid var(--chrome-line);flex:none;z-index:300;}
+  #topbar .brand{font-weight:700;font-size:14px;letter-spacing:.03em;display:flex;align-items:center;gap:8px;}
+  #topbar .brand .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent);}
+  #topbar .actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end;}
+  button{font-family:inherit;cursor:pointer;border:none;}
+  select,input,textarea{font-family:inherit;}
+  .btn{padding:8px 14px;border-radius:8px;font-size:12.5px;font-weight:600;background:var(--chrome-btn);color:var(--chrome-text);transition:.15s;white-space:nowrap;}
+  .btn:hover{background:var(--chrome-btn-hover);}
+  .btn.primary{background:var(--accent);color:#fff;}
+  .btn.primary:hover{filter:brightness(1.08);}
+  .btn.ghost{background:transparent;color:var(--chrome-sub);border:1px solid var(--chrome-line);}
+  .btn.ghost:hover{color:var(--chrome-text);border-color:var(--accent);}
+  .btn.small{padding:6px 10px;font-size:12px;}
+  .btn.full{width:100%;}
+  .btn:disabled{opacity:.4;cursor:default;}
 
-  /* ---------- Design tokens ---------- */
-  :root {
-    --blue: #0071e3;
-    --blue-hover: #0077ed;
-    --blue-active: #006edb;
-    --bg: #f5f5f7;
-    --surface: #ffffff;
-    --surface-translucent: rgba(255, 255, 255, 0.82);
-    --border: #d2d2d7;
-    --border-soft: #e5e5ea;
-    --text: #1d1d1f;
-    --text-secondary: #6e6e73;
-    --text-tertiary: #86868b;
-    --red: #ff3b30;
-    --danger-bg: #fdecea;
-    --radius-sm: 8px;
-    --radius-md: 12px;
-    --radius-lg: 18px;
-    --shadow-card: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-    --header-h: 56px;
+  .menuWrap{position:relative;}
+  .dropdown{position:absolute;top:calc(100% + 6px);left:0;background:var(--chrome-dropdown);border:1px solid var(--chrome-line);border-radius:10px;padding:6px;display:none;flex-direction:column;min-width:180px;box-shadow:0 14px 34px #0006;z-index:400;}
+  .dropdown.open{display:flex;}
+  .dropdown.panelDropdown{padding:14px;width:300px;gap:10px;max-height:78vh;overflow-y:auto;}
+  .dropdown.wide{width:240px;max-height:70vh;overflow-y:auto;}
+  .ddItem{padding:9px 11px;border-radius:7px;font-size:13px;cursor:pointer;color:var(--chrome-text);display:flex;align-items:center;gap:8px;}
+  .ddItem:hover{background:var(--chrome-btn-hover);}
+  .ddItem.active{background:var(--accent-soft);color:var(--accent);}
+  .ddItem .ic{opacity:.7;font-size:14px;width:18px;text-align:center;}
+  .ddSep{height:1px;background:var(--chrome-line);margin:6px 0;}
+
+  #body{flex:1;display:flex;min-height:0;}
+
+  /* Left panel - slides */
+  #left{width:168px;flex:none;background:var(--chrome-panel);border-right:1px solid var(--chrome-line);display:flex;flex-direction:column;}
+  #left .hd{padding:12px 12px 6px;font-size:11px;color:var(--chrome-sub);font-weight:700;letter-spacing:.04em;text-transform:uppercase;}
+  #slideList{flex:1;overflow-y:auto;padding:0 10px 10px;display:flex;flex-direction:column;gap:8px;}
+  .thumb{position:relative;border-radius:8px;overflow:hidden;cursor:pointer;border:2px solid transparent;background:#000;aspect-ratio:4/5;flex-shrink:0;}
+  .thumb.active{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
+  .thumb iframe{width:400%;height:400%;transform:scale(.25);transform-origin:top left;border:0;pointer-events:none;}
+  .thumb .idx{position:absolute;top:4px;left:5px;font-size:10px;font-weight:700;color:#fff;background:#000a;padding:1px 5px;border-radius:4px;}
+  .thumb .del{position:absolute;top:4px;right:4px;width:18px;height:18px;border-radius:5px;background:#000a;color:#fff;font-size:11px;line-height:18px;text-align:center;opacity:0;transition:.15s;}
+  .thumb:hover .del{opacity:1;}
+  .thumb .del:hover{background:var(--danger);}
+  #addSlide{margin:0 10px 12px;padding:10px;border-radius:8px;background:var(--chrome-btn);color:var(--chrome-sub);font-size:12px;font-weight:600;border:1px dashed var(--chrome-line);width:calc(100% - 20px);}
+  #addSlide:hover{color:var(--chrome-text);border-color:var(--accent);}
+
+  /* Stage */
+  #stage{flex:1;display:flex;align-items:center;justify-content:center;overflow:auto;background:radial-gradient(circle at 40% 30%, #1a1530 0%, var(--chrome-stage) 65%);padding:32px;}
+  #canvasWrap{box-shadow:0 28px 56px -18px #000a;border-radius:4px;position:relative;}
+
+  /* Card base */
+  #card{width:400px;height:500px;position:relative;overflow:hidden;display:flex;flex-direction:column;padding:28px 26px 24px;background:#faf9fc;color:#1a1a1a;}
+  #card .rowTop{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
+  #card .badgeTop{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;opacity:.85;}
+  #card .pageNum{font-size:11px;font-weight:600;opacity:.5;}
+  #card .frame{flex:1;margin-top:12px;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden;}
+  #card .pill{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.04em;padding:5px 12px;border-radius:20px;margin-bottom:14px;width:fit-content;}
+  #card .titleText{font-size:28px;line-height:1.3;font-weight:800;letter-spacing:-.02em;white-space:pre-wrap;word-break:keep-all;}
+  #card .titleText .t-accent{font-weight:900;}
+  #card .titleText .t-underline{text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:2px;}
+  #card .subText{margin-top:14px;font-size:15px;line-height:1.55;font-weight:500;white-space:pre-wrap;word-break:keep-all;}
+  #card .subText .t-accent{font-weight:800;}
+  #card .subText .t-underline{text-decoration:underline;text-underline-offset:3px;}
+  #card .rowBottom{display:flex;justify-content:space-between;align-items:center;margin-top:16px;}
+  #card .handle{font-size:12px;font-weight:700;opacity:.7;}
+
+  /* Image areas */
+  #card .imgBox{position:relative;overflow:hidden;background:#0002;}
+  #card .imgBox.full{position:absolute;inset:0;z-index:0;border-radius:0;}
+  #card .imgBox.split{width:100%;height:42%;flex:none;margin-bottom:14px;border-radius:6px;}
+  #card .imgBox.bottom{width:100%;height:36%;flex:none;margin-top:14px;border-radius:6px;}
+  #card .imgBox .layer{position:absolute;inset:0;background-repeat:no-repeat;}
+  #card .imgBox .blurBg{position:absolute;inset:0;background-size:cover;background-position:center;filter:blur(28px) brightness(.85);transform:scale(1.15);}
+  #card .scrim{position:absolute;inset:0;pointer-events:none;z-index:1;}
+  #card .z2{position:relative;z-index:2;}
+
+  /* Right panel */
+  #right{width:300px;flex:none;background:var(--chrome-panel);border-left:1px solid var(--chrome-line);overflow-y:auto;}
+  .sec{padding:14px 16px;border-bottom:1px solid var(--chrome-line);}
+  .sec h3{margin:0 0 10px;font-size:11px;font-weight:700;color:var(--chrome-sub);letter-spacing:.05em;text-transform:uppercase;}
+  .field{margin-bottom:11px;}
+  .field:last-child{margin-bottom:0;}
+  .field label{display:block;font-size:12px;color:var(--chrome-sub);margin-bottom:5px;}
+  .field input[type=text], .field textarea, .field select, .field input[type=number]{
+    width:100%;background:var(--chrome-input);border:1px solid var(--chrome-line);color:var(--chrome-text);
+    border-radius:7px;padding:8px 10px;font-size:13px;resize:vertical;
+  }
+  .field textarea{min-height:64px;line-height:1.4;}
+  .field input:focus, .field textarea:focus, .field select:focus{outline:none;border-color:var(--accent);}
+  .row2{display:flex;gap:8px;}
+  .row2 .field{flex:1;}
+  .colorField{display:flex;align-items:center;gap:8px;background:var(--chrome-input);border:1px solid var(--chrome-line);border-radius:7px;padding:5px 10px;}
+  .colorField input[type=color]{width:26px;height:26px;border:none;background:none;padding:0;cursor:pointer;}
+  .colorField span{font-size:12px;color:var(--chrome-sub);flex:1;}
+  .slider{display:flex;align-items:center;gap:8px;}
+  .slider input[type=range]{flex:1;accent-color:var(--accent);}
+  .slider .val{font-size:11px;color:var(--chrome-sub);width:34px;text-align:right;font-variant-numeric:tabular-nums;}
+  .hint{font-size:11px;color:var(--chrome-sub);margin-top:5px;line-height:1.45;}
+  .swatches{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px;}
+  .sw{width:20px;height:20px;border-radius:5px;cursor:pointer;border:1px solid #ffffff22;}
+  .formatRow{display:flex;gap:5px;}
+  .formatBtn{flex:1;padding:7px 0;border-radius:7px;background:var(--chrome-input);border:1px solid var(--chrome-line);color:var(--chrome-sub);font-size:13px;font-weight:700;transition:.15s;}
+  .formatBtn:hover{color:var(--chrome-text);border-color:var(--accent);}
+  .formatBtn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+  .alignRow{display:flex;gap:5px;}
+  .alignBtn{flex:1;padding:8px 0;border-radius:7px;background:var(--chrome-input);border:1px solid var(--chrome-line);color:var(--chrome-sub);font-size:12px;font-weight:600;transition:.15s;}
+  .alignBtn:hover{color:var(--chrome-text);border-color:var(--accent);}
+  .alignBtn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+  .imgPreviewRow{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+  .imgThumb{width:52px;height:52px;border-radius:8px;background-size:cover;background-position:center;background-color:#0e0b16;border:1px solid var(--chrome-line);flex:none;}
+
+  /* Undo float */
+  #undoRedoFloat{
+    position:fixed;right:16px;bottom:16px;z-index:100;
+    display:flex;gap:5px;padding:5px;border-radius:11px;
+    background:rgba(26,22,40,.6);border:1px solid rgba(255,255,255,.08);
+    backdrop-filter:blur(10px);box-shadow:0 8px 24px #0006;
+  }
+  #undoRedoFloat button{
+    width:38px;height:34px;border-radius:8px;background:rgba(255,255,255,.06);
+    color:var(--chrome-text);font-size:15px;font-weight:700;border:1px solid transparent;transition:.15s;
+  }
+  #undoRedoFloat button:hover:not(:disabled){background:rgba(139,108,255,.35);border-color:rgba(139,108,255,.5);}
+  #undoRedoFloat button:disabled{opacity:.35;cursor:default;}
+
+  /* Mobile */
+  #mobileBar{display:none;gap:5px;align-items:center;}
+  @media (max-width:960px){
+    #mobileBar{display:flex;}
+    #left{position:fixed;left:0;top:52px;bottom:0;z-index:80;width:min(280px,82vw);transform:translateX(-105%);transition:transform .2s ease;box-shadow:8px 0 24px #0004;}
+    #left.open{transform:translateX(0);}
+    #right{position:fixed;right:0;top:52px;bottom:0;z-index:80;width:min(320px,88vw);transform:translateX(105%);transition:transform .2s ease;box-shadow:-8px 0 24px #0004;}
+    #right.open{transform:translateX(0);}
+    #stage{padding:16px;}
+    #topbar{padding:0 10px;}
+    .btn{padding:7px 10px;font-size:12px;}
   }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Pretendard', sans-serif;
-    -webkit-font-smoothing: antialiased;
-  }
+  ::-webkit-scrollbar{width:7px;height:7px;}
+  ::-webkit-scrollbar-thumb{background:#3a3358;border-radius:4px;}
+  button:focus-visible, select:focus-visible, input:focus-visible, textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
 
-  input[type="range"] { accent-color: var(--blue); }
-  :focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
-
-  /* ---------- App shell ---------- */
-  .app { min-height: 100vh; display: flex; flex-direction: column; }
-
-  .app-header {
-    position: sticky;
-    top: 0;
-    z-index: 50;
-    background: var(--surface-translucent);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--border-soft);
-  }
-  .header-inner {
-    max-width: 1600px;
-    margin: 0 auto;
-    height: var(--header-h);
-    padding: 0 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-  }
-  .brand { display: flex; align-items: center; gap: 8px; }
-  .brand-mark {
-    width: 30px; height: 30px; border-radius: 8px;
-    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-    color: #fff; font-weight: 700; font-size: 14px;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
-  .brand-name { font-weight: 600; font-size: 15px; }
-
-  .tab-nav { display: flex; align-items: center; gap: 2px; background: rgba(118,118,128,0.12); padding: 4px; border-radius: 999px; }
-  .tab-nav button {
-    border: none; background: transparent; padding: 7px 18px; border-radius: 999px;
-    font-size: 13.5px; font-weight: 500; color: var(--text-secondary);
-    transition: background 0.15s, color 0.15s, box-shadow 0.15s;
-    white-space: nowrap;
-  }
-  .tab-nav button.active { background: #fff; color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
-  .tab-nav button:hover:not(.active) { color: var(--text); }
-
-  .btn {
-    border: none; border-radius: 980px; font-weight: 500; font-size: 13.5px;
-    padding: 8px 20px; transition: background 0.15s, opacity 0.15s;
-  }
-  .btn-primary { background: var(--blue); color: #fff; }
-  .btn-primary:hover:not(:disabled) { background: var(--blue-hover); }
-  .btn-primary:active:not(:disabled) { background: var(--blue-active); }
-  .btn-primary:disabled { opacity: 0.55; cursor: default; }
-
-  /* ---------- Body layout ---------- */
-  .app-body { flex: 1; display: flex; max-width: 1600px; margin: 0 auto; width: 100%; }
-
-  /* ---------- Sidebar (card list) ---------- */
-  .sidebar {
-    width: 260px; flex-shrink: 0;
-    border-right: 1px solid var(--border-soft);
-    background: rgba(255,255,255,0.4);
-    padding: 18px 16px;
-    display: flex; flex-direction: column;
-  }
-  .sidebar-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-  .sidebar-title { font-size: 13.5px; font-weight: 600; color: var(--text-secondary); }
-  .icon-round {
-    width: 28px; height: 28px; border-radius: 50%; border: none;
-    background: var(--blue); color: #fff; font-size: 18px; line-height: 1;
-    display: flex; align-items: center; justify-content: center;
-    transition: background 0.15s;
-  }
-  .icon-round:hover { background: var(--blue-hover); }
-
-  .card-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
-  .card-thumb {
-    position: relative; border-radius: var(--radius-md); overflow: hidden; cursor: pointer;
-    border: 2px solid transparent; transition: border-color 0.15s;
-  }
-  .card-thumb:hover { border-color: var(--border); }
-  .card-thumb.active { border-color: var(--blue); }
-  .card-thumb-frame { aspect-ratio: 3 / 4; background: #e5e5ea; position: relative; }
-  .card-thumb-bg { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0.85; }
-  .card-thumb-shade { position: absolute; inset: 0; background: rgba(0,0,0,0.38); }
-  .card-thumb-caption {
-    position: absolute; left: 8px; right: 8px; bottom: 8px;
-    color: #fff; font-size: 11.5px; font-weight: 500;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-  .card-thumb-actions {
-    position: absolute; top: 6px; right: 6px; display: flex; gap: 4px;
-    opacity: 0; transition: opacity 0.15s;
-  }
-  .card-thumb:hover .card-thumb-actions { opacity: 1; }
-  .thumb-action {
-    width: 24px; height: 24px; border-radius: 50%; border: none;
-    background: rgba(255,255,255,0.92); font-size: 12px;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .thumb-action:hover { background: #fff; }
-  .thumb-action.danger:hover { background: var(--danger-bg); color: var(--red); }
-
-  /* ---------- Main preview area ---------- */
-  .main-stage {
-    flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px;
-    background: linear-gradient(to bottom, #fafafa, #efeff1);
-  }
-
-  .card-canvas {
-    position: relative; overflow: hidden; border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-card); background: #0a0a0a; width: 100%;
-  }
-  .image-stack { position: absolute; inset: 0; overflow: hidden; }
-  .image-empty {
-    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-    color: #8a8a8e; font-size: 13.5px; background: #1c1c1e;
-  }
-  .image-layer { position: absolute; inset: 0; background-repeat: no-repeat; pointer-events: none; }
-  .gradient-layer { position: absolute; inset: 0; pointer-events: none; }
-
-  .card-content { position: relative; height: 100%; display: flex; flex-direction: column; padding: 24px; color: #fff; }
-  .eyebrow-row { display: flex; align-items: center; gap: 12px; }
-  .eyebrow-rule { width: 32px; height: 2px; background: var(--red); flex-shrink: 0; }
-  .push-bottom { margin-top: auto; }
-  .push-top { margin-bottom: auto; }
-  .divider-rule { height: 2px; background: var(--red); }
-  .footer-row { display: flex; align-items: center; justify-content: space-between; }
-  .text-block { white-space: pre-line; }
-  .highlight-chip { padding: 0px 4px; border-radius: 2px; color: #fff; display: inline; }
-  .underline-chip { text-decoration: none; border-bottom: 0.08em solid; padding-bottom: 0.1em; display: inline; }
-
-  /* layout-specific tweaks */
-  .layout-center-body { align-items: center; justify-content: center; text-align: center; }
-  .layout-big-title-body { justify-content: center; }
-  .layout-big-title-eyebrow { position: absolute; top: 24px; left: 24px; right: 24px; }
-  .layout-big-title-footer { position: absolute; bottom: 24px; left: 24px; right: 24px; }
-  .center-col { text-align: center; }
-  .center-inline { display: flex; align-items: center; justify-content: center; gap: 32px; }
-
-  /* ---------- Right panel ---------- */
-  .panel {
-    width: 320px; flex-shrink: 0; border-left: 1px solid var(--border-soft);
-    background: rgba(255,255,255,0.6); backdrop-filter: blur(12px);
-    padding: 20px; overflow-y: auto;
-  }
-  .panel h3 { margin: 0 0 12px; font-size: 14.5px; font-weight: 600; }
-  .panel h4 { margin: 0; font-size: 13.5px; font-weight: 500; color: var(--text); }
-  .field { margin-bottom: 20px; }
-  .field:last-child { margin-bottom: 0; }
-  .field-label { display: block; font-size: 12px; font-weight: 500; color: var(--text-secondary); margin-bottom: 6px; }
-  .field-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
-  .field-row .value { font-size: 12px; color: var(--text-secondary); }
-
-  .control {
-    width: 100%; border: 1px solid var(--border); border-radius: var(--radius-sm);
-    padding: 8px 11px; font-size: 13.5px; background: #fff;
-  }
-  .control:focus { border-color: var(--blue); }
-  textarea.control { resize: none; }
-  select.control { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%236e6e73'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z' clip-rule='evenodd'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 30px; }
-
-  input[type="range"].control { padding: 0; border: none; background: transparent; }
-
-  .info-box {
-    background: #eef5ff; color: #0a5fd6; font-size: 12px; line-height: 1.6;
-    padding: 12px 14px; border-radius: var(--radius-sm); margin-bottom: 18px;
-  }
-  .info-box strong { display: block; margin-bottom: 4px; }
-  .info-box code { background: rgba(10,95,214,0.12); padding: 1px 5px; border-radius: 4px; }
-
-  .segmented { display: flex; gap: 8px; }
-  .segmented button {
-    flex: 1; padding: 9px 0; border-radius: var(--radius-sm); border: 1px solid var(--border);
-    background: #fff; font-size: 13px; text-align: center; transition: all 0.15s;
-  }
-  .segmented button.active { background: var(--blue); border-color: var(--blue); color: #fff; }
-
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
-
-  .choice-card {
-    padding: 14px 10px; border-radius: var(--radius-md); border: 2px solid var(--border-soft);
-    background: #fff; font-size: 13px; font-weight: 500; text-align: center; transition: all 0.15s;
-  }
-  .choice-card.active { border-color: var(--blue); background: #eef5ff; color: var(--blue); }
-  .choice-card .sub { display: block; font-size: 11px; font-weight: 400; opacity: 0.75; margin-top: 2px; }
-
-  .choice-list { display: flex; flex-direction: column; gap: 8px; }
-  .choice-row {
-    text-align: left; padding: 11px 14px; border-radius: var(--radius-md); border: 2px solid var(--border-soft);
-    background: #fff; font-size: 13.5px; transition: all 0.15s;
-  }
-  .choice-row.active { border-color: var(--blue); background: #eef5ff; color: var(--blue); }
-
-  .swatch-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 12px; }
-  .swatch-field { display: flex; align-items: center; gap: 8px; }
-  .swatch-field .label { font-size: 12px; color: var(--text-secondary); }
-  input[type="color"] {
-    width: 32px; height: 32px; border: none; border-radius: 8px; padding: 0; cursor: pointer; background: none;
-  }
-  input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
-  input[type="color"]::-webkit-color-swatch { border: 1px solid var(--border); border-radius: 8px; }
-
-  .bold-toggle {
-    padding: 7px 16px; border-radius: var(--radius-sm); border: 1px solid var(--border);
-    background: #fff; font-weight: 700; font-size: 13.5px;
-  }
-  .bold-toggle.active { background: var(--text); border-color: var(--text); color: #fff; }
-
-  .file-input { font-size: 13px; }
-
-  .switch-row {
-    display: flex; align-items: center; justify-content: space-between; gap: 12px;
-    padding: 12px 14px; background: #f5f5f7; border-radius: var(--radius-md);
-  }
-  .switch-row .title { font-size: 13.5px; font-weight: 500; }
-  .switch-row .desc { font-size: 11.5px; color: var(--text-secondary); margin-top: 2px; }
-  .switch { position: relative; display: inline-block; width: 42px; height: 24px; flex-shrink: 0; }
-  .switch input { opacity: 0; width: 0; height: 0; }
-  .switch-track {
-    position: absolute; inset: 0; background: #d1d1d6; border-radius: 999px; transition: background 0.15s; cursor: pointer;
-  }
-  .switch-track::before {
-    content: ""; position: absolute; width: 20px; height: 20px; left: 2px; top: 2px;
-    background: #fff; border-radius: 50%; transition: transform 0.15s; box-shadow: 0 1px 2px rgba(0,0,0,0.2);
-  }
-  .switch input:checked + .switch-track { background: var(--blue); }
-  .switch input:checked + .switch-track::before { transform: translateX(18px); }
-
-  .section-divider { border: none; border-top: 1px solid var(--border-soft); margin: 18px 0; }
-
-  .checkbox-row { display: flex; align-items: center; gap: 8px; font-size: 13.5px; }
-
-  .helper-text { font-size: 12px; color: var(--text-secondary); line-height: 1.6; margin-top: 14px; }
-
-  @media (max-width: 900px) {
-    .sidebar, .panel { display: none; }
-  }
+  body.exporting #card .freeText.selected,
+  body.exporting #card .freeSticky.selected{border-color:transparent!important;outline:none!important;}
 </style>
 </head>
 <body>
-<div id="root"></div>
-
-<script type="text/babel">
-const { useState, useRef } = React;
-
-const freeFonts = [
-  { name: 'Pretendard', value: 'Pretendard' },
-  { name: '리디바탕', value: 'RIDIBatang' },
-  { name: 'Inter', value: 'Inter' },
-  { name: 'Playfair Display', value: 'Playfair Display' },
-  { name: 'Noto Sans KR', value: 'Noto Sans KR' },
-  { name: 'Roboto', value: 'Roboto' },
-  { name: 'Montserrat', value: 'Montserrat' },
-  { name: 'Oswald', value: 'Oswald' },
-  { name: 'Lora', value: 'Lora' },
-  { name: 'Poppins', value: 'Poppins' },
-  { name: 'Source Sans 3', value: 'Source Sans 3' },
-  { name: 'Merriweather', value: 'Merriweather' },
-];
-
-const sizePresets = [
-  { id: '3/4', name: '3:4 (기본 카드)', ratio: '3/4', maxW: '380px' },
-  { id: '9/16', name: '9:16 (스토리)', ratio: '9/16', maxW: '320px' },
-  { id: '1/1', name: '1:1 (정사각형)', ratio: '1/1', maxW: '420px' },
-  { id: '16/9', name: '16:9 (가로)', ratio: '16/9', maxW: '560px' },
-  { id: '4/5', name: '4:5 (인스타 세로)', ratio: '4/5', maxW: '360px' },
-];
-
-const layoutOptions = [
-  { id: 'news', name: '뉴스형' },
-  { id: 'big-title', name: '큰 타이틀' },
-  { id: 'bottom', name: '하단 텍스트' },
-  { id: 'center', name: '중앙 집중' },
-];
-
-const defaultTexts = {
-  category: { content: 'WORLD NEWS', fontSize: 13, fontFamily: 'Pretendard', color: '#ffffff', bold: true, align: 'left', highlightColor: '#ff3b30' },
-  live: { content: 'LIVE UPDATE', fontSize: 12, fontFamily: 'Pretendard', color: '#ff3b30', bold: true, align: 'left', highlightColor: '#ff3b30' },
-  title: { content: 'Hurricane [Lala]\nhits Hawaii', fontSize: 52, fontFamily: 'Playfair Display', color: '#ffffff', bold: true, align: 'left', highlightColor: '#ff3b30' },
-  description: { content: 'Hurricane Lala is battering Hawaii with heavy rain and strong winds, prompting flood warnings and emergency rescues across the islands.', fontSize: 15, fontFamily: 'Pretendard', color: '#e5e5e5', bold: false, align: 'left', highlightColor: '#ff3b30' },
-  source: { content: 'SOURCE: REUTERS', fontSize: 11, fontFamily: 'Pretendard', color: '#ff3b30', bold: true, align: 'left', highlightColor: '#ff3b30' },
-  brand: { content: 'WEST150DAILY', fontSize: 11, fontFamily: 'Pretendard', color: '#ffffff', bold: true, align: 'right', highlightColor: '#ff3b30' },
-};
-
-const createNewCard = () => ({
-  id: Date.now() + Math.random(),
-  layout: 'news',
-  size: '3/4',
-  backgroundImage: '',
-  blur: 0,
-  imageFit: 'cover',
-  imagePosition: 'center',
-  imageScale: 1,
-  marginBlur: true,
-  gradient: {
-    enabled: true,
-    direction: 'to bottom',
-    startColor: '#000000',
-    endColor: '#000000',
-    startOpacity: 0.3,
-    endOpacity: 0.85,
-  },
-  texts: JSON.parse(JSON.stringify(defaultTexts)),
-});
-
-// 원본 이미지를 data URL로 확보 (CORS 가능한 경우) — 내보내기 안정성 향상
-const loadImageAsDataURL = (src) => {
-  return new Promise((resolve) => {
-    if (!src) return resolve(null);
-    if (src.startsWith('data:')) return resolve(src);
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.onload = () => {
-      try {
-        const c = document.createElement('canvas');
-        c.width = img.naturalWidth;
-        c.height = img.naturalHeight;
-        c.getContext('2d').drawImage(img, 0, 0);
-        resolve(c.toDataURL('image/jpeg', 0.95));
-      } catch (e) {
-        resolve(src);
-      }
-    };
-    img.onerror = () => resolve(src);
-    img.src = src.includes('?') ? src + '&_=' + Date.now() : src + '?_=' + Date.now();
-  });
-};
-
-// 블러 처리된 data URL 생성. 원본과 정확히 같은 크기의 캔버스에 blur만 적용해서
-// (패딩을 추가하지 않음) background-size:cover 계산이 미리보기와 항상 일치하게 만든다.
-const createBlurredDataURL = (src, blurPx) => {
-  return new Promise((resolve) => {
-    if (!src || blurPx <= 0) return resolve(src);
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.onload = () => {
-      try {
-        const c = document.createElement('canvas');
-        c.width = img.naturalWidth;
-        c.height = img.naturalHeight;
-        const ctx = c.getContext('2d');
-        ctx.filter = `blur(${blurPx}px)`;
-        ctx.drawImage(img, 0, 0);
-        resolve(c.toDataURL('image/jpeg', 0.92));
-      } catch (e) {
-        resolve(src);
-      }
-    };
-    img.onerror = () => resolve(src);
-    img.src = src;
-  });
-};
-
-const renderFormattedText = (content, highlightColor) => {
-  if (!content) return null;
-  const regex = /(\[.*?\])|(~.*?~)/g;
-  const parts = content.split(regex).filter(Boolean);
-  return parts.map((part, index) => {
-    if (part.startsWith('[') && part.endsWith(']')) {
-  const bgColor = highlightColor || '#ff3b30';
-  return (
-    <span key={index} className="highlight-chip" style={{ 
-      // 40% 숫자를 올리면 두꺼워지고, 내리면 얇아져!
-      background: `linear-gradient(to top, ${bgColor} 40%, transparent 40%)` 
-    }}>
-      {part.slice(1, -1)}
-    </span>
-  );
-}
-    if (part.startsWith('~') && part.endsWith('~')) {
-      return <span key={index} className="underline-chip">{part.slice(1, -1)}</span>;
-    }
-    return <span key={index} style={{ display: 'inline' }}>{part}</span>;
-  });
-};
-
-function App() {
-  const [cards, setCards] = useState([createNewCard()]);
-  const [selectedId, setSelectedId] = useState(cards[0].id);
-  const [activeTab, setActiveTab] = useState('layout');
-  const [selectedTextKey, setSelectedTextKey] = useState('title');
-  const [isExporting, setIsExporting] = useState(false);
-  const previewRef = useRef(null);
-
-  const selectedCard = cards.find(c => c.id === selectedId) || cards[0];
-
-  const updateCard = (updates) => {
-    setCards(prev => prev.map(c => c.id === selectedId ? { ...c, ...updates } : c));
-  };
-  const updateGradient = (field, value) => {
-    setCards(prev => prev.map(c => c.id === selectedId ? { ...c, gradient: { ...c.gradient, [field]: value } } : c));
-  };
-  const updateText = (key, field, value) => {
-    setCards(prev => prev.map(c => c.id === selectedId
-      ? { ...c, texts: { ...c.texts, [key]: { ...c.texts[key], [field]: value } } }
-      : c));
-  };
-
-  const addCard = () => {
-    const newCard = createNewCard();
-    setCards(prev => [...prev, newCard]);
-    setSelectedId(newCard.id);
-  };
-  const duplicateCard = (id) => {
-    const original = cards.find(c => c.id === id);
-    const newCard = { ...JSON.parse(JSON.stringify(original)), id: Date.now() + Math.random() };
-    setCards(prev => [...prev, newCard]);
-    setSelectedId(newCard.id);
-  };
-  const deleteCard = (id) => {
-    if (cards.length <= 1) return alert('최소 1개의 카드는 필요합니다.');
-    const next = cards.filter(c => c.id !== id);
-    setCards(next);
-    if (selectedId === id) setSelectedId(next[0].id);
-  };
-
-  const handleFileUpload = (e) => {
-    const file = e.target.files && e.target.files[0];
-    if (!file) return;
-    if (!file.type.startsWith('image/')) {
-      alert('이미지 파일만 업로드할 수 있습니다.');
-      e.target.value = '';
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = () => updateCard({ backgroundImage: reader.result });
-    reader.onerror = () => alert('파일을 읽는 중 오류가 발생했습니다.');
-    reader.readAsDataURL(file);
-    e.target.value = '';
-  };
-
-  const downloadCard = async () => {
-    if (!previewRef.current || isExporting) return;
-    setIsExporting(true);
-    try {
-      if (document.fonts && document.fonts.ready) {
-        await document.fonts.ready;
-      }
-
-      const card = selectedCard;
-      const el = previewRef.current;
-
-      let baseSrc = await loadImageAsDataURL(card.backgroundImage);
-      if (!baseSrc) baseSrc = card.backgroundImage;
-
-      const mainSrc = card.blur > 0 ? await createBlurredDataURL(baseSrc, card.blur) : baseSrc;
-      const marginSrc = (card.imageFit === 'contain' && card.marginBlur)
-        ? await createBlurredDataURL(baseSrc, 25)
-        : null;
-
-      // 캡처용으로 배경이미지를 블러 처리된 data URL로 임시 교체 (CSS filter는 html2canvas 미지원)
-      const layers = el.querySelectorAll('[data-card-img]');
-      const originals = [];
-      layers.forEach((layer) => {
-        originals.push({ layer, bg: layer.style.backgroundImage, filter: layer.style.filter });
-        const role = layer.getAttribute('data-card-img');
-        if (role === 'margin' && marginSrc) {
-          layer.style.backgroundImage = `url(${marginSrc})`;
-          layer.style.filter = 'none';
-        } else if (role === 'main') {
-          layer.style.backgroundImage = `url(${mainSrc})`;
-          layer.style.filter = 'none';
-        }
-      });
-
-      await Promise.all(
-        [mainSrc, marginSrc].filter(Boolean).map((src) => new Promise((res) => {
-          const pre = new Image();
-          pre.onload = () => res();
-          pre.onerror = () => res();
-          pre.src = src;
-        }))
-      );
-
-      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
-
-      const canvas = await html2canvas(el, {
-        scale: 3,
-        useCORS: true,
-        allowTaint: false,
-        backgroundColor: null,
-        logging: false,
-        imageTimeout: 15000,
-      });
-
-      originals.forEach(({ layer, bg, filter }) => {
-        layer.style.backgroundImage = bg;
-        layer.style.filter = filter;
-      });
-
-      const link = document.createElement('a');
-      link.download = `card-${Date.now()}.png`;
-      link.href = canvas.toDataURL('image/png', 1.0);
-      link.click();
-    } catch (err) {
-      console.error(err);
-      alert('저장 중 오류가 발생했습니다. 외부 이미지는 CORS 제한이 있을 수 있습니다. 파일을 직접 업로드해 보세요.');
-    } finally {
-      setIsExporting(false);
-    }
-  };
-
-  const getTextStyle = (t) => ({
-    fontSize: t.fontSize,
-    fontFamily: t.fontFamily,
-    color: t.color,
-    fontWeight: t.bold ? 700 : 400,
-    textAlign: t.align || 'left',
-  });
-
-  const Text = ({ card, textKey, className = '', style = {} }) => {
-    const t = card.texts[textKey];
-    const base = getTextStyle(t);
-    return (
-      <div className={`text-block ${className}`} style={{ ...base, ...style }}>
-        {renderFormattedText(t.content, t.highlightColor)}
-      </div>
-    );
-  };
-
-  const renderCard = (card) => {
-    const t = card.texts;
-    const size = sizePresets.find(s => s.id === card.size) || sizePresets[0];
-    const g = card.gradient;
-    const hasImage = !!card.backgroundImage;
-
-    const gradientStyle = g.enabled
-      ? `linear-gradient(${g.direction}, ${g.startColor}${Math.round(g.startOpacity * 255).toString(16).padStart(2, '0')} 0%, ${g.endColor}${Math.round(g.endOpacity * 255).toString(16).padStart(2, '0')} 100%)`
-      : 'transparent';
-
-    const bgPos = card.imagePosition === 'top' ? 'center top' : card.imagePosition === 'bottom' ? 'center bottom' : 'center center';
-    const scale = card.imageFit === 'cover' ? (card.imageScale || 1) : 1;
-
-    return (
-      <div
-        ref={previewRef}
-        className="card-canvas"
-        style={{ aspectRatio: size.ratio, maxWidth: size.maxW }}
-      >
-        <div className="image-stack">
-          {!hasImage && <div className="image-empty">이미지를 업로드해주세요</div>}
-
-          {hasImage && card.imageFit === 'contain' && card.marginBlur && (
-            <div
-              data-card-img="margin"
-              className="image-layer"
-              style={{
-                backgroundImage: `url(${card.backgroundImage})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                filter: 'blur(25px)',
-                transform: 'scale(1.15)',
-              }}
-            />
-          )}
-
-          {hasImage && (
-            <div
-              data-card-img="main"
-              className="image-layer"
-              style={{
-                backgroundImage: `url(${card.backgroundImage})`,
-                backgroundSize: card.imageFit === 'cover' ? 'cover' : 'contain',
-                backgroundPosition: bgPos,
-                transform: card.imageFit === 'cover' ? `scale(${scale})` : 'none',
-                transformOrigin: bgPos,
-                filter: card.blur > 0 ? `blur(${card.blur}px)` : 'none',
-              }}
-            />
-          )}
+<div id="app">
+  <div id="topbar">
+    <div class="brand"><span class="dot"></span>Card Editor Pro</div>
+    <div id="mobileBar">
+      <button type="button" class="btn ghost" id="mobileSlidesBtn">슬라이드</button>
+      <button type="button" class="btn ghost" id="mobilePanelBtn">패널</button>
+    </div>
+    <div class="actions">
+      <!-- 글꼴 메뉴 -->
+      <div class="menuWrap">
+        <button class="btn ghost" id="fontMenuBtn">글꼴 ▾</button>
+        <div class="dropdown panelDropdown" id="fontMenu">
+          <div class="field">
+            <label>기본 글꼴</label>
+            <select id="fontSelect">
+              <option value="pretendard">Pretendard (필수)</option>
+              <option value="ridibatang">리디바탕 (필수)</option>
+              <option value="noto">Noto Sans KR</option>
+              <option value="plex">IBM Plex Sans KR</option>
+              <option value="black">Black Han Sans</option>
+              <option value="dohyeon">Do Hyeon</option>
+              <option value="jua">Jua</option>
+              <option value="gaegu">Gaegu</option>
+              <option value="myeongjo">Nanum Myeongjo</option>
+              <option value="batang">Gowun Batang</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>제목 글꼴</label>
+            <select id="titleFontSelect">
+              <option value="">기본 글꼴과 동일</option>
+              <option value="pretendard">Pretendard</option>
+              <option value="ridibatang">리디바탕</option>
+              <option value="noto">Noto Sans KR</option>
+              <option value="plex">IBM Plex Sans KR</option>
+              <option value="black">Black Han Sans</option>
+              <option value="dohyeon">Do Hyeon</option>
+              <option value="jua">Jua</option>
+              <option value="gaegu">Gaegu</option>
+              <option value="myeongjo">Nanum Myeongjo</option>
+              <option value="batang">Gowun Batang</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>본문 글꼴</label>
+            <select id="bodyFontSelect">
+              <option value="">기본 글꼴과 동일</option>
+              <option value="pretendard">Pretendard</option>
+              <option value="ridibatang">리디바탕</option>
+              <option value="noto">Noto Sans KR</option>
+              <option value="plex">IBM Plex Sans KR</option>
+              <option value="black">Black Han Sans</option>
+              <option value="dohyeon">Do Hyeon</option>
+              <option value="jua">Jua</option>
+              <option value="gaegu">Gaegu</option>
+              <option value="myeongjo">Nanum Myeongjo</option>
+              <option value="batang">Gowun Batang</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>정렬</label>
+            <div class="alignRow" id="alignRow">
+              <button type="button" class="alignBtn" data-align="left">왼쪽</button>
+              <button type="button" class="alignBtn" data-align="center">가운데</button>
+              <button type="button" class="alignBtn" data-align="right">오른쪽</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>제목 강조색 / 밑줄</label>
+            <div class="formatRow">
+              <button type="button" class="formatBtn" id="fmtAccent" title="강조색">A</button>
+              <button type="button" class="formatBtn" id="fmtUnderline" title="밑줄">U</button>
+            </div>
+            <div class="hint">**굵게** · ==강조색== · [[밑줄]] 문법 지원 (제목 입력칸)</div>
+          </div>
         </div>
-
-        <div className="gradient-layer" style={{ background: gradientStyle }} />
-
-        {card.layout === 'news' && (
-          <div className="card-content">
-            <div className="eyebrow-row push-top">
-              <Text card={card} textKey="category" />
-              <div className="eyebrow-rule" />
-            </div>
-            <div>
-              <Text card={card} textKey="live" style={{ marginBottom: 8 }} />
-              <Text card={card} textKey="title" style={{ lineHeight: 1.15, marginBottom: 16 }} />
-              <div className="divider-rule" style={{ width: 40, marginBottom: 16 }} />
-              <Text card={card} textKey="description" style={{ lineHeight: 1.6, marginBottom: 24 }} />
-              <div className="footer-row">
-                <Text card={card} textKey="source" />
-                <Text card={card} textKey="brand" />
-              </div>
-            </div>
-          </div>
-        )}
-
-        {card.layout === 'big-title' && (
-          <div className="card-content layout-big-title-body">
-            <div className="eyebrow-row layout-big-title-eyebrow">
-              <Text card={card} textKey="category" />
-              <div className="eyebrow-rule" />
-            </div>
-            <div className="center-col" style={{ padding: '0 8px' }}>
-              <Text card={card} textKey="live" style={{ marginBottom: 12 }} />
-              <Text card={card} textKey="title" style={{ lineHeight: 1, marginBottom: 24, fontSize: Math.max(t.title.fontSize, 58) }} />
-              <div className="divider-rule" style={{ width: 48, margin: '0 auto 20px' }} />
-              <Text card={card} textKey="description" style={{ lineHeight: 1.6, maxWidth: '90%', margin: '0 auto', opacity: 0.9, fontSize: Math.min(t.description.fontSize, 15) }} />
-            </div>
-            <div className="footer-row layout-big-title-footer">
-              <Text card={card} textKey="source" />
-              <Text card={card} textKey="brand" />
-            </div>
-          </div>
-        )}
-
-        {card.layout === 'bottom' && (
-          <div className="card-content">
-            <div style={{ flex: 1 }} />
-            <div>
-              <div className="eyebrow-row" style={{ marginBottom: 12 }}>
-                <Text card={card} textKey="category" />
-                <div className="eyebrow-rule" />
-              </div>
-              <Text card={card} textKey="live" style={{ marginBottom: 8 }} />
-              <Text card={card} textKey="title" style={{ lineHeight: 1.15, marginBottom: 12 }} />
-              <Text card={card} textKey="description" style={{ lineHeight: 1.6, marginBottom: 20, opacity: 0.9, fontSize: Math.min(t.description.fontSize, 14) }} />
-              <div className="footer-row">
-                <Text card={card} textKey="source" />
-                <Text card={card} textKey="brand" />
-              </div>
-            </div>
-          </div>
-        )}
-
-        {card.layout === 'center' && (
-          <div className="card-content layout-center-body">
-            <div className="eyebrow-row" style={{ marginBottom: 24 }}>
-              <Text card={card} textKey="category" />
-              <div className="eyebrow-rule" />
-            </div>
-            <Text card={card} textKey="live" style={{ marginBottom: 12 }} />
-            <Text card={card} textKey="title" style={{ lineHeight: 1.15, marginBottom: 20 }} />
-            <div className="divider-rule" style={{ width: 48, marginBottom: 20 }} />
-            <Text card={card} textKey="description" style={{ lineHeight: 1.6, maxWidth: '90%', marginBottom: 32 }} />
-            <div className="center-inline">
-              <Text card={card} textKey="source" />
-              <Text card={card} textKey="brand" />
-            </div>
-          </div>
-        )}
       </div>
-    );
-  };
 
-  const tabs = [
-    { id: 'layout', label: '레이아웃' },
-    { id: 'text', label: '텍스트' },
-    { id: 'image', label: '이미지' },
-    { id: 'style', label: '스타일' },
-    { id: 'export', label: '내보내기' },
-  ];
-
-  return (
-    <div className="app">
-      <header className="app-header">
-        <div className="header-inner">
-          <div className="brand">
-            <div className="brand-mark">C</div>
-            <span className="brand-name">Card Editor</span>
+      <!-- 사진 메뉴 -->
+      <div class="menuWrap">
+        <button class="btn ghost" id="imageMenuBtn">사진 ▾</button>
+        <div class="dropdown panelDropdown" id="imageMenu">
+          <div class="imgPreviewRow">
+            <div class="imgThumb" id="imgThumb"></div>
+            <div style="display:flex;flex-direction:column;gap:5px;flex:1;">
+              <label class="btn small full" id="uploadBtn" style="text-align:center;">사진 업로드</label>
+              <input type="file" id="imageUpload" accept="image/*" style="display:none;">
+              <button class="btn ghost small full" id="imageRemove">사진 삭제</button>
+            </div>
           </div>
-          <nav className="tab-nav">
-            {tabs.map(tab => (
-              <button key={tab.id} className={activeTab === tab.id ? 'active' : ''} onClick={() => setActiveTab(tab.id)}>
-                {tab.label}
-              </button>
-            ))}
-          </nav>
-          <button className="btn btn-primary" onClick={downloadCard} disabled={isExporting}>
-            {isExporting ? '저장 중…' : '저장하기'}
-          </button>
+          <div class="field">
+            <label>배치 방식</label>
+            <select id="imageFit">
+              <option value="cover">전체 채우기 (cover)</option>
+              <option value="contain">전체 보이기 (contain)</option>
+              <option value="original">원본 크기</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>위치</label>
+            <select id="imagePos">
+              <option value="top">상단</option>
+              <option value="center" selected>중앙</option>
+              <option value="bottom">하단</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>원본 여백 블러 채우기</label>
+            <div class="formatRow">
+              <button type="button" class="formatBtn active" id="blurFillOn">켜기</button>
+              <button type="button" class="formatBtn" id="blurFillOff">끄기</button>
+            </div>
+            <div class="hint">원본이 작을 때 남는 공간을 블러 배경으로 채웁니다.</div>
+          </div>
+          <div class="field">
+            <label>사진 효과</label>
+            <select id="imageFilter">
+              <option value="none">없음</option>
+              <option value="gray">흑백</option>
+              <option value="sepia">세피아</option>
+              <option value="vivid">선명하게</option>
+              <option value="dark">어둡게</option>
+              <option value="soft">소프트</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>오버레이 어둡기</label>
+            <div class="slider"><input type="range" id="imageOverlay" min="0" max="80" value="0"><span class="val" id="imageOverlayVal">0</span></div>
+          </div>
+          <div class="field">
+            <label>비네팅 강도</label>
+            <div class="slider"><input type="range" id="vignetteStrength" min="0" max="60" value="0"><span class="val" id="vignetteStrengthVal">0</span></div>
+          </div>
+          <div class="field">
+            <label>스크림 방향</label>
+            <select id="scrimDir">
+              <option value="none">없음</option>
+              <option value="bottom">하단 강조</option>
+              <option value="top">상단 강조</option>
+              <option value="left">좌측 강조</option>
+              <option value="right">우측 강조</option>
+            </select>
+          </div>
         </div>
-      </header>
+      </div>
 
-      <div className="app-body">
-        <aside className="sidebar">
-          <div className="sidebar-head">
-            <span className="sidebar-title">내 카드</span>
-            <button className="icon-round" onClick={addCard}>+</button>
+      <!-- 레이아웃 메뉴 -->
+      <div class="menuWrap">
+        <button class="btn ghost" id="layoutMenuBtn">레이아웃 ▾</button>
+        <div class="dropdown wide" id="layoutMenu">
+          <div class="ddItem active" data-template="text"><span class="ic">Aa</span>텍스트 카드</div>
+          <div class="ddItem" data-template="full"><span class="ic">▣</span>풀 이미지</div>
+          <div class="ddItem" data-template="split"><span class="ic">⬒</span>상단 이미지</div>
+          <div class="ddItem" data-template="bottom"><span class="ic">⬓</span>하단 이미지</div>
+        </div>
+      </div>
+
+      <button class="btn ghost" id="exportOne">현재 저장</button>
+      <button class="btn primary" id="exportAll">전체 ZIP</button>
+    </div>
+  </div>
+
+  <div id="body">
+    <div id="left">
+      <div class="hd">슬라이드 <span id="slideCount">1</span></div>
+      <div id="slideList"></div>
+      <button id="addSlide">+ 슬라이드 추가</button>
+    </div>
+
+    <div id="stage">
+      <div id="canvasWrap"></div>
+    </div>
+
+    <div id="right">
+      <div class="sec">
+        <h3>텍스트</h3>
+        <div class="field">
+          <label>배지 (상단)</label>
+          <input type="text" id="badgeTop" value="CARD NEWS">
+        </div>
+        <div class="field">
+          <label>필 텍스트</label>
+          <input type="text" id="pillText" value="POINT">
+        </div>
+        <div class="field">
+          <label>제목</label>
+          <textarea id="titleText" style="min-height:72px;">제목을 입력하세요</textarea>
+          <div class="hint">**굵게** · ==강조색== · [[밑줄]] 사용 가능</div>
+        </div>
+        <div class="field">
+          <label>본문</label>
+          <textarea id="subText" style="min-height:90px;">본문 내용을 입력하세요.</textarea>
+        </div>
+        <div class="field">
+          <label>핸들 / 출처</label>
+          <input type="text" id="handleText" value="@cardeditor">
+        </div>
+      </div>
+
+      <div class="sec">
+        <h3>글꼴 크기</h3>
+        <div class="field">
+          <label>제목 크기 (12~120)</label>
+          <div class="slider"><input type="range" id="titleSize" min="12" max="120" value="28"><span class="val" id="titleSizeVal">28</span></div>
+        </div>
+        <div class="field">
+          <label>본문 크기 (10~64)</label>
+          <div class="slider"><input type="range" id="subSize" min="10" max="64" value="15"><span class="val" id="subSizeVal">15</span></div>
+        </div>
+        <div class="field">
+          <label>배지 크기 (8~28)</label>
+          <div class="slider"><input type="range" id="badgeSize" min="8" max="28" value="11"><span class="val" id="badgeSizeVal">11</span></div>
+        </div>
+        <div class="field">
+          <label>필 크기 (8~28)</label>
+          <div class="slider"><input type="range" id="pillSize" min="8" max="28" value="11"><span class="val" id="pillSizeVal">11</span></div>
+        </div>
+        <div class="field">
+          <label>핸들 크기 (8~24)</label>
+          <div class="slider"><input type="range" id="handleSize" min="8" max="24" value="12"><span class="val" id="handleSizeVal">12</span></div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h3>색상</h3>
+        <div class="row2">
+          <div class="field">
+            <label>배경</label>
+            <div class="colorField"><input type="color" id="bgColor" value="#faf9fc"><span id="bgColorHex">#faf9fc</span></div>
           </div>
-          <div className="card-list">
-            {cards.map(card => (
-              <div key={card.id} className={`card-thumb ${selectedId === card.id ? 'active' : ''}`} onClick={() => setSelectedId(card.id)}>
-                <div className="card-thumb-frame">
-                  <div className="card-thumb-bg" style={{ backgroundImage: card.backgroundImage ? `url(${card.backgroundImage})` : 'none' }} />
-                  <div className="card-thumb-shade" />
-                  <div className="card-thumb-caption">{card.texts.title.content.replace(/[\[\]~]/g, '').split('\n')[0]}</div>
-                </div>
-                <div className="card-thumb-actions">
-                  <button className="thumb-action" onClick={(e) => { e.stopPropagation(); duplicateCard(card.id); }} title="복제">⧉</button>
-                  <button className="thumb-action danger" onClick={(e) => { e.stopPropagation(); deleteCard(card.id); }} title="삭제">×</button>
-                </div>
-              </div>
-            ))}
+          <div class="field">
+            <label>글자</label>
+            <div class="colorField"><input type="color" id="textColor" value="#1a1a1a"><span id="textColorHex">#1a1a1a</span></div>
           </div>
-        </aside>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label>강조색</label>
+            <div class="colorField"><input type="color" id="accentColor" value="#8b6cff"><span id="accentColorHex">#8b6cff</span></div>
+          </div>
+          <div class="field">
+            <label>필 배경</label>
+            <div class="colorField"><input type="color" id="pillBg" value="#8b6cff"><span id="pillBgHex">#8b6cff</span></div>
+          </div>
+        </div>
+        <div class="field">
+          <label>필 글자색</label>
+          <div class="colorField"><input type="color" id="pillColor" value="#ffffff"><span id="pillColorHex">#ffffff</span></div>
+        </div>
+      </div>
 
-        <main className="main-stage">
-          {renderCard(selectedCard)}
-        </main>
-
-        <aside className="panel">
-          {activeTab === 'layout' && (
-            <div>
-              <h3>레이아웃 선택</h3>
-              <div className="grid-2" style={{ marginBottom: 24 }}>
-                {layoutOptions.map(l => (
-                  <button
-                    key={l.id}
-                    className={`choice-card ${selectedCard.layout === l.id ? 'active' : ''}`}
-                    onClick={() => updateCard({ layout: l.id })}
-                  >
-                    {l.name}
-                  </button>
-                ))}
-              </div>
-              <h3>이미지 사이즈</h3>
-              <div className="choice-list">
-                {sizePresets.map(s => (
-                  <button
-                    key={s.id}
-                    className={`choice-row ${selectedCard.size === s.id ? 'active' : ''}`}
-                    onClick={() => updateCard({ size: s.id })}
-                  >
-                    {s.name}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'text' && (
-            <div>
-              <h3>텍스트 편집</h3>
-              <div className="info-box">
-                <strong>부분 강조 사용법</strong>
-                <div>· 하이라이트: <code>[텍스트]</code></div>
-                <div>· 밑줄: <code>~텍스트~</code></div>
-              </div>
-
-              <div className="field">
-                <label className="field-label">편집할 텍스트</label>
-                <select className="control" value={selectedTextKey} onChange={(e) => setSelectedTextKey(e.target.value)}>
-                  <option value="category">카테고리</option>
-                  <option value="live">라이브 태그</option>
-                  <option value="title">타이틀</option>
-                  <option value="description">설명</option>
-                  <option value="source">출처</option>
-                  <option value="brand">브랜드</option>
-                </select>
-              </div>
-
-              <div className="field">
-                <label className="field-label">내용</label>
-                <textarea
-                  className="control"
-                  rows={4}
-                  value={selectedCard.texts[selectedTextKey].content}
-                  onChange={(e) => updateText(selectedTextKey, 'content', e.target.value)}
-                />
-              </div>
-
-              <div className="field">
-                <label className="field-label">글꼴</label>
-                <select className="control" value={selectedCard.texts[selectedTextKey].fontFamily} onChange={(e) => updateText(selectedTextKey, 'fontFamily', e.target.value)}>
-                  {freeFonts.map(f => <option key={f.value} value={f.value}>{f.name}</option>)}
-                </select>
-              </div>
-
-              <div className="field">
-                <div className="field-row">
-                  <span className="field-label" style={{ margin: 0 }}>크기</span>
-                  <span className="value">{selectedCard.texts[selectedTextKey].fontSize}px</span>
-                </div>
-                <input type="range" className="control" min="10" max="90" value={selectedCard.texts[selectedTextKey].fontSize} onChange={(e) => updateText(selectedTextKey, 'fontSize', Number(e.target.value))} />
-              </div>
-
-              <div className="field">
-                <label className="field-label">정렬</label>
-                <div className="segmented">
-                  {[{ value: 'left', label: '왼쪽' }, { value: 'center', label: '가운데' }, { value: 'right', label: '오른쪽' }].map(a => (
-                    <button key={a.value} className={selectedCard.texts[selectedTextKey].align === a.value ? 'active' : ''} onClick={() => updateText(selectedTextKey, 'align', a.value)}>
-                      {a.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="field">
-                <label className="field-label">강조</label>
-                <div className="swatch-row" style={{ marginTop: 0 }}>
-                  <button className={`bold-toggle ${selectedCard.texts[selectedTextKey].bold ? 'active' : ''}`} onClick={() => updateText(selectedTextKey, 'bold', !selectedCard.texts[selectedTextKey].bold)}>B</button>
-                  <div className="swatch-field">
-                    <span className="label">글자색</span>
-                    <input type="color" value={selectedCard.texts[selectedTextKey].color} onChange={(e) => updateText(selectedTextKey, 'color', e.target.value)} />
-                  </div>
-                  <div className="swatch-field">
-                    <span className="label">하이라이트 색</span>
-                    <input type="color" value={selectedCard.texts[selectedTextKey].highlightColor || '#ff3b30'} onChange={(e) => updateText(selectedTextKey, 'highlightColor', e.target.value)} />
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'image' && (
-            <div>
-              <h3>배경 이미지</h3>
-
-              <div className="field">
-                <label className="field-label">파일 업로드</label>
-                <input type="file" accept="image/*" className="file-input" onChange={handleFileUpload} />
-              </div>
-
-              <div className="field">
-                <label className="field-label">이미지 맞춤 방식</label>
-                <div className="grid-2">
-                  <button className={`choice-card ${selectedCard.imageFit === 'cover' ? 'active' : ''}`} onClick={() => updateCard({ imageFit: 'cover' })}>
-                    전체 채우기<span className="sub">(Cover)</span>
-                  </button>
-                  <button className={`choice-card ${selectedCard.imageFit === 'contain' ? 'active' : ''}`} onClick={() => updateCard({ imageFit: 'contain' })}>
-                    원본 비율<span className="sub">(Contain)</span>
-                  </button>
-                </div>
-              </div>
-
-              <div className="field">
-                <label className="field-label">이미지 위치</label>
-                <div className="grid-3">
-                  {[{ value: 'top', label: '상단' }, { value: 'center', label: '중앙' }, { value: 'bottom', label: '하단' }].map(pos => (
-                    <button key={pos.value} className={`choice-card ${selectedCard.imagePosition === pos.value ? 'active' : ''}`} style={{ padding: '10px 0' }} onClick={() => updateCard({ imagePosition: pos.value })}>
-                      {pos.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {selectedCard.imageFit === 'cover' && (
-                <div className="field">
-                  <div className="field-row">
-                    <span className="field-label" style={{ margin: 0 }}>확대 / 축소</span>
-                    <span className="value">{Math.round((selectedCard.imageScale || 1) * 100)}%</span>
-                  </div>
-                  <input type="range" className="control" min="0.6" max="1.8" step="0.05" value={selectedCard.imageScale || 1} onChange={(e) => updateCard({ imageScale: Number(e.target.value) })} />
-                </div>
-              )}
-
-              {selectedCard.imageFit === 'contain' && (
-                <div className="field">
-                  <div className="switch-row">
-                    <div>
-                      <div className="title">여백 블러 처리</div>
-                      <div className="desc">원본 비율로 생긴 여백을 블러로 채움</div>
-                    </div>
-                    <label className="switch">
-                      <input type="checkbox" checked={!!selectedCard.marginBlur} onChange={(e) => updateCard({ marginBlur: e.target.checked })} />
-                      <span className="switch-track"></span>
-                    </label>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {activeTab === 'style' && (
-            <div>
-              <h3>배경 스타일</h3>
-              <div className="field">
-                <div className="field-row">
-                  <span className="field-label" style={{ margin: 0 }}>배경 블러</span>
-                  <span className="value">{selectedCard.blur}px</span>
-                </div>
-                <input type="range" className="control" min="0" max="20" value={selectedCard.blur} onChange={(e) => updateCard({ blur: Number(e.target.value) })} />
-              </div>
-
-              <hr className="section-divider" />
-
-              <div className="field-row" style={{ marginBottom: 14 }}>
-                <h4>그라데이션</h4>
-                <label className="checkbox-row">
-                  <input type="checkbox" checked={selectedCard.gradient.enabled} onChange={(e) => updateGradient('enabled', e.target.checked)} /> 사용
-                </label>
-              </div>
-
-              {selectedCard.gradient.enabled && (
-                <React.Fragment>
-                  <div className="field">
-                    <label className="field-label">방향</label>
-                    <select className="control" value={selectedCard.gradient.direction} onChange={(e) => updateGradient('direction', e.target.value)}>
-                      <option value="to bottom">위에서 아래</option>
-                      <option value="to top">아래에서 위</option>
-                      <option value="to right">왼쪽에서 오른쪽</option>
-                      <option value="to left">오른쪽에서 왼쪽</option>
-                      <option value="to bottom right">대각선 ↘</option>
-                      <option value="to bottom left">대각선 ↙</option>
-                    </select>
-                  </div>
-                  <div className="field grid-2" style={{ display: 'grid' }}>
-                    <div>
-                      <label className="field-label">시작 색상</label>
-                      <input type="color" style={{ width: '100%', height: 38 }} value={selectedCard.gradient.startColor} onChange={(e) => updateGradient('startColor', e.target.value)} />
-                    </div>
-                    <div>
-                      <label className="field-label">끝 색상</label>
-                      <input type="color" style={{ width: '100%', height: 38 }} value={selectedCard.gradient.endColor} onChange={(e) => updateGradient('endColor', e.target.value)} />
-                    </div>
-                  </div>
-                  <div className="field">
-                    <div className="field-row">
-                      <span className="field-label" style={{ margin: 0 }}>시작 투명도</span>
-                      <span className="value">{Math.round(selectedCard.gradient.startOpacity * 100)}%</span>
-                    </div>
-                    <input type="range" className="control" min="0" max="1" step="0.05" value={selectedCard.gradient.startOpacity} onChange={(e) => updateGradient('startOpacity', Number(e.target.value))} />
-                  </div>
-                  <div className="field">
-                    <div className="field-row">
-                      <span className="field-label" style={{ margin: 0 }}>끝 투명도</span>
-                      <span className="value">{Math.round(selectedCard.gradient.endOpacity * 100)}%</span>
-                    </div>
-                    <input type="range" className="control" min="0" max="1" step="0.05" value={selectedCard.gradient.endOpacity} onChange={(e) => updateGradient('endOpacity', Number(e.target.value))} />
-                  </div>
-                </React.Fragment>
-              )}
-            </div>
-          )}
-
-          {activeTab === 'export' && (
-            <div>
-              <h3>내보내기</h3>
-              <button className="btn btn-primary" style={{ width: '100%', padding: '12px 0' }} onClick={downloadCard} disabled={isExporting}>
-                {isExporting ? '저장 중…' : 'PNG로 저장하기'}
-              </button>
-              <p className="helper-text">저장 시 블러는 캔버스로 미리 적용해 미리보기와 최대한 같게 맞춥니다.</p>
-            </div>
-          )}
-        </aside>
+      <div class="sec">
+        <h3>카드 크기</h3>
+        <div class="field">
+          <label>비율</label>
+          <select id="sizePreset">
+            <option value="4:5">4:5 (인스타 추천)</option>
+            <option value="1:1">1:1 정사각</option>
+            <option value="9:16">9:16 스토리</option>
+            <option value="custom">직접 입력</option>
+          </select>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label>너비</label>
+            <input type="number" id="cardWidth" value="400" min="200" max="1200">
+          </div>
+          <div class="field">
+            <label>높이</label>
+            <input type="number" id="cardHeight" value="500" min="200" max="1600">
+          </div>
+        </div>
       </div>
     </div>
-  );
+  </div>
+
+  <div id="undoRedoFloat">
+    <button type="button" id="undoBtn" title="실행 취소 (Ctrl+Z)">↩</button>
+    <button type="button" id="redoBtn" title="다시 실행 (Ctrl+Y)">↪</button>
+  </div>
+</div>
+
+<script>
+/* ========== Utilities ========== */
+const $ = id => document.getElementById(id);
+const FONTS = {
+  pretendard: "'Pretendard Variable','Pretendard',sans-serif",
+  ridibatang: "'RIDIBatang','Nanum Myeongjo',serif",
+  noto: "'Noto Sans KR',sans-serif",
+  plex: "'IBM Plex Sans KR',sans-serif",
+  black: "'Black Han Sans',sans-serif",
+  dohyeon: "'Do Hyeon',sans-serif",
+  jua: "'Jua',sans-serif",
+  gaegu: "'Gaegu',sans-serif",
+  myeongjo: "'Nanum Myeongjo',serif",
+  batang: "'Gowun Batang',serif"
+};
+
+function escapeHtml(str){
+  return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+function parseInlineFormat(text, accentColor){
+  let s = escapeHtml(text || '');
+  s = s.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  s = s.replace(/==(.+?)==/g, '<span class="t-accent" style="color:'+accentColor+'">$1</span>');
+  s = s.replace(/\[\[(.+?)\]\]/g, '<span class="t-underline">$1</span>');
+  return s;
+}
+
+/* ========== State ========== */
+function defaults(){
+  return {
+    template: 'text',
+    badgeTop: 'CARD NEWS',
+    pillText: 'POINT',
+    title: '제목을 입력하세요',
+    sub: '본문 내용을 입력하세요.',
+    handle: '@cardeditor',
+    bg: '#faf9fc',
+    text: '#1a1a1a',
+    accent: '#8b6cff',
+    pillBg: '#8b6cff',
+    pillColor: '#ffffff',
+    font: 'pretendard',
+    titleFont: '',
+    bodyFont: '',
+    align: 'left',
+    titleSize: 28,
+    subSize: 15,
+    badgeSize: 11,
+    pillSize: 11,
+    handleSize: 12,
+    cardWidth: 400,
+    cardHeight: 500,
+    sizePreset: '4:5',
+    image: null,
+    imageFit: 'cover',
+    imagePos: 'center',
+    imageFilter: 'none',
+    imageOverlay: 0,
+    blurFill: true,
+    vignetteStrength: 0,
+    scrimDir: 'none',
+    showPageNum: true
+  };
+}
+
+let slides = [defaults()];
+let active = 0;
+
+/* ========== Card Markup ========== */
+function fontCss(key){
+  return FONTS[key] || FONTS.pretendard;
+}
+
+function filterCss(f){
+  if(f === 'gray') return 'grayscale(1)';
+  if(f === 'sepia') return 'sepia(.7)';
+  if(f === 'vivid') return 'contrast(1.15) saturate(1.25)';
+  if(f === 'dark') return 'brightness(.72)';
+  if(f === 'soft') return 'brightness(1.05) contrast(.92) saturate(.9)';
+  return 'none';
+}
+
+function scrimStyle(dir, overlay){
+  const o = Math.max(0, Math.min(80, overlay||0)) / 100;
+  if(dir === 'bottom') return `background:linear-gradient(to top,rgba(0,0,0,${0.55+o*0.4}) 0%,transparent 55%);`;
+  if(dir === 'top') return `background:linear-gradient(to bottom,rgba(0,0,0,${0.55+o*0.4}) 0%,transparent 55%);`;
+  if(dir === 'left') return `background:linear-gradient(to right,rgba(0,0,0,${0.55+o*0.4}) 0%,transparent 55%);`;
+  if(dir === 'right') return `background:linear-gradient(to left,rgba(0,0,0,${0.55+o*0.4}) 0%,transparent 55%);`;
+  if(o > 0) return `background:rgba(0,0,0,${o});`;
+  return '';
+}
+
+function vignetteStyle(str){
+  if(!str || str <= 0) return '';
+  const s = str / 100;
+  return `box-shadow:inset 0 0 ${80*s}px ${30*s}px rgba(0,0,0,${0.55*s});`;
+}
+
+function imageBoxHtml(s, mode){
+  if(!s.image) return '';
+  const posMap = {top:'center top', center:'center center', bottom:'center bottom'};
+  const pos = posMap[s.imagePos] || 'center center';
+  const fit = s.imageFit || 'cover';
+  const filt = filterCss(s.imageFilter);
+  let bgSize = fit === 'original' ? 'auto' : fit;
+  let blurLayer = '';
+  if(fit === 'original' && s.blurFill !== false){
+    blurLayer = `<div class="blurBg" style="background-image:url('${s.image}');"></div>`;
+  }
+  const layerStyle = `background-image:url('${s.image}');background-size:${bgSize};background-position:${pos};filter:${filt};`;
+  return `<div class="imgBox ${mode}">${blurLayer}<div class="layer" style="${layerStyle}"></div></div>`;
+}
+
+function cardMarkup(s, pageIdx, total){
+  const w = s.cardWidth || 400;
+  const h = s.cardHeight || 500;
+  const baseFont = fontCss(s.font);
+  const titleFont = s.titleFont ? fontCss(s.titleFont) : baseFont;
+  const bodyFont = s.bodyFont ? fontCss(s.bodyFont) : baseFont;
+  const align = s.align || 'left';
+  const accent = s.accent || '#8b6cff';
+
+  const titleHtml = parseInlineFormat(s.title, accent);
+  const subHtml = parseInlineFormat(s.sub, accent);
+
+  const pageNum = s.showPageNum !== false ? `<span class="pageNum" style="font-size:${s.badgeSize||11}px;">${pageIdx+1}/${total}</span>` : '';
+  const badge = s.badgeTop ? `<span class="badgeTop" style="font-size:${s.badgeSize||11}px;">${escapeHtml(s.badgeTop)}</span>` : '';
+  const pill = s.pillText ? `<div class="pill" style="background:${s.pillBg||accent};color:${s.pillColor||'#fff'};font-size:${s.pillSize||11}px;">${escapeHtml(s.pillText)}</div>` : '';
+  const handle = s.handle ? `<span class="handle" style="font-size:${s.handleSize||12}px;">${escapeHtml(s.handle)}</span>` : '<span></span>';
+
+  let vignette = '';
+  if(s.vignetteStrength > 0){
+    vignette = `<div class="scrim" style="${vignetteStyle(s.vignetteStrength)}"></div>`;
+  }
+  let scrim = '';
+  if(s.scrimDir && s.scrimDir !== 'none'){
+    scrim = `<div class="scrim" style="${scrimStyle(s.scrimDir, s.imageOverlay)}"></div>`;
+  } else if(s.imageOverlay > 0){
+    scrim = `<div class="scrim" style="${scrimStyle('none', s.imageOverlay)}"></div>`;
+  }
+
+  const cls = `id="card" style="width:${w}px;height:${h}px;background:${s.bg};color:${s.text};font-family:${baseFont};"`;
+
+  // TEXT
+  if(s.template === 'text' || !s.image){
+    return `<div ${cls}>
+      <div class="rowTop">${badge}${pageNum}</div>
+      <div class="frame z2" style="text-align:${align};">
+        ${pill}
+        <div class="titleText" style="font-size:${s.titleSize}px;font-family:${titleFont};">${titleHtml}</div>
+        <div class="subText" style="font-size:${s.subSize}px;font-family:${bodyFont};">${subHtml}</div>
+      </div>
+      <div class="rowBottom">${handle}<span></span></div>
+    </div>`;
+  }
+
+  // FULL
+  if(s.template === 'full'){
+    return `<div ${cls}>
+      ${imageBoxHtml(s,'full')}${scrim}${vignette}
+      <div class="rowTop z2" style="color:#fff;text-shadow:0 1px 4px #0006;">${badge}${pageNum}</div>
+      <div class="frame z2" style="text-align:${align};color:#fff;text-shadow:0 1px 6px #0008;">
+        ${pill}
+        <div class="titleText" style="font-size:${s.titleSize}px;font-family:${titleFont};">${titleHtml}</div>
+        <div class="subText" style="font-size:${s.subSize}px;font-family:${bodyFont};">${subHtml}</div>
+      </div>
+      <div class="rowBottom z2" style="color:#fff;text-shadow:0 1px 4px #0006;">${handle}<span></span></div>
+    </div>`;
+  }
+
+  // SPLIT (top image)
+  if(s.template === 'split'){
+    return `<div ${cls}>
+      <div class="rowTop">${badge}${pageNum}</div>
+      ${imageBoxHtml(s,'split')}${scrim}
+      <div class="frame z2" style="text-align:${align};justify-content:flex-start;">
+        ${pill}
+        <div class="titleText" style="font-size:${s.titleSize}px;font-family:${titleFont};">${titleHtml}</div>
+        <div class="subText" style="font-size:${s.subSize}px;font-family:${bodyFont};">${subHtml}</div>
+      </div>
+      <div class="rowBottom">${handle}<span></span></div>
+    </div>`;
+  }
+
+  // BOTTOM image
+  if(s.template === 'bottom'){
+    return `<div ${cls}>
+      <div class="rowTop">${badge}${pageNum}</div>
+      <div class="frame z2" style="text-align:${align};justify-content:flex-start;">
+        ${pill}
+        <div class="titleText" style="font-size:${s.titleSize}px;font-family:${titleFont};">${titleHtml}</div>
+        <div class="subText" style="font-size:${s.subSize}px;font-family:${bodyFont};">${subHtml}</div>
+      </div>
+      ${imageBoxHtml(s,'bottom')}${scrim}
+      <div class="rowBottom">${handle}<span></span></div>
+    </div>`;
+  }
+
+  // fallback
+  return `<div ${cls}><div class="frame" style="text-align:${align};">${pill}<div class="titleText" style="font-size:${s.titleSize}px;">${titleHtml}</div><div class="subText" style="font-size:${s.subSize}px;">${subHtml}</div></div></div>`;
+}
+
+/* ========== Render ========== */
+const fullCss = document.querySelector('style').textContent;
+const fontLinksHtml = Array.from(document.querySelectorAll('link[rel="stylesheet"]')).map(l=>l.outerHTML).join('') +
+  `<style>@font-face{font-family:'RIDIBatang';src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_twelve@1.0/RIDIBatang.woff') format('woff');font-weight:normal;font-display:swap;}</style>`;
+
+function renderMainCard(){
+  const s = slides[active];
+  $('canvasWrap').innerHTML = cardMarkup(s, active, slides.length);
+}
+
+function thumbSrcDoc(s, idx){
+  return '<!DOCTYPE html><html><head>' + fontLinksHtml + '<style>' + fullCss + '</style></head><body style="margin:0;">' + cardMarkup(s, idx, slides.length) + '</body></html>';
+}
+
+function renderList(){
+  const list = $('slideList');
+  list.innerHTML = '';
+  slides.forEach((s, i) => {
+    const div = document.createElement('div');
+    div.className = 'thumb' + (i === active ? ' active' : '');
+    const iframe = document.createElement('iframe');
+    iframe.srcdoc = thumbSrcDoc(s, i);
+    div.appendChild(iframe);
+    const idx = document.createElement('div');
+    idx.className = 'idx'; idx.textContent = i+1;
+    div.appendChild(idx);
+    const del = document.createElement('div');
+    del.className = 'del'; del.textContent = '✕';
+    del.onclick = (e) => { e.stopPropagation(); deleteSlide(i); };
+    div.appendChild(del);
+    div.onclick = () => { active = i; syncForm(); renderMainCard(); renderList(); };
+    list.appendChild(div);
+  });
+  $('slideCount').textContent = slides.length;
+}
+
+function deleteSlide(i){
+  if(slides.length === 1) return;
+  slides.splice(i,1);
+  if(active >= slides.length) active = slides.length - 1;
+  syncForm(); renderMainCard(); renderList();
+}
+
+function syncForm(){
+  const s = slides[active];
+  $('badgeTop').value = s.badgeTop || '';
+  $('pillText').value = s.pillText || '';
+  $('titleText').value = s.title || '';
+  $('subText').value = s.sub || '';
+  $('handleText').value = s.handle || '';
+  $('bgColor').value = s.bg; $('bgColorHex').textContent = s.bg;
+  $('textColor').value = s.text; $('textColorHex').textContent = s.text;
+  $('accentColor').value = s.accent; $('accentColorHex').textContent = s.accent;
+  $('pillBg').value = s.pillBg; $('pillBgHex').textContent = s.pillBg;
+  $('pillColor').value = s.pillColor; $('pillColorHex').textContent = s.pillColor;
+  $('titleSize').value = s.titleSize; $('titleSizeVal').textContent = s.titleSize;
+  $('subSize').value = s.subSize; $('subSizeVal').textContent = s.subSize;
+  $('badgeSize').value = s.badgeSize || 11; $('badgeSizeVal').textContent = s.badgeSize || 11;
+  $('pillSize').value = s.pillSize || 11; $('pillSizeVal').textContent = s.pillSize || 11;
+  $('handleSize').value = s.handleSize || 12; $('handleSizeVal').textContent = s.handleSize || 12;
+  $('fontSelect').value = s.font || 'pretendard';
+  $('titleFontSelect').value = s.titleFont || '';
+  $('bodyFontSelect').value = s.bodyFont || '';
+  $('sizePreset').value = s.sizePreset || '4:5';
+  $('cardWidth').value = s.cardWidth || 400;
+  $('cardHeight').value = s.cardHeight || 500;
+  $('imageFit').value = s.imageFit || 'cover';
+  $('imagePos').value = s.imagePos || 'center';
+  $('imageFilter').value = s.imageFilter || 'none';
+  $('imageOverlay').value = s.imageOverlay || 0; $('imageOverlayVal').textContent = s.imageOverlay || 0;
+  $('vignetteStrength').value = s.vignetteStrength || 0; $('vignetteStrengthVal').textContent = s.vignetteStrength || 0;
+  $('scrimDir').value = s.scrimDir || 'none';
+  $('imgThumb').style.backgroundImage = s.image ? "url('"+s.image+"')" : 'none';
+  $('blurFillOn').classList.toggle('active', s.blurFill !== false);
+  $('blurFillOff').classList.toggle('active', s.blurFill === false);
+  Array.from(document.querySelectorAll('.alignBtn')).forEach(b => b.classList.toggle('active', b.dataset.align === (s.align||'left')));
+  Array.from(document.querySelectorAll('#layoutMenu .ddItem')).forEach(item => {
+    item.classList.toggle('active', item.dataset.template === (s.template||'text'));
+  });
+}
+
+/* ========== Bindings ========== */
+function bindText(id, prop){
+  $(id).addEventListener('input', e => {
+    slides[active][prop] = e.target.value;
+    renderMainCard(); renderList();
+  });
+}
+bindText('badgeTop','badgeTop');
+bindText('pillText','pillText');
+bindText('titleText','title');
+bindText('subText','sub');
+bindText('handleText','handle');
+
+function bindColor(id, prop){
+  $(id).addEventListener('input', e => {
+    slides[active][prop] = e.target.value;
+    $(id+'Hex').textContent = e.target.value;
+    renderMainCard(); renderList();
+  });
+}
+bindColor('bgColor','bg');
+bindColor('textColor','text');
+bindColor('accentColor','accent');
+bindColor('pillBg','pillBg');
+bindColor('pillColor','pillColor');
+
+function bindSlider(id, prop, valId){
+  $(id).addEventListener('input', e => {
+    slides[active][prop] = +e.target.value;
+    $(valId).textContent = e.target.value;
+    renderMainCard(); renderList();
+  });
+}
+bindSlider('titleSize','titleSize','titleSizeVal');
+bindSlider('subSize','subSize','subSizeVal');
+bindSlider('badgeSize','badgeSize','badgeSizeVal');
+bindSlider('pillSize','pillSize','pillSizeVal');
+bindSlider('handleSize','handleSize','handleSizeVal');
+bindSlider('imageOverlay','imageOverlay','imageOverlayVal');
+bindSlider('vignetteStrength','vignetteStrength','vignetteStrengthVal');
+
+$('fontSelect').addEventListener('change', e => { slides[active].font = e.target.value; renderMainCard(); renderList(); });
+$('titleFontSelect').addEventListener('change', e => { slides[active].titleFont = e.target.value; renderMainCard(); renderList(); });
+$('bodyFontSelect').addEventListener('change', e => { slides[active].bodyFont = e.target.value; renderMainCard(); renderList(); });
+$('imageFit').addEventListener('change', e => { slides[active].imageFit = e.target.value; renderMainCard(); renderList(); });
+$('imagePos').addEventListener('change', e => { slides[active].imagePos = e.target.value; renderMainCard(); renderList(); });
+$('imageFilter').addEventListener('change', e => { slides[active].imageFilter = e.target.value; renderMainCard(); renderList(); });
+$('scrimDir').addEventListener('change', e => { slides[active].scrimDir = e.target.value; renderMainCard(); renderList(); });
+
+$('blurFillOn').addEventListener('click', () => {
+  slides[active].blurFill = true;
+  $('blurFillOn').classList.add('active');
+  $('blurFillOff').classList.remove('active');
+  renderMainCard(); renderList();
+});
+$('blurFillOff').addEventListener('click', () => {
+  slides[active].blurFill = false;
+  $('blurFillOff').classList.add('active');
+  $('blurFillOn').classList.remove('active');
+  renderMainCard(); renderList();
+});
+
+Array.from(document.querySelectorAll('.alignBtn')).forEach(btn => {
+  btn.addEventListener('click', () => {
+    slides[active].align = btn.dataset.align;
+    Array.from(document.querySelectorAll('.alignBtn')).forEach(b => b.classList.toggle('active', b === btn));
+    renderMainCard(); renderList();
+  });
+});
+
+Array.from(document.querySelectorAll('#layoutMenu .ddItem')).forEach(item => {
+  item.addEventListener('click', () => {
+    slides[active].template = item.dataset.template;
+    Array.from(document.querySelectorAll('#layoutMenu .ddItem')).forEach(i => i.classList.toggle('active', i === item));
+    closeAllDropdowns();
+    renderMainCard(); renderList();
+  });
+});
+
+$('sizePreset').addEventListener('change', e => {
+  const v = e.target.value;
+  slides[active].sizePreset = v;
+  if(v === '4:5'){ slides[active].cardWidth=400; slides[active].cardHeight=500; }
+  else if(v === '1:1'){ slides[active].cardWidth=400; slides[active].cardHeight=400; }
+  else if(v === '9:16'){ slides[active].cardWidth=360; slides[active].cardHeight=640; }
+  $('cardWidth').value = slides[active].cardWidth;
+  $('cardHeight').value = slides[active].cardHeight;
+  renderMainCard(); renderList();
+});
+$('cardWidth').addEventListener('input', e => {
+  slides[active].sizePreset = 'custom';
+  slides[active].cardWidth = Number(e.target.value)||400;
+  $('sizePreset').value = 'custom';
+  renderMainCard(); renderList();
+});
+$('cardHeight').addEventListener('input', e => {
+  slides[active].sizePreset = 'custom';
+  slides[active].cardHeight = Number(e.target.value)||500;
+  $('sizePreset').value = 'custom';
+  renderMainCard(); renderList();
+});
+
+/* Image upload */
+$('uploadBtn').addEventListener('click', () => $('imageUpload').click());
+$('imageUpload').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = new Image();
+    img.onload = () => {
+      const maxW = 1400;
+      const scale = Math.min(1, maxW / img.width);
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.round(img.width * scale);
+      canvas.height = Math.round(img.height * scale);
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      slides[active].image = canvas.toDataURL('image/jpeg', 0.88);
+      if(slides[active].template === 'text') slides[active].template = 'full';
+      syncForm(); renderMainCard(); renderList();
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+  e.target.value = '';
+});
+$('imageRemove').addEventListener('click', () => {
+  slides[active].image = null;
+  $('imgThumb').style.backgroundImage = 'none';
+  renderMainCard(); renderList();
+});
+
+/* Menus */
+function closeAllDropdowns(){
+  Array.from(document.querySelectorAll('.dropdown')).forEach(d => d.classList.remove('open'));
+}
+function bindMenu(btnId, ddId){
+  $(btnId).addEventListener('click', e => {
+    e.stopPropagation();
+    const dd = $(ddId);
+    const was = dd.classList.contains('open');
+    closeAllDropdowns();
+    if(!was) dd.classList.add('open');
+  });
+}
+bindMenu('fontMenuBtn','fontMenu');
+bindMenu('imageMenuBtn','imageMenu');
+bindMenu('layoutMenuBtn','layoutMenu');
+document.addEventListener('click', e => {
+  if(!e.target.closest('.menuWrap')) closeAllDropdowns();
+});
+
+/* Add slide */
+$('addSlide').addEventListener('click', () => {
+  const next = JSON.parse(JSON.stringify(slides[active]));
+  slides.splice(active+1, 0, next);
+  active = active + 1;
+  syncForm(); renderMainCard(); renderList();
+});
+
+/* Mobile */
+(function(){
+  const left = $('left'), right = $('right');
+  if($('mobileSlidesBtn')) $('mobileSlidesBtn').addEventListener('click', e => {
+    e.stopPropagation();
+    right.classList.remove('open');
+    left.classList.toggle('open');
+  });
+  if($('mobilePanelBtn')) $('mobilePanelBtn').addEventListener('click', e => {
+    e.stopPropagation();
+    left.classList.remove('open');
+    right.classList.toggle('open');
+  });
+})();
+
+/* ========== Export (iOS / Mac 안정화) ========== */
+function isIOS(){
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+}
+
+function canvasToBlob(canvas, type, quality){
+  return new Promise(resolve => {
+    if(canvas.toBlob){
+      canvas.toBlob(b => resolve(b), type || 'image/png', quality);
+    } else {
+      try {
+        const dataUrl = canvas.toDataURL(type || 'image/png', quality);
+        const arr = dataUrl.split(',');
+        const mime = (arr[0].match(/:(.*?);/)||[])[1] || 'image/png';
+        const bstr = atob(arr[1]);
+        const u8 = new Uint8Array(bstr.length);
+        for(let i=0;i<bstr.length;i++) u8[i] = bstr.charCodeAt(i);
+        resolve(new Blob([u8], {type: mime}));
+      } catch(e){
+        resolve(null);
+      }
+    }
+  });
+}
+
+function downloadBlob(blob, filename){
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.download = filename;
+  a.href = url;
+  a.rel = 'noopener';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 1200);
+}
+
+function showIOSSaveModal(blob, filename){
+  return new Promise(resolve => {
+    const url = URL.createObjectURL(blob);
+    let overlay = document.getElementById('iosSaveOverlay');
+    if(!overlay){
+      overlay = document.createElement('div');
+      overlay.id = 'iosSaveOverlay';
+      overlay.style.cssText = 'position:fixed;inset:0;background:#0a0716ee;z-index:500;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;';
+      document.body.appendChild(overlay);
+    }
+    overlay.innerHTML =
+      '<div style="color:#eae6f5;font-weight:700;font-size:15px;margin-bottom:10px;text-align:center;">이미지 저장</div>' +
+      '<div style="color:#9a92b5;font-size:13px;margin-bottom:14px;text-align:center;line-height:1.5;">이미지를 <b style="color:#eae6f5;">길게 누른 뒤</b><br>「사진 앱에 저장」을 선택하세요</div>' +
+      '<img id="iosSaveImg" alt="save" style="max-width:min(90vw,360px);max-height:55vh;border-radius:8px;box-shadow:0 12px 40px #0008;">' +
+      '<div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;justify-content:center;">' +
+        '<button type="button" id="iosShareBtn" class="btn primary" style="padding:10px 16px;">공유하기</button>' +
+        '<button type="button" id="iosCloseBtn" class="btn ghost" style="padding:10px 16px;">닫기</button>' +
+      '</div>';
+    overlay.style.display = 'flex';
+    const img = document.getElementById('iosSaveImg');
+    img.src = url;
+    const cleanup = () => { overlay.style.display = 'none'; URL.revokeObjectURL(url); resolve(); };
+    document.getElementById('iosCloseBtn').onclick = cleanup;
+    document.getElementById('iosShareBtn').onclick = async () => {
+      try {
+        const file = new File([blob], filename, {type: blob.type || 'image/png'});
+        if(navigator.canShare && navigator.canShare({files:[file]})){
+          await navigator.share({files:[file], title: filename});
+        } else if(navigator.share){
+          await navigator.share({title: filename, url: url});
+        } else {
+          alert('공유를 지원하지 않는 브라우저입니다. 이미지를 길게 눌러 저장해 주세요.');
+        }
+      } catch(err){
+        if(err && err.name !== 'AbortError') alert('공유에 실패했습니다. 이미지를 길게 눌러 저장해 주세요.');
+      }
+    };
+  });
+}
+
+async function captureCardBlob(){
+  const node = $('canvasWrap');
+  document.body.classList.add('exporting');
+  try {
+    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+    // 짧은 대기: 폰트/이미지 렌더 안정화
+    await new Promise(r => setTimeout(r, 80));
+    const canvas = await html2canvas(node, {
+      backgroundColor: null,
+      scale: 2,
+      useCORS: true,
+      logging: false,
+      allowTaint: true,
+      imageTimeout: 15000,
+      width: node.scrollWidth || node.clientWidth,
+      height: node.scrollHeight || node.clientHeight
+    });
+    // iOS 캔버스 크기 제한 방어 (대략 4096 기준)
+    if(canvas.width > 4096 || canvas.height > 4096){
+      const ratio = Math.min(4096 / canvas.width, 4096 / canvas.height);
+      const c2 = document.createElement('canvas');
+      c2.width = Math.floor(canvas.width * ratio);
+      c2.height = Math.floor(canvas.height * ratio);
+      const ctx = c2.getContext('2d');
+      ctx.drawImage(canvas, 0, 0, c2.width, c2.height);
+      return await canvasToBlob(c2, 'image/png', 0.95);
+    }
+    return await canvasToBlob(canvas, 'image/png', 0.95);
+  } finally {
+    document.body.classList.remove('exporting');
+  }
+}
+
+async function exportNode(filename){
+  const blob = await captureCardBlob();
+  if(!blob){ alert('이미지 생성에 실패했습니다.'); return; }
+  if(isIOS()){
+    try {
+      const file = new File([blob], filename, {type: 'image/png'});
+      if(navigator.canShare && navigator.canShare({files:[file]})){
+        await navigator.share({files:[file], title: filename});
+        return;
+      }
+    } catch(err){
+      if(err && err.name === 'AbortError') return;
+    }
+    await showIOSSaveModal(blob, filename);
+    return;
+  }
+  downloadBlob(blob, filename);
+}
+
+$('exportOne').addEventListener('click', async () => {
+  try {
+    await exportNode('card_' + (active+1) + '.png');
+  } catch(e){
+    console.error(e);
+    alert('저장 중 오류가 발생했습니다. 다시 시도해 주세요.');
+  }
+});
+
+$('exportAll').addEventListener('click', async () => {
+  const orig = active;
+  try {
+    if(typeof JSZip === 'undefined'){
+      for(let i=0;i<slides.length;i++){
+        active = i; renderMainCard();
+        await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+        await exportNode('card_' + (i+1) + '.png');
+        await new Promise(r => setTimeout(r, 350));
+      }
+    } else {
+      const zip = new JSZip();
+      for(let i=0;i<slides.length;i++){
+        active = i; renderMainCard();
+        await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+        const blob = await captureCardBlob();
+        if(blob) zip.file('card_' + (i+1) + '.png', blob);
+        await new Promise(r => setTimeout(r, 100));
+      }
+      const zipBlob = await zip.generateAsync({type:'blob'});
+      const zipName = 'cards_' + slides.length + '.zip';
+      if(isIOS()){
+        try {
+          const file = new File([zipBlob], zipName, {type:'application/zip'});
+          if(navigator.canShare && navigator.canShare({files:[file]})){
+            await navigator.share({files:[file], title: zipName});
+          } else downloadBlob(zipBlob, zipName);
+        } catch(err){
+          if(!err || err.name !== 'AbortError') downloadBlob(zipBlob, zipName);
+        }
+      } else {
+        downloadBlob(zipBlob, zipName);
+      }
+    }
+  } catch(e){
+    console.error(e);
+    alert('저장 중 오류가 발생했습니다.');
+  }
+  active = orig;
+  renderMainCard(); renderList();
+});
+
+/* ========== Undo / Redo ========== */
+const MAX_HISTORY = 40;
+let historyStack = [];
+let historyIndex = -1;
+let applyingHistory = false;
+let historyTimer = null;
+
+function pushHistory(){
+  if(applyingHistory) return;
+  const snap = JSON.stringify({slides, active});
+  if(historyIndex >= 0 && historyStack[historyIndex] === snap) return;
+  historyStack = historyStack.slice(0, historyIndex+1);
+  historyStack.push(snap);
+  if(historyStack.length > MAX_HISTORY) historyStack.shift();
+  historyIndex = historyStack.length - 1;
+  updateUndoRedo();
+}
+function scheduleHistory(){
+  if(applyingHistory) return;
+  clearTimeout(historyTimer);
+  historyTimer = setTimeout(pushHistory, 400);
+}
+function restoreHistory(idx){
+  if(idx < 0 || idx >= historyStack.length) return;
+  applyingHistory = true;
+  try {
+    const data = JSON.parse(historyStack[idx]);
+    slides = data.slides;
+    active = data.active;
+    if(active >= slides.length) active = Math.max(0, slides.length-1);
+    historyIndex = idx;
+    syncForm(); renderMainCard(); renderList();
+    updateUndoRedo();
+  } finally { applyingHistory = false; }
+}
+function undo(){ if(historyIndex <= 0) return; restoreHistory(historyIndex-1); }
+function redo(){ if(historyIndex >= historyStack.length-1) return; restoreHistory(historyIndex+1); }
+function updateUndoRedo(){
+  const ub = $('undoBtn'), rb = $('redoBtn');
+  if(ub) ub.disabled = historyIndex <= 0;
+  if(rb) rb.disabled = historyIndex >= historyStack.length-1;
+}
+$('undoBtn').addEventListener('click', undo);
+$('redoBtn').addEventListener('click', redo);
+document.addEventListener('keydown', e => {
+  const mod = e.ctrlKey || e.metaKey;
+  if(!mod) return;
+  const k = e.key.toLowerCase();
+  if(k === 'z' && !e.shiftKey){ e.preventDefault(); undo(); }
+  else if(k === 'y' || (k === 'z' && e.shiftKey)){ e.preventDefault(); redo(); }
+});
+
+const _origRender = renderMainCard;
+renderMainCard = function(){
+  _origRender();
+  if(!applyingHistory) scheduleHistory();
+};
+
+/* Init */
+syncForm();
+renderMainCard();
+renderList();
+pushHistory();
+updateUndoRedo();
 </script>
 </body>
 </html>
