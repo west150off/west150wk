@@ -1159,8 +1159,43 @@
   #card .imgBox .blurBg{position:absolute;inset:0;background-size:cover;background-position:center;filter:blur(28px) brightness(.85);transform:scale(1.15);}
   #card .scrim{position:absolute;inset:0;pointer-events:none;z-index:1;}
   #card .z2{position:relative;z-index:2;}
-  #card .titleText .t-accent,#card .subText .t-accent{font-weight:800;}
-  #card .titleText .t-underline,#card .subText .t-underline{text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:2px;}
+  /* 인라인 서식: 모든 템플릿에서 강조색·밑줄 동작 */
+  #card .t-accent{font-weight:800;}
+  #card .t-underline{text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:2px;}
+  /* 본문 색상 오버라이드 (data-body-c 있을 때만) */
+  #card[data-body-c] .summary,
+  #card[data-body-c] .bulletItem,
+  #card[data-body-c] .thText,
+  #card[data-body-c] .srcTitle,
+  #card[data-body-c] .srcUrl,
+  #card[data-body-c] .luxeDeck,
+  #card[data-body-c] .cvDeck,
+  #card[data-body-c] .wireDeck,
+  #card[data-body-c] .ftDeck,
+  #card[data-body-c] .atlDeck,
+  #card[data-body-c] .polDeck,
+  #card[data-body-c] .magDeck,
+  #card[data-body-c] .axItem,
+  #card[data-body-c] .bbDeck,
+  #card[data-body-c] .voxDeck,
+  #card[data-body-c] .ecoDeck,
+  #card[data-body-c] .wtDeck,
+  #card[data-body-c] .apCap,
+  #card[data-body-c] .icDeck,
+  #card[data-body-c] .ppDeck,
+  #card[data-body-c] .faDeck,
+  #card[data-body-c] .nrDeck,
+  #card[data-body-c] .stDeck,
+  #card[data-body-c] .mbItem,
+  #card[data-body-c] .ssDeck,
+  #card[data-body-c] .igDeck,
+  #card[data-body-c] .tgDeck,
+  #card[data-body-c] .shDeck,
+  #card[data-body-c] .coDeck,
+  #card[data-body-c] .swDeck,
+  #card[data-body-c] .subText{
+    color: var(--body-c) !important;
+  }
 
   /* Right panel */
   #right{width:300px;flex:none;background:var(--chrome-panel);border-left:1px solid var(--chrome-line);overflow-y:auto;}
@@ -1409,28 +1444,11 @@
           <div class="ddSep"></div>
           <div class="ddLabel">디자인 스타일</div>
           <div class="ddItem" data-template="wire"><span class="ic">▣</span>Wire · Reuters/AP</div>
-          <div class="ddItem" data-template="ft"><span class="ic">§</span>FT · Salmon</div>
-          <div class="ddItem" data-template="atlantic"><span class="ic">¶</span>Atlantic</div>
-          <div class="ddItem" data-template="politico"><span class="ic">■</span>Politico</div>
-          <div class="ddItem" data-template="magazine"><span class="ic">◈</span>Magazine</div>
           <div class="ddItem" data-template="axios"><span class="ic">●</span>Axios</div>
           <div class="ddItem" data-template="bloomberg"><span class="ic">◆</span>Bloomberg</div>
-          <div class="ddItem" data-template="vox"><span class="ic">▲</span>Vox</div>
           <div class="ddItem" data-template="economist"><span class="ic">■</span>Economist</div>
-          <div class="ddItem" data-template="wtimes"><span class="ic">☰</span>Washington Times</div>
-          <div class="ddItem" data-template="apphoto"><span class="ic">▣</span>AP Photo</div>
-          <div class="ddItem" data-template="intercept"><span class="ic">◆</span>The Intercept</div>
-          <div class="ddItem" data-template="propublica"><span class="ic">■</span>ProPublica</div>
-          <div class="ddItem" data-template="fa"><span class="ic">§</span>Foreign Affairs</div>
-          <div class="ddItem" data-template="nr"><span class="ic">¶</span>National Review</div>
-          <div class="ddItem" data-template="stratechery"><span class="ic">Aa</span>Stratechery</div>
-          <div class="ddItem" data-template="mb"><span class="ic">●</span>Morning Brew</div>
-          <div class="ddItem" data-template="substack"><span class="ic">✎</span>Substack</div>
-          <div class="ddItem" data-template="ig"><span class="ic">◎</span>IG News</div>
           <div class="ddItem" data-template="telegram"><span class="ic">✈</span>Telegram</div>
-          <div class="ddItem" data-template="shimbun"><span class="ic">日</span>Shimbun</div>
           <div class="ddItem" data-template="construct"><span class="ic">▲</span>Constructivist</div>
-          <div class="ddItem" data-template="swiss"><span class="ic">+</span>Swiss</div>
           <div class="ddSep"></div>
           <div class="ddLabel">기본</div>
           <div class="ddItem" data-template="basic"><span class="ic">Aa</span>텍스트 기본</div>
@@ -1527,7 +1545,7 @@
         <div class="field">
           <label>헤드라인 (제목)</label>
           <textarea id="titleText" style="min-height:80px;">여야, 공급망 안정을 위한 긴급 특별법안 본회의 전격 통과</textarea>
-          <div class="hint">**굵게** · ==강조색== · [[밑줄]] 사용 가능</div>
+          <div class="hint">**굵게** · ==강조색== (브랜드 컬러의 강조색) · [[밑줄]] 사용 가능</div>
         </div>
         <div class="field" id="bulletsField">
           <label>불릿 포인트 (한 줄에 하나)</label>
@@ -1571,13 +1589,20 @@
         </div>
         <div class="row2">
           <div class="field">
-            <label>Neon Yellow</label>
-            <div class="colorField"><input type="color" id="neonColor" value="#E6FF00"><span id="neonColorHex">#E6FF00</span></div>
+            <label>본문</label>
+            <div class="colorField"><input type="color" id="bodyColor" value="#e8e4dc"><span id="bodyColorHex">#e8e4dc</span></div>
           </div>
           <div class="field">
-            <label>Crimson</label>
+            <label>강조색 (==텍스트==)</label>
+            <div class="colorField"><input type="color" id="neonColor" value="#E6FF00"><span id="neonColorHex">#E6FF00</span></div>
+          </div>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label>Crimson (액센트)</label>
             <div class="colorField"><input type="color" id="crimsonColor" value="#E50914"><span id="crimsonColorHex">#E50914</span></div>
           </div>
+          <div class="field"></div>
         </div>
       </div>
 
@@ -1693,6 +1718,7 @@ function defaults(){
     logoPos: 'br',
     bg: '#111318',
     text: '#ffffff',
+    bodyColor: '',
     neon: '#E6FF00',
     crimson: '#E50914',
     font: 'pretendard',
@@ -1773,6 +1799,9 @@ function cardMarkup(s, pageIdx, total){
   const h = s.cardHeight || 480;
   const neon = s.neon || '#E6FF00';
   const crimson = s.crimson || '#E50914';
+  const bodyC = (s.bodyColor && String(s.bodyColor).trim()) ? String(s.bodyColor).trim() : '';
+  const bodyData = bodyC ? ' data-body-c="1"' : '';
+  const bodyStyle = bodyC ? '--body-c:' + bodyC + ';' : '';
   // 제목/본문이 '기본과 동일'이면 기본 글꼴을 사용
   const baseFont = fontCss(s.font || 'pretendard');
   const titleFont = (s.titleFont && String(s.titleFont).trim()) ? fontCss(s.titleFont) : baseFont;
@@ -1796,7 +1825,7 @@ function cardMarkup(s, pageIdx, total){
     const bulletsHtml = lines.map(line =>
       `<div class="bulletItem" style="${align==='center'?'justify-content:center;':align==='right'?'justify-content:flex-end;':''}"><span class="bulletMark" style="background:${neon}"></span><span style="font-size:${s.subSize}px;font-family:${bodyFont};${alignStyle}">${parseInlineFormat(line, neon)}</span></div>`
     ).join('');
-    return `<div id="card" class="tpl-politics" style="width:${w}px;height:${h}px;background:${s.bg};font-family:${baseFont};">
+    return `<div id="card" class="tpl-politics"${bodyData} style="width:${w}px;height:${h}px;background:${s.bg};font-family:${baseFont};${bodyStyle}">
       <div class="tagYellow" style="background:${neon};font-size:${s.tagSize}px;${tagAlign}">${escapeHtml(s.tagText || s.category || 'POLITICS INSIGHT')}</div>
       <div class="headline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text};${alignStyle}">${headline}</div>
       <div class="bulletBox" style="border-color:${crimson};">
@@ -1840,7 +1869,7 @@ function cardMarkup(s, pageIdx, total){
         <div class="headline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text};${alignStyle}">${headline}</div>
         <div class="summary" style="font-size:${s.subSize}px;font-family:${bodyFont};${sumBorder}${alignStyle}">${parseInlineFormat(s.summary, neon)}</div>
         ${metaBlock}`;
-    return `<div id="card" class="tpl-breaking" style="width:${w}px;height:${h}px;background:${s.bg};font-family:${baseFont};">
+    return `<div id="card" class="tpl-breaking"${bodyData} style="width:${w}px;height:${h}px;background:${s.bg};font-family:${baseFont};${bodyStyle}">
       <div class="photoZone">
         ${photoInner}
         ${vig}
@@ -1889,7 +1918,7 @@ function cardMarkup(s, pageIdx, total){
         <div class="headline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text};${alignStyle}">${headline}</div>
         <div class="summary" style="font-size:${s.subSize}px;font-family:${bodyFont};${sumBorderFb}${alignStyle}">${parseInlineFormat(s.summary, neon)}</div>
         ${metaBlock}`;
-    return `<div id="card" class="tpl-fullbleed" style="width:${w}px;height:${h}px;background:${s.bg};font-family:${baseFont};">
+    return `<div id="card" class="tpl-fullbleed"${bodyData} style="width:${w}px;height:${h}px;background:${s.bg};font-family:${baseFont};${bodyStyle}">
       <div class="fbPhoto" style="${photoStyle}"></div>
       <div class="fbScrim" style="${scrimStyle}"></div>
       <div class="fbContent${useGlass?' glassOn':''}">
@@ -1921,7 +1950,7 @@ function cardMarkup(s, pageIdx, total){
     }
     const brand = s.brandName || 'WEST150 DAILY';
     const deck = (s.summary || '').trim();
-    return `<div id="card" class="tpl-cover" style="width:${w}px;height:${h}px;background:${s.bg};font-family:${baseFont};">
+    return `<div id="card" class="tpl-cover"${bodyData} style="width:${w}px;height:${h}px;background:${s.bg};font-family:${baseFont};${bodyStyle}">
       <div class="cvPhoto" style="${photoStyle}"></div>
       <div class="cvScrim" style="background:${scrimLayers.join(',')};"></div>
       <div class="cvFrame"></div>
@@ -1953,7 +1982,7 @@ function cardMarkup(s, pageIdx, total){
     const items = lines.map((line,i) =>
       `<div class="thItem"><div class="thNum" style="background:${crimson}">${i+1}</div><div class="thText" style="font-size:${s.subSize}px;font-family:${bodyFont};${alignStyle}">${parseInlineFormat(line, neon)}</div></div>`
     ).join('');
-    return `<div id="card" class="tpl-thread" style="width:${w}px;height:${h}px;background:${s.bg};font-family:${baseFont};">
+    return `<div id="card" class="tpl-thread"${bodyData} style="width:${w}px;height:${h}px;background:${s.bg};font-family:${baseFont};${bodyStyle}">
       <div class="tagYellow" style="background:${neon};font-size:${s.tagSize}px;${tagAlign}">${escapeHtml(s.tagText || 'THREAD')}</div>
       <div class="headline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text};${alignStyle}">${headline}</div>
       <div class="thList">${items || '<div class="thItem"><div class="thNum">1</div><div class="thText">요약을 입력하세요</div></div>'}</div>
@@ -1978,7 +2007,7 @@ function cardMarkup(s, pageIdx, total){
         </div>
       </div>`;
     }).join('');
-    return `<div id="card" class="tpl-sources" style="width:${w}px;height:${h}px;background:${s.bg};font-family:${baseFont};">
+    return `<div id="card" class="tpl-sources"${bodyData} style="width:${w}px;height:${h}px;background:${s.bg};font-family:${baseFont};${bodyStyle}">
       <div class="tagYellow" style="background:${neon};font-size:${s.tagSize}px;${tagAlign}">${escapeHtml(s.tagText || 'SOURCES')}</div>
       <div class="headline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text};${alignStyle}">${headline}</div>
       <div class="srcList">${items || '<div class="srcItem"><div class="srcNum">01</div><div class="srcBody"><div class="srcTitle">출처를 입력하세요 (제목 | URL)</div></div></div>'}</div>
@@ -1992,7 +2021,7 @@ function cardMarkup(s, pageIdx, total){
     const kicker = escapeHtml(s.tagText || s.category || 'EDITORIAL');
     const deck = (s.summary || '').trim();
     const accentAlign = align === 'center' ? 'margin-left:auto;margin-right:auto;' : (align === 'right' ? 'margin-left:auto;' : '');
-    return `<div id="card" class="tpl-luxe" style="width:${w}px;height:${h}px;background:${s.bg};font-family:${baseFont};">
+    return `<div id="card" class="tpl-luxe"${bodyData} style="width:${w}px;height:${h}px;background:${s.bg};font-family:${baseFont};${bodyStyle}">
       <div class="luxeFrame"></div>
       <div class="luxeInner">
         <div class="luxeKicker" style="color:${neon};font-size:${s.tagSize}px;${alignStyle}">${kicker}</div>
@@ -2020,7 +2049,7 @@ function cardMarkup(s, pageIdx, total){
       ? `<div class="layer" style="background-image:url('${s.image}');background-size:${bgSize};background-position:${pos};filter:${filt};"></div>`
       : `<div class="layer" style="background:#ddd;display:flex;align-items:center;justify-content:center;color:#888;font-size:12px;">사진</div>`;
     const deck = (s.summary || '').trim();
-    return `<div id="card" class="tpl-wire" style="width:${w}px;height:${h}px;background:${s.bg||'#fff'};font-family:${baseFont};">
+    return `<div id="card" class="tpl-wire"${bodyData} style="width:${w}px;height:${h}px;background:${s.bg||'#fff'};font-family:${baseFont};${bodyStyle}">
       <div class="wirePhoto">${photoInner}${pc}</div>
       <div class="wireBody">
         <div class="wireKicker" style="color:${crimson};font-size:${s.tagSize}px;">${escapeHtml(s.tagText || s.category || 'WORLD')}</div>
@@ -2035,7 +2064,7 @@ function cardMarkup(s, pageIdx, total){
   /* ===== FT ===== */
   if(s.template === 'ft'){
     const deck = (s.summary || '').trim();
-    return `<div id="card" class="tpl-ft" style="width:${w}px;height:${h}px;background:${s.bg||'#fff1e5'};font-family:${baseFont};">
+    return `<div id="card" class="tpl-ft"${bodyData} style="width:${w}px;height:${h}px;background:${s.bg||'#fff1e5'};font-family:${baseFont};${bodyStyle}">
       <div class="ftTop">
         <div class="ftBrand" style="color:${s.text||'#0d0d0d'};">${escapeHtml(s.brandName || 'WEST150 DAILY')}</div>
         <div class="ftSection" style="color:${crimson};font-size:${s.tagSize}px;">${escapeHtml(s.tagText || s.category || 'ANALYSIS')}</div>
@@ -2050,7 +2079,7 @@ function cardMarkup(s, pageIdx, total){
   /* ===== Atlantic ===== */
   if(s.template === 'atlantic'){
     const deck = (s.summary || '').trim();
-    return `<div id="card" class="tpl-atlantic" style="width:${w}px;height:${h}px;background:${s.bg||'#f7f3eb'};font-family:${baseFont};">
+    return `<div id="card" class="tpl-atlantic"${bodyData} style="width:${w}px;height:${h}px;background:${s.bg||'#f7f3eb'};font-family:${baseFont};${bodyStyle}">
       <div class="atlKicker" style="color:${crimson};font-size:${s.tagSize}px;">${escapeHtml(s.tagText || s.category || 'ESSAY')}</div>
       <div class="atlHeadline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text||'#1a1814'};${alignStyle}">${headline}</div>
       ${deck ? `<div class="atlDeck" style="font-size:${s.subSize}px;font-family:${bodyFont};${alignStyle}">${parseInlineFormat(deck, crimson)}</div>` : ''}
@@ -2062,7 +2091,7 @@ function cardMarkup(s, pageIdx, total){
   /* ===== Politico ===== */
   if(s.template === 'politico'){
     const deck = (s.summary || '').trim();
-    return `<div id="card" class="tpl-politico" style="width:${w}px;height:${h}px;background:${s.bg||'#fff'};font-family:${baseFont};">
+    return `<div id="card" class="tpl-politico"${bodyData} style="width:${w}px;height:${h}px;background:${s.bg||'#fff'};font-family:${baseFont};${bodyStyle}">
       <div class="polBar" style="background:${crimson};font-size:${s.tagSize}px;">${escapeHtml(s.tagText || 'BREAKING')}</div>
       <div class="polBody">
         <div class="polHeadline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text||'#111'};${alignStyle}">${headline}</div>
@@ -2086,7 +2115,7 @@ function cardMarkup(s, pageIdx, total){
     const ov = Math.max(0, Math.min(80, s.imageOverlay || 0)) / 100;
     const deck = (s.summary || '').trim();
     const scrim = `linear-gradient(180deg,rgba(0,0,0,${0.2+ov*0.3}) 0%,rgba(0,0,0,${0.1+ov*0.2}) 40%,rgba(0,0,0,${0.75+ov*0.2}) 100%)`;
-    return `<div id="card" class="tpl-magazine" style="width:${w}px;height:${h}px;background:${s.bg||'#0c0c0c'};font-family:${baseFont};">
+    return `<div id="card" class="tpl-magazine"${bodyData} style="width:${w}px;height:${h}px;background:${s.bg||'#0c0c0c'};font-family:${baseFont};${bodyStyle}">
       <div class="magPhoto" style="${photoStyle}"></div>
       <div class="magScrim" style="background:${scrim};"></div>
       <div class="magContent">
@@ -2107,7 +2136,7 @@ function cardMarkup(s, pageIdx, total){
     const items = lines.map(line =>
       `<div class="axItem"><span class="axDot" style="background:${s.neon||'#5b0ead'}"></span><span style="font-size:${s.subSize}px;font-family:${bodyFont};">${parseInlineFormat(line, s.neon||'#5b0ead')}</span></div>`
     ).join('');
-    return `<div id="card" class="tpl-axios" style="width:${w}px;height:${h}px;background:${s.bg||'#fafafa'};font-family:${baseFont};">
+    return `<div id="card" class="tpl-axios"${bodyData} style="width:${w}px;height:${h}px;background:${s.bg||'#fafafa'};font-family:${baseFont};${bodyStyle}">
       <div class="axBig" style="color:${s.neon||'#5b0ead'};font-size:${s.tagSize}px;">${escapeHtml(s.tagText || '1 BIG THING')}</div>
       <div class="axHeadline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text||'#1a1a1a'};${alignStyle}">${headline}</div>
       <div class="axList">${items || '<div class="axItem"><span class="axDot"></span><span>포인트를 입력하세요</span></div>'}</div>
@@ -2119,7 +2148,7 @@ function cardMarkup(s, pageIdx, total){
   /* ===== Bloomberg ===== */
   if(s.template === 'bloomberg'){
     const deck = (s.summary || '').trim();
-    return `<div id="card" class="tpl-bloomberg" style="width:${w}px;height:${h}px;background:${s.bg||'#000'};font-family:${baseFont};">
+    return `<div id="card" class="tpl-bloomberg"${bodyData} style="width:${w}px;height:${h}px;background:${s.bg||'#000'};font-family:${baseFont};${bodyStyle}">
       <div class="bbTop">
         <div class="bbBrand">${escapeHtml(s.brandName || 'WEST150')}</div>
         <div class="bbAmber" style="color:${neon};font-size:${s.tagSize}px;">${escapeHtml(s.tagText || 'MARKETS')}</div>
@@ -2134,7 +2163,7 @@ function cardMarkup(s, pageIdx, total){
   /* ===== Vox ===== */
   if(s.template === 'vox'){
     const deck = (s.summary || '').trim();
-    return `<div id="card" class="tpl-vox" style="width:${w}px;height:${h}px;background:${s.bg||'#fff'};font-family:${baseFont};">
+    return `<div id="card" class="tpl-vox"${bodyData} style="width:${w}px;height:${h}px;background:${s.bg||'#fff'};font-family:${baseFont};${bodyStyle}">
       <div class="voxKicker" style="background:${neon};font-size:${s.tagSize}px;">${escapeHtml(s.tagText || 'EXPLAINER')}</div>
       <div class="voxHeadline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text||'#201c29'};${alignStyle}">${headline}</div>
       ${deck ? `<div class="voxDeck" style="font-size:${s.subSize}px;font-family:${bodyFont};${alignStyle}">${parseInlineFormat(deck, neon)}</div>` : ''}
@@ -2146,7 +2175,7 @@ function cardMarkup(s, pageIdx, total){
   /* ===== Economist ===== */
   if(s.template === 'economist'){
     const deck = (s.summary || '').trim();
-    return `<div id="card" class="tpl-economist" style="width:${w}px;height:${h}px;background:${s.bg||'#e3120b'};font-family:${baseFont};">
+    return `<div id="card" class="tpl-economist"${bodyData} style="width:${w}px;height:${h}px;background:${s.bg||'#e3120b'};font-family:${baseFont};${bodyStyle}">
       <div class="ecoBrand">${escapeHtml(s.brandName || 'WEST150 DAILY')}</div>
       <div class="ecoRule"></div>
       <div class="ecoHeadline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text||'#fff'};${alignStyle}">${headline}</div>
@@ -2159,7 +2188,7 @@ function cardMarkup(s, pageIdx, total){
   /* ===== Washington Times ===== */
   if(s.template === 'wtimes'){
     const deck = (s.summary || '').trim();
-    return `<div id="card" class="tpl-wtimes" style="width:${w}px;height:${h}px;background:${s.bg||'#fff'};font-family:${baseFont};">
+    return `<div id="card" class="tpl-wtimes"${bodyData} style="width:${w}px;height:${h}px;background:${s.bg||'#fff'};font-family:${baseFont};${bodyStyle}">
       <div class="wtMast">
         <div class="wtBrand">${escapeHtml(s.brandName || 'WEST150 DAILY')}</div>
         <div class="wtSub">CARD NEWS</div>
@@ -2184,7 +2213,7 @@ function cardMarkup(s, pageIdx, total){
       ? `background-image:url('${s.image}');background-size:${bgSize};background-position:${pos};filter:${filt};`
       : `background:linear-gradient(160deg,#333,#111);`;
     const deck = (s.summary || '').trim();
-    return `<div id="card" class="tpl-apphoto" style="width:${w}px;height:${h}px;background:#0a0a0a;font-family:${baseFont};">
+    return `<div id="card" class="tpl-apphoto"${bodyData} style="width:${w}px;height:${h}px;background:#0a0a0a;font-family:${baseFont};${bodyStyle}">
       <div class="apPhoto" style="${photoStyle}"></div>
       <div class="apScrim"></div>
       <div class="apBody">
@@ -2199,7 +2228,7 @@ function cardMarkup(s, pageIdx, total){
   /* ===== Intercept ===== */
   if(s.template === 'intercept'){
     const deck = (s.summary || '').trim();
-    return `<div id="card" class="tpl-intercept" style="width:${w}px;height:${h}px;background:${s.bg||'#0f0f0f'};font-family:${baseFont};">
+    return `<div id="card" class="tpl-intercept"${bodyData} style="width:${w}px;height:${h}px;background:${s.bg||'#0f0f0f'};font-family:${baseFont};${bodyStyle}">
       <div class="icKicker" style="color:${crimson};font-size:${s.tagSize}px;">${escapeHtml(s.tagText || 'INVESTIGATION')}</div>
       <div class="icHeadline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text||'#f2f2f2'};${alignStyle}">${headline}</div>
       ${deck ? `<div class="icDeck" style="font-size:${s.subSize}px;font-family:${bodyFont};${alignStyle}">${parseInlineFormat(deck, crimson)}</div>` : ''}
@@ -2211,7 +2240,7 @@ function cardMarkup(s, pageIdx, total){
   /* ===== ProPublica ===== */
   if(s.template === 'propublica'){
     const deck = (s.summary || '').trim();
-    return `<div id="card" class="tpl-propublica" style="width:${w}px;height:${h}px;background:${s.bg||'#fff'};font-family:${baseFont};">
+    return `<div id="card" class="tpl-propublica"${bodyData} style="width:${w}px;height:${h}px;background:${s.bg||'#fff'};font-family:${baseFont};${bodyStyle}">
       <div class="ppBar" style="background:${s.bg==='#fff'||!s.bg?'#0c2340':s.bg};"></div>
       <div class="ppKicker" style="color:#0c2340;font-size:${s.tagSize}px;">${escapeHtml(s.tagText || 'INVESTIGATION')}</div>
       <div class="ppHeadline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text||'#1a1a1a'};${alignStyle}">${headline}</div>
@@ -2224,7 +2253,7 @@ function cardMarkup(s, pageIdx, total){
   /* ===== Foreign Affairs ===== */
   if(s.template === 'fa'){
     const deck = (s.summary || '').trim();
-    return `<div id="card" class="tpl-fa" style="width:${w}px;height:${h}px;background:${s.bg||'#0b1c2c'};font-family:${baseFont};">
+    return `<div id="card" class="tpl-fa"${bodyData} style="width:${w}px;height:${h}px;background:${s.bg||'#0b1c2c'};font-family:${baseFont};${bodyStyle}">
       <div class="faGold" style="background:${neon};"></div>
       <div class="faKicker" style="color:${neon};font-size:${s.tagSize}px;">${escapeHtml(s.tagText || 'ESSAY')}</div>
       <div class="faHeadline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text||'#f5f0e6'};${alignStyle}">${headline}</div>
@@ -2237,7 +2266,7 @@ function cardMarkup(s, pageIdx, total){
   /* ===== National Review ===== */
   if(s.template === 'nr'){
     const deck = (s.summary || '').trim();
-    return `<div id="card" class="tpl-nr" style="width:${w}px;height:${h}px;background:${s.bg||'#f8f5ef'};font-family:${baseFont};">
+    return `<div id="card" class="tpl-nr"${bodyData} style="width:${w}px;height:${h}px;background:${s.bg||'#f8f5ef'};font-family:${baseFont};${bodyStyle}">
       <div class="nrKicker" style="color:${crimson};font-size:${s.tagSize}px;">${escapeHtml(s.tagText || 'OPINION')}</div>
       <div class="nrHeadline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text||'#1c1914'};${alignStyle}">${headline}</div>
       ${deck ? `<div class="nrDeck" style="font-size:${s.subSize}px;font-family:${bodyFont};${alignStyle}">${parseInlineFormat(deck, crimson)}</div>` : ''}
@@ -2249,7 +2278,7 @@ function cardMarkup(s, pageIdx, total){
   /* ===== Stratechery ===== */
   if(s.template === 'stratechery'){
     const deck = (s.summary || '').trim();
-    return `<div id="card" class="tpl-stratechery" style="width:${w}px;height:${h}px;background:${s.bg||'#fff'};font-family:${baseFont};">
+    return `<div id="card" class="tpl-stratechery"${bodyData} style="width:${w}px;height:${h}px;background:${s.bg||'#fff'};font-family:${baseFont};${bodyStyle}">
       <div class="stKicker" style="font-size:${s.tagSize}px;">${escapeHtml(s.tagText || 'ANALYSIS')}</div>
       <div class="stHeadline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text||'#222'};${alignStyle}">${headline}</div>
       ${deck ? `<div class="stDeck" style="font-size:${s.subSize}px;font-family:${bodyFont};${alignStyle}">${parseInlineFormat(deck, neon)}</div>` : ''}
@@ -2264,7 +2293,7 @@ function cardMarkup(s, pageIdx, total){
     const items = lines.map((line,i) =>
       `<div class="mbItem"><span class="mbNum" style="color:${neon}">${i+1}</span><span style="font-size:${s.subSize}px;font-family:${bodyFont};">${parseInlineFormat(line, neon)}</span></div>`
     ).join('');
-    return `<div id="card" class="tpl-mb" style="width:${w}px;height:${h}px;background:${s.bg||'#fffaf3'};font-family:${baseFont};">
+    return `<div id="card" class="tpl-mb"${bodyData} style="width:${w}px;height:${h}px;background:${s.bg||'#fffaf3'};font-family:${baseFont};${bodyStyle}">
       <div class="mbTop"><span class="mbDot" style="background:${neon}"></span><span class="mbBrand">${escapeHtml(s.brandName || 'WEST150 DAILY')}</span></div>
       <div class="mbHeadline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text||'#1a1a1a'};${alignStyle}">${headline}</div>
       <div class="mbList">${items || '<div class="mbItem"><span class="mbNum">1</span><span>포인트를 입력하세요</span></div>'}</div>
@@ -2276,7 +2305,7 @@ function cardMarkup(s, pageIdx, total){
   /* ===== Substack ===== */
   if(s.template === 'substack'){
     const deck = (s.summary || '').trim();
-    return `<div id="card" class="tpl-substack" style="width:${w}px;height:${h}px;background:${s.bg||'#fff'};font-family:${baseFont};">
+    return `<div id="card" class="tpl-substack"${bodyData} style="width:${w}px;height:${h}px;background:${s.bg||'#fff'};font-family:${baseFont};${bodyStyle}">
       <div class="ssBy">${escapeHtml(s.watermark || s.brandName || '@west150daily')}</div>
       <div class="ssHeadline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text||'#1a1a1a'};${alignStyle}">${headline}</div>
       ${deck ? `<div class="ssDeck" style="font-size:${s.subSize}px;font-family:${bodyFont};${alignStyle}">${parseInlineFormat(deck, neon)}</div>` : ''}
@@ -2288,7 +2317,7 @@ function cardMarkup(s, pageIdx, total){
   /* ===== IG News ===== */
   if(s.template === 'ig'){
     const deck = (s.summary || '').trim();
-    return `<div id="card" class="tpl-ig" style="width:${w}px;height:${h}px;background:${s.bg||'#111'};font-family:${baseFont};">
+    return `<div id="card" class="tpl-ig"${bodyData} style="width:${w}px;height:${h}px;background:${s.bg||'#111'};font-family:${baseFont};${bodyStyle}">
       <div class="igKicker" style="background:${neon};color:#111;font-size:${s.tagSize}px;">${escapeHtml(s.tagText || s.category || 'NEWS')}</div>
       <div class="igHeadline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text||'#fff'};${alignStyle}">${headline}</div>
       ${deck ? `<div class="igDeck" style="font-size:${s.subSize}px;font-family:${bodyFont};${alignStyle}">${parseInlineFormat(deck, neon)}</div>` : ''}
@@ -2301,7 +2330,7 @@ function cardMarkup(s, pageIdx, total){
   if(s.template === 'telegram'){
     const deck = (s.summary || '').trim();
     const initial = escapeHtml((s.brandName || 'W').trim().charAt(0).toUpperCase() || 'W');
-    return `<div id="card" class="tpl-telegram" style="width:${w}px;height:${h}px;background:${s.bg||'#0e1621'};font-family:${baseFont};">
+    return `<div id="card" class="tpl-telegram"${bodyData} style="width:${w}px;height:${h}px;background:${s.bg||'#0e1621'};font-family:${baseFont};${bodyStyle}">
       <div class="tgHead">
         <div class="tgAvatar" style="background:${neon}">${initial}</div>
         <div><div class="tgName">${escapeHtml(s.brandName || 'WEST150 DAILY')}</div><div class="tgSub">${escapeHtml(s.tagText || 'channel')}</div></div>
@@ -2318,7 +2347,7 @@ function cardMarkup(s, pageIdx, total){
   /* ===== Shimbun ===== */
   if(s.template === 'shimbun'){
     const deck = (s.summary || '').trim();
-    return `<div id="card" class="tpl-shimbun" style="width:${w}px;height:${h}px;background:${s.bg||'#f7f4ec'};font-family:${baseFont};">
+    return `<div id="card" class="tpl-shimbun"${bodyData} style="width:${w}px;height:${h}px;background:${s.bg||'#f7f4ec'};font-family:${baseFont};${bodyStyle}">
       <div class="shMast">
         <div class="shBrand">${escapeHtml(s.brandName || 'WEST150')}</div>
         <div class="shDate">${escapeHtml(dateStr)}</div>
@@ -2334,7 +2363,7 @@ function cardMarkup(s, pageIdx, total){
   /* ===== Constructivist ===== */
   if(s.template === 'construct'){
     const deck = (s.summary || '').trim();
-    return `<div id="card" class="tpl-construct" style="width:${w}px;height:${h}px;background:${s.bg||'#111'};font-family:${baseFont};">
+    return `<div id="card" class="tpl-construct"${bodyData} style="width:${w}px;height:${h}px;background:${s.bg||'#111'};font-family:${baseFont};${bodyStyle}">
       <div class="coShape" style="background:${crimson};"></div>
       <div class="coShape2" style="border-color:${neon};"></div>
       <div class="coInner">
@@ -2350,7 +2379,7 @@ function cardMarkup(s, pageIdx, total){
   /* ===== Swiss ===== */
   if(s.template === 'swiss'){
     const deck = (s.summary || '').trim();
-    return `<div id="card" class="tpl-swiss" style="width:${w}px;height:${h}px;background:${s.bg||'#f2f2f2'};font-family:${baseFont};">
+    return `<div id="card" class="tpl-swiss"${bodyData} style="width:${w}px;height:${h}px;background:${s.bg||'#f2f2f2'};font-family:${baseFont};${bodyStyle}">
       <div class="swGrid">
         <div class="swBar" style="background:${crimson};"></div>
         <div>
@@ -2366,7 +2395,7 @@ function cardMarkup(s, pageIdx, total){
 
 
   /* Basic fallback */
-  return `<div id="card" class="tpl-basic" style="width:${w}px;height:${h}px;background:${s.bg||'#faf9fc'};color:${s.text||'#1a1a1a'};font-family:${baseFont};">
+  return `<div id="card" class="tpl-basic"${bodyData} style="width:${w}px;height:${h}px;background:${s.bg||'#faf9fc'};color:${s.text||'#1a1a1a'};font-family:${baseFont};${bodyStyle}">
     <div class="rowTop"><span class="badgeTop">${escapeHtml(s.tagText||s.category||'')}</span>${s.showPageNum!==false?`<span class="pageNum">${pageLabel}</span>`:''}</div>
     <div class="frame" style="text-align:${s.align||'left'};">
       <div class="titleText" style="font-size:${s.titleSize}px;font-family:${titleFont};">${headline}</div>
@@ -2460,6 +2489,8 @@ function syncForm(){
   if($('glassField')) $('glassField').style.display = (s.template==='breaking'||s.template==='fullbleed') ? '' : 'none';
   $('bgColor').value = s.bg; $('bgColorHex').textContent = s.bg;
   $('textColor').value = s.text; $('textColorHex').textContent = s.text;
+  const _bc = (s.bodyColor && String(s.bodyColor).trim()) ? s.bodyColor : '#e8e4dc';
+  if($('bodyColor')){ $('bodyColor').value = _bc; $('bodyColorHex').textContent = (s.bodyColor && String(s.bodyColor).trim()) ? s.bodyColor : '(기본)'; }
   $('neonColor').value = s.neon; $('neonColorHex').textContent = s.neon;
   $('crimsonColor').value = s.crimson; $('crimsonColorHex').textContent = s.crimson;
   $('titleSize').value = s.titleSize; $('titleSizeVal').textContent = s.titleSize;
@@ -2660,6 +2691,7 @@ function bindColor(id, prop){
 }
 bindColor('bgColor','bg');
 bindColor('textColor','text');
+bindColor('bodyColor','bodyColor');
 bindColor('neonColor','neon');
 bindColor('crimsonColor','crimson');
 
