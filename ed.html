@@ -812,6 +812,106 @@
     color:rgba(255,255,255,.6);
   }
 
+  /* ===== BLOOMBERG ===== */
+  #card.tpl-bloomberg{background:#000;color:#fff;padding:24px 22px 18px;}
+  #card.tpl-bloomberg .bbTop{
+    display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;
+  }
+  #card.tpl-bloomberg .bbBrand{
+    font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:11px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:#fff;
+  }
+  #card.tpl-bloomberg .bbAmber{
+    font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#ffb81c;
+  }
+  #card.tpl-bloomberg .bbHeadline{
+    font-family:inherit;font-weight:700;font-size:26px;line-height:1.18;letter-spacing:-.02em;
+    margin:0 0 12px;white-space:pre-wrap;word-break:keep-all;color:#fff;
+  }
+  #card.tpl-bloomberg .bbDeck{
+    font-family:inherit;font-size:13.5px;line-height:1.5;color:rgba(255,255,255,.78);
+    white-space:pre-wrap;word-break:keep-all;flex:1;
+    padding-left:12px;border-left:3px solid #ffb81c;
+  }
+  #card.tpl-bloomberg .metaRow{
+    border-top-color:rgba(255,184,28,.35);color:rgba(255,255,255,.5);margin-top:16px;padding-top:12px;
+  }
+
+  /* ===== VOX ===== */
+  #card.tpl-vox{background:#fff;color:#201c29;padding:26px 24px 18px;}
+  #card.tpl-vox .voxKicker{
+    display:inline-block;background:#f9d71c;color:#201c29;
+    font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;
+    padding:5px 10px;margin-bottom:14px;
+  }
+  #card.tpl-vox .voxHeadline{
+    font-family:inherit;font-weight:800;font-size:26px;line-height:1.18;letter-spacing:-.025em;
+    margin:0 0 14px;white-space:pre-wrap;word-break:keep-all;
+  }
+  #card.tpl-vox .voxDeck{
+    font-family:inherit;font-size:14px;line-height:1.5;color:#3d3a47;
+    white-space:pre-wrap;word-break:keep-all;flex:1;
+  }
+  #card.tpl-vox .metaRow{
+    border-top-color:#e8e6ef;color:#6b6778;margin-top:16px;padding-top:12px;
+  }
+  #card.tpl-vox .watermark{color:#201c29;text-shadow:none;opacity:.35;}
+
+  /* ===== ECONOMIST ===== */
+  #card.tpl-economist{background:#e3120b;color:#fff;padding:28px 26px 20px;}
+  #card.tpl-economist .ecoBrand{
+    font-family:Georgia,'Noto Serif KR',serif;font-weight:700;font-size:20px;
+    letter-spacing:-.02em;margin-bottom:14px;
+  }
+  #card.tpl-economist .ecoRule{
+    height:2px;background:#fff;width:48px;margin-bottom:16px;
+  }
+  #card.tpl-economist .ecoHeadline{
+    font-family:inherit;font-weight:400;font-size:28px;line-height:1.15;letter-spacing:-.02em;
+    margin:0 0 14px;white-space:pre-wrap;word-break:keep-all;
+  }
+  #card.tpl-economist .ecoDeck{
+    font-family:inherit;font-size:14px;line-height:1.5;color:rgba(255,255,255,.9);
+    white-space:pre-wrap;word-break:keep-all;flex:1;
+  }
+  #card.tpl-economist .metaRow{
+    border-top-color:rgba(255,255,255,.35);color:rgba(255,255,255,.75);
+    margin-top:16px;padding-top:12px;
+  }
+
+  /* ===== WASHINGTON TIMES ===== */
+  #card.tpl-wtimes{background:#fff;color:#111;padding:22px 22px 16px;}
+  #card.tpl-wtimes .wtMast{
+    text-align:center;padding-bottom:10px;border-bottom:3px double #111;margin-bottom:14px;
+  }
+  #card.tpl-wtimes .wtBrand{
+    font-family:Georgia,'Noto Serif KR',serif;font-weight:700;font-size:16px;
+    letter-spacing:.04em;text-transform:uppercase;
+  }
+  #card.tpl-wtimes .wtSub{
+    font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:#555;margin-top:4px;
+  }
+  #card.tpl-wtimes .wtKicker{
+    font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;
+    color:#8b0000;margin-bottom:8px;
+  }
+  #card.tpl-wtimes .wtHeadline{
+    font-family:inherit;font-weight:700;font-size:26px;line-height:1.15;letter-spacing:-.02em;
+    margin:0 0 12px;white-space:pre-wrap;word-break:keep-all;
+  }
+  #card.tpl-wtimes .wtDeck{
+    font-family:inherit;font-size:13.5px;line-height:1.5;color:#333;
+    white-space:pre-wrap;word-break:keep-all;flex:1;
+  }
+  #card.tpl-wtimes .metaRow{
+    border-top:1px solid #111;color:#444;margin-top:14px;padding-top:10px;
+  }
+  #card.tpl-wtimes .watermark{color:#111;text-shadow:none;opacity:.35;}
+
   /* Logo mark */
   #card .logoMark{
     position:absolute;z-index:11;pointer-events:none;
@@ -1118,6 +1218,10 @@
           <div class="ddItem" data-template="politico"><span class="ic">■</span>Politico</div>
           <div class="ddItem" data-template="magazine"><span class="ic">◈</span>Magazine</div>
           <div class="ddItem" data-template="axios"><span class="ic">●</span>Axios</div>
+          <div class="ddItem" data-template="bloomberg"><span class="ic">◆</span>Bloomberg</div>
+          <div class="ddItem" data-template="vox"><span class="ic">▲</span>Vox</div>
+          <div class="ddItem" data-template="economist"><span class="ic">■</span>Economist</div>
+          <div class="ddItem" data-template="wtimes"><span class="ic">☰</span>Washington Times</div>
           <div class="ddSep"></div>
           <div class="ddLabel">기본</div>
           <div class="ddItem" data-template="basic"><span class="ic">Aa</span>텍스트 기본</div>
@@ -1803,6 +1907,62 @@ function cardMarkup(s, pageIdx, total){
     </div>`;
   }
 
+  /* ===== Bloomberg ===== */
+  if(s.template === 'bloomberg'){
+    const deck = (s.summary || '').trim();
+    return `<div id="card" class="tpl-bloomberg" style="width:${w}px;height:${h}px;background:${s.bg||'#000'};font-family:${baseFont};">
+      <div class="bbTop">
+        <div class="bbBrand">${escapeHtml(s.brandName || 'WEST150')}</div>
+        <div class="bbAmber" style="color:${neon};font-size:${s.tagSize}px;">${escapeHtml(s.tagText || 'MARKETS')}</div>
+      </div>
+      <div class="bbHeadline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text||'#fff'};${alignStyle}">${headline}</div>
+      ${deck ? `<div class="bbDeck" style="font-size:${s.subSize}px;font-family:${bodyFont};border-left-color:${neon};${alignStyle}">${parseInlineFormat(deck, neon)}</div>` : ''}
+      ${metaBlock}
+      ${wm}${lg}
+    </div>`;
+  }
+
+  /* ===== Vox ===== */
+  if(s.template === 'vox'){
+    const deck = (s.summary || '').trim();
+    return `<div id="card" class="tpl-vox" style="width:${w}px;height:${h}px;background:${s.bg||'#fff'};font-family:${baseFont};">
+      <div class="voxKicker" style="background:${neon};font-size:${s.tagSize}px;">${escapeHtml(s.tagText || 'EXPLAINER')}</div>
+      <div class="voxHeadline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text||'#201c29'};${alignStyle}">${headline}</div>
+      ${deck ? `<div class="voxDeck" style="font-size:${s.subSize}px;font-family:${bodyFont};${alignStyle}">${parseInlineFormat(deck, neon)}</div>` : ''}
+      ${metaBlock}
+      ${wm}${lg}
+    </div>`;
+  }
+
+  /* ===== Economist ===== */
+  if(s.template === 'economist'){
+    const deck = (s.summary || '').trim();
+    return `<div id="card" class="tpl-economist" style="width:${w}px;height:${h}px;background:${s.bg||'#e3120b'};font-family:${baseFont};">
+      <div class="ecoBrand">${escapeHtml(s.brandName || 'WEST150 DAILY')}</div>
+      <div class="ecoRule"></div>
+      <div class="ecoHeadline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text||'#fff'};${alignStyle}">${headline}</div>
+      ${deck ? `<div class="ecoDeck" style="font-size:${s.subSize}px;font-family:${bodyFont};${alignStyle}">${parseInlineFormat(deck, '#fff')}</div>` : ''}
+      ${metaBlock}
+      ${wm}${lg}
+    </div>`;
+  }
+
+  /* ===== Washington Times ===== */
+  if(s.template === 'wtimes'){
+    const deck = (s.summary || '').trim();
+    return `<div id="card" class="tpl-wtimes" style="width:${w}px;height:${h}px;background:${s.bg||'#fff'};font-family:${baseFont};">
+      <div class="wtMast">
+        <div class="wtBrand">${escapeHtml(s.brandName || 'WEST150 DAILY')}</div>
+        <div class="wtSub">CARD NEWS</div>
+      </div>
+      <div class="wtKicker" style="color:${crimson};font-size:${s.tagSize}px;">${escapeHtml(s.tagText || s.category || 'NATION')}</div>
+      <div class="wtHeadline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text||'#111'};${alignStyle}">${headline}</div>
+      ${deck ? `<div class="wtDeck" style="font-size:${s.subSize}px;font-family:${bodyFont};${alignStyle}">${parseInlineFormat(deck, crimson)}</div>` : ''}
+      ${metaBlock}
+      ${wm}${lg}
+    </div>`;
+  }
+
   /* Basic fallback */
   return `<div id="card" class="tpl-basic" style="width:${w}px;height:${h}px;background:${s.bg||'#faf9fc'};color:${s.text||'#1a1a1a'};font-family:${baseFont};">
     <div class="rowTop"><span class="badgeTop">${escapeHtml(s.tagText||s.category||'')}</span>${s.showPageNum!==false?`<span class="pageNum">${pageLabel}</span>`:''}</div>
@@ -1851,7 +2011,8 @@ function updateTemplateFields(){
   const t = slides[active].template;
   const needBullets = (t==='politics' || t==='thread' || t==='sources' || t==='axios');
   const needSummary = (t==='breaking' || t==='fullbleed' || t==='basic' || t==='cover' || t==='luxe'
-    || t==='wire' || t==='ft' || t==='atlantic' || t==='politico' || t==='magazine');
+    || t==='wire' || t==='ft' || t==='atlantic' || t==='politico' || t==='magazine'
+    || t==='bloomberg' || t==='vox' || t==='economist' || t==='wtimes');
   $('bulletsField').style.display = needBullets ? '' : 'none';
   $('summaryField').style.display = needSummary ? '' : 'none';
   if($('bulletsField') && t==='sources'){
@@ -2238,6 +2399,35 @@ Array.from(document.querySelectorAll('#layoutMenu .ddItem')).forEach(item => {
       if(!(slides[active].bullets||'').trim()){
         slides[active].bullets = '핵심 한 줄을 입력하세요\n두 번째 포인트\n세 번째 포인트';
       }
+    }
+    if(t === 'bloomberg'){
+      slides[active].tagText = slides[active].tagText || 'MARKETS';
+      slides[active].titleSize = 26;
+      if(slides[active].bg === '#111318' || slides[active].bg === '#ffffff' || slides[active].bg === '#fafafa') slides[active].bg = '#000000';
+      if(slides[active].text === '#1a1a1a' || slides[active].text === '#111111' || slides[active].text === '#1c1a17') slides[active].text = '#ffffff';
+      if(slides[active].neon === '#E6FF00' || slides[active].neon === '#5b0ead') slides[active].neon = '#ffb81c';
+    }
+    if(t === 'vox'){
+      slides[active].tagText = slides[active].tagText || 'EXPLAINER';
+      slides[active].titleSize = 26;
+      if(slides[active].bg === '#111318' || slides[active].bg === '#000000') slides[active].bg = '#ffffff';
+      if(slides[active].text === '#ffffff') slides[active].text = '#201c29';
+      if(slides[active].neon === '#E6FF00' || slides[active].neon === '#ffb81c') slides[active].neon = '#f9d71c';
+    }
+    if(t === 'economist'){
+      slides[active].tagText = slides[active].tagText || 'LEADERS';
+      slides[active].titleSize = 28;
+      slides[active].bg = '#e3120b';
+      slides[active].text = '#ffffff';
+      if(!slides[active].titleFont) slides[active].titleFont = 'notoserif';
+    }
+    if(t === 'wtimes'){
+      slides[active].tagText = slides[active].tagText || 'NATION';
+      slides[active].titleSize = 26;
+      if(slides[active].bg === '#111318' || slides[active].bg === '#000000' || slides[active].bg === '#e3120b') slides[active].bg = '#ffffff';
+      if(slides[active].text === '#ffffff') slides[active].text = '#111111';
+      if(slides[active].crimson === '#E50914') slides[active].crimson = '#8b0000';
+      if(!slides[active].titleFont) slides[active].titleFont = 'notoserif';
     }
     Array.from(document.querySelectorAll('#layoutMenu .ddItem')).forEach(i => i.classList.toggle('active', i===item));
     closeAllDropdowns();
