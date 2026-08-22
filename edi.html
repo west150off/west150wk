@@ -61,9 +61,9 @@
       <button data-r="1:1">1:1</button>
     </div>
     <div class="seg">
-      <button id="zo-">−</button>
+      <button id="zoMinus">−</button>
       <button id="zolabel">72%</button>
-      <button id="zo+">＋</button>
+      <button id="zoPlus">＋</button>
     </div>
     <div style="flex:1"></div>
     <button class="ghost" id="upload">사진 업로드</button>
@@ -279,7 +279,7 @@
 
 <div class="modal" id="fxModal">
   <div class="modalbox">
-    <div class="mh"><b>IMAGE EFFECTS</b><button class="plus" data-close="fxModal">×</button></div>
+    <div class="mh"><b>IMAGE EFFECTS</b><button type="button" class="plus" id="fxX" data-close="fxModal" aria-label="닫기">×</button></div>
     <div class="mb">
       <div class="two">
         <div><label class="label">노출</label><input class="range" id="exp" type="range" min="50" max="160"></div>
@@ -296,6 +296,10 @@
       <div class="two" style="margin-top:12px">
         <label><input id="gray" type="checkbox"> 흑백</label>
         <label><input id="vignette" type="checkbox"> 비네팅</label>
+      </div>
+      <div style="margin-top:18px;display:flex;gap:8px;justify-content:flex-end">
+        <button type="button" class="topbtn" id="fxReset">초기화</button>
+        <button type="button" class="topbtn primary" id="fxCloseBtn">닫기</button>
       </div>
     </div>
   </div>
@@ -376,7 +380,7 @@ const base = () => ({
   body: 'EU 빅테크 과징금 보복 예고,\n한국 디지털 규제도 영향권 주목',
   source: '연합뉴스TV  |  김준하 기자',
   credit: 'Photo: Reuters',
-  wm: '@rpick',
+  wm: '@west150daily',
   kicker: 'GLOBAL POLITICS',
   sub: 'TRUMP WARNS EU OVER GOOGLE FINE',
   time: '2026-07-25T09:38',
@@ -424,8 +428,16 @@ let S = {
 S.cards[1].headline = '새 카드 · 두 번째 페이지';
 S.cards[1].photo = PLACEHOLDER;
 
-const $ = s => document.querySelector(s);
-const $$ = s => [...document.querySelectorAll(s)];
+const $ = s => {
+  if (typeof s === 'string' && s.charAt(0) === '#' && s.indexOf(' ') === -1) {
+    // getElementById handles special chars like + in ids
+    return document.getElementById(s.slice(1));
+  }
+  try { return document.querySelector(s); } catch (e) { return null; }
+};
+const $$ = s => {
+  try { return [...document.querySelectorAll(s)]; } catch (e) { return []; }
+};
 
 
 /* ========== Undo / Redo ========== */
@@ -1207,7 +1219,7 @@ function closeModal(id) {
   const m = document.getElementById(id);
   if (!m) return;
   m.classList.remove('show');
-  m.style.display = 'none';
+  m.style.setProperty('display', 'none', 'important');
 }
 function closeAllModals() {
   ['fxModal', 'tplModal', 'previewModal'].forEach(closeModal);
@@ -1216,7 +1228,7 @@ function openModal(id) {
   closeAllModals();
   const m = document.getElementById(id);
   if (!m) return;
-  m.style.display = 'flex';
+  m.style.setProperty('display', 'flex', 'important');
   m.classList.add('show');
 }
 function openPreview() {
@@ -1263,11 +1275,11 @@ function init() {
   $('#save').onclick = save;
   $('#preview').onclick = openPreview;
   $('#previewPng').onclick = () => { exportP(); };
-  $('#zo-').onclick = () => {
+  $('#zoMinus').onclick = () => {
     S.zoom = Math.max(0.4, +(S.zoom - 0.05).toFixed(2));
     render();
   };
-  $('#zo+').onclick = () => {
+  $('#zoPlus').onclick = () => {
     S.zoom = Math.min(1.4, +(S.zoom + 0.05).toFixed(2));
     render();
   };
@@ -1281,25 +1293,19 @@ function init() {
       apply(b.dataset.tpl);
     };
   });
-  // 모달 닫기 버튼 (×)
-  document.querySelectorAll('[data-close]').forEach(b => {
-    b.addEventListener('click', e => {
+  // 모달 닫기 — 이벤트 위임 (항상 동작)
+  document.addEventListener('click', e => {
+    const closer = e.target.closest('[data-close]');
+    if (closer) {
       e.preventDefault();
       e.stopPropagation();
-      closeModal(b.getAttribute('data-close'));
-    });
-  });
-
-  // 모달 배경 클릭 시 닫기
-  ['fxModal', 'tplModal', 'previewModal'].forEach(id => {
-    const m = document.getElementById(id);
-    if (!m) return;
-    m.addEventListener('mousedown', e => {
-      if (e.target === m) closeModal(id);
-    });
-    m.addEventListener('click', e => {
-      if (e.target === m) closeModal(id);
-    });
+      closeModal(closer.getAttribute('data-close'));
+      return;
+    }
+    // 모달 배경 클릭
+    if (e.target.classList && e.target.classList.contains('modal') && e.target.classList.contains('show')) {
+      closeModal(e.target.id);
+    }
   });
 
   // ESC
@@ -1309,6 +1315,25 @@ function init() {
       closeAllMenus();
     }
   });
+
+  // 효과 모달 닫기 / 초기화
+  const fxClose = document.getElementById('fxCloseBtn');
+  if (fxClose) fxClose.onclick = e => {
+    e.preventDefault();
+    e.stopPropagation();
+    closeModal('fxModal');
+  };
+  const fxReset = document.getElementById('fxReset');
+  if (fxReset) fxReset.onclick = e => {
+    e.preventDefault();
+    const st = C().styles;
+    st.exp = 100; st.contrast = 100; st.sat = 100;
+    st.sepia = 0; st.blur = 0; st.bgblur = 0;
+    st.gray = false; st.vig = false;
+    effects(); // refresh sliders
+    render();
+    toast('효과 초기화');
+  };
 
   // 미리보기 / PNG 버튼 누를 때 메뉴 닫기
   ['preview', 'png', 'rightPng', 'save', 'upload', 'add'].forEach(id => {
