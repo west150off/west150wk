@@ -115,7 +115,7 @@
     width:fit-content;
   }
   #card.tpl-politics .headline{
-    font-family:Georgia,'Noto Serif KR','Nanum Myeongjo',serif;
+    font-family:inherit;
     font-weight:400;
     font-size:32px;
     line-height:1.15;
@@ -253,7 +253,7 @@
     min-height:0;
   }
   #card.tpl-breaking .headline{
-    font-family:Georgia,'Noto Serif KR','Nanum Myeongjo',serif;
+    font-family:inherit;
     font-weight:400;
     font-size:26px;
     line-height:1.2;
@@ -320,7 +320,7 @@
   }
   #card.tpl-fullbleed .fbSpacer{flex:1;}
   #card.tpl-fullbleed .headline{
-    font-family:Georgia,'Noto Serif KR','Nanum Myeongjo',serif;
+    font-family:inherit;
     font-weight:400;
     font-size:30px;
     line-height:1.15;
@@ -431,7 +431,7 @@
   }
   #card.tpl-cover .headline{
     margin-top:12px;
-    font-family:Georgia,'Noto Serif KR','Nanum Myeongjo',serif;
+    font-family:inherit;
     font-weight:400;font-size:32px;line-height:1.14;letter-spacing:-.03em;
     color:#fff;white-space:pre-wrap;word-break:keep-all;
     text-shadow:0 2px 20px rgba(0,0,0,.45);
@@ -465,7 +465,7 @@
     padding:6px 12px;margin-bottom:18px;width:fit-content;
   }
   #card.tpl-thread .headline{
-    font-family:Georgia,'Noto Serif KR',serif;
+    font-family:inherit;
     font-weight:400;font-size:26px;line-height:1.2;letter-spacing:-.025em;
     color:#fff;margin:0 0 20px;white-space:pre-wrap;word-break:keep-all;
   }
@@ -506,7 +506,7 @@
     padding:6px 12px;margin-bottom:16px;width:fit-content;
   }
   #card.tpl-sources .headline{
-    font-family:Georgia,'Noto Serif KR',serif;
+    font-family:inherit;
     font-weight:400;font-size:24px;line-height:1.22;letter-spacing:-.02em;
     color:#fff;margin:0 0 18px;white-space:pre-wrap;word-break:keep-all;
   }
@@ -576,7 +576,7 @@
     margin-top:14px;
   }
   #card.tpl-luxe .luxeHeadline{
-    font-family:'Noto Serif KR','Nanum Myeongjo',Georgia,serif;
+    font-family:inherit;
     font-weight:400;
     line-height:1.3;
     letter-spacing:-.01em;
@@ -585,7 +585,7 @@
     word-break:keep-all;
   }
   #card.tpl-luxe .luxeDeck{
-    font-family:'Noto Serif KR',Georgia,serif;
+    font-family:inherit;
     font-style:italic;
     font-weight:400;
     line-height:1.7;
@@ -612,6 +612,206 @@
   /* 워터마크/로고/포토크레딧은 어두운 배경 기준 색상이므로 밝은 배경용으로 재정의 */
   #card.tpl-luxe .watermark{color:#1c1a17;text-shadow:none;opacity:.45;}
   #card.tpl-luxe .photoCredit{color:rgba(20,18,15,.5);text-shadow:none;}
+
+  /* ===== WIRE: Reuters / AP ===== */
+  #card.tpl-wire{background:#fff;color:#111;padding:0;}
+  #card.tpl-wire .wirePhoto{
+    position:relative;width:100%;height:52%;overflow:hidden;flex:none;background:#e8e8e8;
+  }
+  #card.tpl-wire .wirePhoto .layer{
+    position:absolute;inset:0;background-size:cover;background-position:center;background-repeat:no-repeat;
+  }
+  #card.tpl-wire .wireBody{
+    flex:1;display:flex;flex-direction:column;
+    padding:16px 20px 14px;min-height:0;
+  }
+  #card.tpl-wire .wireKicker{
+    font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;
+    color:#c00;margin-bottom:8px;
+  }
+  #card.tpl-wire .wireHeadline{
+    font-family:inherit;font-weight:700;font-size:22px;line-height:1.22;letter-spacing:-.02em;
+    color:#111;margin:0 0 10px;white-space:pre-wrap;word-break:keep-all;
+  }
+  #card.tpl-wire .wireDeck{
+    font-family:inherit;font-size:13px;line-height:1.45;color:#333;
+    white-space:pre-wrap;word-break:keep-all;flex:1;
+  }
+  #card.tpl-wire .wireMeta{
+    display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 12px;
+    margin-top:12px;padding-top:10px;border-top:1px solid #ddd;
+    font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:10px;letter-spacing:.04em;color:#666;text-transform:uppercase;
+  }
+  #card.tpl-wire .watermark{color:#111;text-shadow:none;opacity:.4;}
+  #card.tpl-wire .photoCredit{color:rgba(0,0,0,.45);text-shadow:none;left:10px;top:8px;bottom:auto;}
+
+  /* ===== FT: Financial Times ===== */
+  #card.tpl-ft{background:#fff1e5;color:#0d0d0d;padding:28px 26px 20px;}
+  #card.tpl-ft .ftTop{
+    display:flex;justify-content:space-between;align-items:center;
+    padding-bottom:10px;border-bottom:3px solid #0d0d0d;margin-bottom:18px;
+  }
+  #card.tpl-ft .ftBrand{
+    font-family:Georgia,'Noto Serif KR',serif;font-weight:700;font-size:18px;letter-spacing:-.02em;
+  }
+  #card.tpl-ft .ftSection{
+    font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#990f3d;
+  }
+  #card.tpl-ft .ftHeadline{
+    font-family:inherit;font-weight:400;font-size:30px;line-height:1.15;letter-spacing:-.03em;
+    margin:0 0 14px;white-space:pre-wrap;word-break:keep-all;
+  }
+  #card.tpl-ft .ftDeck{
+    font-family:inherit;font-size:14px;line-height:1.5;color:#333;
+    white-space:pre-wrap;word-break:keep-all;flex:1;
+  }
+  #card.tpl-ft .ftMeta{
+    display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 12px;
+    margin-top:18px;padding-top:12px;border-top:1px solid rgba(13,13,13,.2);
+    font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:rgba(13,13,13,.55);
+  }
+  #card.tpl-ft .watermark{color:#0d0d0d;text-shadow:none;opacity:.4;}
+
+  /* ===== ATLANTIC ===== */
+  #card.tpl-atlantic{background:#f7f3eb;color:#1a1814;padding:36px 32px 24px;}
+  #card.tpl-atlantic .atlKicker{
+    font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
+    color:#8b2942;margin-bottom:20px;
+  }
+  #card.tpl-atlantic .atlHeadline{
+    font-family:inherit;font-weight:400;font-size:34px;line-height:1.12;letter-spacing:-.035em;
+    margin:0 0 20px;white-space:pre-wrap;word-break:keep-all;
+  }
+  #card.tpl-atlantic .atlDeck{
+    font-family:inherit;font-size:15px;line-height:1.55;color:#3a3630;
+    white-space:pre-wrap;word-break:keep-all;max-width:94%;flex:1;
+  }
+  #card.tpl-atlantic .atlMeta{
+    display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 12px;
+    margin-top:24px;padding-top:14px;border-top:1px solid rgba(26,24,20,.15);
+    font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(26,24,20,.5);
+  }
+  #card.tpl-atlantic .watermark{color:#1a1814;text-shadow:none;opacity:.35;}
+
+  /* ===== POLITICO ===== */
+  #card.tpl-politico{background:#fff;color:#111;padding:0;}
+  #card.tpl-politico .polBar{
+    background:#e11b22;color:#fff;padding:10px 18px;
+    font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:11px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;
+  }
+  #card.tpl-politico .polBody{padding:20px 22px 16px;flex:1;display:flex;flex-direction:column;}
+  #card.tpl-politico .polHeadline{
+    font-family:inherit;font-weight:900;font-size:26px;line-height:1.18;letter-spacing:-.025em;
+    margin:0 0 12px;white-space:pre-wrap;word-break:keep-all;
+  }
+  #card.tpl-politico .polDeck{
+    font-family:inherit;font-size:14px;line-height:1.5;color:#333;
+    white-space:pre-wrap;word-break:keep-all;flex:1;
+    padding-left:12px;border-left:3px solid #e11b22;
+  }
+  #card.tpl-politico .polMeta{
+    display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 12px;
+    margin-top:16px;padding-top:12px;border-top:2px solid #111;
+    font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#444;
+  }
+  #card.tpl-politico .watermark{color:#111;text-shadow:none;opacity:.4;}
+
+  /* ===== MAGAZINE (NYT Magazine-like) ===== */
+  #card.tpl-magazine{background:#0c0c0c;color:#f5f2ec;padding:0;}
+  #card.tpl-magazine .magPhoto{
+    position:absolute;inset:0;z-index:0;
+    background-size:cover;background-position:center;background-repeat:no-repeat;
+  }
+  #card.tpl-magazine .magScrim{
+    position:absolute;inset:0;z-index:1;pointer-events:none;
+    background:linear-gradient(180deg,rgba(0,0,0,.25) 0%,rgba(0,0,0,.15) 40%,rgba(0,0,0,.82) 100%);
+  }
+  #card.tpl-magazine .magContent{
+    position:relative;z-index:2;height:100%;
+    padding:28px 28px 22px;display:flex;flex-direction:column;box-sizing:border-box;
+  }
+  #card.tpl-magazine .magBrand{
+    font-family:Georgia,'Noto Serif KR',serif;font-size:13px;font-weight:700;
+    letter-spacing:.08em;text-transform:uppercase;color:#fff;opacity:.9;
+  }
+  #card.tpl-magazine .magSpacer{flex:1;}
+  #card.tpl-magazine .magKicker{
+    font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:10px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;
+    color:#f4c430;margin-bottom:10px;
+  }
+  #card.tpl-magazine .magHeadline{
+    font-family:inherit;font-weight:400;font-size:32px;line-height:1.12;letter-spacing:-.03em;
+    color:#fff;margin:0 0 12px;white-space:pre-wrap;word-break:keep-all;
+    text-shadow:0 2px 18px rgba(0,0,0,.4);
+  }
+  #card.tpl-magazine .magDeck{
+    font-family:inherit;font-size:13px;line-height:1.45;color:rgba(245,242,236,.88);
+    white-space:pre-wrap;word-break:keep-all;max-width:92%;
+  }
+  #card.tpl-magazine .magMeta{
+    display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 12px;
+    margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,.25);
+    font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.6);
+  }
+
+  /* ===== AXIOS ===== */
+  #card.tpl-axios{background:#fafafa;color:#1a1a1a;padding:26px 24px 18px;}
+  #card.tpl-axios .axBig{
+    font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;
+    color:#5b0ead;margin-bottom:10px;
+  }
+  #card.tpl-axios .axHeadline{
+    font-family:inherit;font-weight:800;font-size:24px;line-height:1.2;letter-spacing:-.02em;
+    margin:0 0 16px;white-space:pre-wrap;word-break:keep-all;
+  }
+  #card.tpl-axios .axList{display:flex;flex-direction:column;gap:12px;flex:1;}
+  #card.tpl-axios .axItem{
+    display:flex;gap:10px;align-items:flex-start;
+    font-family:inherit;font-size:14px;line-height:1.4;color:#222;
+  }
+  #card.tpl-axios .axDot{
+    flex:none;width:8px;height:8px;border-radius:50%;background:#5b0ead;margin-top:6px;
+  }
+  #card.tpl-axios .axMeta{
+    display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 12px;
+    margin-top:16px;padding-top:12px;border-top:1px solid #e0e0e0;
+    font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:#666;
+  }
+  #card.tpl-axios .watermark{color:#1a1a1a;text-shadow:none;opacity:.35;}
+
+  /* Light templates: metaRow 가독성 */
+  #card.tpl-wire .metaRow,
+  #card.tpl-ft .metaRow,
+  #card.tpl-atlantic .metaRow,
+  #card.tpl-politico .metaRow,
+  #card.tpl-axios .metaRow,
+  #card.tpl-luxe .metaRow{
+    border-top-color:rgba(0,0,0,.15);
+    color:rgba(0,0,0,.5);
+    letter-spacing:.04em;
+  }
+  #card.tpl-wire .metaRow{margin-top:12px;padding-top:10px;}
+  #card.tpl-ft .metaRow{margin-top:18px;padding-top:12px;}
+  #card.tpl-atlantic .metaRow{margin-top:24px;padding-top:14px;}
+  #card.tpl-politico .metaRow{margin-top:16px;padding-top:12px;border-top:2px solid #111;color:#444;}
+  #card.tpl-axios .metaRow{margin-top:16px;padding-top:12px;}
+  #card.tpl-magazine .metaRow{
+    border-top-color:rgba(255,255,255,.25);
+    color:rgba(255,255,255,.6);
+  }
+
   /* Logo mark */
   #card .logoMark{
     position:absolute;z-index:11;pointer-events:none;
@@ -910,6 +1110,14 @@
           <div class="ddItem" data-template="luxe"><span class="ic">✦</span>L · Luxe Editorial</div>
           <div class="ddItem" data-template="thread"><span class="ic">≡</span>J · Thread 요약</div>
           <div class="ddItem" data-template="sources"><span class="ic">※</span>K · Source List</div>
+          <div class="ddSep"></div>
+          <div class="ddLabel">디자인 스타일</div>
+          <div class="ddItem" data-template="wire"><span class="ic">▣</span>Wire · Reuters/AP</div>
+          <div class="ddItem" data-template="ft"><span class="ic">§</span>FT · Salmon</div>
+          <div class="ddItem" data-template="atlantic"><span class="ic">¶</span>Atlantic</div>
+          <div class="ddItem" data-template="politico"><span class="ic">■</span>Politico</div>
+          <div class="ddItem" data-template="magazine"><span class="ic">◈</span>Magazine</div>
+          <div class="ddItem" data-template="axios"><span class="ic">●</span>Axios</div>
           <div class="ddSep"></div>
           <div class="ddLabel">기본</div>
           <div class="ddItem" data-template="basic"><span class="ic">Aa</span>텍스트 기본</div>
@@ -1252,9 +1460,10 @@ function cardMarkup(s, pageIdx, total){
   const h = s.cardHeight || 480;
   const neon = s.neon || '#E6FF00';
   const crimson = s.crimson || '#E50914';
-  const titleFont = s.titleFont ? fontCss(s.titleFont) : fontCss('notoserif');
-  const bodyFont = s.bodyFont ? fontCss(s.bodyFont) : fontCss('pretendard');
+  // 제목/본문이 '기본과 동일'이면 기본 글꼴을 사용
   const baseFont = fontCss(s.font || 'pretendard');
+  const titleFont = (s.titleFont && String(s.titleFont).trim()) ? fontCss(s.titleFont) : baseFont;
+  const bodyFont = (s.bodyFont && String(s.bodyFont).trim()) ? fontCss(s.bodyFont) : baseFont;
   const headline = parseInlineFormat(s.title, neon);
   const pageLabel = String(pageIdx+1).padStart(2,'0') + ' / ' + String(total).padStart(2,'0');
   const dateStr = s.date || '';
@@ -1274,7 +1483,7 @@ function cardMarkup(s, pageIdx, total){
     const bulletsHtml = lines.map(line =>
       `<div class="bulletItem" style="${align==='center'?'justify-content:center;':align==='right'?'justify-content:flex-end;':''}"><span class="bulletMark" style="background:${neon}"></span><span style="font-size:${s.subSize}px;font-family:${bodyFont};${alignStyle}">${parseInlineFormat(line, neon)}</span></div>`
     ).join('');
-    return `<div id="card" class="tpl-politics" style="width:${w}px;height:${h}px;background:${s.bg};">
+    return `<div id="card" class="tpl-politics" style="width:${w}px;height:${h}px;background:${s.bg};font-family:${baseFont};">
       <div class="tagYellow" style="background:${neon};font-size:${s.tagSize}px;${tagAlign}">${escapeHtml(s.tagText || s.category || 'POLITICS INSIGHT')}</div>
       <div class="headline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text};${alignStyle}">${headline}</div>
       <div class="bulletBox" style="border-color:${crimson};">
@@ -1318,7 +1527,7 @@ function cardMarkup(s, pageIdx, total){
         <div class="headline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text};${alignStyle}">${headline}</div>
         <div class="summary" style="font-size:${s.subSize}px;font-family:${bodyFont};${sumBorder}${alignStyle}">${parseInlineFormat(s.summary, neon)}</div>
         ${metaBlock}`;
-    return `<div id="card" class="tpl-breaking" style="width:${w}px;height:${h}px;background:${s.bg};">
+    return `<div id="card" class="tpl-breaking" style="width:${w}px;height:${h}px;background:${s.bg};font-family:${baseFont};">
       <div class="photoZone">
         ${photoInner}
         ${vig}
@@ -1367,7 +1576,7 @@ function cardMarkup(s, pageIdx, total){
         <div class="headline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text};${alignStyle}">${headline}</div>
         <div class="summary" style="font-size:${s.subSize}px;font-family:${bodyFont};${sumBorderFb}${alignStyle}">${parseInlineFormat(s.summary, neon)}</div>
         ${metaBlock}`;
-    return `<div id="card" class="tpl-fullbleed" style="width:${w}px;height:${h}px;background:${s.bg};">
+    return `<div id="card" class="tpl-fullbleed" style="width:${w}px;height:${h}px;background:${s.bg};font-family:${baseFont};">
       <div class="fbPhoto" style="${photoStyle}"></div>
       <div class="fbScrim" style="${scrimStyle}"></div>
       <div class="fbContent${useGlass?' glassOn':''}">
@@ -1399,7 +1608,7 @@ function cardMarkup(s, pageIdx, total){
     }
     const brand = s.brandName || 'WEST150 DAILY';
     const deck = (s.summary || '').trim();
-    return `<div id="card" class="tpl-cover" style="width:${w}px;height:${h}px;background:${s.bg};">
+    return `<div id="card" class="tpl-cover" style="width:${w}px;height:${h}px;background:${s.bg};font-family:${baseFont};">
       <div class="cvPhoto" style="${photoStyle}"></div>
       <div class="cvScrim" style="background:${scrimLayers.join(',')};"></div>
       <div class="cvFrame"></div>
@@ -1431,7 +1640,7 @@ function cardMarkup(s, pageIdx, total){
     const items = lines.map((line,i) =>
       `<div class="thItem"><div class="thNum" style="background:${crimson}">${i+1}</div><div class="thText" style="font-size:${s.subSize}px;font-family:${bodyFont};${alignStyle}">${parseInlineFormat(line, neon)}</div></div>`
     ).join('');
-    return `<div id="card" class="tpl-thread" style="width:${w}px;height:${h}px;background:${s.bg};">
+    return `<div id="card" class="tpl-thread" style="width:${w}px;height:${h}px;background:${s.bg};font-family:${baseFont};">
       <div class="tagYellow" style="background:${neon};font-size:${s.tagSize}px;${tagAlign}">${escapeHtml(s.tagText || 'THREAD')}</div>
       <div class="headline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text};${alignStyle}">${headline}</div>
       <div class="thList">${items || '<div class="thItem"><div class="thNum">1</div><div class="thText">요약을 입력하세요</div></div>'}</div>
@@ -1456,7 +1665,7 @@ function cardMarkup(s, pageIdx, total){
         </div>
       </div>`;
     }).join('');
-    return `<div id="card" class="tpl-sources" style="width:${w}px;height:${h}px;background:${s.bg};">
+    return `<div id="card" class="tpl-sources" style="width:${w}px;height:${h}px;background:${s.bg};font-family:${baseFont};">
       <div class="tagYellow" style="background:${neon};font-size:${s.tagSize}px;${tagAlign}">${escapeHtml(s.tagText || 'SOURCES')}</div>
       <div class="headline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text};${alignStyle}">${headline}</div>
       <div class="srcList">${items || '<div class="srcItem"><div class="srcNum">01</div><div class="srcBody"><div class="srcTitle">출처를 입력하세요 (제목 | URL)</div></div></div>'}</div>
@@ -1470,7 +1679,7 @@ function cardMarkup(s, pageIdx, total){
     const kicker = escapeHtml(s.tagText || s.category || 'EDITORIAL');
     const deck = (s.summary || '').trim();
     const accentAlign = align === 'center' ? 'margin-left:auto;margin-right:auto;' : (align === 'right' ? 'margin-left:auto;' : '');
-    return `<div id="card" class="tpl-luxe" style="width:${w}px;height:${h}px;background:${s.bg};">
+    return `<div id="card" class="tpl-luxe" style="width:${w}px;height:${h}px;background:${s.bg};font-family:${baseFont};">
       <div class="luxeFrame"></div>
       <div class="luxeInner">
         <div class="luxeKicker" style="color:${neon};font-size:${s.tagSize}px;${alignStyle}">${kicker}</div>
@@ -1486,6 +1695,114 @@ function cardMarkup(s, pageIdx, total){
       ${pc}${wm}${lg}
     </div>`;
   }
+
+  /* ===== Wire: Reuters / AP ===== */
+  if(s.template === 'wire'){
+    const posMap = {top:'center top', center:'center center', bottom:'center bottom'};
+    const pos = posMap[s.imagePos] || 'center center';
+    const fit = s.imageFit || 'cover';
+    const filt = filterCss(s.imageFilter);
+    const bgSize = fit === 'original' ? 'auto' : fit;
+    let photoInner = s.image
+      ? `<div class="layer" style="background-image:url('${s.image}');background-size:${bgSize};background-position:${pos};filter:${filt};"></div>`
+      : `<div class="layer" style="background:#ddd;display:flex;align-items:center;justify-content:center;color:#888;font-size:12px;">사진</div>`;
+    const deck = (s.summary || '').trim();
+    return `<div id="card" class="tpl-wire" style="width:${w}px;height:${h}px;background:${s.bg||'#fff'};font-family:${baseFont};">
+      <div class="wirePhoto">${photoInner}${pc}</div>
+      <div class="wireBody">
+        <div class="wireKicker" style="color:${crimson};font-size:${s.tagSize}px;">${escapeHtml(s.tagText || s.category || 'WORLD')}</div>
+        <div class="wireHeadline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text||'#111'};${alignStyle}">${headline}</div>
+        ${deck ? `<div class="wireDeck" style="font-size:${s.subSize}px;font-family:${bodyFont};${alignStyle}">${parseInlineFormat(deck, crimson)}</div>` : ''}
+        ${metaBlock}
+      </div>
+      ${wm}${lg}
+    </div>`;
+  }
+
+  /* ===== FT ===== */
+  if(s.template === 'ft'){
+    const deck = (s.summary || '').trim();
+    return `<div id="card" class="tpl-ft" style="width:${w}px;height:${h}px;background:${s.bg||'#fff1e5'};font-family:${baseFont};">
+      <div class="ftTop">
+        <div class="ftBrand" style="color:${s.text||'#0d0d0d'};">${escapeHtml(s.brandName || 'WEST150 DAILY')}</div>
+        <div class="ftSection" style="color:${crimson};font-size:${s.tagSize}px;">${escapeHtml(s.tagText || s.category || 'ANALYSIS')}</div>
+      </div>
+      <div class="ftHeadline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text||'#0d0d0d'};${alignStyle}">${headline}</div>
+      ${deck ? `<div class="ftDeck" style="font-size:${s.subSize}px;font-family:${bodyFont};${alignStyle}">${parseInlineFormat(deck, crimson)}</div>` : ''}
+      ${metaBlock}
+      ${wm}${lg}
+    </div>`;
+  }
+
+  /* ===== Atlantic ===== */
+  if(s.template === 'atlantic'){
+    const deck = (s.summary || '').trim();
+    return `<div id="card" class="tpl-atlantic" style="width:${w}px;height:${h}px;background:${s.bg||'#f7f3eb'};font-family:${baseFont};">
+      <div class="atlKicker" style="color:${crimson};font-size:${s.tagSize}px;">${escapeHtml(s.tagText || s.category || 'ESSAY')}</div>
+      <div class="atlHeadline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text||'#1a1814'};${alignStyle}">${headline}</div>
+      ${deck ? `<div class="atlDeck" style="font-size:${s.subSize}px;font-family:${bodyFont};${alignStyle}">${parseInlineFormat(deck, crimson)}</div>` : ''}
+      ${metaBlock}
+      ${wm}${lg}
+    </div>`;
+  }
+
+  /* ===== Politico ===== */
+  if(s.template === 'politico'){
+    const deck = (s.summary || '').trim();
+    return `<div id="card" class="tpl-politico" style="width:${w}px;height:${h}px;background:${s.bg||'#fff'};font-family:${baseFont};">
+      <div class="polBar" style="background:${crimson};font-size:${s.tagSize}px;">${escapeHtml(s.tagText || 'BREAKING')}</div>
+      <div class="polBody">
+        <div class="polHeadline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text||'#111'};${alignStyle}">${headline}</div>
+        ${deck ? `<div class="polDeck" style="font-size:${s.subSize}px;font-family:${bodyFont};border-left-color:${crimson};${alignStyle}">${parseInlineFormat(deck, crimson)}</div>` : ''}
+        ${metaBlock}
+      </div>
+      ${wm}${lg}
+    </div>`;
+  }
+
+  /* ===== Magazine ===== */
+  if(s.template === 'magazine'){
+    const posMap = {top:'center top', center:'center center', bottom:'center bottom'};
+    const pos = posMap[s.imagePos] || 'center center';
+    const fit = s.imageFit || 'cover';
+    const filt = filterCss(s.imageFilter);
+    const bgSize = fit === 'original' ? 'auto' : fit;
+    let photoStyle = s.image
+      ? `background-image:url('${s.image}');background-size:${bgSize};background-position:${pos};filter:${filt};`
+      : `background:linear-gradient(160deg,#2a2a2a,#0c0c0c);`;
+    const ov = Math.max(0, Math.min(80, s.imageOverlay || 0)) / 100;
+    const deck = (s.summary || '').trim();
+    const scrim = `linear-gradient(180deg,rgba(0,0,0,${0.2+ov*0.3}) 0%,rgba(0,0,0,${0.1+ov*0.2}) 40%,rgba(0,0,0,${0.75+ov*0.2}) 100%)`;
+    return `<div id="card" class="tpl-magazine" style="width:${w}px;height:${h}px;background:${s.bg||'#0c0c0c'};font-family:${baseFont};">
+      <div class="magPhoto" style="${photoStyle}"></div>
+      <div class="magScrim" style="background:${scrim};"></div>
+      <div class="magContent">
+        <div class="magBrand">${escapeHtml(s.brandName || 'WEST150 DAILY')}</div>
+        <div class="magSpacer"></div>
+        <div class="magKicker" style="color:${neon};font-size:${s.tagSize}px;">${escapeHtml(s.tagText || s.category || 'FEATURE')}</div>
+        <div class="magHeadline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text||'#fff'};${alignStyle}">${headline}</div>
+        ${deck ? `<div class="magDeck" style="font-size:${s.subSize}px;font-family:${bodyFont};${alignStyle}">${parseInlineFormat(deck, neon)}</div>` : ''}
+        ${metaBlock}
+      </div>
+      ${pc}${wm}${lg}
+    </div>`;
+  }
+
+  /* ===== Axios ===== */
+  if(s.template === 'axios'){
+    const lines = String(s.bullets||'').split('\n').map(l=>l.trim()).filter(Boolean);
+    const items = lines.map(line =>
+      `<div class="axItem"><span class="axDot" style="background:${s.neon||'#5b0ead'}"></span><span style="font-size:${s.subSize}px;font-family:${bodyFont};">${parseInlineFormat(line, s.neon||'#5b0ead')}</span></div>`
+    ).join('');
+    return `<div id="card" class="tpl-axios" style="width:${w}px;height:${h}px;background:${s.bg||'#fafafa'};font-family:${baseFont};">
+      <div class="axBig" style="color:${s.neon||'#5b0ead'};font-size:${s.tagSize}px;">${escapeHtml(s.tagText || '1 BIG THING')}</div>
+      <div class="axHeadline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text||'#1a1a1a'};${alignStyle}">${headline}</div>
+      <div class="axList">${items || '<div class="axItem"><span class="axDot"></span><span>포인트를 입력하세요</span></div>'}</div>
+      ${metaBlock}
+      ${wm}${lg}
+    </div>`;
+  }
+
   /* Basic fallback */
   return `<div id="card" class="tpl-basic" style="width:${w}px;height:${h}px;background:${s.bg||'#faf9fc'};color:${s.text||'#1a1a1a'};font-family:${baseFont};">
     <div class="rowTop"><span class="badgeTop">${escapeHtml(s.tagText||s.category||'')}</span>${s.showPageNum!==false?`<span class="pageNum">${pageLabel}</span>`:''}</div>
@@ -1532,8 +1849,9 @@ function renderList(){
 
 function updateTemplateFields(){
   const t = slides[active].template;
-  const needBullets = (t==='politics' || t==='thread' || t==='sources');
-    const needSummary = (t==='breaking' || t==='fullbleed' || t==='basic' || t==='cover' || t==='luxe');
+  const needBullets = (t==='politics' || t==='thread' || t==='sources' || t==='axios');
+  const needSummary = (t==='breaking' || t==='fullbleed' || t==='basic' || t==='cover' || t==='luxe'
+    || t==='wire' || t==='ft' || t==='atlantic' || t==='politico' || t==='magazine');
   $('bulletsField').style.display = needBullets ? '' : 'none';
   $('summaryField').style.display = needSummary ? '' : 'none';
   if($('bulletsField') && t==='sources'){
@@ -1792,9 +2110,19 @@ bindSlider('tagSize','tagSize','tagSizeVal');
 bindSlider('imageOverlay','imageOverlay','imageOverlayVal');
 bindSlider('vignetteStrength','vignetteStrength','vignetteStrengthVal');
 
-$('fontSelect').addEventListener('change', e => { slides[active].font=e.target.value; renderMainCard(); renderList(); });
-$('titleFontSelect').addEventListener('change', e => { slides[active].titleFont=e.target.value; renderMainCard(); renderList(); });
-$('bodyFontSelect').addEventListener('change', e => { slides[active].bodyFont=e.target.value; renderMainCard(); renderList(); });
+$('fontSelect').addEventListener('change', e => {
+  slides[active].font = e.target.value;
+  // 제목/본문이 기본 글꼴 추종이면 함께 갱신되도록 유지
+  renderMainCard(); renderList();
+});
+$('titleFontSelect').addEventListener('change', e => {
+  slides[active].titleFont = e.target.value; // '' 이면 기본 글꼴 사용
+  renderMainCard(); renderList();
+});
+$('bodyFontSelect').addEventListener('change', e => {
+  slides[active].bodyFont = e.target.value;
+  renderMainCard(); renderList();
+});
 $('imageFit').addEventListener('change', e => { slides[active].imageFit=e.target.value; renderMainCard(); renderList(); });
 $('imagePos').addEventListener('change', e => { slides[active].imagePos=e.target.value; renderMainCard(); renderList(); });
 $('imageFilter').addEventListener('change', e => { slides[active].imageFilter=e.target.value; renderMainCard(); renderList(); });
@@ -1856,13 +2184,60 @@ Array.from(document.querySelectorAll('#layoutMenu .ddItem')).forEach(item => {
         slides[active].bullets = '관련 보도 제목 | https://example.com\n공식 브리핑 자료 | https://example.com/brief';
       }
     }
-        if(t === 'luxe'){
+    if(t === 'luxe'){
       if(!slides[active].tagText || slides[active].tagText === 'POLITICS INSIGHT') slides[active].tagText = 'EDITORIAL';
       slides[active].titleSize = 34;
-      // 럭스 에디토리얼은 밝은 아이보리 배경이 어울립니다 (사용자가 색상을 직접 바꾸지 않은 경우에만 자동 전환)
       if(slides[active].bg === '#111318') slides[active].bg = '#f4efe6';
       if(slides[active].text === '#ffffff') slides[active].text = '#1c1a17';
       if(slides[active].neon === '#E6FF00') slides[active].neon = '#b08d57';
+    }
+    if(t === 'wire'){
+      slides[active].tagText = slides[active].tagText || 'WORLD';
+      slides[active].titleSize = 22;
+      if(slides[active].bg === '#111318') slides[active].bg = '#ffffff';
+      if(slides[active].text === '#ffffff') slides[active].text = '#111111';
+      if(slides[active].crimson === '#E50914') slides[active].crimson = '#cc0000';
+    }
+    if(t === 'ft'){
+      slides[active].tagText = slides[active].tagText || 'ANALYSIS';
+      slides[active].titleSize = 30;
+      if(slides[active].bg === '#111318' || slides[active].bg === '#ffffff') slides[active].bg = '#fff1e5';
+      if(slides[active].text === '#ffffff') slides[active].text = '#0d0d0d';
+      if(slides[active].crimson === '#E50914') slides[active].crimson = '#990f3d';
+      if(!slides[active].titleFont) slides[active].titleFont = 'notoserif';
+    }
+    if(t === 'atlantic'){
+      slides[active].tagText = slides[active].tagText || 'ESSAY';
+      slides[active].titleSize = 34;
+      if(slides[active].bg === '#111318' || slides[active].bg === '#ffffff') slides[active].bg = '#f7f3eb';
+      if(slides[active].text === '#ffffff') slides[active].text = '#1a1814';
+      if(slides[active].crimson === '#E50914') slides[active].crimson = '#8b2942';
+      if(!slides[active].titleFont) slides[active].titleFont = 'notoserif';
+    }
+    if(t === 'politico'){
+      slides[active].tagText = slides[active].tagText || 'BREAKING';
+      slides[active].titleSize = 26;
+      if(slides[active].bg === '#111318') slides[active].bg = '#ffffff';
+      if(slides[active].text === '#ffffff') slides[active].text = '#111111';
+      if(slides[active].crimson === '#E50914') slides[active].crimson = '#e11b22';
+    }
+    if(t === 'magazine'){
+      slides[active].tagText = slides[active].tagText || 'FEATURE';
+      slides[active].titleSize = 32;
+      if(slides[active].bg === '#ffffff' || slides[active].bg === '#f4efe6') slides[active].bg = '#0c0c0c';
+      if(slides[active].text === '#1c1a17' || slides[active].text === '#111111') slides[active].text = '#ffffff';
+      if(slides[active].neon === '#E6FF00') slides[active].neon = '#f4c430';
+      if(!slides[active].titleFont) slides[active].titleFont = 'notoserif';
+    }
+    if(t === 'axios'){
+      slides[active].tagText = '1 BIG THING';
+      slides[active].titleSize = 24;
+      if(slides[active].bg === '#111318') slides[active].bg = '#fafafa';
+      if(slides[active].text === '#ffffff') slides[active].text = '#1a1a1a';
+      if(slides[active].neon === '#E6FF00') slides[active].neon = '#5b0ead';
+      if(!(slides[active].bullets||'').trim()){
+        slides[active].bullets = '핵심 한 줄을 입력하세요\n두 번째 포인트\n세 번째 포인트';
+      }
     }
     Array.from(document.querySelectorAll('#layoutMenu .ddItem')).forEach(i => i.classList.toggle('active', i===item));
     closeAllDropdowns();
