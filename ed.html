@@ -597,43 +597,13 @@
           <label>카테고리</label>
           <select id="categorySelect">
             <option value="정치">정치</option>
-            <option value="정치 인사이트">정치 인사이트</option>
-            <option value="국회">국회</option>
-            <option value="청와대·대통령실">청와대·대통령실</option>
-            <option value="선거">선거</option>
-            <option value="외교">외교</option>
-            <option value="안보">안보</option>
-            <option value="경제">경제</option>
-            <option value="금융">금융</option>
-            <option value="부동산">부동산</option>
-            <option value="산업">산업</option>
-            <option value="노동">노동</option>
             <option value="사회">사회</option>
-            <option value="사건·사고">사건·사고</option>
-            <option value="교육">교육</option>
-            <option value="복지">복지</option>
-            <option value="환경">환경</option>
-            <option value="기후">기후</option>
-            <option value="과학">과학</option>
-            <option value="IT·테크">IT·테크</option>
-            <option value="문화">문화</option>
-            <option value="연예">연예</option>
-            <option value="스포츠">스포츠</option>
-            <option value="국제">국제</option>
-            <option value="북한">북한</option>
             <option value="보도자료">보도자료</option>
-            <option value="브리핑">브리핑</option>
-            <option value="성명">성명</option>
-            <option value="논평">논평</option>
-            <option value="칼럼">칼럼</option>
-            <option value="인터뷰">인터뷰</option>
+            <option value="팩트시트">팩트시트</option>
             <option value="팩트체크">팩트체크</option>
+            <option value="브리핑">브리핑</option>
             <option value="속보">속보</option>
             <option value="단독">단독</option>
-            <option value="해설">해설</option>
-            <option value="데이터">데이터</option>
-            <option value="인포그래픽">인포그래픽</option>
-            <option value="기타">기타</option>
           </select>
         </div>
         <div class="field">
@@ -1175,10 +1145,14 @@ $('categorySelect').addEventListener('change', e => {
   // auto-fill tag if still default-ish
   const cat = e.target.value;
   const tagMap = {
-    '정치':'POLITICS INSIGHT', '정치 인사이트':'POLITICS INSIGHT', '국회':'ASSEMBLY',
-    '속보':'BREAKING', '단독':'EXCLUSIVE', '보도자료':'PRESS RELEASE',
-    '브리핑':'BRIEFING', '팩트체크':'FACT CHECK', '국제':'WORLD',
-    '경제':'ECONOMY', '사회':'SOCIETY', '데이터':'DATA'
+    '정치':'POLITICS INSIGHT',
+    '사회':'SOCIETY',
+    '보도자료':'PRESS RELEASE',
+    '팩트시트':'FACT SHEET',
+    '팩트체크':'FACT CHECK',
+    '브리핑':'BRIEFING',
+    '속보':'BREAKING',
+    '단독':'EXCLUSIVE'
   };
   if(tagMap[cat]) {
     slides[active].tagText = tagMap[cat];
