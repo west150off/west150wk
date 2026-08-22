@@ -15,12 +15,26 @@
 #previewModal .mh{background:#12151a}
 #previewModal .mb{flex:1;overflow:auto;display:flex;align-items:center;justify-content:center;padding:24px;background:#0a0b0d}
 #previewStage{transform-origin:center top;box-shadow:0 20px 60px #000a}
+
+  .statusBar{position:absolute;left:0;right:0;bottom:8px;text-align:center;font-size:11px;color:#6b7078;pointer-events:none;z-index:5}
+  .statusBar kbd{margin:0 2px}
+  .center{position:relative}
+
+#undoRedoFloat{position:fixed;right:18px;bottom:18px;z-index:120;display:flex;gap:6px;padding:6px;border-radius:12px;background:rgba(12,13,15,.75);border:1px solid #2a2e36;backdrop-filter:blur(10px);box-shadow:0 8px 24px #0008}
+#undoRedoFloat button{width:40px;height:36px;border-radius:8px;border:1px solid transparent;background:#1a1d24;color:#e8eaed;font-size:15px;font-weight:700;cursor:pointer}
+#undoRedoFloat button:hover:not(:disabled){background:#e3253922;border-color:#e3253955}
+#undoRedoFloat button:disabled{opacity:.35;cursor:default}
+.histBadge{font-size:11px;color:#8b9099;margin-left:8px}
+.left .head .count{font-size:11px;color:#8b9099;font-weight:600;margin-left:auto;margin-right:8px}
+.top .brand .dot{width:9px;height:9px;border-radius:50%;background:#e32539;box-shadow:0 0 10px #e32539;display:inline-block;margin-right:6px}
+.statusBar{position:absolute;left:0;right:0;bottom:8px;text-align:center;font-size:11px;color:#6b7078;pointer-events:none;z-index:5}
+.statusBar kbd{font-size:10px;padding:1px 5px;border-radius:4px;background:#1a1d24;border:1px solid #30353c;color:#8b9099;font-family:inherit;margin:0 2px}
 </style>
 </head>
 <body>
 <div class="app">
 <header class="top">
-  <div class="brand">WEST150 <b>EDITORIAL</b></div>
+  <div class="brand"><span class="dot"></span>WEST150 <b>EDITORIAL</b><span class="histBadge" id="histBadge"></span></div>
   <div class="menus">
     <div class="menu"><button>파일</button><div class="pop"><div data-a="new">새 카드</div><div data-a="dup">현재 카드 복제</div><div data-a="save">브라우저 저장</div><div data-a="load">저장본 불러오기</div></div></div>
     <div class="menu"><button>템플릿</button><div class="pop"><div data-a="tpl" data-t="editorial">Editorial Dark</div><div data-a="tpl" data-t="bloomberg">Bloomberg</div><div data-a="tpl" data-t="vox">Vox</div><div data-a="tpl" data-t="economist">Economist</div><div data-a="tpl" data-t="washington">Washington Times</div></div></div>
@@ -35,7 +49,7 @@
 </header>
 
 <aside class="left panel">
-  <div class="head"><strong>CARDS</strong><button class="plus" id="add">＋</button></div>
+  <div class="head"><strong>CARDS</strong><span class="count" id="cardCount">1</span><button class="plus" id="add" title="새 카드">＋</button></div>
   <div class="cards" id="cards"></div>
 </aside>
 
@@ -76,6 +90,7 @@
     </div>
   </div>
   <div class="tip">텍스트 드래그 또는 POSITION에서 위치 조절 · 휠/줌으로 확대축소</div>
+  <div class="statusBar" id="statusBar">텍스트 드래그 · <kbd>Ctrl</kbd>+<kbd>Z</kbd> 실행취소 · <kbd>Ctrl</kbd>+<kbd>S</kbd> 저장 · <kbd>Esc</kbd> 닫기</div>
 </main>
 
 <aside class="right panel">
@@ -303,6 +318,10 @@
 
 <input type="file" id="file" accept="image/*" hidden>
 <div class="toast" id="toast"></div>
+<div id="undoRedoFloat">
+  <button type="button" id="undoBtn" title="실행 취소 (Ctrl+Z)">↶</button>
+  <button type="button" id="redoBtn" title="다시 실행 (Ctrl+Shift+Z)">↷</button>
+</div>
 
 <div class="modal" id="previewModal">
   <div class="modalbox">
@@ -408,6 +427,78 @@ S.cards[1].photo = PLACEHOLDER;
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 
+
+/* ========== Undo / Redo ========== */
+const MAX_HISTORY = 50;
+let historyStack = [];
+let historyIndex = -1;
+let applyingHistory = false;
+let historyTimer = null;
+
+function cloneCards() {
+  return JSON.parse(JSON.stringify({ cards: S.cards, i: S.i, ratio: S.ratio }));
+}
+function pushHistory() {
+  if (applyingHistory) return;
+  const snap = JSON.stringify(cloneCards());
+  if (historyIndex >= 0 && historyStack[historyIndex] === snap) return;
+  historyStack = historyStack.slice(0, historyIndex + 1);
+  historyStack.push(snap);
+  if (historyStack.length > MAX_HISTORY) historyStack.shift();
+  historyIndex = historyStack.length - 1;
+  updateUndoRedoButtons();
+}
+function scheduleHistory() {
+  if (applyingHistory) return;
+  clearTimeout(historyTimer);
+  historyTimer = setTimeout(pushHistory, 280);
+}
+function restoreHistory(idx) {
+  if (idx < 0 || idx >= historyStack.length) return;
+  applyingHistory = true;
+  try {
+    const data = JSON.parse(historyStack[idx]);
+    S.cards = data.cards;
+    S.i = Math.min(Math.max(0, data.i), S.cards.length - 1);
+    if (data.ratio) S.ratio = data.ratio;
+    historyIndex = idx;
+    cards();
+    const stage = document.getElementById('stage');
+    if (stage && data.ratio) {
+      const w = 540;
+      const h = data.ratio === '9:16' ? 960 : data.ratio === '4:5' ? 675 : 540;
+      stage.style.width = w + 'px';
+      stage.style.height = h + 'px';
+      document.querySelectorAll('#ratio button').forEach(b => b.classList.toggle('active', b.dataset.r === data.ratio));
+    }
+    render();
+    updateUndoRedoButtons();
+  } finally {
+    applyingHistory = false;
+  }
+}
+function undo() {
+  if (historyIndex <= 0) return;
+  const snap = JSON.stringify(cloneCards());
+  if (historyStack[historyIndex] !== snap) pushHistory();
+  if (historyIndex <= 0) return;
+  restoreHistory(historyIndex - 1);
+  toast('실행 취소');
+}
+function redo() {
+  if (historyIndex >= historyStack.length - 1) return;
+  restoreHistory(historyIndex + 1);
+  toast('다시 실행');
+}
+function updateUndoRedoButtons() {
+  const ub = document.getElementById('undoBtn');
+  const rb = document.getElementById('redoBtn');
+  if (ub) ub.disabled = historyIndex <= 0;
+  if (rb) rb.disabled = historyIndex >= historyStack.length - 1;
+  const badge = document.getElementById('histBadge');
+  if (badge) badge.textContent = historyStack.length ? (historyIndex + 1) + '/' + historyStack.length : '';
+}
+
 function toast(t) {
   const e = $('#toast');
   e.textContent = t;
@@ -440,6 +531,8 @@ function cards() {
   const w = $('#cards');
   if (!w) return;
   w.innerHTML = '';
+  const cnt = document.getElementById('cardCount');
+  if (cnt) cnt.textContent = String(S.cards.length);
   S.cards.forEach((c, i) => {
     const e = document.createElement('div');
     e.className = 'card' + (i === S.i ? ' active' : '');
@@ -609,6 +702,7 @@ function setTxt(id, text, style, pos, key) {
 function render() {
   const c = C();
   ensureTextStyles(c);
+  if (!applyingHistory) scheduleHistory();
   const stage = $('#stage');
   stage.style.transform = `scale(${S.zoom})`;
   $('#zolabel').textContent = Math.round(S.zoom * 100) + '%';
@@ -1248,7 +1342,33 @@ function init() {
   if ($('#fadeToggle')) $('#fadeToggle').onchange = e => { C().styles.fade = e.target.checked; render(); };
   if ($('#vigToggle')) $('#vigToggle').onchange = e => { C().styles.vig = e.target.checked; render(); };
 
+  // Undo / Redo
+  const undoBtn = document.getElementById('undoBtn');
+  const redoBtn = document.getElementById('redoBtn');
+  if (undoBtn) undoBtn.onclick = undo;
+  if (redoBtn) redoBtn.onclick = redo;
+
+  document.addEventListener('keydown', e => {
+    const mod = e.ctrlKey || e.metaKey;
+    const tag = (e.target && e.target.tagName) || '';
+    const typing = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || e.target.isContentEditable;
+    if (mod && e.key.toLowerCase() === 'z' && !e.shiftKey) {
+      if (!typing) { e.preventDefault(); undo(); }
+    } else if (mod && (e.key.toLowerCase() === 'y' || (e.key.toLowerCase() === 'z' && e.shiftKey))) {
+      if (!typing) { e.preventDefault(); redo(); }
+    } else if (mod && e.key.toLowerCase() === 's') {
+      e.preventDefault();
+      save();
+    } else if (e.key === 'Delete' || e.key === 'Backspace') {
+      if (!typing && S.cards.length > 1) {
+        // optional: don't delete on backspace alone for safety
+      }
+    }
+  });
+
   render();
+  pushHistory();
+  updateUndoRedoButtons();
 }
 
 init();
