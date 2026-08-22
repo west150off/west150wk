@@ -74,6 +74,7 @@
       imagePosition: 'center',
       imageScale: 1,
       marginBlur: true,
+      imageLoadFailed: false,
       gradient: {
         enabled: true,
         direction: 'to bottom',
@@ -104,6 +105,19 @@
         };
         img.onerror = () => resolve(src);
         img.src = src.includes('?') ? src + '&_=' + Date.now() : src + '?_=' + Date.now();
+      });
+    };
+
+    // 이미지의 자연 픽셀 크기를 얻는다. 미리보기(표시 크기)와 저장본(원본 해상도) 사이의
+    // 블러 강도를 동일하게 맞추기 위해 필요하다.
+    const getNaturalSize = (src) => {
+      return new Promise((resolve) => {
+        if (!src) return resolve(null);
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => resolve({ w: img.naturalWidth, h: img.naturalHeight });
+        img.onerror = () => resolve(null);
+        img.src = src;
       });
     };
 
@@ -261,7 +275,7 @@
           return;
         }
         const reader = new FileReader();
-        reader.onload = () => updateCard({ backgroundImage: reader.result });
+        reader.onload = () => updateCard({ backgroundImage: reader.result, imageLoadFailed: false });
         reader.onerror = () => alert('파일을 읽는 중 오류가 발생했습니다.');
         reader.readAsDataURL(file);
         e.target.value = '';
@@ -287,12 +301,21 @@
             if (converted) baseSrc = converted;
           } catch (e) {}
 
+          // 미리보기는 "화면에 표시된 카드 너비" 기준으로 블러가 적용되지만,
+          // 저장 시 블러를 이미지 원본(자연) 해상도에 직접 구워 넣으면
+          // 같은 px 값이라도 원본 해상도가 클수록 훨씬 흐릿함이 옅어 보인다.
+          // 두 결과가 일치하도록 (원본 해상도 / 화면 표시 너비) 비율만큼
+          // 블러 반경을 보정해서 굽는다.
+          const displayedWidth = el.getBoundingClientRect().width || 380;
+          const natural = await getNaturalSize(baseSrc);
+          const blurScaleFactor = natural && natural.w ? natural.w / displayedWidth : 1;
+
           const mainSrc =
-            card.blur > 0 ? await createBlurredDataURL(baseSrc, card.blur) : baseSrc;
+            card.blur > 0 ? await createBlurredDataURL(baseSrc, card.blur * blurScaleFactor) : baseSrc;
 
           const marginSrc =
             card.imageFit === 'contain' && card.marginBlur
-              ? await createBlurredDataURL(baseSrc, 25)
+              ? await createBlurredDataURL(baseSrc, 25 * blurScaleFactor)
               : null;
 
           imgs.forEach((img) => {
@@ -402,6 +425,10 @@
           card.imagePosition === 'top' ? 'center top' :
           card.imagePosition === 'bottom' ? 'center bottom' : 'center center';
 
+        const transformOrigin =
+          card.imagePosition === 'top' ? 'center top' :
+          card.imagePosition === 'bottom' ? 'center bottom' : 'center center';
+
         const scale = card.imageFit === 'cover' ? (card.imageScale || 1) : 1;
 
         return (
@@ -420,49 +447,44 @@
                   className="absolute inset-0 w-full h-full pointer-events-none"
                   style={{
                     objectFit: 'cover',
-                    objectPosition: 'center',
+                    objectPosition: objectPos,
                     filter: 'blur(25px)',
                     transform: 'scale(1.15)',
                   }}
                   draggable={false}
+                  onError={(e) => { e.target.style.opacity = '0'; }}
                 />
               )}
 
+              {/*
+                'cover' 모드는 항상 이미지가 카드 전체(100% x 100%)를 채우도록 두고,
+                object-position으로 위치를, CSS transform: scale()로 확대만 적용한다.
+                이렇게 하면 확대율이 100% 밑으로 내려갈 일이 없어 카드 가장자리에
+                빈 여백(투명/검은 여백)이 생기는 문제가 미리보기·저장본 모두에서 사라진다.
+              */}
               <img
                 data-card-img="main"
                 src={card.backgroundImage}
                 alt=""
                 crossOrigin="anonymous"
-                className="absolute pointer-events-none"
+                className="absolute inset-0 w-full h-full pointer-events-none"
                 style={{
-                  ...(card.imageFit === 'cover'
-                    ? {
-                        width: `${100 * scale}%`,
-                        height: `${100 * scale}%`,
-                        left: '50%',
-                        top: card.imagePosition === 'top' ? '0%' :
-                             card.imagePosition === 'bottom' ? '100%' : '50%',
-                        transform:
-                          card.imagePosition === 'top'
-                            ? 'translate(-50%, 0%)'
-                            : card.imagePosition === 'bottom'
-                            ? 'translate(-50%, -100%)'
-                            : 'translate(-50%, -50%)',
-                        objectFit: 'cover',
-                        objectPosition: objectPos,
-                      }
-                    : {
-                        width: '100%',
-                        height: '100%',
-                        left: 0,
-                        top: 0,
-                        objectFit: 'contain',
-                        objectPosition: objectPos,
-                      }),
+                  objectFit: card.imageFit === 'cover' ? 'cover' : 'contain',
+                  objectPosition: objectPos,
+                  transform: card.imageFit === 'cover' ? `scale(${scale})` : 'none',
+                  transformOrigin: transformOrigin,
                   filter: card.blur > 0 ? `blur(${card.blur}px)` : 'none',
                 }}
                 draggable={false}
+                onError={() => updateCard({ imageLoadFailed: true })}
+                onLoad={() => { if (card.imageLoadFailed) updateCard({ imageLoadFailed: false }); }}
               />
+
+              {card.imageLoadFailed && (
+                <div className="absolute inset-0 flex items-center justify-center bg-gray-900/90 text-white text-xs text-center px-6 pointer-events-none">
+                  이미지를 불러올 수 없습니다.<br/>URL을 확인하거나 파일 업로드를 이용해 주세요.
+                </div>
+              )}
             </div>
 
             <div className="absolute inset-0" style={{ background: gradientStyle }} />
@@ -765,7 +787,7 @@
                   <div>
                     <label className="text-xs font-medium text-gray-500 mb-1 block">이미지 URL</label>
                     <input type="text" value={selectedCard.backgroundImage}
-                      onChange={(e) => updateCard({ backgroundImage: e.target.value })}
+                      onChange={(e) => updateCard({ backgroundImage: e.target.value, imageLoadFailed: false })}
                       className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm" />
                     <p className="text-[11px] text-gray-400 mt-1">외부 URL은 CORS 때문에 저장이 실패할 수 있습니다. 가능하면 파일 업로드를 권장합니다.</p>
                   </div>
@@ -819,15 +841,16 @@
                   {selectedCard.imageFit === 'cover' && (
                     <div>
                       <div className="flex justify-between text-xs font-medium text-gray-500 mb-1">
-                        <span>확대 / 축소</span>
+                        <span>확대 (Zoom in)</span>
                         <span>{Math.round((selectedCard.imageScale || 1) * 100)}%</span>
                       </div>
                       <input
-                        type="range" min="0.6" max="1.8" step="0.05"
+                        type="range" min="1" max="2.5" step="0.05"
                         value={selectedCard.imageScale || 1}
                         onChange={(e) => updateCard({ imageScale: Number(e.target.value) })}
                         className="w-full"
                       />
+                      <p className="text-[11px] text-gray-400 mt-1">100%가 카드를 정확히 채우는 기준값이며, 그보다 축소하면 빈 여백이 생기므로 확대만 가능합니다.</p>
                     </div>
                   )}
 

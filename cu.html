@@ -1011,47 +1011,67 @@ function isSafariBrowser(){
 document.getElementById('exportBtn').addEventListener('click', async ()=>{
   const card = document.getElementById('card');
   const wrap = document.getElementById('canvasWrap');
+  const exportBtn = document.getElementById('exportBtn');
   const prevTransform = wrap.style.transform;
+
+  if(exportBtn.disabled) return; // 저장 진행 중 중복 클릭 방지
+  exportBtn.disabled = true;
   wrap.style.transform = 'none';
   toast('이미지 생성 중...');
 
-  let canvas;
   try{
-    canvas = await html2canvas(card, { backgroundColor: null, scale: 2, useCORS: true });
-  }catch(err){
-    toast('저장 중 오류가 발생했어요');
-    console.error(err);
-    wrap.style.transform = prevTransform;
-    return;
-  }
-  wrap.style.transform = prevTransform;
-
-  const filename = `x-today-${Date.now()}.png`;
-
-  canvas.toBlob(async (blob)=>{
-    if(!blob){
-      toast('저장 중 오류가 발생했어요');
-      return;
+    // 웹폰트가 완전히 로드되기 전에 캡처하면 글자가 기본 폰트로 깨져 보일 수 있음
+    if(document.fonts && document.fonts.ready){
+      await document.fonts.ready;
     }
+
+    const canvas = await html2canvas(card, {
+      backgroundColor: null,
+      scale: 2,
+      useCORS: true,
+      allowTaint: true,
+      imageTimeout: 15000,
+      logging: false
+    });
+
+    wrap.style.transform = prevTransform;
+
+    const filename = `x-today-${Date.now()}.png`;
+
+    // canvas.toBlob이 실패(특히 canvas가 오염된 경우 SecurityError)해도
+    // 반드시 이 catch로 잡히도록 Promise로 감쌈 — 이전 코드는 이 예외가
+    // 잡히지 않아 아무 반응 없이 "저장이 안 되는" 현상의 원인이었음
+    const blob = await new Promise((resolve, reject)=>{
+      try{
+        canvas.toBlob((b)=>{
+          if(b) resolve(b);
+          else reject(new Error('canvas.toBlob이 빈 결과를 반환했습니다'));
+        }, 'image/png');
+      }catch(toBlobErr){
+        reject(toBlobErr);
+      }
+    });
 
     // 1) iPhone/iPad/Mac: try the native share sheet first — this is the most
     //    reliable way to save an image to Photos from Safari.
+    let shared = false;
     if(navigator.canShare && window.File){
       try{
         const file = new File([blob], filename, { type: 'image/png' });
         if(navigator.canShare({ files: [file] })){
           await navigator.share({ files: [file], title: filename });
           toast('공유 시트에서 "이미지 저장"을 선택하세요');
-          return;
+          shared = true;
         }
       }catch(shareErr){
         if(shareErr && shareErr.name === 'AbortError'){
           // user cancelled the share sheet — don't fall through with a duplicate download
-          return;
+          shared = true;
         }
         // otherwise fall through to the other methods below
       }
     }
+    if(shared){ exportBtn.disabled = false; return; }
 
     const blobUrl = URL.createObjectURL(blob);
 
@@ -1073,7 +1093,13 @@ document.getElementById('exportBtn').addEventListener('click', async ()=>{
     }
 
     setTimeout(()=>URL.revokeObjectURL(blobUrl), 60000);
-  }, 'image/png');
+  }catch(err){
+    console.error('PNG 저장 오류:', err);
+    toast('저장 중 오류가 발생했어요 (F12 콘솔을 확인해주세요)');
+    wrap.style.transform = prevTransform;
+  }finally{
+    exportBtn.disabled = false;
+  }
 });
 
 document.getElementById('resetBtn').addEventListener('click', ()=>{
