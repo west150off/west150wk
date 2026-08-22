@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&family=Noto+Serif+KR:wght@200..900&family=Black+Han+Sans&family=Do+Hyeon&family=Gothic+A1:wght@100..900&family=Nanum+Gothic:wght@400;700;800&family=Nanum+Myeongjo:wght@400;700;800&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
-*{box-sizing:border-box}html,body{height:100%;margin:0;background:#090a0c;color:#f4f4f5;font-family:Pretendard,'Noto Sans KR',sans-serif}body{overflow:hidden}button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer}.app{height:100vh;display:grid;grid-template:56px 1fr/250px 1fr 330px;grid-template-areas:'top top top' 'left center right'}.top{grid-area:top;background:#0c0d0f;border-bottom:1px solid #25282e;display:flex;align-items:center;gap:18px;padding:0 16px;z-index:20}.brand{font-size:14px;font-weight:800;letter-spacing:.13em}.brand b{color:#e32539}.menus{display:flex;gap:3px}.menu{position:relative}.menu>button{border:0;background:none;padding:9px 11px;border-radius:7px;color:#c8cbd0;font-size:13px}.menu>button:hover{background:#171a1f;color:#fff}.pop{display:none;position:absolute;top:42px;left:0;min-width:215px;padding:7px;background:#121519;border:1px solid #2a2e36;border-radius:10px;box-shadow:0 18px 50px #000b;z-index:50}.menu.open .pop{display:block}.pop div{padding:9px;border-radius:6px;font-size:12px;color:#d8dbe0}.pop div:hover{background:#1d2127}.topfill{flex:1}.topbtn,.ghost{border:1px solid #343943;background:#15181d;border-radius:7px;padding:8px 10px;font-size:11px}.primary{background:#e32539;border-color:#e32539;font-weight:800}.panel{background:#0f1115;min-height:0}.left{grid-area:left;border-right:1px solid #25282e;display:flex;flex-direction:column;min-height:0;overflow:hidden}.head{height:52px;flex-shrink:0;border-bottom:1px solid #25282e;padding:0 12px;display:flex;justify-content:space-between;align-items:center}.head strong{font-size:11px;letter-spacing:.11em}.plus{height:30px;width:30px;border-radius:7px;border:1px solid #30353c;background:#171a1f}.cards{flex:1;min-height:0;padding:11px;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;gap:11px;-webkit-overflow-scrolling:touch}.card{position:relative;border:1px solid #272b33;background:#111419;border-radius:9px;overflow:hidden;flex-shrink:0}.card.active{border-color:#b51c2b;box-shadow:0 0 0 1px #b51c2b55}.thumb{aspect-ratio:9/16;position:relative;background:#20242b}.thumb img{width:100%;height:100%;object-fit:cover;display:block}.shade{position:absolute;inset:0;background:linear-gradient(transparent 50%,#07080a 100%)}.ctitle{position:absolute;left:9px;right:9px;bottom:9px;font-size:13px;font-weight:900;line-height:1.08}.badge{position:absolute;top:7px;left:7px;background:#0009;padding:3px 5px;border-radius:4px;font-size:9px}.tools{position:absolute;top:7px;right:7px;display:none;gap:4px}.card:hover .tools{display:flex}.tools button{width:24px;height:24px;border:1px solid #444a55;background:#0c0e11cc;border-radius:5px;font-size:11px}.meta{display:flex;justify-content:space-between;padding:7px 8px;color:#777e88;font-size:9px}.center{grid-area:center;display:flex;flex-direction:column;background:#15171b;min-width:0;min-height:0;overflow:hidden}.toolbar{height:52px;flex-shrink:0;border-bottom:1px solid #25282e;display:flex;align-items:center;gap:7px;padding:0 11px}.seg{display:flex;background:#0d0f12;border:1px solid #262a31;border-radius:7px;padding:2px}.seg button{border:0;background:none;color:#838992;padding:6px 8px;border-radius:5px;font-size:10px}.seg button.active{background:#2a2e35;color:#fff}.canvas-area{flex:1;min-height:0;position:relative;overflow:auto;background:radial-gradient(circle at 50% 20%,#2b2f36 0,#1c1f24 38%,#131519 80%);cursor:grab;-webkit-overflow-scrolling:touch}.canvas-area.panning{cursor:grabbing}.canvas-inner{position:relative;min-width:100%;min-height:100%;display:flex;align-items:center;justify-content:center;padding:40px}.stage{position:relative;width:540px;height:960px;overflow:hidden;background:#161616;box-shadow:0 30px 90px #000c;transform-origin:center center;flex-shrink:0}.bg,.bgblur,.photo,.photo img,.fade,.overlay,.vig{position:absolute}.bg,.bgblur{inset:0;background:center/cover no-repeat}.bgblur{inset:-8%;transform:scale(1.08);filter:blur(24px) brightness(.62)}.photo{left:0;right:0;top:0;height:63%;z-index:2;overflow:hidden}.photo img{inset:0;width:100%;height:100%;object-position:center}.fade{inset:0;background:linear-gradient(transparent 59%,rgba(7,8,10,.96) 100%);z-index:3}.overlay{inset:0;z-index:4;pointer-events:none}.vig{inset:0;z-index:5;box-shadow:inset 0 0 130px #000b;pointer-events:none}.line{position:absolute;left:6.4%;top:58.8%;height:14%;width:3px;background:#e32539;z-index:7}.txt{position:absolute;z-index:8;max-width:82%;white-space:pre-wrap;line-height:1.08;cursor:move;user-select:none}.txt.sel{outline:1px dashed #e32539aa;outline-offset:6px}.kicker{left:9%;top:4.2%;font-size:11px;letter-spacing:.17em}.wm{right:6.5%;top:4.2%;font-size:11px;letter-spacing:.15em}.headtxt{left:9%;top:59%;font-size:42px;letter-spacing:-.045em;font-weight:900}.sub{left:9%;top:71.7%;font-size:12px;letter-spacing:.05em;max-width:76%}.bodytxt{left:9%;top:76%;font-size:14px;line-height:1.55;max-width:79%}.src{left:9%;bottom:3.3%;font-size:11px}.time{right:6.5%;bottom:3.3%;font-size:11px}.tip{height:34px;flex-shrink:0;border-top:1px solid #25282e;display:flex;align-items:center;justify-content:center;color:#6e747d;font-size:9px}.right{grid-area:right;border-left:1px solid #25282e;display:flex;flex-direction:column;min-width:0;min-height:0;overflow:hidden}.scroll{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:11px;-webkit-overflow-scrolling:touch}.sec{border:1px solid #272b33;background:#12151a;border-radius:9px;margin-bottom:9px;overflow:hidden}.sec h3{margin:0;padding:10px 11px;border-bottom:1px solid #25282e;font-size:10px;letter-spacing:.12em;color:#b7bbc2}.secbody{padding:9px}.label{font-size:9px;color:#7f858f;display:block;margin-bottom:4px}.input,.select,.ta,.color{width:100%;background:#0e1014;border:1px solid #2a2e35;border-radius:6px;padding:8px;font-size:11px;outline:none}.ta{min-height:52px;resize:vertical}.color{height:32px;padding:2px}.grid3{display:grid;grid-template-columns:1fr 1fr 48px;gap:6px;margin-top:7px}.row{display:flex;gap:7px;align-items:center;margin-top:7px}.row .f{flex:1}.range{width:100%}.v{font-size:9px;color:#8e949e;width:32px;text-align:right}.two{display:grid;grid-template-columns:1fr 1fr;gap:7px}.templates{display:grid;grid-template-columns:1fr 1fr;gap:7px}.templ{border:1px solid #2a2e35;background:#0d0f12;border-radius:7px;overflow:hidden;text-align:left;padding:0}.templ .mini{height:78px;position:relative;background:linear-gradient(135deg,#42464e,#17191d)}.templ .mini:after{content:'';position:absolute;left:8px;right:8px;bottom:9px;height:24px;border-left:2px solid #e32539;border-bottom:1px solid #777}.templ small{display:block;padding:6px;color:#aeb3bb;font-size:9px}.foot{flex-shrink:0;border-top:1px solid #25282e;padding:9px;display:flex;gap:7px}.foot>*{flex:1}.modal{position:fixed;inset:0;background:#000c;display:none;align-items:center;justify-content:center;z-index:99}.modal.show{display:flex}.modalbox{width:min(700px,90vw);max-height:85vh;overflow:auto;background:#12151a;border:1px solid #2c3139;border-radius:11px}.mh{padding:12px 14px;border-bottom:1px solid #262a31;display:flex;justify-content:space-between;align-items:center}.mb{padding:14px}.toast{position:fixed;left:50%;bottom:20px;transform:translate(-50%,20px);opacity:0;background:#1a1d23;border:1px solid #343943;padding:8px 12px;border-radius:7px;font-size:10px;transition:.2s;z-index:120}.toast.show{opacity:1;transform:translate(-50%,0)}
+*{box-sizing:border-box}html,body{height:100%;margin:0;background:#090a0c;color:#f4f4f5;font-family:Pretendard,'Noto Sans KR',sans-serif}body{overflow:hidden}button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer}.app{height:100vh;display:grid;grid-template:56px 1fr/250px 1fr 330px;grid-template-areas:'top top top' 'left center right'}.top{grid-area:top;background:#0c0d0f;border-bottom:1px solid #25282e;display:flex;align-items:center;gap:18px;padding:0 16px;z-index:20}.brand{font-size:14px;font-weight:800;letter-spacing:.13em}.brand b{color:#e32539}.menus{display:flex;gap:3px}.menu{position:relative}.menu>button{border:0;background:none;padding:9px 11px;border-radius:7px;color:#c8cbd0;font-size:13px}.menu>button:hover{background:#171a1f;color:#fff}.pop{display:none;position:absolute;top:42px;left:0;min-width:215px;padding:7px;background:#121519;border:1px solid #2a2e36;border-radius:10px;box-shadow:0 18px 50px #000b;z-index:50}.menu.open .pop{display:block}.pop div{padding:9px;border-radius:6px;font-size:12px;color:#d8dbe0}.pop div:hover{background:#1d2127}.topfill{flex:1}.topbtn,.ghost{border:1px solid #343943;background:#15181d;border-radius:7px;padding:8px 10px;font-size:11px}.primary{background:#e32539;border-color:#e32539;font-weight:800}.panel{background:#0f1115;min-height:0}.left{grid-area:left;border-right:1px solid #25282e;display:flex;flex-direction:column;min-height:0;overflow:hidden}.head{height:52px;flex-shrink:0;border-bottom:1px solid #25282e;padding:0 12px;display:flex;justify-content:space-between;align-items:center}.head strong{font-size:11px;letter-spacing:.11em}.plus{height:30px;width:30px;border-radius:7px;border:1px solid #30353c;background:#171a1f}.cards{flex:1;min-height:0;padding:11px;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;gap:11px;-webkit-overflow-scrolling:touch}.card{position:relative;border:1px solid #272b33;background:#111419;border-radius:9px;overflow:hidden;flex-shrink:0}.card.active{border-color:#b51c2b;box-shadow:0 0 0 1px #b51c2b55}.thumb{aspect-ratio:9/16;position:relative;background:#20242b}.thumb img{width:100%;height:100%;object-fit:cover;display:block}.shade{position:absolute;inset:0;background:linear-gradient(transparent 50%,#07080a 100%)}.ctitle{position:absolute;left:9px;right:9px;bottom:9px;font-size:13px;font-weight:900;line-height:1.08}.badge{position:absolute;top:7px;left:7px;background:#0009;padding:3px 5px;border-radius:4px;font-size:9px}.tools{position:absolute;top:7px;right:7px;display:none;gap:4px}.card:hover .tools{display:flex}.tools button{width:24px;height:24px;border:1px solid #444a55;background:#0c0e11cc;border-radius:5px;font-size:11px}.meta{display:flex;justify-content:space-between;padding:7px 8px;color:#777e88;font-size:9px}.center{grid-area:center;display:flex;flex-direction:column;background:#15171b;min-width:0;min-height:0;overflow:hidden}.toolbar{height:52px;flex-shrink:0;border-bottom:1px solid #25282e;display:flex;align-items:center;gap:7px;padding:0 11px}.seg{display:flex;background:#0d0f12;border:1px solid #262a31;border-radius:7px;padding:2px}.seg button{border:0;background:none;color:#838992;padding:6px 8px;border-radius:5px;font-size:10px}.seg button.active{background:#2a2e35;color:#fff}.canvas-area{flex:1;min-height:0;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 20%,#2b2f36 0,#1c1f24 38%,#131519 80%)}.canvas-inner{display:flex;align-items:center;justify-content:center;width:100%;height:100%;pointer-events:none}.canvas-inner .stage,.canvas-inner .txt{pointer-events:auto}.stage{position:relative;width:540px;height:960px;overflow:hidden;background:#161616;box-shadow:0 30px 90px #000c;transform-origin:center center;flex-shrink:0}.bg,.bgblur,.photo,.photo img,.fade,.overlay,.vig{position:absolute}.bg,.bgblur{inset:0;background:center/cover no-repeat}.bgblur{inset:-8%;transform:scale(1.08);filter:blur(24px) brightness(.62)}.photo{left:0;right:0;top:0;height:63%;z-index:2;overflow:hidden}.photo img{inset:0;width:100%;height:100%;object-position:center}.fade{inset:0;background:linear-gradient(transparent 59%,rgba(7,8,10,.96) 100%);z-index:3}.overlay{inset:0;z-index:4;pointer-events:none}.vig{inset:0;z-index:5;box-shadow:inset 0 0 130px #000b;pointer-events:none}.line{position:absolute;left:6.4%;top:58.8%;height:14%;width:3px;background:#e32539;z-index:7}.txt{position:absolute;z-index:8;max-width:82%;white-space:pre-wrap;line-height:1.08;cursor:move;user-select:none}.txt.sel{outline:1px dashed #e32539aa;outline-offset:6px}.kicker{left:9%;top:4.2%;font-size:11px;letter-spacing:.17em}.wm{right:6.5%;top:4.2%;font-size:11px;letter-spacing:.15em}.headtxt{left:9%;top:59%;font-size:42px;letter-spacing:-.045em;font-weight:900}.sub{left:9%;top:71.7%;font-size:12px;letter-spacing:.05em;max-width:76%}.bodytxt{left:9%;top:76%;font-size:14px;line-height:1.55;max-width:79%}.src{left:9%;bottom:3.3%;font-size:11px}.credit{left:9%;bottom:5.8%;font-size:10px;opacity:.85}.time{right:6.5%;bottom:3.3%;font-size:11px}.tip{height:34px;flex-shrink:0;border-top:1px solid #25282e;display:flex;align-items:center;justify-content:center;color:#6e747d;font-size:9px}.right{grid-area:right;border-left:1px solid #25282e;display:flex;flex-direction:column;min-width:0;min-height:0;overflow:hidden}.scroll{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:10px;-webkit-overflow-scrolling:touch}.group-label{font-size:9px;letter-spacing:.14em;color:#5c636e;padding:10px 4px 5px;font-weight:700}.sec{border:1px solid #272b33;background:#12151a;border-radius:8px;margin-bottom:7px;overflow:hidden}.sec h3{margin:0;padding:9px 11px;font-size:10px;letter-spacing:.12em;color:#b7bbc2;border-bottom:1px solid #25282e}.secbody{padding:9px;display:block}.sec .secbody > :first-child{margin-top:0}#fitSeg{display:flex;background:#0d0f12;border:1px solid #262a31;border-radius:7px;padding:2px}#fitSeg button{flex:1;border:0;background:none;color:#838992;padding:6px 4px;border-radius:5px;font-size:10px}#fitSeg button.active{background:#2a2e35;color:#fff}.label{font-size:9px;color:#7f858f;display:block;margin-bottom:4px}.input,.select,.ta,.color{width:100%;background:#0e1014;border:1px solid #2a2e35;border-radius:6px;padding:8px;font-size:11px;outline:none}.ta{min-height:52px;resize:vertical}.color{height:32px;padding:2px}.grid3{display:grid;grid-template-columns:1fr 1fr 48px;gap:6px;margin-top:7px}.row{display:flex;gap:7px;align-items:center;margin-top:7px}.row .f{flex:1}.range{width:100%}.v{font-size:9px;color:#8e949e;width:32px;text-align:right}.two{display:grid;grid-template-columns:1fr 1fr;gap:7px}.templates{display:grid;grid-template-columns:1fr 1fr;gap:7px}.templ{border:1px solid #2a2e35;background:#0d0f12;border-radius:7px;overflow:hidden;text-align:left;padding:0}.templ .mini{height:78px;position:relative;background:linear-gradient(135deg,#42464e,#17191d)}.templ .mini:after{content:'';position:absolute;left:8px;right:8px;bottom:9px;height:24px;border-left:2px solid #e32539;border-bottom:1px solid #777}.templ small{display:block;padding:6px;color:#aeb3bb;font-size:9px}.foot{flex-shrink:0;border-top:1px solid #25282e;padding:9px;display:flex;gap:7px}.foot>*{flex:1}.modal{position:fixed;inset:0;background:#000c;display:none;align-items:center;justify-content:center;z-index:99}.modal.show{display:flex}.modalbox{width:min(700px,90vw);max-height:85vh;overflow:auto;background:#12151a;border:1px solid #2c3139;border-radius:11px}.mh{padding:12px 14px;border-bottom:1px solid #262a31;display:flex;justify-content:space-between;align-items:center}.mb{padding:14px}.toast{position:fixed;left:50%;bottom:20px;transform:translate(-50%,20px);opacity:0;background:#1a1d23;border:1px solid #343943;padding:8px 12px;border-radius:7px;font-size:10px;transition:.2s;z-index:120}.toast.show{opacity:1;transform:translate(-50%,0)}
 /* preview modal */
 #previewModal .modalbox{width:auto;max-width:95vw;max-height:95vh;background:#0a0b0d;padding:0;overflow:hidden;display:flex;flex-direction:column}
 #previewModal .mh{background:#12151a}
@@ -48,7 +48,7 @@
     </div>
     <div class="seg">
       <button id="zo-">−</button>
-      <button id="zolabel">86%</button>
+      <button id="zolabel">72%</button>
       <button id="zo+">＋</button>
     </div>
     <div style="flex:1"></div>
@@ -70,33 +70,20 @@
         <div class="txt sub" id="sub" data-k="sub"></div>
         <div class="txt bodytxt" id="body" data-k="body"></div>
         <div class="txt src" id="source" data-k="source"></div>
+        <div class="txt credit" id="credit" data-k="credit"></div>
         <div class="txt time" id="time" data-k="time"></div>
       </div>
     </div>
   </div>
-  <div class="tip">텍스트를 캔버스에서 드래그해 위치를 바꾸고 오른쪽에서 폰트·색상·크기를 조절하세요.</div>
+  <div class="tip">텍스트 드래그 또는 POSITION에서 위치 조절 · 휠/줌으로 확대축소</div>
 </main>
 
 <aside class="right panel">
   <div class="head"><strong>EDITOR</strong><button class="plus" id="openTpl">T</button></div>
   <div class="scroll">
-    <section class="sec">
-      <h3>KICKER</h3>
-      <div class="secbody">
-        <input class="input" id="kickerInput" placeholder="킥커">
-        <div class="grid3">
-          <div><label class="label">글꼴</label><select class="select" id="kickerFont"></select></div>
-          <div><label class="label">크기</label><input class="input" id="kickerSize" type="number" min="7" max="32"></div>
-          <div><label class="label">색상</label><input class="color" id="kickerColor" type="color"></div>
-        </div>
-        <div class="row">
-          <div class="f"><label class="label">볼륨 / 굵기</label><input class="range" id="kickerWeight" type="range" min="100" max="900" step="100"></div>
-          <div class="v" id="kickerWV"></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="sec">
+    <!-- TEXT -->
+    <div class="group-label">TEXT</div>
+    <section class="sec always">
       <h3>HEADLINE</h3>
       <div class="secbody">
         <textarea class="ta" id="headInput" placeholder="헤드라인"></textarea>
@@ -106,29 +93,12 @@
           <div><label class="label">색상</label><input class="color" id="headColor" type="color"></div>
         </div>
         <div class="row">
-          <div class="f"><label class="label">볼륨 / 굵기</label><input class="range" id="headWeight" type="range" min="100" max="900" step="100"></div>
+          <div class="f"><label class="label">굵기</label><input class="range" id="headWeight" type="range" min="100" max="900" step="100"></div>
           <div class="v" id="headWV"></div>
         </div>
       </div>
     </section>
-
-    <section class="sec">
-      <h3>SUBLINE</h3>
-      <div class="secbody">
-        <input class="input" id="subInput" placeholder="서브라인">
-        <div class="grid3">
-          <div><label class="label">글꼴</label><select class="select" id="subFont"></select></div>
-          <div><label class="label">크기</label><input class="input" id="subSize" type="number" min="7" max="40"></div>
-          <div><label class="label">색상</label><input class="color" id="subColor" type="color"></div>
-        </div>
-        <div class="row">
-          <div class="f"><label class="label">볼륨 / 굵기</label><input class="range" id="subWeight" type="range" min="100" max="900" step="100"></div>
-          <div class="v" id="subWV"></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="sec">
+    <section class="sec always">
       <h3>BODY</h3>
       <div class="secbody">
         <textarea class="ta" id="bodyInput" placeholder="본문 요약"></textarea>
@@ -138,52 +108,59 @@
           <div><label class="label">색상</label><input class="color" id="bodyColor" type="color"></div>
         </div>
         <div class="row">
-          <div class="f"><label class="label">볼륨 / 굵기</label><input class="range" id="bodyWeight" type="range" min="100" max="900" step="100"></div>
+          <div class="f"><label class="label">굵기</label><input class="range" id="bodyWeight" type="range" min="100" max="900" step="100"></div>
           <div class="v" id="bodyWV"></div>
         </div>
       </div>
     </section>
-
-    <section class="sec">
-      <h3>SOURCE</h3>
+    <section class="sec always">
+      <h3>KICKER / SUB</h3>
       <div class="secbody">
+        <label class="label">Kicker</label>
+        <input class="input" id="kickerInput" placeholder="킥커">
+        <div class="grid3" style="margin-top:6px">
+          <div><label class="label">글꼴</label><select class="select" id="kickerFont"></select></div>
+          <div><label class="label">크기</label><input class="input" id="kickerSize" type="number" min="7" max="32"></div>
+          <div><label class="label">색상</label><input class="color" id="kickerColor" type="color"></div>
+        </div>
+        <label class="label" style="margin-top:8px">Subline</label>
+        <input class="input" id="subInput" placeholder="서브라인">
+        <div class="grid3" style="margin-top:6px">
+          <div><label class="label">글꼴</label><select class="select" id="subFont"></select></div>
+          <div><label class="label">크기</label><input class="input" id="subSize" type="number" min="7" max="40"></div>
+          <div><label class="label">색상</label><input class="color" id="subColor" type="color"></div>
+        </div>
+      </div>
+    </section>
+    <section class="sec always">
+      <h3>SOURCE / CREDIT</h3>
+      <div class="secbody">
+        <label class="label">출처 / 기자</label>
         <input class="input" id="sourceInput" placeholder="출처 / 기자명">
-        <div class="grid3">
+        <label class="label" style="margin-top:8px">사진 출처</label>
+        <input class="input" id="creditInput" placeholder="사진 출처 / Photo by">
+        <div class="grid3" style="margin-top:6px">
           <div><label class="label">글꼴</label><select class="select" id="sourceFont"></select></div>
           <div><label class="label">크기</label><input class="input" id="sourceSize" type="number" min="7" max="28"></div>
           <div><label class="label">색상</label><input class="color" id="sourceColor" type="color"></div>
         </div>
-        <div class="row">
-          <div class="f"><label class="label">볼륨 / 굵기</label><input class="range" id="sourceWeight" type="range" min="100" max="900" step="100"></div>
-          <div class="v" id="sourceWV"></div>
-        </div>
       </div>
     </section>
-
-    <section class="sec">
-      <h3>WATERMARK</h3>
+    <section class="sec always">
+      <h3>WATERMARK / TIME</h3>
       <div class="secbody">
+        <label class="label">워터마크</label>
         <input class="input" id="wmInput" placeholder="@account / brand">
-        <div class="grid3">
+        <div class="grid3" style="margin-top:6px">
           <div><label class="label">글꼴</label><select class="select" id="wmFont"></select></div>
           <div><label class="label">크기</label><input class="input" id="wmSize" type="number" min="7" max="32"></div>
           <div><label class="label">색상</label><input class="color" id="wmColor" type="color"></div>
         </div>
-        <div class="row">
-          <div class="f"><label class="label">볼륨 / 굵기</label><input class="range" id="wmWeight" type="range" min="100" max="900" step="100"></div>
-          <div class="v" id="wmWV"></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="sec">
-      <h3>TIME</h3>
-      <div class="secbody">
-        <div class="two">
+        <div class="two" style="margin-top:10px">
           <div>
             <label class="label">시간대</label>
             <select class="select" id="zone">
-              <option value="KST">한국시간 (KST)</option>
+              <option value="KST">한국 (KST)</option>
               <option value="ET">미국 동부 (ET)</option>
               <option value="CT">미국 중부 (CT)</option>
               <option value="MT">미국 산악 (MT)</option>
@@ -202,7 +179,7 @@
           <input class="input" id="dt" type="datetime-local">
           <button class="ghost" id="now">지금</button>
         </div>
-        <div class="grid3">
+        <div class="grid3" style="margin-top:6px">
           <div><label class="label">글꼴</label><select class="select" id="timeFont"></select></div>
           <div><label class="label">크기</label><input class="input" id="timeSize" type="number" min="7" max="28"></div>
           <div><label class="label">색상</label><input class="color" id="timeColor" type="color"></div>
@@ -210,20 +187,74 @@
       </div>
     </section>
 
-    <section class="sec">
-      <h3>BASIC COLOR</h3>
+    <!-- POSITION -->
+    <div class="group-label">POSITION</div>
+    <section class="sec always">
+      <h3>선택 요소 위치</h3>
+      <div class="secbody">
+        <label class="label">요소 선택</label>
+        <select class="select" id="posTarget">
+          <option value="kicker">Kicker</option>
+          <option value="headline">Headline</option>
+          <option value="sub">Subline</option>
+          <option value="body">Body</option>
+          <option value="source">Source</option>
+          <option value="credit">Photo Credit</option>
+          <option value="wm">Watermark</option>
+          <option value="time">Time</option>
+        </select>
+        <div class="two" style="margin-top:8px">
+          <div><label class="label">X (%)</label><input class="input" id="posX" type="number" min="0" max="100" step="0.1"></div>
+          <div><label class="label">Y (%)</label><input class="input" id="posY" type="number" min="0" max="100" step="0.1"></div>
+        </div>
+        <div class="row" style="margin-top:6px">
+          <button class="ghost f" id="posApply">위치 적용</button>
+          <button class="ghost f" id="posReset">기본값</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- IMAGE -->
+    <div class="group-label">IMAGE</div>
+    <section class="sec always">
+      <h3>이미지</h3>
+      <div class="secbody">
+        <button class="ghost" id="upload2" style="width:100%;margin-bottom:8px">사진 업로드</button>
+        <label class="label">맞춤</label>
+        <div class="seg" id="fitSeg" style="margin-top:4px">
+          <button data-f="cover" class="active">꽉 채우기</button>
+          <button data-f="contain">전체보기</button>
+          <button data-f="native">원본</button>
+        </div>
+        <button class="ghost" id="openFx" style="width:100%;margin-top:8px">사진 효과 / 블러</button>
+      </div>
+    </section>
+
+    <!-- LAYOUT / COLOR -->
+    <div class="group-label">LAYOUT · COLOR</div>
+    <section class="sec always">
+      <h3>색상 · 레이아웃</h3>
       <div class="secbody">
         <div class="two">
-          <div><label class="label">배경</label><input class="color" id="bgColor" type="color"></div>
+          <div><label class="label">배경색</label><input class="color" id="bgColor" type="color"></div>
           <div><label class="label">강조선</label><input class="color" id="accentColor" type="color"></div>
         </div>
         <div class="row">
-          <div class="f"><label class="label">오버레이 농도</label><input class="range" id="overlayOpacity" type="range" min="0" max="100"></div>
+          <div class="f"><label class="label">오버레이</label><input class="range" id="overlayOpacity" type="range" min="0" max="100"></div>
           <div class="v" id="overlayV"></div>
+        </div>
+        <div class="row">
+          <div class="f"><label class="label">사진 높이 %</label><input class="range" id="photoH" type="range" min="30" max="80"></div>
+          <div class="v" id="photoHV"></div>
+        </div>
+        <div class="two" style="margin-top:8px">
+          <label style="font-size:11px"><input id="fadeToggle" type="checkbox"> 하단 페이드</label>
+          <label style="font-size:11px"><input id="vigToggle" type="checkbox"> 비네팅</label>
         </div>
       </div>
     </section>
   </div>
+
   <div class="foot">
     <button class="ghost" id="save">프로젝트 저장</button>
     <button class="topbtn primary" id="rightPng">PNG 저장</button>
@@ -325,6 +356,7 @@ const base = () => ({
   headline: '트럼프, EU에 “큰 대가” 경고',
   body: 'EU 빅테크 과징금 보복 예고,\n한국 디지털 규제도 영향권 주목',
   source: '연합뉴스TV  |  김준하 기자',
+  credit: 'Photo: Reuters',
   wm: '@rpick',
   kicker: 'GLOBAL POLITICS',
   sub: 'TRUMP WARNS EU OVER GOOGLE FINE',
@@ -333,7 +365,7 @@ const base = () => ({
   fmt: '24',
   photo: PLACEHOLDER,
   fit: 'cover',
-  show: {kicker:true, sub:true, headline:true, body:true, source:true, wm:true, time:true},
+  show: {kicker:true, sub:true, headline:true, body:true, source:true, credit:true, wm:true, time:true},
   styles: {
     bg:'#161616', acc:'#e32539', op:0, ph:63,
     exp:100, contrast:100, sat:100, sepia:0, blur:0, bgblur:24,
@@ -345,6 +377,7 @@ const base = () => ({
     sub: {font:'Pretendard', size:12, weight:500, color:'#d1d4da'},
     body: {font:'Pretendard', size:14, weight:400, color:'#d1d4da'},
     source: {font:'Pretendard', size:11, weight:500, color:'#8f949d'},
+    credit: {font:'Pretendard', size:10, weight:400, color:'#8f949d'},
     wm: {font:'Pretendard', size:11, weight:500, color:'#d4d6da'},
     time: {font:'Pretendard', size:11, weight:500, color:'#8f949d'}
   },
@@ -356,6 +389,7 @@ const base = () => ({
     sub:[9, 71.7],
     body:[9, 76],
     source:[9, 96.7],
+    credit:[9, 94.2],
     time:[6.5, 96.7]
   }
 });
@@ -364,12 +398,9 @@ let S = {
   cards: [base(), base()],
   i: 0,
   ratio: '9:16',
-  zoom: 0.86,
-  panX: 0,
-  panY: 0,
+  zoom: 0.72,
   sel: null,
-  drag: null,
-  pan: null
+  drag: null
 };
 S.cards[1].headline = '새 카드 · 두 번째 페이지';
 S.cards[1].photo = PLACEHOLDER;
@@ -539,15 +570,19 @@ function setTxt(id, text, style, pos, key) {
 function render() {
   const c = C();
   const stage = $('#stage');
-  stage.style.transform = `translate(${S.panX}px, ${S.panY}px) scale(${S.zoom})`;
+  stage.style.transform = `scale(${S.zoom})`;
   $('#zolabel').textContent = Math.round(S.zoom * 100) + '%';
 
+  // 배경색: stage + #bg 는 단색만 (사진 이미지 올리지 않음)
   stage.style.background = c.styles.bg;
   $('#bg').style.backgroundColor = c.styles.bg;
-  $('#bg').style.backgroundImage = `url("${c.photo || PLACEHOLDER}")`;
+  $('#bg').style.backgroundImage = 'none';
+  // 여백 블러용 배경만 사진 사용
   $('#bgblur').style.backgroundImage = `url("${c.photo || PLACEHOLDER}")`;
-  $('#bgblur').style.filter = `blur(${c.styles.bgblur}px) brightness(.62)`;
-  $('#bgblur').style.display = (c.fit !== 'cover' || c.styles.bgblur > 0) ? 'block' : 'none';
+  $('#bgblur').style.filter = `blur(${c.styles.bgblur || 0}px) brightness(.55)`;
+  // contain/native 이거나 bgblur>0 일 때 여백 블러 표시
+  const needBlur = (c.fit !== 'cover') || ((c.styles.bgblur || 0) > 0);
+  $('#bgblur').style.display = needBlur ? 'block' : 'none';
 
   $('#photoWrap').style.height = (c.styles.ph || 63) + '%';
   const photo = $('#photo');
@@ -576,9 +611,19 @@ function render() {
   setTxt('sub', c.sub, c.text.sub, c.pos.sub, 'sub');
   setTxt('body', c.body, c.text.body, c.pos.body, 'body');
   setTxt('source', c.source, c.text.source, c.pos.source, 'source');
+  setTxt('credit', c.credit, c.text.credit || c.text.source, c.pos.credit || [9,94], 'credit');
   setTxt('time', timeText(), c.text.time, c.pos.time, 'time');
 
   form();
+}
+
+
+function updatePosFields() {
+  const key = ($('#posTarget') && $('#posTarget').value) || S.sel || 'headline';
+  if ($('#posTarget') && S.sel) $('#posTarget').value = S.sel;
+  const p = C().pos[key] || [9, 50];
+  if ($('#posX')) $('#posX').value = (+p[0]).toFixed(1);
+  if ($('#posY')) $('#posY').value = (+p[1]).toFixed(1);
 }
 
 function form() {
@@ -588,6 +633,7 @@ function form() {
   $('#subInput').value = c.sub || '';
   $('#bodyInput').value = c.body || '';
   $('#sourceInput').value = c.source || '';
+  if ($('#creditInput')) $('#creditInput').value = c.credit || '';
   $('#wmInput').value = c.wm || '';
   $('#dt').value = c.time || '';
   $('#zone').value = c.zone || 'KST';
@@ -596,6 +642,13 @@ function form() {
   $('#accentColor').value = c.styles.acc || '#e32539';
   $('#overlayOpacity').value = c.styles.op || 0;
   $('#overlayV').textContent = (c.styles.op || 0) + '%';
+  if ($('#photoH')) { $('#photoH').value = c.styles.ph || 63; $('#photoHV').textContent = (c.styles.ph || 63) + '%'; }
+  if ($('#fadeToggle')) $('#fadeToggle').checked = !!c.styles.fade;
+  if ($('#vigToggle')) $('#vigToggle').checked = !!c.styles.vig;
+  // fit seg
+  if ($('#fitSeg')) $$('#fitSeg button').forEach(b => b.classList.toggle('active', b.dataset.f === (c.fit || 'cover')));
+  // position fields for selected
+  updatePosFields();
 
   const map = {
     kicker: 'kicker',
@@ -631,6 +684,7 @@ function bind() {
     ['subInput', 'sub'],
     ['bodyInput', 'body'],
     ['sourceInput', 'source'],
+    ['creditInput', 'credit'],
     ['wmInput', 'wm']
   ];
   textMap.forEach(([id, k]) => {
@@ -870,6 +924,8 @@ function drag() {
       const k = e.dataset.k;
       if (!k) return;
       S.sel = k;
+      if ($('#posTarget')) $('#posTarget').value = k;
+      updatePosFields();
       const p = C().pos[k] || [9, 50];
       S.drag = {
         k,
@@ -903,42 +959,16 @@ function drag() {
     e.onpointercancel = () => { S.drag = null; };
   });
 
-  // 캔버스 팬 (빈 공간 드래그로 화면 이동)
+  // 휠로 줌 (캔버스 중앙 고정)
   const area = $('#canvasArea');
-  area.onpointerdown = ev => {
-    if (ev.target.closest('.txt') || ev.target.closest('.stage .photo') || S.drag) return;
-    // stage 자체나 빈 공간
-    S.pan = {
-      sx: ev.clientX,
-      sy: ev.clientY,
-      ox: S.panX,
-      oy: S.panY
-    };
-    area.classList.add('panning');
-    area.setPointerCapture(ev.pointerId);
-  };
-  area.onpointermove = ev => {
-    if (!S.pan) return;
-    S.panX = S.pan.ox + (ev.clientX - S.pan.sx);
-    S.panY = S.pan.oy + (ev.clientY - S.pan.sy);
-    render();
-  };
-  area.onpointerup = () => {
-    S.pan = null;
-    area.classList.remove('panning');
-  };
-  area.onpointercancel = () => {
-    S.pan = null;
-    area.classList.remove('panning');
-  };
-
-  // 휠로 줌
-  area.addEventListener('wheel', ev => {
-    ev.preventDefault();
-    const delta = ev.deltaY > 0 ? -0.05 : 0.05;
-    S.zoom = Math.max(0.35, Math.min(1.6, +(S.zoom + delta).toFixed(2)));
-    render();
-  }, { passive: false });
+  if (area) {
+    area.addEventListener('wheel', ev => {
+      ev.preventDefault();
+      const delta = ev.deltaY > 0 ? -0.05 : 0.05;
+      S.zoom = Math.max(0.4, Math.min(1.4, +(S.zoom + delta).toFixed(2)));
+      render();
+    }, { passive: false });
+  }
 }
 
 function openPreview() {
@@ -976,20 +1006,12 @@ function init() {
   $('#preview').onclick = openPreview;
   $('#previewPng').onclick = () => { exportP(); };
   $('#zo-').onclick = () => {
-    S.zoom = Math.max(0.35, +(S.zoom - 0.05).toFixed(2));
+    S.zoom = Math.max(0.4, +(S.zoom - 0.05).toFixed(2));
     render();
   };
   $('#zo+').onclick = () => {
-    S.zoom = Math.min(1.6, +(S.zoom + 0.05).toFixed(2));
+    S.zoom = Math.min(1.4, +(S.zoom + 0.05).toFixed(2));
     render();
-  };
-  // 더블클릭으로 팬/줌 리셋
-  $('#canvasArea').ondblclick = () => {
-    S.panX = 0;
-    S.panY = 0;
-    S.zoom = 0.86;
-    render();
-    toast('화면 위치·줌 초기화');
   };
   $$('#ratio button').forEach(b => {
     b.onclick = () => ratio(b.dataset.r);
@@ -1013,6 +1035,32 @@ function init() {
       if (e.target === m) m.classList.remove('show');
     });
   });
+
+
+  // 위치 조절
+  if ($('#posTarget')) $('#posTarget').onchange = () => { S.sel = $('#posTarget').value; updatePosFields(); render(); };
+  if ($('#posApply')) $('#posApply').onclick = () => {
+    const k = $('#posTarget').value;
+    C().pos[k] = [+$('#posX').value, +$('#posY').value];
+    S.sel = k;
+    render();
+    toast('위치 적용');
+  };
+  if ($('#posReset')) $('#posReset').onclick = () => {
+    const defaults = {kicker:[9,4.2],wm:[6.5,4.2],headline:[9,59],sub:[9,71.7],body:[9,76],source:[9,96.7],credit:[9,94.2],time:[6.5,96.7]};
+    const k = $('#posTarget').value;
+    C().pos[k] = defaults[k] || [9,50];
+    updatePosFields();
+    render();
+  };
+  // 이미지 맞춤
+  if ($('#fitSeg')) $$('#fitSeg button').forEach(b => b.onclick = () => { C().fit = b.dataset.f; render(); toast('맞춤: '+b.dataset.f); });
+  if ($('#upload2')) $('#upload2').onclick = upload;
+  if ($('#openFx')) $('#openFx').onclick = effects;
+  // 사진 높이
+  if ($('#photoH')) $('#photoH').oninput = e => { C().styles.ph = +e.target.value; $('#photoHV').textContent = e.target.value+'%'; render(); };
+  if ($('#fadeToggle')) $('#fadeToggle').onchange = e => { C().styles.fade = e.target.checked; render(); };
+  if ($('#vigToggle')) $('#vigToggle').onchange = e => { C().styles.vig = e.target.checked; render(); };
 
   render();
 }
