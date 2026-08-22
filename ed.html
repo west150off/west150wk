@@ -6,7 +6,7 @@
 <title>Card Editor Pro</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=IBM+Plex+Sans+KR:wght@400;600;700&family=Black+Han+Sans&family=Do+Hyeon&family=Jua&family=Gaegu:wght@400;700&family=Nanum+Myeongjo:wght@400;700;800&family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Noto+Serif+KR:wght@400;600;700&family=IBM+Plex+Sans+KR:wght@400;600;700&family=Black+Han+Sans&family=Do+Hyeon&family=Jua&family=Gaegu:wght@400;700&family=Nanum+Myeongjo:wght@400;700;800&family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css" />
 <style>
   @font-face {
@@ -35,27 +35,10 @@
     --danger:#ff5c7a;
     --success:#3ecf8e;
   }
-  [data-editor-theme="light"]{
-    --chrome-bg:#ebe8f2;
-    --chrome-panel:#ffffff;
-    --chrome-line:#ddd6ea;
-    --chrome-text:#1a1528;
-    --chrome-sub:#6b6580;
-    --chrome-input:#f5f2fa;
-    --chrome-btn:#ebe6f5;
-    --chrome-btn-hover:#ddd5f0;
-    --chrome-dropdown:#ffffff;
-    --chrome-stage:#e4e0ec;
-    --accent:#6c4aff;
-    --accent-soft:#6c4aff22;
-    --danger:#e03d5c;
-    --success:#2aad6e;
-  }
   *{box-sizing:border-box;}
   html,body{margin:0;height:100%;font-family:'Pretendard Variable','Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:var(--chrome-bg);color:var(--chrome-text);overflow:hidden;}
   #app{display:flex;flex-direction:column;height:100vh;}
 
-  /* Topbar */
   #topbar{display:flex;align-items:center;justify-content:space-between;padding:0 16px;height:52px;background:var(--chrome-panel);border-bottom:1px solid var(--chrome-line);flex:none;z-index:300;}
   #topbar .brand{font-weight:700;font-size:14px;letter-spacing:.03em;display:flex;align-items:center;gap:8px;}
   #topbar .brand .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent);}
@@ -76,20 +59,20 @@
   .dropdown{position:absolute;top:calc(100% + 6px);left:0;background:var(--chrome-dropdown);border:1px solid var(--chrome-line);border-radius:10px;padding:6px;display:none;flex-direction:column;min-width:180px;box-shadow:0 14px 34px #0006;z-index:400;}
   .dropdown.open{display:flex;}
   .dropdown.panelDropdown{padding:14px;width:300px;gap:10px;max-height:78vh;overflow-y:auto;}
-  .dropdown.wide{width:240px;max-height:70vh;overflow-y:auto;}
+  .dropdown.wide{width:260px;max-height:70vh;overflow-y:auto;}
   .ddItem{padding:9px 11px;border-radius:7px;font-size:13px;cursor:pointer;color:var(--chrome-text);display:flex;align-items:center;gap:8px;}
   .ddItem:hover{background:var(--chrome-btn-hover);}
   .ddItem.active{background:var(--accent-soft);color:var(--accent);}
   .ddItem .ic{opacity:.7;font-size:14px;width:18px;text-align:center;}
   .ddSep{height:1px;background:var(--chrome-line);margin:6px 0;}
+  .ddLabel{padding:8px 11px 4px;font-size:10px;font-weight:700;color:var(--chrome-sub);letter-spacing:.06em;text-transform:uppercase;}
 
   #body{flex:1;display:flex;min-height:0;}
 
-  /* Left panel - slides */
   #left{width:168px;flex:none;background:var(--chrome-panel);border-right:1px solid var(--chrome-line);display:flex;flex-direction:column;}
   #left .hd{padding:12px 12px 6px;font-size:11px;color:var(--chrome-sub);font-weight:700;letter-spacing:.04em;text-transform:uppercase;}
   #slideList{flex:1;overflow-y:auto;padding:0 10px 10px;display:flex;flex-direction:column;gap:8px;}
-  .thumb{position:relative;border-radius:8px;overflow:hidden;cursor:pointer;border:2px solid transparent;background:#000;aspect-ratio:4/5;flex-shrink:0;}
+  .thumb{position:relative;border-radius:8px;overflow:hidden;cursor:pointer;border:2px solid transparent;background:#000;aspect-ratio:1/1;flex-shrink:0;}
   .thumb.active{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
   .thumb iframe{width:400%;height:400%;transform:scale(.25);transform-origin:top left;border:0;pointer-events:none;}
   .thumb .idx{position:absolute;top:4px;left:5px;font-size:10px;font-weight:700;color:#fff;background:#000a;padding:1px 5px;border-radius:4px;}
@@ -99,35 +82,191 @@
   #addSlide{margin:0 10px 12px;padding:10px;border-radius:8px;background:var(--chrome-btn);color:var(--chrome-sub);font-size:12px;font-weight:600;border:1px dashed var(--chrome-line);width:calc(100% - 20px);}
   #addSlide:hover{color:var(--chrome-text);border-color:var(--accent);}
 
-  /* Stage */
   #stage{flex:1;display:flex;align-items:center;justify-content:center;overflow:auto;background:radial-gradient(circle at 40% 30%, #1a1530 0%, var(--chrome-stage) 65%);padding:32px;}
-  #canvasWrap{box-shadow:0 28px 56px -18px #000a;border-radius:4px;position:relative;}
+  #canvasWrap{box-shadow:0 28px 56px -18px #000a;border-radius:2px;position:relative;}
 
-  /* Card base */
-  #card{width:400px;height:500px;position:relative;overflow:hidden;display:flex;flex-direction:column;padding:28px 26px 24px;background:#faf9fc;color:#1a1a1a;}
-  #card .rowTop{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
-  #card .badgeTop{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;opacity:.85;}
-  #card .pageNum{font-size:11px;font-weight:600;opacity:.5;}
-  #card .frame{flex:1;margin-top:12px;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden;}
-  #card .pill{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.04em;padding:5px 12px;border-radius:20px;margin-bottom:14px;width:fit-content;}
-  #card .titleText{font-size:28px;line-height:1.3;font-weight:800;letter-spacing:-.02em;white-space:pre-wrap;word-break:keep-all;}
-  #card .titleText .t-accent{font-weight:900;}
-  #card .titleText .t-underline{text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:2px;}
-  #card .subText{margin-top:14px;font-size:15px;line-height:1.55;font-weight:500;white-space:pre-wrap;word-break:keep-all;}
-  #card .subText .t-accent{font-weight:800;}
-  #card .subText .t-underline{text-decoration:underline;text-underline-offset:3px;}
-  #card .rowBottom{display:flex;justify-content:space-between;align-items:center;margin-top:16px;}
-  #card .handle{font-size:12px;font-weight:700;opacity:.7;}
+  /* ========== CARD BASE ========== */
+  #card{width:480px;height:480px;position:relative;overflow:hidden;display:flex;flex-direction:column;background:#111318;color:#f5f2ec;}
 
-  /* Image areas */
+  /* ===== TEMPLATE A: Politics Insight ===== */
+  #card.tpl-politics{
+    background:#111318;
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+    padding:28px 28px 24px;
+    color:#f5f2ec;
+  }
+  #card.tpl-politics .tagYellow{
+    display:inline-block;
+    background:#E6FF00;
+    color:#0a0a0a;
+    font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:11px;
+    font-weight:800;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    padding:7px 14px;
+    margin-bottom:22px;
+    width:fit-content;
+  }
+  #card.tpl-politics .headline{
+    font-family:Georgia,'Noto Serif KR','Nanum Myeongjo',serif;
+    font-weight:400;
+    font-size:32px;
+    line-height:1.15;
+    letter-spacing:-.03em;
+    color:#fff;
+    margin:0 0 28px;
+    white-space:pre-wrap;
+    word-break:keep-all;
+    flex:1;
+  }
+  #card.tpl-politics .bulletBox{
+    background:#1a1d24;
+    border:3px solid #E50914;
+    padding:18px 18px 16px;
+    margin-top:auto;
+  }
+  #card.tpl-politics .bulletItem{
+    display:flex;
+    gap:12px;
+    align-items:flex-start;
+    margin-bottom:12px;
+    font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:14px;
+    line-height:1.45;
+    color:rgba(245,242,236,.92);
+    word-break:keep-all;
+  }
+  #card.tpl-politics .bulletItem:last-child{margin-bottom:0;}
+  #card.tpl-politics .bulletMark{
+    flex:none;
+    width:10px;height:10px;
+    background:#E6FF00;
+    margin-top:5px;
+  }
+  #card.tpl-politics .metaRow{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:16px;
+    padding-top:12px;
+    border-top:1px solid rgba(255,255,255,.12);
+    font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:11px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:rgba(255,255,255,.55);
+  }
+
+  /* ===== TEMPLATE B: Breaking Photo ===== */
+  #card.tpl-breaking{
+    background:#111318;
+    padding:0;
+    color:#f5f2ec;
+  }
+  #card.tpl-breaking .photoZone{
+    position:relative;
+    width:100%;
+    height:50%;
+    overflow:hidden;
+    flex:none;
+  }
+  #card.tpl-breaking .photoZone .layer{
+    position:absolute;inset:0;
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+  }
+  #card.tpl-breaking .photoZone .vignette{
+    position:absolute;inset:0;
+    background:radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,.55) 100%);
+    pointer-events:none;
+  }
+  #card.tpl-breaking .photoZone .redLine{
+    position:absolute;left:0;right:0;bottom:0;
+    height:8px;
+    background:#E50914;
+  }
+  #card.tpl-breaking .tagRed{
+    position:absolute;
+    top:18px;left:20px;
+    z-index:3;
+    background:#E50914;
+    color:#fff;
+    font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:11px;
+    font-weight:800;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    padding:6px 12px;
+  }
+  #card.tpl-breaking .lower{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    padding:22px 26px 20px;
+    min-height:0;
+  }
+  #card.tpl-breaking .headline{
+    font-family:Georgia,'Noto Serif KR','Nanum Myeongjo',serif;
+    font-weight:400;
+    font-size:26px;
+    line-height:1.2;
+    letter-spacing:-.025em;
+    color:#fff;
+    margin:0 0 14px;
+    white-space:pre-wrap;
+    word-break:keep-all;
+  }
+  #card.tpl-breaking .summary{
+    font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:13.5px;
+    line-height:1.55;
+    color:rgba(245,242,236,.88);
+    padding-left:14px;
+    border-left:3px solid #E6FF00;
+    white-space:pre-wrap;
+    word-break:keep-all;
+    margin-bottom:auto;
+  }
+  #card.tpl-breaking .metaRow{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:16px;
+    padding-top:12px;
+    border-top:1px solid rgba(255,255,255,.12);
+    font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:11px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:rgba(255,255,255,.55);
+  }
+
+  /* Generic fallback card */
+  #card.tpl-basic{
+    padding:28px 26px 24px;
+    background:#faf9fc;
+    color:#1a1a1a;
+  }
+  #card.tpl-basic .badgeTop{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;opacity:.85;}
+  #card.tpl-basic .pageNum{font-size:11px;font-weight:600;opacity:.5;}
+  #card.tpl-basic .frame{flex:1;margin-top:12px;display:flex;flex-direction:column;justify-content:center;}
+  #card.tpl-basic .pill{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.04em;padding:5px 12px;border-radius:20px;margin-bottom:14px;width:fit-content;}
+  #card.tpl-basic .titleText{font-size:28px;line-height:1.3;font-weight:800;letter-spacing:-.02em;white-space:pre-wrap;word-break:keep-all;}
+  #card.tpl-basic .subText{margin-top:14px;font-size:15px;line-height:1.55;font-weight:500;white-space:pre-wrap;word-break:keep-all;}
+  #card.tpl-basic .rowTop{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
+  #card.tpl-basic .rowBottom{display:flex;justify-content:space-between;align-items:center;margin-top:16px;}
+  #card.tpl-basic .handle{font-size:12px;font-weight:700;opacity:.7;}
+
   #card .imgBox{position:relative;overflow:hidden;background:#0002;}
   #card .imgBox.full{position:absolute;inset:0;z-index:0;border-radius:0;}
-  #card .imgBox.split{width:100%;height:42%;flex:none;margin-bottom:14px;border-radius:6px;}
-  #card .imgBox.bottom{width:100%;height:36%;flex:none;margin-top:14px;border-radius:6px;}
   #card .imgBox .layer{position:absolute;inset:0;background-repeat:no-repeat;}
   #card .imgBox .blurBg{position:absolute;inset:0;background-size:cover;background-position:center;filter:blur(28px) brightness(.85);transform:scale(1.15);}
   #card .scrim{position:absolute;inset:0;pointer-events:none;z-index:1;}
   #card .z2{position:relative;z-index:2;}
+  #card .titleText .t-accent,#card .subText .t-accent{font-weight:800;}
+  #card .titleText .t-underline,#card .subText .t-underline{text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:2px;}
 
   /* Right panel */
   #right{width:300px;flex:none;background:var(--chrome-panel);border-left:1px solid var(--chrome-line);overflow-y:auto;}
@@ -151,8 +290,6 @@
   .slider input[type=range]{flex:1;accent-color:var(--accent);}
   .slider .val{font-size:11px;color:var(--chrome-sub);width:34px;text-align:right;font-variant-numeric:tabular-nums;}
   .hint{font-size:11px;color:var(--chrome-sub);margin-top:5px;line-height:1.45;}
-  .swatches{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px;}
-  .sw{width:20px;height:20px;border-radius:5px;cursor:pointer;border:1px solid #ffffff22;}
   .formatRow{display:flex;gap:5px;}
   .formatBtn{flex:1;padding:7px 0;border-radius:7px;background:var(--chrome-input);border:1px solid var(--chrome-line);color:var(--chrome-sub);font-size:13px;font-weight:700;transition:.15s;}
   .formatBtn:hover{color:var(--chrome-text);border-color:var(--accent);}
@@ -164,7 +301,6 @@
   .imgPreviewRow{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
   .imgThumb{width:52px;height:52px;border-radius:8px;background-size:cover;background-position:center;background-color:#0e0b16;border:1px solid var(--chrome-line);flex:none;}
 
-  /* Undo float */
   #undoRedoFloat{
     position:fixed;right:16px;bottom:16px;z-index:100;
     display:flex;gap:5px;padding:5px;border-radius:11px;
@@ -178,7 +314,6 @@
   #undoRedoFloat button:hover:not(:disabled){background:rgba(139,108,255,.35);border-color:rgba(139,108,255,.5);}
   #undoRedoFloat button:disabled{opacity:.35;cursor:default;}
 
-  /* Mobile */
   #mobileBar{display:none;gap:5px;align-items:center;}
   @media (max-width:960px){
     #mobileBar{display:flex;}
@@ -190,13 +325,9 @@
     #topbar{padding:0 10px;}
     .btn{padding:7px 10px;font-size:12px;}
   }
-
   ::-webkit-scrollbar{width:7px;height:7px;}
   ::-webkit-scrollbar-thumb{background:#3a3358;border-radius:4px;}
   button:focus-visible, select:focus-visible, input:focus-visible, textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
-
-  body.exporting #card .freeText.selected,
-  body.exporting #card .freeSticky.selected{border-color:transparent!important;outline:none!important;}
 </style>
 </head>
 <body>
@@ -208,39 +339,37 @@
       <button type="button" class="btn ghost" id="mobilePanelBtn">패널</button>
     </div>
     <div class="actions">
-      <!-- 글꼴 메뉴 -->
       <div class="menuWrap">
         <button class="btn ghost" id="fontMenuBtn">글꼴 ▾</button>
         <div class="dropdown panelDropdown" id="fontMenu">
           <div class="field">
             <label>기본 글꼴</label>
             <select id="fontSelect">
-              <option value="pretendard">Pretendard (필수)</option>
-              <option value="ridibatang">리디바탕 (필수)</option>
+              <option value="pretendard">Pretendard</option>
+              <option value="ridibatang">리디바탕</option>
+              <option value="notoserif">Noto Serif KR</option>
               <option value="noto">Noto Sans KR</option>
               <option value="plex">IBM Plex Sans KR</option>
+              <option value="myeongjo">Nanum Myeongjo</option>
+              <option value="batang">Gowun Batang</option>
               <option value="black">Black Han Sans</option>
               <option value="dohyeon">Do Hyeon</option>
               <option value="jua">Jua</option>
               <option value="gaegu">Gaegu</option>
-              <option value="myeongjo">Nanum Myeongjo</option>
-              <option value="batang">Gowun Batang</option>
             </select>
           </div>
           <div class="field">
             <label>제목 글꼴</label>
             <select id="titleFontSelect">
               <option value="">기본 글꼴과 동일</option>
-              <option value="pretendard">Pretendard</option>
+              <option value="notoserif">Noto Serif KR (추천)</option>
+              <option value="myeongjo">Nanum Myeongjo</option>
               <option value="ridibatang">리디바탕</option>
+              <option value="pretendard">Pretendard</option>
               <option value="noto">Noto Sans KR</option>
               <option value="plex">IBM Plex Sans KR</option>
-              <option value="black">Black Han Sans</option>
-              <option value="dohyeon">Do Hyeon</option>
-              <option value="jua">Jua</option>
-              <option value="gaegu">Gaegu</option>
-              <option value="myeongjo">Nanum Myeongjo</option>
               <option value="batang">Gowun Batang</option>
+              <option value="black">Black Han Sans</option>
             </select>
           </div>
           <div class="field">
@@ -251,12 +380,8 @@
               <option value="ridibatang">리디바탕</option>
               <option value="noto">Noto Sans KR</option>
               <option value="plex">IBM Plex Sans KR</option>
-              <option value="black">Black Han Sans</option>
-              <option value="dohyeon">Do Hyeon</option>
-              <option value="jua">Jua</option>
-              <option value="gaegu">Gaegu</option>
+              <option value="notoserif">Noto Serif KR</option>
               <option value="myeongjo">Nanum Myeongjo</option>
-              <option value="batang">Gowun Batang</option>
             </select>
           </div>
           <div class="field">
@@ -267,18 +392,9 @@
               <button type="button" class="alignBtn" data-align="right">오른쪽</button>
             </div>
           </div>
-          <div class="field">
-            <label>제목 강조색 / 밑줄</label>
-            <div class="formatRow">
-              <button type="button" class="formatBtn" id="fmtAccent" title="강조색">A</button>
-              <button type="button" class="formatBtn" id="fmtUnderline" title="밑줄">U</button>
-            </div>
-            <div class="hint">**굵게** · ==강조색== · [[밑줄]] 문법 지원 (제목 입력칸)</div>
-          </div>
         </div>
       </div>
 
-      <!-- 사진 메뉴 -->
       <div class="menuWrap">
         <button class="btn ghost" id="imageMenuBtn">사진 ▾</button>
         <div class="dropdown panelDropdown" id="imageMenu">
@@ -293,8 +409,8 @@
           <div class="field">
             <label>배치 방식</label>
             <select id="imageFit">
-              <option value="cover">전체 채우기 (cover)</option>
-              <option value="contain">전체 보이기 (contain)</option>
+              <option value="cover">전체 채우기</option>
+              <option value="contain">전체 보이기</option>
               <option value="original">원본 크기</option>
             </select>
           </div>
@@ -307,12 +423,11 @@
             </select>
           </div>
           <div class="field">
-            <label>원본 여백 블러 채우기</label>
+            <label>원본 여백 블러</label>
             <div class="formatRow">
               <button type="button" class="formatBtn active" id="blurFillOn">켜기</button>
               <button type="button" class="formatBtn" id="blurFillOff">끄기</button>
             </div>
-            <div class="hint">원본이 작을 때 남는 공간을 블러 배경으로 채웁니다.</div>
           </div>
           <div class="field">
             <label>사진 효과</label>
@@ -331,29 +446,20 @@
           </div>
           <div class="field">
             <label>비네팅 강도</label>
-            <div class="slider"><input type="range" id="vignetteStrength" min="0" max="60" value="0"><span class="val" id="vignetteStrengthVal">0</span></div>
-          </div>
-          <div class="field">
-            <label>스크림 방향</label>
-            <select id="scrimDir">
-              <option value="none">없음</option>
-              <option value="bottom">하단 강조</option>
-              <option value="top">상단 강조</option>
-              <option value="left">좌측 강조</option>
-              <option value="right">우측 강조</option>
-            </select>
+            <div class="slider"><input type="range" id="vignetteStrength" min="0" max="60" value="20"><span class="val" id="vignetteStrengthVal">20</span></div>
           </div>
         </div>
       </div>
 
-      <!-- 레이아웃 메뉴 -->
       <div class="menuWrap">
-        <button class="btn ghost" id="layoutMenuBtn">레이아웃 ▾</button>
+        <button class="btn ghost" id="layoutMenuBtn">템플릿 ▾</button>
         <div class="dropdown wide" id="layoutMenu">
-          <div class="ddItem active" data-template="text"><span class="ic">Aa</span>텍스트 카드</div>
-          <div class="ddItem" data-template="full"><span class="ic">▣</span>풀 이미지</div>
-          <div class="ddItem" data-template="split"><span class="ic">⬒</span>상단 이미지</div>
-          <div class="ddItem" data-template="bottom"><span class="ic">⬓</span>하단 이미지</div>
+          <div class="ddLabel">프리미엄 에디토리얼</div>
+          <div class="ddItem active" data-template="politics"><span class="ic">◆</span>A · Politics Insight</div>
+          <div class="ddItem" data-template="breaking"><span class="ic">▣</span>B · Breaking Photo</div>
+          <div class="ddSep"></div>
+          <div class="ddLabel">기본</div>
+          <div class="ddItem" data-template="basic"><span class="ic">Aa</span>텍스트 기본</div>
         </div>
       </div>
 
@@ -375,79 +481,120 @@
 
     <div id="right">
       <div class="sec">
+        <h3>카테고리 · 출처</h3>
+        <div class="field">
+          <label>카테고리</label>
+          <select id="categorySelect">
+            <option value="정치">정치</option>
+            <option value="정치 인사이트">정치 인사이트</option>
+            <option value="국회">국회</option>
+            <option value="청와대·대통령실">청와대·대통령실</option>
+            <option value="선거">선거</option>
+            <option value="외교">외교</option>
+            <option value="안보">안보</option>
+            <option value="경제">경제</option>
+            <option value="금융">금융</option>
+            <option value="부동산">부동산</option>
+            <option value="산업">산업</option>
+            <option value="노동">노동</option>
+            <option value="사회">사회</option>
+            <option value="사건·사고">사건·사고</option>
+            <option value="교육">교육</option>
+            <option value="복지">복지</option>
+            <option value="환경">환경</option>
+            <option value="기후">기후</option>
+            <option value="과학">과학</option>
+            <option value="IT·테크">IT·테크</option>
+            <option value="문화">문화</option>
+            <option value="연예">연예</option>
+            <option value="스포츠">스포츠</option>
+            <option value="국제">국제</option>
+            <option value="북한">북한</option>
+            <option value="보도자료">보도자료</option>
+            <option value="브리핑">브리핑</option>
+            <option value="성명">성명</option>
+            <option value="논평">논평</option>
+            <option value="칼럼">칼럼</option>
+            <option value="인터뷰">인터뷰</option>
+            <option value="팩트체크">팩트체크</option>
+            <option value="속보">속보</option>
+            <option value="단독">단독</option>
+            <option value="해설">해설</option>
+            <option value="데이터">데이터</option>
+            <option value="인포그래픽">인포그래픽</option>
+            <option value="기타">기타</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>태그 문구 (카드 상단)</label>
+          <input type="text" id="tagText" value="POLITICS INSIGHT" placeholder="POLITICS INSIGHT">
+        </div>
+        <div class="field">
+          <label>출처</label>
+          <input type="text" id="sourceText" value="Source: Newsroom" placeholder="Source: 연합뉴스">
+        </div>
+        <div class="field">
+          <label>날짜</label>
+          <input type="text" id="dateText" value="" placeholder="2026.08.23">
+        </div>
+      </div>
+
+      <div class="sec">
         <h3>텍스트</h3>
         <div class="field">
-          <label>배지 (상단)</label>
-          <input type="text" id="badgeTop" value="CARD NEWS">
-        </div>
-        <div class="field">
-          <label>필 텍스트</label>
-          <input type="text" id="pillText" value="POINT">
-        </div>
-        <div class="field">
-          <label>제목</label>
-          <textarea id="titleText" style="min-height:72px;">제목을 입력하세요</textarea>
+          <label>헤드라인 (제목)</label>
+          <textarea id="titleText" style="min-height:80px;">여야, 공급망 안정을 위한 긴급 특별법안 본회의 전격 통과</textarea>
           <div class="hint">**굵게** · ==강조색== · [[밑줄]] 사용 가능</div>
         </div>
-        <div class="field">
-          <label>본문</label>
-          <textarea id="subText" style="min-height:90px;">본문 내용을 입력하세요.</textarea>
+        <div class="field" id="bulletsField">
+          <label>불릿 포인트 (한 줄에 하나)</label>
+          <textarea id="bulletsText" style="min-height:90px;">여야 원내대표 긴급 합의 도출
+본회의 표결 결과 가결
+시행령 마련 절차 착수</textarea>
         </div>
-        <div class="field">
-          <label>핸들 / 출처</label>
-          <input type="text" id="handleText" value="@cardeditor">
+        <div class="field" id="summaryField" style="display:none;">
+          <label>요약 문장</label>
+          <textarea id="summaryText" style="min-height:72px;">새 법안 통과 직후 여야 원내대표가 긴급 브리핑을 갖고 향후 일정을 설명했다.</textarea>
         </div>
       </div>
 
       <div class="sec">
         <h3>글꼴 크기</h3>
         <div class="field">
-          <label>제목 크기 (12~120)</label>
-          <div class="slider"><input type="range" id="titleSize" min="12" max="120" value="28"><span class="val" id="titleSizeVal">28</span></div>
+          <label>헤드라인 (16~72)</label>
+          <div class="slider"><input type="range" id="titleSize" min="16" max="72" value="32"><span class="val" id="titleSizeVal">32</span></div>
         </div>
         <div class="field">
-          <label>본문 크기 (10~64)</label>
-          <div class="slider"><input type="range" id="subSize" min="10" max="64" value="15"><span class="val" id="subSizeVal">15</span></div>
+          <label>본문 / 불릿 (10~36)</label>
+          <div class="slider"><input type="range" id="subSize" min="10" max="36" value="14"><span class="val" id="subSizeVal">14</span></div>
         </div>
         <div class="field">
-          <label>배지 크기 (8~28)</label>
-          <div class="slider"><input type="range" id="badgeSize" min="8" max="28" value="11"><span class="val" id="badgeSizeVal">11</span></div>
-        </div>
-        <div class="field">
-          <label>필 크기 (8~28)</label>
-          <div class="slider"><input type="range" id="pillSize" min="8" max="28" value="11"><span class="val" id="pillSizeVal">11</span></div>
-        </div>
-        <div class="field">
-          <label>핸들 크기 (8~24)</label>
-          <div class="slider"><input type="range" id="handleSize" min="8" max="24" value="12"><span class="val" id="handleSizeVal">12</span></div>
+          <label>태그 (8~20)</label>
+          <div class="slider"><input type="range" id="tagSize" min="8" max="20" value="11"><span class="val" id="tagSizeVal">11</span></div>
         </div>
       </div>
 
       <div class="sec">
-        <h3>색상</h3>
+        <h3>브랜드 컬러</h3>
         <div class="row2">
           <div class="field">
             <label>배경</label>
-            <div class="colorField"><input type="color" id="bgColor" value="#faf9fc"><span id="bgColorHex">#faf9fc</span></div>
+            <div class="colorField"><input type="color" id="bgColor" value="#111318"><span id="bgColorHex">#111318</span></div>
           </div>
           <div class="field">
-            <label>글자</label>
-            <div class="colorField"><input type="color" id="textColor" value="#1a1a1a"><span id="textColorHex">#1a1a1a</span></div>
+            <label>헤드라인</label>
+            <div class="colorField"><input type="color" id="textColor" value="#ffffff"><span id="textColorHex">#ffffff</span></div>
           </div>
         </div>
         <div class="row2">
           <div class="field">
-            <label>강조색</label>
-            <div class="colorField"><input type="color" id="accentColor" value="#8b6cff"><span id="accentColorHex">#8b6cff</span></div>
+            <label>Neon Yellow</label>
+            <div class="colorField"><input type="color" id="neonColor" value="#E6FF00"><span id="neonColorHex">#E6FF00</span></div>
           </div>
           <div class="field">
-            <label>필 배경</label>
-            <div class="colorField"><input type="color" id="pillBg" value="#8b6cff"><span id="pillBgHex">#8b6cff</span></div>
+            <label>Crimson</label>
+            <div class="colorField"><input type="color" id="crimsonColor" value="#E50914"><span id="crimsonColorHex">#E50914</span></div>
           </div>
-        </div>
-        <div class="field">
-          <label>필 글자색</label>
-          <div class="colorField"><input type="color" id="pillColor" value="#ffffff"><span id="pillColorHex">#ffffff</span></div>
         </div>
       </div>
 
@@ -456,8 +603,8 @@
         <div class="field">
           <label>비율</label>
           <select id="sizePreset">
-            <option value="4:5">4:5 (인스타 추천)</option>
-            <option value="1:1">1:1 정사각</option>
+            <option value="1:1" selected>1:1 정사각 (추천)</option>
+            <option value="4:5">4:5 인스타</option>
             <option value="9:16">9:16 스토리</option>
             <option value="custom">직접 입력</option>
           </select>
@@ -465,11 +612,11 @@
         <div class="row2">
           <div class="field">
             <label>너비</label>
-            <input type="number" id="cardWidth" value="400" min="200" max="1200">
+            <input type="number" id="cardWidth" value="480" min="200" max="1200">
           </div>
           <div class="field">
             <label>높이</label>
-            <input type="number" id="cardHeight" value="500" min="200" max="1600">
+            <input type="number" id="cardHeight" value="480" min="200" max="1600">
           </div>
         </div>
       </div>
@@ -477,17 +624,17 @@
   </div>
 
   <div id="undoRedoFloat">
-    <button type="button" id="undoBtn" title="실행 취소 (Ctrl+Z)">↩</button>
-    <button type="button" id="redoBtn" title="다시 실행 (Ctrl+Y)">↪</button>
+    <button type="button" id="undoBtn" title="실행 취소">↩</button>
+    <button type="button" id="redoBtn" title="다시 실행">↪</button>
   </div>
 </div>
 
 <script>
-/* ========== Utilities ========== */
 const $ = id => document.getElementById(id);
 const FONTS = {
   pretendard: "'Pretendard Variable','Pretendard',sans-serif",
   ridibatang: "'RIDIBatang','Nanum Myeongjo',serif",
+  notoserif: "'Noto Serif KR',Georgia,serif",
   noto: "'Noto Sans KR',sans-serif",
   plex: "'IBM Plex Sans KR',sans-serif",
   black: "'Black Han Sans',sans-serif",
@@ -501,7 +648,6 @@ const FONTS = {
 function escapeHtml(str){
   return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
-
 function parseInlineFormat(text, accentColor){
   let s = escapeHtml(text || '');
   s = s.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
@@ -509,366 +655,334 @@ function parseInlineFormat(text, accentColor){
   s = s.replace(/\[\[(.+?)\]\]/g, '<span class="t-underline">$1</span>');
   return s;
 }
+function filterCss(f){
+  if(f==='gray') return 'grayscale(1)';
+  if(f==='sepia') return 'sepia(.7)';
+  if(f==='vivid') return 'contrast(1.15) saturate(1.25)';
+  if(f==='dark') return 'brightness(.72)';
+  if(f==='soft') return 'brightness(1.05) contrast(.92) saturate(.9)';
+  return 'none';
+}
+function todayStr(){
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const day = String(d.getDate()).padStart(2,'0');
+  return y+'.'+m+'.'+day;
+}
 
-/* ========== State ========== */
 function defaults(){
   return {
-    template: 'text',
-    badgeTop: 'CARD NEWS',
-    pillText: 'POINT',
-    title: '제목을 입력하세요',
-    sub: '본문 내용을 입력하세요.',
-    handle: '@cardeditor',
-    bg: '#faf9fc',
-    text: '#1a1a1a',
-    accent: '#8b6cff',
-    pillBg: '#8b6cff',
-    pillColor: '#ffffff',
+    template: 'politics',
+    category: '정치',
+    tagText: 'POLITICS INSIGHT',
+    title: '여야, 공급망 안정을 위한 긴급 특별법안 본회의 전격 통과',
+    bullets: '여야 원내대표 긴급 합의 도출\n본회의 표결 결과 가결\n시행령 마련 절차 착수',
+    summary: '새 법안 통과 직후 여야 원내대표가 긴급 브리핑을 갖고 향후 일정을 설명했다.',
+    source: 'Source: Newsroom',
+    date: todayStr(),
+    bg: '#111318',
+    text: '#ffffff',
+    neon: '#E6FF00',
+    crimson: '#E50914',
     font: 'pretendard',
-    titleFont: '',
-    bodyFont: '',
+    titleFont: 'notoserif',
+    bodyFont: 'pretendard',
     align: 'left',
-    titleSize: 28,
-    subSize: 15,
-    badgeSize: 11,
-    pillSize: 11,
-    handleSize: 12,
-    cardWidth: 400,
-    cardHeight: 500,
-    sizePreset: '4:5',
+    titleSize: 32,
+    subSize: 14,
+    tagSize: 11,
+    cardWidth: 480,
+    cardHeight: 480,
+    sizePreset: '1:1',
     image: null,
     imageFit: 'cover',
     imagePos: 'center',
     imageFilter: 'none',
     imageOverlay: 0,
     blurFill: true,
-    vignetteStrength: 0,
-    scrimDir: 'none',
-    showPageNum: true
+    vignetteStrength: 25
   };
 }
 
 let slides = [defaults()];
 let active = 0;
 
-/* ========== Card Markup ========== */
-function fontCss(key){
-  return FONTS[key] || FONTS.pretendard;
-}
-
-function filterCss(f){
-  if(f === 'gray') return 'grayscale(1)';
-  if(f === 'sepia') return 'sepia(.7)';
-  if(f === 'vivid') return 'contrast(1.15) saturate(1.25)';
-  if(f === 'dark') return 'brightness(.72)';
-  if(f === 'soft') return 'brightness(1.05) contrast(.92) saturate(.9)';
-  return 'none';
-}
-
-function scrimStyle(dir, overlay){
-  const o = Math.max(0, Math.min(80, overlay||0)) / 100;
-  if(dir === 'bottom') return `background:linear-gradient(to top,rgba(0,0,0,${0.55+o*0.4}) 0%,transparent 55%);`;
-  if(dir === 'top') return `background:linear-gradient(to bottom,rgba(0,0,0,${0.55+o*0.4}) 0%,transparent 55%);`;
-  if(dir === 'left') return `background:linear-gradient(to right,rgba(0,0,0,${0.55+o*0.4}) 0%,transparent 55%);`;
-  if(dir === 'right') return `background:linear-gradient(to left,rgba(0,0,0,${0.55+o*0.4}) 0%,transparent 55%);`;
-  if(o > 0) return `background:rgba(0,0,0,${o});`;
-  return '';
-}
-
-function vignetteStyle(str){
-  if(!str || str <= 0) return '';
-  const s = str / 100;
-  return `box-shadow:inset 0 0 ${80*s}px ${30*s}px rgba(0,0,0,${0.55*s});`;
-}
-
-function imageBoxHtml(s, mode){
-  if(!s.image) return '';
-  const posMap = {top:'center top', center:'center center', bottom:'center bottom'};
-  const pos = posMap[s.imagePos] || 'center center';
-  const fit = s.imageFit || 'cover';
-  const filt = filterCss(s.imageFilter);
-  let bgSize = fit === 'original' ? 'auto' : fit;
-  let blurLayer = '';
-  if(fit === 'original' && s.blurFill !== false){
-    blurLayer = `<div class="blurBg" style="background-image:url('${s.image}');"></div>`;
-  }
-  const layerStyle = `background-image:url('${s.image}');background-size:${bgSize};background-position:${pos};filter:${filt};`;
-  return `<div class="imgBox ${mode}">${blurLayer}<div class="layer" style="${layerStyle}"></div></div>`;
-}
+function fontCss(key){ return FONTS[key] || FONTS.pretendard; }
 
 function cardMarkup(s, pageIdx, total){
-  const w = s.cardWidth || 400;
-  const h = s.cardHeight || 500;
-  const baseFont = fontCss(s.font);
-  const titleFont = s.titleFont ? fontCss(s.titleFont) : baseFont;
-  const bodyFont = s.bodyFont ? fontCss(s.bodyFont) : baseFont;
-  const align = s.align || 'left';
-  const accent = s.accent || '#8b6cff';
+  const w = s.cardWidth || 480;
+  const h = s.cardHeight || 480;
+  const neon = s.neon || '#E6FF00';
+  const crimson = s.crimson || '#E50914';
+  const titleFont = s.titleFont ? fontCss(s.titleFont) : fontCss('notoserif');
+  const bodyFont = s.bodyFont ? fontCss(s.bodyFont) : fontCss('pretendard');
+  const baseFont = fontCss(s.font || 'pretendard');
+  const headline = parseInlineFormat(s.title, neon);
+  const pageLabel = String(pageIdx+1).padStart(2,'0') + ' / ' + String(total).padStart(2,'0');
+  const dateStr = s.date || '';
+  const sourceStr = s.source || '';
 
-  const titleHtml = parseInlineFormat(s.title, accent);
-  const subHtml = parseInlineFormat(s.sub, accent);
-
-  const pageNum = s.showPageNum !== false ? `<span class="pageNum" style="font-size:${s.badgeSize||11}px;">${pageIdx+1}/${total}</span>` : '';
-  const badge = s.badgeTop ? `<span class="badgeTop" style="font-size:${s.badgeSize||11}px;">${escapeHtml(s.badgeTop)}</span>` : '';
-  const pill = s.pillText ? `<div class="pill" style="background:${s.pillBg||accent};color:${s.pillColor||'#fff'};font-size:${s.pillSize||11}px;">${escapeHtml(s.pillText)}</div>` : '';
-  const handle = s.handle ? `<span class="handle" style="font-size:${s.handleSize||12}px;">${escapeHtml(s.handle)}</span>` : '<span></span>';
-
-  let vignette = '';
-  if(s.vignetteStrength > 0){
-    vignette = `<div class="scrim" style="${vignetteStyle(s.vignetteStrength)}"></div>`;
-  }
-  let scrim = '';
-  if(s.scrimDir && s.scrimDir !== 'none'){
-    scrim = `<div class="scrim" style="${scrimStyle(s.scrimDir, s.imageOverlay)}"></div>`;
-  } else if(s.imageOverlay > 0){
-    scrim = `<div class="scrim" style="${scrimStyle('none', s.imageOverlay)}"></div>`;
-  }
-
-  const cls = `id="card" style="width:${w}px;height:${h}px;background:${s.bg};color:${s.text};font-family:${baseFont};"`;
-
-  // TEXT
-  if(s.template === 'text' || !s.image){
-    return `<div ${cls}>
-      <div class="rowTop">${badge}${pageNum}</div>
-      <div class="frame z2" style="text-align:${align};">
-        ${pill}
-        <div class="titleText" style="font-size:${s.titleSize}px;font-family:${titleFont};">${titleHtml}</div>
-        <div class="subText" style="font-size:${s.subSize}px;font-family:${bodyFont};">${subHtml}</div>
+  /* ===== A: Politics Insight ===== */
+  if(s.template === 'politics'){
+    const lines = String(s.bullets||'').split('\n').map(l=>l.trim()).filter(Boolean);
+    const bulletsHtml = lines.map(line =>
+      `<div class="bulletItem"><span class="bulletMark" style="background:${neon}"></span><span style="font-size:${s.subSize}px;font-family:${bodyFont}">${parseInlineFormat(line, neon)}</span></div>`
+    ).join('');
+    return `<div id="card" class="tpl-politics" style="width:${w}px;height:${h}px;background:${s.bg};">
+      <div class="tagYellow" style="background:${neon};font-size:${s.tagSize}px;">${escapeHtml(s.tagText || s.category || 'POLITICS INSIGHT')}</div>
+      <div class="headline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text};">${headline}</div>
+      <div class="bulletBox" style="border-color:${crimson};">
+        ${bulletsHtml || '<div class="bulletItem"><span class="bulletMark" style="background:'+neon+'"></span><span>불릿을 입력하세요</span></div>'}
       </div>
-      <div class="rowBottom">${handle}<span></span></div>
+      <div class="metaRow">
+        <span>${escapeHtml(dateStr)}</span>
+        <span>${escapeHtml(sourceStr)}</span>
+      </div>
     </div>`;
   }
 
-  // FULL
-  if(s.template === 'full'){
-    return `<div ${cls}>
-      ${imageBoxHtml(s,'full')}${scrim}${vignette}
-      <div class="rowTop z2" style="color:#fff;text-shadow:0 1px 4px #0006;">${badge}${pageNum}</div>
-      <div class="frame z2" style="text-align:${align};color:#fff;text-shadow:0 1px 6px #0008;">
-        ${pill}
-        <div class="titleText" style="font-size:${s.titleSize}px;font-family:${titleFont};">${titleHtml}</div>
-        <div class="subText" style="font-size:${s.subSize}px;font-family:${bodyFont};">${subHtml}</div>
+  /* ===== B: Breaking Photo ===== */
+  if(s.template === 'breaking'){
+    const posMap = {top:'center top', center:'center center', bottom:'center bottom'};
+    const pos = posMap[s.imagePos] || 'center center';
+    const fit = s.imageFit || 'cover';
+    const filt = filterCss(s.imageFilter);
+    const bgSize = fit === 'original' ? 'auto' : fit;
+    let photoInner = '';
+    if(s.image){
+      photoInner = `<div class="layer" style="background-image:url('${s.image}');background-size:${bgSize};background-position:${pos};filter:${filt};"></div>`;
+    } else {
+      photoInner = `<div class="layer" style="background:linear-gradient(135deg,#2a2e36,#15171c);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.35);font-size:13px;font-family:${baseFont};">사진 업로드</div>`;
+    }
+    const vig = s.vignetteStrength > 0
+      ? `<div class="vignette" style="background:radial-gradient(ellipse at center, transparent ${Math.max(20,60-s.vignetteStrength)}%, rgba(0,0,0,${0.3+s.vignetteStrength/120}) 100%);"></div>`
+      : '';
+    return `<div id="card" class="tpl-breaking" style="width:${w}px;height:${h}px;background:${s.bg};">
+      <div class="photoZone">
+        ${photoInner}
+        ${vig}
+        <div class="redLine" style="background:${crimson};"></div>
+        <div class="tagRed" style="background:${crimson};font-size:${s.tagSize}px;">${escapeHtml(s.tagText || 'BREAKING ISSUE')}</div>
       </div>
-      <div class="rowBottom z2" style="color:#fff;text-shadow:0 1px 4px #0006;">${handle}<span></span></div>
+      <div class="lower">
+        <div class="headline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text};">${headline}</div>
+        <div class="summary" style="font-size:${s.subSize}px;font-family:${bodyFont};border-left-color:${neon};">${parseInlineFormat(s.summary, neon)}</div>
+        <div class="metaRow">
+          <span>${escapeHtml(dateStr)}</span>
+          <span>${escapeHtml(sourceStr)}</span>
+        </div>
+      </div>
     </div>`;
   }
 
-  // SPLIT (top image)
-  if(s.template === 'split'){
-    return `<div ${cls}>
-      <div class="rowTop">${badge}${pageNum}</div>
-      ${imageBoxHtml(s,'split')}${scrim}
-      <div class="frame z2" style="text-align:${align};justify-content:flex-start;">
-        ${pill}
-        <div class="titleText" style="font-size:${s.titleSize}px;font-family:${titleFont};">${titleHtml}</div>
-        <div class="subText" style="font-size:${s.subSize}px;font-family:${bodyFont};">${subHtml}</div>
-      </div>
-      <div class="rowBottom">${handle}<span></span></div>
-    </div>`;
-  }
-
-  // BOTTOM image
-  if(s.template === 'bottom'){
-    return `<div ${cls}>
-      <div class="rowTop">${badge}${pageNum}</div>
-      <div class="frame z2" style="text-align:${align};justify-content:flex-start;">
-        ${pill}
-        <div class="titleText" style="font-size:${s.titleSize}px;font-family:${titleFont};">${titleHtml}</div>
-        <div class="subText" style="font-size:${s.subSize}px;font-family:${bodyFont};">${subHtml}</div>
-      </div>
-      ${imageBoxHtml(s,'bottom')}${scrim}
-      <div class="rowBottom">${handle}<span></span></div>
-    </div>`;
-  }
-
-  // fallback
-  return `<div ${cls}><div class="frame" style="text-align:${align};">${pill}<div class="titleText" style="font-size:${s.titleSize}px;">${titleHtml}</div><div class="subText" style="font-size:${s.subSize}px;">${subHtml}</div></div></div>`;
+  /* Basic fallback */
+  return `<div id="card" class="tpl-basic" style="width:${w}px;height:${h}px;background:${s.bg||'#faf9fc'};color:${s.text||'#1a1a1a'};font-family:${baseFont};">
+    <div class="rowTop"><span class="badgeTop">${escapeHtml(s.tagText||s.category||'')}</span><span class="pageNum">${pageLabel}</span></div>
+    <div class="frame" style="text-align:${s.align||'left'};">
+      <div class="titleText" style="font-size:${s.titleSize}px;font-family:${titleFont};">${headline}</div>
+      <div class="subText" style="font-size:${s.subSize}px;font-family:${bodyFont};">${parseInlineFormat(s.summary || s.bullets, neon)}</div>
+    </div>
+    <div class="rowBottom"><span class="handle">${escapeHtml(sourceStr)}</span><span></span></div>
+  </div>`;
 }
 
-/* ========== Render ========== */
-const fullCss = document.querySelector('style').textContent;
+const fullCss = Array.from(document.querySelectorAll('style')).map(s=>s.textContent).join('\n');
 const fontLinksHtml = Array.from(document.querySelectorAll('link[rel="stylesheet"]')).map(l=>l.outerHTML).join('') +
   `<style>@font-face{font-family:'RIDIBatang';src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_twelve@1.0/RIDIBatang.woff') format('woff');font-weight:normal;font-display:swap;}</style>`;
 
 function renderMainCard(){
-  const s = slides[active];
-  $('canvasWrap').innerHTML = cardMarkup(s, active, slides.length);
+  $('canvasWrap').innerHTML = cardMarkup(slides[active], active, slides.length);
 }
-
 function thumbSrcDoc(s, idx){
-  return '<!DOCTYPE html><html><head>' + fontLinksHtml + '<style>' + fullCss + '</style></head><body style="margin:0;">' + cardMarkup(s, idx, slides.length) + '</body></html>';
+  return '<!DOCTYPE html><html><head>'+fontLinksHtml+'<style>'+fullCss+'</style></head><body style="margin:0;">'+cardMarkup(s,idx,slides.length)+'</body></html>';
 }
-
 function renderList(){
   const list = $('slideList');
   list.innerHTML = '';
-  slides.forEach((s, i) => {
+  slides.forEach((s,i)=>{
     const div = document.createElement('div');
-    div.className = 'thumb' + (i === active ? ' active' : '');
+    div.className = 'thumb'+(i===active?' active':'');
     const iframe = document.createElement('iframe');
-    iframe.srcdoc = thumbSrcDoc(s, i);
+    iframe.srcdoc = thumbSrcDoc(s,i);
     div.appendChild(iframe);
     const idx = document.createElement('div');
-    idx.className = 'idx'; idx.textContent = i+1;
+    idx.className='idx'; idx.textContent=i+1;
     div.appendChild(idx);
     const del = document.createElement('div');
-    del.className = 'del'; del.textContent = '✕';
-    del.onclick = (e) => { e.stopPropagation(); deleteSlide(i); };
+    del.className='del'; del.textContent='✕';
+    del.onclick = e => { e.stopPropagation(); if(slides.length<=1) return; slides.splice(i,1); if(active>=slides.length) active=slides.length-1; syncForm(); renderMainCard(); renderList(); };
     div.appendChild(del);
-    div.onclick = () => { active = i; syncForm(); renderMainCard(); renderList(); };
+    div.onclick = () => { active=i; syncForm(); renderMainCard(); renderList(); };
     list.appendChild(div);
   });
   $('slideCount').textContent = slides.length;
 }
 
-function deleteSlide(i){
-  if(slides.length === 1) return;
-  slides.splice(i,1);
-  if(active >= slides.length) active = slides.length - 1;
-  syncForm(); renderMainCard(); renderList();
+function updateTemplateFields(){
+  const t = slides[active].template;
+  $('bulletsField').style.display = (t==='politics') ? '' : 'none';
+  $('summaryField').style.display = (t==='breaking' || t==='basic') ? '' : 'none';
 }
 
 function syncForm(){
   const s = slides[active];
-  $('badgeTop').value = s.badgeTop || '';
-  $('pillText').value = s.pillText || '';
+  $('categorySelect').value = s.category || '정치';
+  $('tagText').value = s.tagText || '';
+  $('sourceText').value = s.source || '';
+  $('dateText').value = s.date || '';
   $('titleText').value = s.title || '';
-  $('subText').value = s.sub || '';
-  $('handleText').value = s.handle || '';
+  $('bulletsText').value = s.bullets || '';
+  $('summaryText').value = s.summary || '';
   $('bgColor').value = s.bg; $('bgColorHex').textContent = s.bg;
   $('textColor').value = s.text; $('textColorHex').textContent = s.text;
-  $('accentColor').value = s.accent; $('accentColorHex').textContent = s.accent;
-  $('pillBg').value = s.pillBg; $('pillBgHex').textContent = s.pillBg;
-  $('pillColor').value = s.pillColor; $('pillColorHex').textContent = s.pillColor;
+  $('neonColor').value = s.neon; $('neonColorHex').textContent = s.neon;
+  $('crimsonColor').value = s.crimson; $('crimsonColorHex').textContent = s.crimson;
   $('titleSize').value = s.titleSize; $('titleSizeVal').textContent = s.titleSize;
   $('subSize').value = s.subSize; $('subSizeVal').textContent = s.subSize;
-  $('badgeSize').value = s.badgeSize || 11; $('badgeSizeVal').textContent = s.badgeSize || 11;
-  $('pillSize').value = s.pillSize || 11; $('pillSizeVal').textContent = s.pillSize || 11;
-  $('handleSize').value = s.handleSize || 12; $('handleSizeVal').textContent = s.handleSize || 12;
+  $('tagSize').value = s.tagSize||11; $('tagSizeVal').textContent = s.tagSize||11;
   $('fontSelect').value = s.font || 'pretendard';
   $('titleFontSelect').value = s.titleFont || '';
   $('bodyFontSelect').value = s.bodyFont || '';
-  $('sizePreset').value = s.sizePreset || '4:5';
-  $('cardWidth').value = s.cardWidth || 400;
-  $('cardHeight').value = s.cardHeight || 500;
+  $('sizePreset').value = s.sizePreset || '1:1';
+  $('cardWidth').value = s.cardWidth || 480;
+  $('cardHeight').value = s.cardHeight || 480;
   $('imageFit').value = s.imageFit || 'cover';
   $('imagePos').value = s.imagePos || 'center';
   $('imageFilter').value = s.imageFilter || 'none';
-  $('imageOverlay').value = s.imageOverlay || 0; $('imageOverlayVal').textContent = s.imageOverlay || 0;
-  $('vignetteStrength').value = s.vignetteStrength || 0; $('vignetteStrengthVal').textContent = s.vignetteStrength || 0;
-  $('scrimDir').value = s.scrimDir || 'none';
+  $('imageOverlay').value = s.imageOverlay||0; $('imageOverlayVal').textContent = s.imageOverlay||0;
+  $('vignetteStrength').value = s.vignetteStrength||0; $('vignetteStrengthVal').textContent = s.vignetteStrength||0;
   $('imgThumb').style.backgroundImage = s.image ? "url('"+s.image+"')" : 'none';
   $('blurFillOn').classList.toggle('active', s.blurFill !== false);
   $('blurFillOff').classList.toggle('active', s.blurFill === false);
   Array.from(document.querySelectorAll('.alignBtn')).forEach(b => b.classList.toggle('active', b.dataset.align === (s.align||'left')));
   Array.from(document.querySelectorAll('#layoutMenu .ddItem')).forEach(item => {
-    item.classList.toggle('active', item.dataset.template === (s.template||'text'));
+    item.classList.toggle('active', item.dataset.template === (s.template||'politics'));
   });
+  updateTemplateFields();
 }
 
-/* ========== Bindings ========== */
+/* Bindings */
 function bindText(id, prop){
-  $(id).addEventListener('input', e => {
-    slides[active][prop] = e.target.value;
-    renderMainCard(); renderList();
-  });
+  $(id).addEventListener('input', e => { slides[active][prop]=e.target.value; renderMainCard(); renderList(); });
 }
-bindText('badgeTop','badgeTop');
-bindText('pillText','pillText');
+bindText('tagText','tagText');
+bindText('sourceText','source');
+bindText('dateText','date');
 bindText('titleText','title');
-bindText('subText','sub');
-bindText('handleText','handle');
+bindText('bulletsText','bullets');
+bindText('summaryText','summary');
+
+$('categorySelect').addEventListener('change', e => {
+  slides[active].category = e.target.value;
+  // auto-fill tag if still default-ish
+  const cat = e.target.value;
+  const tagMap = {
+    '정치':'POLITICS INSIGHT', '정치 인사이트':'POLITICS INSIGHT', '국회':'ASSEMBLY',
+    '속보':'BREAKING', '단독':'EXCLUSIVE', '보도자료':'PRESS RELEASE',
+    '브리핑':'BRIEFING', '팩트체크':'FACT CHECK', '국제':'WORLD',
+    '경제':'ECONOMY', '사회':'SOCIETY', '데이터':'DATA'
+  };
+  if(tagMap[cat]) {
+    slides[active].tagText = tagMap[cat];
+    $('tagText').value = tagMap[cat];
+  }
+  renderMainCard(); renderList();
+});
 
 function bindColor(id, prop){
   $(id).addEventListener('input', e => {
-    slides[active][prop] = e.target.value;
-    $(id+'Hex').textContent = e.target.value;
+    slides[active][prop]=e.target.value;
+    $(id+'Hex').textContent=e.target.value;
     renderMainCard(); renderList();
   });
 }
 bindColor('bgColor','bg');
 bindColor('textColor','text');
-bindColor('accentColor','accent');
-bindColor('pillBg','pillBg');
-bindColor('pillColor','pillColor');
+bindColor('neonColor','neon');
+bindColor('crimsonColor','crimson');
 
 function bindSlider(id, prop, valId){
   $(id).addEventListener('input', e => {
-    slides[active][prop] = +e.target.value;
-    $(valId).textContent = e.target.value;
+    slides[active][prop]=+e.target.value;
+    $(valId).textContent=e.target.value;
     renderMainCard(); renderList();
   });
 }
 bindSlider('titleSize','titleSize','titleSizeVal');
 bindSlider('subSize','subSize','subSizeVal');
-bindSlider('badgeSize','badgeSize','badgeSizeVal');
-bindSlider('pillSize','pillSize','pillSizeVal');
-bindSlider('handleSize','handleSize','handleSizeVal');
+bindSlider('tagSize','tagSize','tagSizeVal');
 bindSlider('imageOverlay','imageOverlay','imageOverlayVal');
 bindSlider('vignetteStrength','vignetteStrength','vignetteStrengthVal');
 
-$('fontSelect').addEventListener('change', e => { slides[active].font = e.target.value; renderMainCard(); renderList(); });
-$('titleFontSelect').addEventListener('change', e => { slides[active].titleFont = e.target.value; renderMainCard(); renderList(); });
-$('bodyFontSelect').addEventListener('change', e => { slides[active].bodyFont = e.target.value; renderMainCard(); renderList(); });
-$('imageFit').addEventListener('change', e => { slides[active].imageFit = e.target.value; renderMainCard(); renderList(); });
-$('imagePos').addEventListener('change', e => { slides[active].imagePos = e.target.value; renderMainCard(); renderList(); });
-$('imageFilter').addEventListener('change', e => { slides[active].imageFilter = e.target.value; renderMainCard(); renderList(); });
-$('scrimDir').addEventListener('change', e => { slides[active].scrimDir = e.target.value; renderMainCard(); renderList(); });
+$('fontSelect').addEventListener('change', e => { slides[active].font=e.target.value; renderMainCard(); renderList(); });
+$('titleFontSelect').addEventListener('change', e => { slides[active].titleFont=e.target.value; renderMainCard(); renderList(); });
+$('bodyFontSelect').addEventListener('change', e => { slides[active].bodyFont=e.target.value; renderMainCard(); renderList(); });
+$('imageFit').addEventListener('change', e => { slides[active].imageFit=e.target.value; renderMainCard(); renderList(); });
+$('imagePos').addEventListener('change', e => { slides[active].imagePos=e.target.value; renderMainCard(); renderList(); });
+$('imageFilter').addEventListener('change', e => { slides[active].imageFilter=e.target.value; renderMainCard(); renderList(); });
 
 $('blurFillOn').addEventListener('click', () => {
-  slides[active].blurFill = true;
-  $('blurFillOn').classList.add('active');
-  $('blurFillOff').classList.remove('active');
+  slides[active].blurFill=true;
+  $('blurFillOn').classList.add('active'); $('blurFillOff').classList.remove('active');
   renderMainCard(); renderList();
 });
 $('blurFillOff').addEventListener('click', () => {
-  slides[active].blurFill = false;
-  $('blurFillOff').classList.add('active');
-  $('blurFillOn').classList.remove('active');
+  slides[active].blurFill=false;
+  $('blurFillOff').classList.add('active'); $('blurFillOn').classList.remove('active');
   renderMainCard(); renderList();
 });
 
 Array.from(document.querySelectorAll('.alignBtn')).forEach(btn => {
   btn.addEventListener('click', () => {
     slides[active].align = btn.dataset.align;
-    Array.from(document.querySelectorAll('.alignBtn')).forEach(b => b.classList.toggle('active', b === btn));
+    Array.from(document.querySelectorAll('.alignBtn')).forEach(b => b.classList.toggle('active', b===btn));
     renderMainCard(); renderList();
   });
 });
 
 Array.from(document.querySelectorAll('#layoutMenu .ddItem')).forEach(item => {
   item.addEventListener('click', () => {
-    slides[active].template = item.dataset.template;
-    Array.from(document.querySelectorAll('#layoutMenu .ddItem')).forEach(i => i.classList.toggle('active', i === item));
+    const t = item.dataset.template;
+    slides[active].template = t;
+    if(t === 'politics'){
+      if(!slides[active].tagText || slides[active].tagText === 'BREAKING ISSUE') slides[active].tagText = 'POLITICS INSIGHT';
+      slides[active].titleSize = 32;
+    }
+    if(t === 'breaking'){
+      if(!slides[active].tagText || slides[active].tagText === 'POLITICS INSIGHT') slides[active].tagText = 'BREAKING ISSUE';
+      slides[active].titleSize = 26;
+    }
+    Array.from(document.querySelectorAll('#layoutMenu .ddItem')).forEach(i => i.classList.toggle('active', i===item));
     closeAllDropdowns();
-    renderMainCard(); renderList();
+    syncForm(); renderMainCard(); renderList();
   });
 });
 
 $('sizePreset').addEventListener('change', e => {
   const v = e.target.value;
   slides[active].sizePreset = v;
-  if(v === '4:5'){ slides[active].cardWidth=400; slides[active].cardHeight=500; }
-  else if(v === '1:1'){ slides[active].cardWidth=400; slides[active].cardHeight=400; }
-  else if(v === '9:16'){ slides[active].cardWidth=360; slides[active].cardHeight=640; }
+  if(v==='1:1'){ slides[active].cardWidth=480; slides[active].cardHeight=480; }
+  else if(v==='4:5'){ slides[active].cardWidth=400; slides[active].cardHeight=500; }
+  else if(v==='9:16'){ slides[active].cardWidth=360; slides[active].cardHeight=640; }
   $('cardWidth').value = slides[active].cardWidth;
   $('cardHeight').value = slides[active].cardHeight;
   renderMainCard(); renderList();
 });
 $('cardWidth').addEventListener('input', e => {
-  slides[active].sizePreset = 'custom';
-  slides[active].cardWidth = Number(e.target.value)||400;
-  $('sizePreset').value = 'custom';
+  slides[active].sizePreset='custom';
+  slides[active].cardWidth=Number(e.target.value)||480;
+  $('sizePreset').value='custom';
   renderMainCard(); renderList();
 });
 $('cardHeight').addEventListener('input', e => {
-  slides[active].sizePreset = 'custom';
-  slides[active].cardHeight = Number(e.target.value)||500;
-  $('sizePreset').value = 'custom';
+  slides[active].sizePreset='custom';
+  slides[active].cardHeight=Number(e.target.value)||480;
+  $('sizePreset').value='custom';
   renderMainCard(); renderList();
 });
 
-/* Image upload */
+/* Image */
 $('uploadBtn').addEventListener('click', () => $('imageUpload').click());
 $('imageUpload').addEventListener('change', e => {
   const file = e.target.files[0];
@@ -878,14 +992,13 @@ $('imageUpload').addEventListener('change', e => {
     const img = new Image();
     img.onload = () => {
       const maxW = 1400;
-      const scale = Math.min(1, maxW / img.width);
+      const scale = Math.min(1, maxW/img.width);
       const canvas = document.createElement('canvas');
-      canvas.width = Math.round(img.width * scale);
-      canvas.height = Math.round(img.height * scale);
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      canvas.width = Math.round(img.width*scale);
+      canvas.height = Math.round(img.height*scale);
+      canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);
       slides[active].image = canvas.toDataURL('image/jpeg', 0.88);
-      if(slides[active].template === 'text') slides[active].template = 'full';
+      if(slides[active].template === 'politics') slides[active].template = 'breaking';
       syncForm(); renderMainCard(); renderList();
     };
     img.src = ev.target.result;
@@ -915,270 +1028,182 @@ function bindMenu(btnId, ddId){
 bindMenu('fontMenuBtn','fontMenu');
 bindMenu('imageMenuBtn','imageMenu');
 bindMenu('layoutMenuBtn','layoutMenu');
-document.addEventListener('click', e => {
-  if(!e.target.closest('.menuWrap')) closeAllDropdowns();
-});
+document.addEventListener('click', e => { if(!e.target.closest('.menuWrap')) closeAllDropdowns(); });
 
-/* Add slide */
 $('addSlide').addEventListener('click', () => {
   const next = JSON.parse(JSON.stringify(slides[active]));
   slides.splice(active+1, 0, next);
-  active = active + 1;
+  active = active+1;
   syncForm(); renderMainCard(); renderList();
 });
 
 /* Mobile */
 (function(){
-  const left = $('left'), right = $('right');
+  const left=$('left'), right=$('right');
   if($('mobileSlidesBtn')) $('mobileSlidesBtn').addEventListener('click', e => {
-    e.stopPropagation();
-    right.classList.remove('open');
-    left.classList.toggle('open');
+    e.stopPropagation(); right.classList.remove('open'); left.classList.toggle('open');
   });
   if($('mobilePanelBtn')) $('mobilePanelBtn').addEventListener('click', e => {
-    e.stopPropagation();
-    left.classList.remove('open');
-    right.classList.toggle('open');
+    e.stopPropagation(); left.classList.remove('open'); right.classList.toggle('open');
   });
 })();
 
-/* ========== Export (iOS / Mac 안정화) ========== */
+/* Export */
 function isIOS(){
   return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
 }
-
 function canvasToBlob(canvas, type, quality){
   return new Promise(resolve => {
-    if(canvas.toBlob){
-      canvas.toBlob(b => resolve(b), type || 'image/png', quality);
-    } else {
+    if(canvas.toBlob){ canvas.toBlob(b=>resolve(b), type||'image/png', quality); }
+    else {
       try {
-        const dataUrl = canvas.toDataURL(type || 'image/png', quality);
+        const dataUrl = canvas.toDataURL(type||'image/png', quality);
         const arr = dataUrl.split(',');
-        const mime = (arr[0].match(/:(.*?);/)||[])[1] || 'image/png';
+        const mime = (arr[0].match(/:(.*?);/)||[])[1]||'image/png';
         const bstr = atob(arr[1]);
         const u8 = new Uint8Array(bstr.length);
-        for(let i=0;i<bstr.length;i++) u8[i] = bstr.charCodeAt(i);
-        resolve(new Blob([u8], {type: mime}));
-      } catch(e){
-        resolve(null);
-      }
+        for(let i=0;i<bstr.length;i++) u8[i]=bstr.charCodeAt(i);
+        resolve(new Blob([u8],{type:mime}));
+      } catch(e){ resolve(null); }
     }
   });
 }
-
 function downloadBlob(blob, filename){
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.download = filename;
-  a.href = url;
-  a.rel = 'noopener';
-  document.body.appendChild(a);
-  a.click();
-  setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 1200);
+  a.download=filename; a.href=url; a.rel='noopener';
+  document.body.appendChild(a); a.click();
+  setTimeout(()=>{ document.body.removeChild(a); URL.revokeObjectURL(url); },1200);
 }
-
 function showIOSSaveModal(blob, filename){
   return new Promise(resolve => {
     const url = URL.createObjectURL(blob);
     let overlay = document.getElementById('iosSaveOverlay');
     if(!overlay){
       overlay = document.createElement('div');
-      overlay.id = 'iosSaveOverlay';
-      overlay.style.cssText = 'position:fixed;inset:0;background:#0a0716ee;z-index:500;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;';
+      overlay.id='iosSaveOverlay';
+      overlay.style.cssText='position:fixed;inset:0;background:#0a0716ee;z-index:500;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;';
       document.body.appendChild(overlay);
     }
     overlay.innerHTML =
-      '<div style="color:#eae6f5;font-weight:700;font-size:15px;margin-bottom:10px;text-align:center;">이미지 저장</div>' +
-      '<div style="color:#9a92b5;font-size:13px;margin-bottom:14px;text-align:center;line-height:1.5;">이미지를 <b style="color:#eae6f5;">길게 누른 뒤</b><br>「사진 앱에 저장」을 선택하세요</div>' +
-      '<img id="iosSaveImg" alt="save" style="max-width:min(90vw,360px);max-height:55vh;border-radius:8px;box-shadow:0 12px 40px #0008;">' +
-      '<div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;justify-content:center;">' +
-        '<button type="button" id="iosShareBtn" class="btn primary" style="padding:10px 16px;">공유하기</button>' +
-        '<button type="button" id="iosCloseBtn" class="btn ghost" style="padding:10px 16px;">닫기</button>' +
+      '<div style="color:#eae6f5;font-weight:700;font-size:15px;margin-bottom:10px;text-align:center;">이미지 저장</div>'+
+      '<div style="color:#9a92b5;font-size:13px;margin-bottom:14px;text-align:center;line-height:1.5;">이미지를 <b style="color:#eae6f5;">길게 누른 뒤</b><br>「사진 앱에 저장」을 선택하세요</div>'+
+      '<img id="iosSaveImg" style="max-width:min(90vw,360px);max-height:55vh;border-radius:8px;box-shadow:0 12px 40px #0008;">'+
+      '<div style="display:flex;gap:8px;margin-top:16px;">'+
+        '<button type="button" id="iosShareBtn" class="btn primary" style="padding:10px 16px;">공유하기</button>'+
+        '<button type="button" id="iosCloseBtn" class="btn ghost" style="padding:10px 16px;">닫기</button>'+
       '</div>';
-    overlay.style.display = 'flex';
-    const img = document.getElementById('iosSaveImg');
-    img.src = url;
-    const cleanup = () => { overlay.style.display = 'none'; URL.revokeObjectURL(url); resolve(); };
-    document.getElementById('iosCloseBtn').onclick = cleanup;
-    document.getElementById('iosShareBtn').onclick = async () => {
-      try {
-        const file = new File([blob], filename, {type: blob.type || 'image/png'});
-        if(navigator.canShare && navigator.canShare({files:[file]})){
-          await navigator.share({files:[file], title: filename});
-        } else if(navigator.share){
-          await navigator.share({title: filename, url: url});
-        } else {
-          alert('공유를 지원하지 않는 브라우저입니다. 이미지를 길게 눌러 저장해 주세요.');
-        }
-      } catch(err){
-        if(err && err.name !== 'AbortError') alert('공유에 실패했습니다. 이미지를 길게 눌러 저장해 주세요.');
-      }
+    overlay.style.display='flex';
+    document.getElementById('iosSaveImg').src=url;
+    const cleanup=()=>{ overlay.style.display='none'; URL.revokeObjectURL(url); resolve(); };
+    document.getElementById('iosCloseBtn').onclick=cleanup;
+    document.getElementById('iosShareBtn').onclick=async()=>{
+      try{
+        const file=new File([blob],filename,{type:blob.type||'image/png'});
+        if(navigator.canShare&&navigator.canShare({files:[file]})) await navigator.share({files:[file],title:filename});
+        else if(navigator.share) await navigator.share({title:filename,url:url});
+        else alert('이미지를 길게 눌러 저장해 주세요.');
+      }catch(err){ if(err&&err.name!=='AbortError') alert('공유 실패. 길게 눌러 저장해 주세요.'); }
     };
   });
 }
-
 async function captureCardBlob(){
-  const node = $('canvasWrap');
+  const node=$('canvasWrap');
   document.body.classList.add('exporting');
-  try {
-    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
-    // 짧은 대기: 폰트/이미지 렌더 안정화
-    await new Promise(r => setTimeout(r, 80));
-    const canvas = await html2canvas(node, {
-      backgroundColor: null,
-      scale: 2,
-      useCORS: true,
-      logging: false,
-      allowTaint: true,
-      imageTimeout: 15000,
-      width: node.scrollWidth || node.clientWidth,
-      height: node.scrollHeight || node.clientHeight
+  try{
+    await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+    await new Promise(r=>setTimeout(r,80));
+    const canvas=await html2canvas(node,{
+      backgroundColor:null, scale:2, useCORS:true, logging:false, allowTaint:true, imageTimeout:15000,
+      width:node.scrollWidth||node.clientWidth, height:node.scrollHeight||node.clientHeight
     });
-    // iOS 캔버스 크기 제한 방어 (대략 4096 기준)
-    if(canvas.width > 4096 || canvas.height > 4096){
-      const ratio = Math.min(4096 / canvas.width, 4096 / canvas.height);
-      const c2 = document.createElement('canvas');
-      c2.width = Math.floor(canvas.width * ratio);
-      c2.height = Math.floor(canvas.height * ratio);
-      const ctx = c2.getContext('2d');
-      ctx.drawImage(canvas, 0, 0, c2.width, c2.height);
-      return await canvasToBlob(c2, 'image/png', 0.95);
+    if(canvas.width>4096||canvas.height>4096){
+      const ratio=Math.min(4096/canvas.width,4096/canvas.height);
+      const c2=document.createElement('canvas');
+      c2.width=Math.floor(canvas.width*ratio); c2.height=Math.floor(canvas.height*ratio);
+      c2.getContext('2d').drawImage(canvas,0,0,c2.width,c2.height);
+      return await canvasToBlob(c2,'image/png',0.95);
     }
-    return await canvasToBlob(canvas, 'image/png', 0.95);
-  } finally {
-    document.body.classList.remove('exporting');
-  }
+    return await canvasToBlob(canvas,'image/png',0.95);
+  } finally { document.body.classList.remove('exporting'); }
 }
-
 async function exportNode(filename){
-  const blob = await captureCardBlob();
-  if(!blob){ alert('이미지 생성에 실패했습니다.'); return; }
+  const blob=await captureCardBlob();
+  if(!blob){ alert('이미지 생성 실패'); return; }
   if(isIOS()){
-    try {
-      const file = new File([blob], filename, {type: 'image/png'});
-      if(navigator.canShare && navigator.canShare({files:[file]})){
-        await navigator.share({files:[file], title: filename});
-        return;
-      }
-    } catch(err){
-      if(err && err.name === 'AbortError') return;
-    }
-    await showIOSSaveModal(blob, filename);
-    return;
+    try{
+      const file=new File([blob],filename,{type:'image/png'});
+      if(navigator.canShare&&navigator.canShare({files:[file]})){ await navigator.share({files:[file],title:filename}); return; }
+    }catch(err){ if(err&&err.name==='AbortError') return; }
+    await showIOSSaveModal(blob,filename); return;
   }
-  downloadBlob(blob, filename);
+  downloadBlob(blob,filename);
 }
-
-$('exportOne').addEventListener('click', async () => {
-  try {
-    await exportNode('card_' + (active+1) + '.png');
-  } catch(e){
-    console.error(e);
-    alert('저장 중 오류가 발생했습니다. 다시 시도해 주세요.');
-  }
+$('exportOne').addEventListener('click', async()=>{
+  try{ await exportNode('card_'+(active+1)+'.png'); }
+  catch(e){ console.error(e); alert('저장 오류'); }
 });
-
-$('exportAll').addEventListener('click', async () => {
-  const orig = active;
-  try {
-    if(typeof JSZip === 'undefined'){
-      for(let i=0;i<slides.length;i++){
-        active = i; renderMainCard();
-        await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
-        await exportNode('card_' + (i+1) + '.png');
-        await new Promise(r => setTimeout(r, 350));
-      }
+$('exportAll').addEventListener('click', async()=>{
+  const orig=active;
+  try{
+    if(typeof JSZip==='undefined'){
+      for(let i=0;i<slides.length;i++){ active=i; renderMainCard(); await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))); await exportNode('card_'+(i+1)+'.png'); await new Promise(r=>setTimeout(r,350)); }
     } else {
-      const zip = new JSZip();
-      for(let i=0;i<slides.length;i++){
-        active = i; renderMainCard();
-        await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
-        const blob = await captureCardBlob();
-        if(blob) zip.file('card_' + (i+1) + '.png', blob);
-        await new Promise(r => setTimeout(r, 100));
-      }
-      const zipBlob = await zip.generateAsync({type:'blob'});
-      const zipName = 'cards_' + slides.length + '.zip';
+      const zip=new JSZip();
+      for(let i=0;i<slides.length;i++){ active=i; renderMainCard(); await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))); const blob=await captureCardBlob(); if(blob) zip.file('card_'+(i+1)+'.png',blob); await new Promise(r=>setTimeout(r,100)); }
+      const zipBlob=await zip.generateAsync({type:'blob'});
+      const zipName='cards_'+slides.length+'.zip';
       if(isIOS()){
-        try {
-          const file = new File([zipBlob], zipName, {type:'application/zip'});
-          if(navigator.canShare && navigator.canShare({files:[file]})){
-            await navigator.share({files:[file], title: zipName});
-          } else downloadBlob(zipBlob, zipName);
-        } catch(err){
-          if(!err || err.name !== 'AbortError') downloadBlob(zipBlob, zipName);
-        }
-      } else {
-        downloadBlob(zipBlob, zipName);
-      }
+        try{ const file=new File([zipBlob],zipName,{type:'application/zip'}); if(navigator.canShare&&navigator.canShare({files:[file]})) await navigator.share({files:[file],title:zipName}); else downloadBlob(zipBlob,zipName); }
+        catch(err){ if(!err||err.name!=='AbortError') downloadBlob(zipBlob,zipName); }
+      } else downloadBlob(zipBlob,zipName);
     }
-  } catch(e){
-    console.error(e);
-    alert('저장 중 오류가 발생했습니다.');
-  }
-  active = orig;
-  renderMainCard(); renderList();
+  }catch(e){ console.error(e); alert('저장 오류'); }
+  active=orig; renderMainCard(); renderList();
 });
 
-/* ========== Undo / Redo ========== */
-const MAX_HISTORY = 40;
-let historyStack = [];
-let historyIndex = -1;
-let applyingHistory = false;
-let historyTimer = null;
-
+/* Undo */
+const MAX_HISTORY=40;
+let historyStack=[], historyIndex=-1, applyingHistory=false, historyTimer=null;
 function pushHistory(){
   if(applyingHistory) return;
-  const snap = JSON.stringify({slides, active});
-  if(historyIndex >= 0 && historyStack[historyIndex] === snap) return;
-  historyStack = historyStack.slice(0, historyIndex+1);
+  const snap=JSON.stringify({slides,active});
+  if(historyIndex>=0&&historyStack[historyIndex]===snap) return;
+  historyStack=historyStack.slice(0,historyIndex+1);
   historyStack.push(snap);
-  if(historyStack.length > MAX_HISTORY) historyStack.shift();
-  historyIndex = historyStack.length - 1;
+  if(historyStack.length>MAX_HISTORY) historyStack.shift();
+  historyIndex=historyStack.length-1;
   updateUndoRedo();
 }
-function scheduleHistory(){
-  if(applyingHistory) return;
-  clearTimeout(historyTimer);
-  historyTimer = setTimeout(pushHistory, 400);
-}
+function scheduleHistory(){ if(applyingHistory) return; clearTimeout(historyTimer); historyTimer=setTimeout(pushHistory,400); }
 function restoreHistory(idx){
-  if(idx < 0 || idx >= historyStack.length) return;
-  applyingHistory = true;
-  try {
-    const data = JSON.parse(historyStack[idx]);
-    slides = data.slides;
-    active = data.active;
-    if(active >= slides.length) active = Math.max(0, slides.length-1);
-    historyIndex = idx;
-    syncForm(); renderMainCard(); renderList();
-    updateUndoRedo();
-  } finally { applyingHistory = false; }
+  if(idx<0||idx>=historyStack.length) return;
+  applyingHistory=true;
+  try{
+    const data=JSON.parse(historyStack[idx]);
+    slides=data.slides; active=data.active;
+    if(active>=slides.length) active=Math.max(0,slides.length-1);
+    historyIndex=idx; syncForm(); renderMainCard(); renderList(); updateUndoRedo();
+  } finally { applyingHistory=false; }
 }
-function undo(){ if(historyIndex <= 0) return; restoreHistory(historyIndex-1); }
-function redo(){ if(historyIndex >= historyStack.length-1) return; restoreHistory(historyIndex+1); }
+function undo(){ if(historyIndex<=0) return; restoreHistory(historyIndex-1); }
+function redo(){ if(historyIndex>=historyStack.length-1) return; restoreHistory(historyIndex+1); }
 function updateUndoRedo(){
-  const ub = $('undoBtn'), rb = $('redoBtn');
-  if(ub) ub.disabled = historyIndex <= 0;
-  if(rb) rb.disabled = historyIndex >= historyStack.length-1;
+  const ub=$('undoBtn'), rb=$('redoBtn');
+  if(ub) ub.disabled=historyIndex<=0;
+  if(rb) rb.disabled=historyIndex>=historyStack.length-1;
 }
 $('undoBtn').addEventListener('click', undo);
 $('redoBtn').addEventListener('click', redo);
 document.addEventListener('keydown', e => {
-  const mod = e.ctrlKey || e.metaKey;
-  if(!mod) return;
-  const k = e.key.toLowerCase();
-  if(k === 'z' && !e.shiftKey){ e.preventDefault(); undo(); }
-  else if(k === 'y' || (k === 'z' && e.shiftKey)){ e.preventDefault(); redo(); }
+  const mod=e.ctrlKey||e.metaKey; if(!mod) return;
+  const k=e.key.toLowerCase();
+  if(k==='z'&&!e.shiftKey){ e.preventDefault(); undo(); }
+  else if(k==='y'||(k==='z'&&e.shiftKey)){ e.preventDefault(); redo(); }
 });
-
-const _origRender = renderMainCard;
-renderMainCard = function(){
-  _origRender();
-  if(!applyingHistory) scheduleHistory();
-};
+const _origRender=renderMainCard;
+renderMainCard=function(){ _origRender(); if(!applyingHistory) scheduleHistory(); };
 
 /* Init */
 syncForm();
