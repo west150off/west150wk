@@ -1,849 +1,1008 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Card Editor - Apple Style</title>
-  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <style>
-*,:after,:before{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/*! tailwindcss v3.4.19 | MIT License | https://tailwindcss.com*/*,:after,:before{box-sizing:border-box;border:0 solid #e5e7eb}:after,:before{--tw-content:""}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;-o-tab-size:4;tab-size:4;font-family:ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0}fieldset,legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{opacity:1;color:#9ca3af}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border-width:0}.pointer-events-none{pointer-events:none}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.inset-0{inset:0}.bottom-2{bottom:.5rem}.bottom-6{bottom:1.5rem}.left-2{left:.5rem}.left-6{left:1.5rem}.right-2{right:.5rem}.right-6{right:1.5rem}.top-0{top:0}.top-2{top:.5rem}.top-6{top:1.5rem}.z-50{z-index:50}.mx-auto{margin-left:auto;margin-right:auto}.mb-1{margin-bottom:.25rem}.mb-2{margin-bottom:.5rem}.mb-3{margin-bottom:.75rem}.mb-4{margin-bottom:1rem}.mb-5{margin-bottom:1.25rem}.mb-6{margin-bottom:1.5rem}.mb-8{margin-bottom:2rem}.mb-auto{margin-bottom:auto}.mt-auto{margin-top:auto}.block{display:block}.inline{display:inline}.flex{display:flex}.inline-flex{display:inline-flex}.grid{display:grid}.aspect-\[3\/4\]{aspect-ratio:3/4}.h-0\.5{height:.125rem}.h-10{height:2.5rem}.h-14{height:3.5rem}.h-6{height:1.5rem}.h-7{height:1.75rem}.h-8{height:2rem}.h-full{height:100%}.min-h-screen{min-height:100vh}.w-10{width:2.5rem}.w-11{width:2.75rem}.w-12{width:3rem}.w-64{width:16rem}.w-7{width:1.75rem}.w-8{width:2rem}.w-80{width:20rem}.w-full{width:100%}.max-w-\[1600px\]{max-width:1600px}.max-w-\[90\%\]{max-width:90%}.flex-1{flex:1 1 0%}.transform{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.cursor-pointer{cursor:pointer}.resize-none{resize:none}.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1{gap:.25rem}.gap-2{gap:.5rem}.gap-3{gap:.75rem}.gap-8{gap:2rem}.space-y-1>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.25rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.25rem*var(--tw-space-y-reverse))}.space-y-2>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.5rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.5rem*var(--tw-space-y-reverse))}.space-y-3>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.75rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.75rem*var(--tw-space-y-reverse))}.space-y-4>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem*var(--tw-space-y-reverse))}.space-y-5>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.25rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.25rem*var(--tw-space-y-reverse))}.space-y-6>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.5rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem*var(--tw-space-y-reverse))}.overflow-hidden{overflow:hidden}.overflow-y-auto{overflow-y:auto}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rounded{border-radius:.25rem}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:.5rem}.rounded-xl{border-radius:.75rem}.border{border-width:1px}.border-0{border-width:0}.border-2{border-width:2px}.border-b{border-bottom-width:1px}.border-l{border-left-width:1px}.border-r{border-right-width:1px}.border-t{border-top-width:1px}.border-blue-500{--tw-border-opacity:1;border-color:rgb(59 130 246/var(--tw-border-opacity,1))}.border-blue-600{--tw-border-opacity:1;border-color:rgb(37 99 235/var(--tw-border-opacity,1))}.border-gray-200{--tw-border-opacity:1;border-color:rgb(229 231 235/var(--tw-border-opacity,1))}.border-gray-200\/80{border-color:rgba(229,231,235,.8)}.border-gray-900{--tw-border-opacity:1;border-color:rgb(17 24 39/var(--tw-border-opacity,1))}.border-transparent{border-color:transparent}.bg-black{--tw-bg-opacity:1;background-color:rgb(0 0 0/var(--tw-bg-opacity,1))}.bg-black\/40{background-color:rgba(0,0,0,.4)}.bg-blue-100{--tw-bg-opacity:1;background-color:rgb(219 234 254/var(--tw-bg-opacity,1))}.bg-blue-50{--tw-bg-opacity:1;background-color:rgb(239 246 255/var(--tw-bg-opacity,1))}.bg-blue-600{--tw-bg-opacity:1;background-color:rgb(37 99 235/var(--tw-bg-opacity,1))}.bg-gray-100\/80{background-color:rgba(243,244,246,.8)}.bg-gray-200{--tw-bg-opacity:1;background-color:rgb(229 231 235/var(--tw-bg-opacity,1))}.bg-gray-50{--tw-bg-opacity:1;background-color:rgb(249 250 251/var(--tw-bg-opacity,1))}.bg-gray-900{--tw-bg-opacity:1;background-color:rgb(17 24 39/var(--tw-bg-opacity,1))}.bg-red-500{--tw-bg-opacity:1;background-color:rgb(239 68 68/var(--tw-bg-opacity,1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255/var(--tw-bg-opacity,1))}.bg-white\/50{background-color:hsla(0,0%,100%,.5)}.bg-white\/70{background-color:hsla(0,0%,100%,.7)}.bg-white\/80{background-color:hsla(0,0%,100%,.8)}.bg-white\/90{background-color:hsla(0,0%,100%,.9)}.bg-gradient-to-b{background-image:linear-gradient(to bottom,var(--tw-gradient-stops))}.bg-gradient-to-br{background-image:linear-gradient(to bottom right,var(--tw-gradient-stops))}.from-blue-500{--tw-gradient-from:#3b82f6 var(--tw-gradient-from-position);--tw-gradient-to:rgba(59,130,246,0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to)}.from-gray-50{--tw-gradient-from:#f9fafb var(--tw-gradient-from-position);--tw-gradient-to:rgba(249,250,251,0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to)}.to-blue-600{--tw-gradient-to:#2563eb var(--tw-gradient-to-position)}.to-gray-100{--tw-gradient-to:#f3f4f6 var(--tw-gradient-to-position)}.bg-cover{background-size:cover}.bg-center{background-position:50%}.p-1{padding:.25rem}.p-3{padding:.75rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-6{padding:1.5rem}.p-8{padding:2rem}.px-1{padding-left:.25rem;padding-right:.25rem}.px-2{padding-left:.5rem;padding-right:.5rem}.px-3{padding-left:.75rem;padding-right:.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.py-2{padding-top:.5rem;padding-bottom:.5rem}.py-2\.5{padding-top:.625rem;padding-bottom:.625rem}.py-3{padding-top:.75rem;padding-bottom:.75rem}.pt-2{padding-top:.5rem}.text-left{text-align:left}.text-center{text-align:center}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:.875rem;line-height:1.25rem}.text-xs{font-size:.75rem;line-height:1rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-semibold{font-weight:600}.leading-none{line-height:1}.leading-relaxed{line-height:1.625}.leading-tight{line-height:1.25}.text-blue-700{--tw-text-opacity:1;color:rgb(29 78 216/var(--tw-text-opacity,1))}.text-blue-800{--tw-text-opacity:1;color:rgb(30 64 175/var(--tw-text-opacity,1))}.text-gray-500{--tw-text-opacity:1;color:rgb(107 114 128/var(--tw-text-opacity,1))}.text-gray-600{--tw-text-opacity:1;color:rgb(75 85 99/var(--tw-text-opacity,1))}.text-gray-700{--tw-text-opacity:1;color:rgb(55 65 81/var(--tw-text-opacity,1))}.text-gray-800{--tw-text-opacity:1;color:rgb(31 41 55/var(--tw-text-opacity,1))}.text-gray-900{--tw-text-opacity:1;color:rgb(17 24 39/var(--tw-text-opacity,1))}.text-red-600{--tw-text-opacity:1;color:rgb(220 38 38/var(--tw-text-opacity,1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}.underline{text-decoration-line:underline}.opacity-0{opacity:0}.opacity-80{opacity:.8}.opacity-90{opacity:.9}.shadow-sm{--tw-shadow:0 1px 2px 0 rgba(0,0,0,.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.blur{--tw-blur:blur(8px)}.blur,.filter{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.backdrop-blur{--tw-backdrop-blur:blur(8px)}.backdrop-blur,.backdrop-blur-xl{-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.backdrop-blur-xl{--tw-backdrop-blur:blur(24px)}.transition{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,-webkit-backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter,-webkit-backdrop-filter;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.after\:absolute:after{content:var(--tw-content);position:absolute}.after\:left-\[2px\]:after{content:var(--tw-content);left:2px}.after\:top-\[2px\]:after{content:var(--tw-content);top:2px}.after\:h-5:after{content:var(--tw-content);height:1.25rem}.after\:w-5:after{content:var(--tw-content);width:1.25rem}.after\:rounded-full:after{content:var(--tw-content);border-radius:9999px}.after\:border:after{content:var(--tw-content);border-width:1px}.after\:border-gray-300:after{content:var(--tw-content);--tw-border-opacity:1;border-color:rgb(209 213 219/var(--tw-border-opacity,1))}.after\:bg-white:after{content:var(--tw-content);--tw-bg-opacity:1;background-color:rgb(255 255 255/var(--tw-bg-opacity,1))}.after\:transition-all:after{content:var(--tw-content);transition-property:all;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.after\:content-\[\'\'\]:after{--tw-content:"";content:var(--tw-content)}.hover\:border-gray-300:hover{--tw-border-opacity:1;border-color:rgb(209 213 219/var(--tw-border-opacity,1))}.hover\:bg-blue-700:hover{--tw-bg-opacity:1;background-color:rgb(29 78 216/var(--tw-bg-opacity,1))}.hover\:bg-red-100:hover{--tw-bg-opacity:1;background-color:rgb(254 226 226/var(--tw-bg-opacity,1))}.hover\:bg-white:hover{--tw-bg-opacity:1;background-color:rgb(255 255 255/var(--tw-bg-opacity,1))}.hover\:text-gray-900:hover{--tw-text-opacity:1;color:rgb(17 24 39/var(--tw-text-opacity,1))}.disabled\:opacity-60:disabled{opacity:.6}.group:hover .group-hover\:opacity-100{opacity:1}.peer:checked~.peer-checked\:bg-blue-600{--tw-bg-opacity:1;background-color:rgb(37 99 235/var(--tw-bg-opacity,1))}.peer:checked~.peer-checked\:after\:translate-x-full:after{content:var(--tw-content);--tw-translate-x:100%;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.peer:checked~.peer-checked\:after\:border-white:after{content:var(--tw-content);--tw-border-opacity:1;border-color:rgb(255 255 255/var(--tw-border-opacity,1))}.peer:focus~.peer-focus\:outline-none{outline:2px solid transparent;outline-offset:2px}
-  </style>
-  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Card Editor</title>
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&family=Noto+Sans+KR:wght@400;500;700&family=Roboto:wght@400;700&family=Montserrat:wght@500;700&family=Oswald:wght@500;700&family=Lora:wght@400;700&family=Poppins:wght@500;700&family=Source+Sans+3:wght@400;600&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&family=Noto+Sans+KR:wght@400;500;700&family=Roboto:wght@400;700&family=Montserrat:wght@500;700&family=Oswald:wght@500;700&family=Lora:wght@400;700&family=Poppins:wght@500;700&family=Source+Sans+3:wght@400;600&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
 
-  <style>
-    @font-face {
-      font-family: 'RIDIBatang';
-      src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_twelve@1.0/RIDIBatang.woff') format('woff');
-      font-weight: normal;
-      font-display: swap;
-    }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', sans-serif; }
-    .apple-bg { background: #f5f5f7; }
-    .card-shadow { box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25); }
-    input[type=range] { accent-color: #0071e3; }
-  </style>
+<style>
+  @font-face {
+    font-family: 'RIDIBatang';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_twelve@1.0/RIDIBatang.woff') format('woff');
+    font-weight: normal;
+    font-display: swap;
+  }
+
+  /* ---------- Reset ---------- */
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  ul { list-style: none; margin: 0; padding: 0; }
+  img { max-width: 100%; display: block; }
+
+  /* ---------- Design tokens ---------- */
+  :root {
+    --blue: #0071e3;
+    --blue-hover: #0077ed;
+    --blue-active: #006edb;
+    --bg: #f5f5f7;
+    --surface: #ffffff;
+    --surface-translucent: rgba(255, 255, 255, 0.82);
+    --border: #d2d2d7;
+    --border-soft: #e5e5ea;
+    --text: #1d1d1f;
+    --text-secondary: #6e6e73;
+    --text-tertiary: #86868b;
+    --red: #ff3b30;
+    --danger-bg: #fdecea;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 18px;
+    --shadow-card: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    --header-h: 56px;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Pretendard', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  input[type="range"] { accent-color: var(--blue); }
+  :focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+  /* ---------- App shell ---------- */
+  .app { min-height: 100vh; display: flex; flex-direction: column; }
+
+  .app-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--surface-translucent);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .header-inner {
+    max-width: 1600px;
+    margin: 0 auto;
+    height: var(--header-h);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .brand { display: flex; align-items: center; gap: 8px; }
+  .brand-mark {
+    width: 30px; height: 30px; border-radius: 8px;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: #fff; font-weight: 700; font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .brand-name { font-weight: 600; font-size: 15px; }
+
+  .tab-nav { display: flex; align-items: center; gap: 2px; background: rgba(118,118,128,0.12); padding: 4px; border-radius: 999px; }
+  .tab-nav button {
+    border: none; background: transparent; padding: 7px 18px; border-radius: 999px;
+    font-size: 13.5px; font-weight: 500; color: var(--text-secondary);
+    transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+    white-space: nowrap;
+  }
+  .tab-nav button.active { background: #fff; color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  .tab-nav button:hover:not(.active) { color: var(--text); }
+
+  .btn {
+    border: none; border-radius: 980px; font-weight: 500; font-size: 13.5px;
+    padding: 8px 20px; transition: background 0.15s, opacity 0.15s;
+  }
+  .btn-primary { background: var(--blue); color: #fff; }
+  .btn-primary:hover:not(:disabled) { background: var(--blue-hover); }
+  .btn-primary:active:not(:disabled) { background: var(--blue-active); }
+  .btn-primary:disabled { opacity: 0.55; cursor: default; }
+
+  /* ---------- Body layout ---------- */
+  .app-body { flex: 1; display: flex; max-width: 1600px; margin: 0 auto; width: 100%; }
+
+  /* ---------- Sidebar (card list) ---------- */
+  .sidebar {
+    width: 260px; flex-shrink: 0;
+    border-right: 1px solid var(--border-soft);
+    background: rgba(255,255,255,0.4);
+    padding: 18px 16px;
+    display: flex; flex-direction: column;
+  }
+  .sidebar-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .sidebar-title { font-size: 13.5px; font-weight: 600; color: var(--text-secondary); }
+  .icon-round {
+    width: 28px; height: 28px; border-radius: 50%; border: none;
+    background: var(--blue); color: #fff; font-size: 18px; line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s;
+  }
+  .icon-round:hover { background: var(--blue-hover); }
+
+  .card-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+  .card-thumb {
+    position: relative; border-radius: var(--radius-md); overflow: hidden; cursor: pointer;
+    border: 2px solid transparent; transition: border-color 0.15s;
+  }
+  .card-thumb:hover { border-color: var(--border); }
+  .card-thumb.active { border-color: var(--blue); }
+  .card-thumb-frame { aspect-ratio: 3 / 4; background: #e5e5ea; position: relative; }
+  .card-thumb-bg { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0.85; }
+  .card-thumb-shade { position: absolute; inset: 0; background: rgba(0,0,0,0.38); }
+  .card-thumb-caption {
+    position: absolute; left: 8px; right: 8px; bottom: 8px;
+    color: #fff; font-size: 11.5px; font-weight: 500;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .card-thumb-actions {
+    position: absolute; top: 6px; right: 6px; display: flex; gap: 4px;
+    opacity: 0; transition: opacity 0.15s;
+  }
+  .card-thumb:hover .card-thumb-actions { opacity: 1; }
+  .thumb-action {
+    width: 24px; height: 24px; border-radius: 50%; border: none;
+    background: rgba(255,255,255,0.92); font-size: 12px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .thumb-action:hover { background: #fff; }
+  .thumb-action.danger:hover { background: var(--danger-bg); color: var(--red); }
+
+  /* ---------- Main preview area ---------- */
+  .main-stage {
+    flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px;
+    background: linear-gradient(to bottom, #fafafa, #efeff1);
+  }
+
+  .card-canvas {
+    position: relative; overflow: hidden; border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card); background: #0a0a0a; width: 100%;
+  }
+  .image-stack { position: absolute; inset: 0; overflow: hidden; }
+  .image-empty {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    color: #8a8a8e; font-size: 13.5px; background: #1c1c1e;
+  }
+  .image-layer { position: absolute; inset: 0; background-repeat: no-repeat; pointer-events: none; }
+  .gradient-layer { position: absolute; inset: 0; pointer-events: none; }
+
+  .card-content { position: relative; height: 100%; display: flex; flex-direction: column; padding: 24px; color: #fff; }
+  .eyebrow-row { display: flex; align-items: center; gap: 12px; }
+  .eyebrow-rule { width: 32px; height: 2px; background: var(--red); flex-shrink: 0; }
+  .push-bottom { margin-top: auto; }
+  .push-top { margin-bottom: auto; }
+  .divider-rule { height: 2px; background: var(--red); }
+  .footer-row { display: flex; align-items: center; justify-content: space-between; }
+  .text-block { white-space: pre-line; }
+  .highlight-chip { padding: 1px 5px; border-radius: 4px; color: #fff; display: inline; }
+  .underline-chip { text-decoration: underline; text-underline-offset: 3px; display: inline; }
+
+  /* layout-specific tweaks */
+  .layout-center-body { align-items: center; justify-content: center; text-align: center; }
+  .layout-big-title-body { justify-content: center; }
+  .layout-big-title-eyebrow { position: absolute; top: 24px; left: 24px; right: 24px; }
+  .layout-big-title-footer { position: absolute; bottom: 24px; left: 24px; right: 24px; }
+  .center-col { text-align: center; }
+  .center-inline { display: flex; align-items: center; justify-content: center; gap: 32px; }
+
+  /* ---------- Right panel ---------- */
+  .panel {
+    width: 320px; flex-shrink: 0; border-left: 1px solid var(--border-soft);
+    background: rgba(255,255,255,0.6); backdrop-filter: blur(12px);
+    padding: 20px; overflow-y: auto;
+  }
+  .panel h3 { margin: 0 0 12px; font-size: 14.5px; font-weight: 600; }
+  .panel h4 { margin: 0; font-size: 13.5px; font-weight: 500; color: var(--text); }
+  .field { margin-bottom: 20px; }
+  .field:last-child { margin-bottom: 0; }
+  .field-label { display: block; font-size: 12px; font-weight: 500; color: var(--text-secondary); margin-bottom: 6px; }
+  .field-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+  .field-row .value { font-size: 12px; color: var(--text-secondary); }
+
+  .control {
+    width: 100%; border: 1px solid var(--border); border-radius: var(--radius-sm);
+    padding: 8px 11px; font-size: 13.5px; background: #fff;
+  }
+  .control:focus { border-color: var(--blue); }
+  textarea.control { resize: none; }
+  select.control { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%236e6e73'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z' clip-rule='evenodd'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 30px; }
+
+  input[type="range"].control { padding: 0; border: none; background: transparent; }
+
+  .info-box {
+    background: #eef5ff; color: #0a5fd6; font-size: 12px; line-height: 1.6;
+    padding: 12px 14px; border-radius: var(--radius-sm); margin-bottom: 18px;
+  }
+  .info-box strong { display: block; margin-bottom: 4px; }
+  .info-box code { background: rgba(10,95,214,0.12); padding: 1px 5px; border-radius: 4px; }
+
+  .segmented { display: flex; gap: 8px; }
+  .segmented button {
+    flex: 1; padding: 9px 0; border-radius: var(--radius-sm); border: 1px solid var(--border);
+    background: #fff; font-size: 13px; text-align: center; transition: all 0.15s;
+  }
+  .segmented button.active { background: var(--blue); border-color: var(--blue); color: #fff; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+
+  .choice-card {
+    padding: 14px 10px; border-radius: var(--radius-md); border: 2px solid var(--border-soft);
+    background: #fff; font-size: 13px; font-weight: 500; text-align: center; transition: all 0.15s;
+  }
+  .choice-card.active { border-color: var(--blue); background: #eef5ff; color: var(--blue); }
+  .choice-card .sub { display: block; font-size: 11px; font-weight: 400; opacity: 0.75; margin-top: 2px; }
+
+  .choice-list { display: flex; flex-direction: column; gap: 8px; }
+  .choice-row {
+    text-align: left; padding: 11px 14px; border-radius: var(--radius-md); border: 2px solid var(--border-soft);
+    background: #fff; font-size: 13.5px; transition: all 0.15s;
+  }
+  .choice-row.active { border-color: var(--blue); background: #eef5ff; color: var(--blue); }
+
+  .swatch-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 12px; }
+  .swatch-field { display: flex; align-items: center; gap: 8px; }
+  .swatch-field .label { font-size: 12px; color: var(--text-secondary); }
+  input[type="color"] {
+    width: 32px; height: 32px; border: none; border-radius: 8px; padding: 0; cursor: pointer; background: none;
+  }
+  input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+  input[type="color"]::-webkit-color-swatch { border: 1px solid var(--border); border-radius: 8px; }
+
+  .bold-toggle {
+    padding: 7px 16px; border-radius: var(--radius-sm); border: 1px solid var(--border);
+    background: #fff; font-weight: 700; font-size: 13.5px;
+  }
+  .bold-toggle.active { background: var(--text); border-color: var(--text); color: #fff; }
+
+  .file-input { font-size: 13px; }
+
+  .switch-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 12px 14px; background: #f5f5f7; border-radius: var(--radius-md);
+  }
+  .switch-row .title { font-size: 13.5px; font-weight: 500; }
+  .switch-row .desc { font-size: 11.5px; color: var(--text-secondary); margin-top: 2px; }
+  .switch { position: relative; display: inline-block; width: 42px; height: 24px; flex-shrink: 0; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .switch-track {
+    position: absolute; inset: 0; background: #d1d1d6; border-radius: 999px; transition: background 0.15s; cursor: pointer;
+  }
+  .switch-track::before {
+    content: ""; position: absolute; width: 20px; height: 20px; left: 2px; top: 2px;
+    background: #fff; border-radius: 50%; transition: transform 0.15s; box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  }
+  .switch input:checked + .switch-track { background: var(--blue); }
+  .switch input:checked + .switch-track::before { transform: translateX(18px); }
+
+  .section-divider { border: none; border-top: 1px solid var(--border-soft); margin: 18px 0; }
+
+  .checkbox-row { display: flex; align-items: center; gap: 8px; font-size: 13.5px; }
+
+  .helper-text { font-size: 12px; color: var(--text-secondary); line-height: 1.6; margin-top: 14px; }
+
+  @media (max-width: 900px) {
+    .sidebar, .panel { display: none; }
+  }
+</style>
 </head>
-<body class="apple-bg min-h-screen">
-  <div id="root"></div>
+<body>
+<div id="root"></div>
 
-  <script type="text/babel">
-    const { useState, useRef, useEffect, useCallback } = React;
+<script type="text/babel">
+const { useState, useRef } = React;
 
-    const freeFonts = [
-      { name: 'Pretendard', value: 'Pretendard' },
-      { name: '리디바탕', value: 'RIDIBatang' },
-      { name: 'Inter', value: 'Inter' },
-      { name: 'Playfair Display', value: 'Playfair Display' },
-      { name: 'Noto Sans KR', value: 'Noto Sans KR' },
-      { name: 'Roboto', value: 'Roboto' },
-      { name: 'Montserrat', value: 'Montserrat' },
-      { name: 'Oswald', value: 'Oswald' },
-      { name: 'Lora', value: 'Lora' },
-      { name: 'Poppins', value: 'Poppins' },
-      { name: 'Source Sans 3', value: 'Source Sans 3' },
-      { name: 'Merriweather', value: 'Merriweather' },
-    ];
+const freeFonts = [
+  { name: 'Pretendard', value: 'Pretendard' },
+  { name: '리디바탕', value: 'RIDIBatang' },
+  { name: 'Inter', value: 'Inter' },
+  { name: 'Playfair Display', value: 'Playfair Display' },
+  { name: 'Noto Sans KR', value: 'Noto Sans KR' },
+  { name: 'Roboto', value: 'Roboto' },
+  { name: 'Montserrat', value: 'Montserrat' },
+  { name: 'Oswald', value: 'Oswald' },
+  { name: 'Lora', value: 'Lora' },
+  { name: 'Poppins', value: 'Poppins' },
+  { name: 'Source Sans 3', value: 'Source Sans 3' },
+  { name: 'Merriweather', value: 'Merriweather' },
+];
 
-    const sizePresets = [
-      { id: '3/4', name: '3:4 (기본 카드)', ratio: '3/4', maxW: '380px' },
-      { id: '9/16', name: '9:16 (스토리)', ratio: '9/16', maxW: '320px' },
-      { id: '1/1', name: '1:1 (정사각형)', ratio: '1/1', maxW: '420px' },
-      { id: '16/9', name: '16:9 (가로)', ratio: '16/9', maxW: '560px' },
-      { id: '4/5', name: '4:5 (인스타 세로)', ratio: '4/5', maxW: '360px' },
-    ];
+const sizePresets = [
+  { id: '3/4', name: '3:4 (기본 카드)', ratio: '3/4', maxW: '380px' },
+  { id: '9/16', name: '9:16 (스토리)', ratio: '9/16', maxW: '320px' },
+  { id: '1/1', name: '1:1 (정사각형)', ratio: '1/1', maxW: '420px' },
+  { id: '16/9', name: '16:9 (가로)', ratio: '16/9', maxW: '560px' },
+  { id: '4/5', name: '4:5 (인스타 세로)', ratio: '4/5', maxW: '360px' },
+];
 
-    const defaultTexts = {
-      category: { content: 'WORLD NEWS', fontSize: 13, fontFamily: 'Pretendard', color: '#ffffff', bold: true, align: 'left', highlightColor: '#ff3b30' },
-      live: { content: 'LIVE UPDATE', fontSize: 12, fontFamily: 'Pretendard', color: '#ff3b30', bold: true, align: 'left', highlightColor: '#ff3b30' },
-      title: { content: 'Hurricane [Lala]\nhits Hawaii', fontSize: 52, fontFamily: 'Playfair Display', color: '#ffffff', bold: true, align: 'left', highlightColor: '#ff3b30' },
-      description: { content: 'Hurricane Lala is battering Hawaii with heavy rain and strong winds, prompting flood warnings and emergency rescues across the islands.', fontSize: 15, fontFamily: 'Pretendard', color: '#e5e5e5', bold: false, align: 'left', highlightColor: '#ff3b30' },
-      source: { content: 'SOURCE: REUTERS', fontSize: 11, fontFamily: 'Pretendard', color: '#ff3b30', bold: true, align: 'left', highlightColor: '#ff3b30' },
-      brand: { content: 'WEST150DAILY', fontSize: 11, fontFamily: 'Pretendard', color: '#ffffff', bold: true, align: 'right', highlightColor: '#ff3b30' },
+const layoutOptions = [
+  { id: 'news', name: '뉴스형' },
+  { id: 'big-title', name: '큰 타이틀' },
+  { id: 'bottom', name: '하단 텍스트' },
+  { id: 'center', name: '중앙 집중' },
+];
+
+const defaultTexts = {
+  category: { content: 'WORLD NEWS', fontSize: 13, fontFamily: 'Pretendard', color: '#ffffff', bold: true, align: 'left', highlightColor: '#ff3b30' },
+  live: { content: 'LIVE UPDATE', fontSize: 12, fontFamily: 'Pretendard', color: '#ff3b30', bold: true, align: 'left', highlightColor: '#ff3b30' },
+  title: { content: 'Hurricane [Lala]\nhits Hawaii', fontSize: 52, fontFamily: 'Playfair Display', color: '#ffffff', bold: true, align: 'left', highlightColor: '#ff3b30' },
+  description: { content: 'Hurricane Lala is battering Hawaii with heavy rain and strong winds, prompting flood warnings and emergency rescues across the islands.', fontSize: 15, fontFamily: 'Pretendard', color: '#e5e5e5', bold: false, align: 'left', highlightColor: '#ff3b30' },
+  source: { content: 'SOURCE: REUTERS', fontSize: 11, fontFamily: 'Pretendard', color: '#ff3b30', bold: true, align: 'left', highlightColor: '#ff3b30' },
+  brand: { content: 'WEST150DAILY', fontSize: 11, fontFamily: 'Pretendard', color: '#ffffff', bold: true, align: 'right', highlightColor: '#ff3b30' },
+};
+
+const createNewCard = () => ({
+  id: Date.now() + Math.random(),
+  layout: 'news',
+  size: '3/4',
+  backgroundImage: '',
+  blur: 0,
+  imageFit: 'cover',
+  imagePosition: 'center',
+  imageScale: 1,
+  marginBlur: true,
+  gradient: {
+    enabled: true,
+    direction: 'to bottom',
+    startColor: '#000000',
+    endColor: '#000000',
+    startOpacity: 0.3,
+    endOpacity: 0.85,
+  },
+  texts: JSON.parse(JSON.stringify(defaultTexts)),
+});
+
+// 원본 이미지를 data URL로 확보 (CORS 가능한 경우) — 내보내기 안정성 향상
+const loadImageAsDataURL = (src) => {
+  return new Promise((resolve) => {
+    if (!src) return resolve(null);
+    if (src.startsWith('data:')) return resolve(src);
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      try {
+        const c = document.createElement('canvas');
+        c.width = img.naturalWidth;
+        c.height = img.naturalHeight;
+        c.getContext('2d').drawImage(img, 0, 0);
+        resolve(c.toDataURL('image/jpeg', 0.95));
+      } catch (e) {
+        resolve(src);
+      }
     };
+    img.onerror = () => resolve(src);
+    img.src = src.includes('?') ? src + '&_=' + Date.now() : src + '?_=' + Date.now();
+  });
+};
 
-    const createNewCard = () => ({
-      id: Date.now() + Math.random(),
-      layout: 'news',
-      size: '3/4',
-      backgroundImage: '',
-      blur: 0,
-      imageFit: 'cover',
-      imagePosition: 'center',
-      imageScale: 1,
-      marginBlur: true,
-      gradient: {
-        enabled: true,
-        direction: 'to bottom',
-        startColor: '#000000',
-        endColor: '#000000',
-        startOpacity: 0.3,
-        endOpacity: 0.85,
-      },
-      texts: JSON.parse(JSON.stringify(defaultTexts)),
-    });
-
-    // 이미지를 data URL로 로드 (CORS 가능 시) — 저장 안정성↑
-    const loadImageAsDataURL = (src) => {
-      return new Promise((resolve) => {
-        if (!src) return resolve(null);
-        if (src.startsWith('data:')) return resolve(src);
-
-        const img = new Image();
-        img.crossOrigin = 'anonymous';
-        img.onload = () => {
-          try {
-            const c = document.createElement('canvas');
-            c.width = img.naturalWidth;
-            c.height = img.naturalHeight;
-            const ctx = c.getContext('2d');
-            ctx.drawImage(img, 0, 0);
-            resolve(c.toDataURL('image/jpeg', 0.95));
-          } catch (e) {
-            resolve(src); // tainted면 원본 URL 유지
-          }
-        };
-        img.onerror = () => resolve(src);
-        // 캐시 이슈 방지용 쿼리 (data/blob 제외)
-        img.src = src.includes('?') ? src + '&_=' + Date.now() : src + '?_=' + Date.now();
-      });
+// 블러 처리된 data URL 생성. 원본과 정확히 같은 크기의 캔버스에 blur만 적용해서
+// (패딩을 추가하지 않음) background-size:cover 계산이 미리보기와 항상 일치하게 만든다.
+const createBlurredDataURL = (src, blurPx) => {
+  return new Promise((resolve) => {
+    if (!src || blurPx <= 0) return resolve(src);
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      try {
+        const c = document.createElement('canvas');
+        c.width = img.naturalWidth;
+        c.height = img.naturalHeight;
+        const ctx = c.getContext('2d');
+        ctx.filter = `blur(${blurPx}px)`;
+        ctx.drawImage(img, 0, 0);
+        resolve(c.toDataURL('image/jpeg', 0.92));
+      } catch (e) {
+        resolve(src);
+      }
     };
+    img.onerror = () => resolve(src);
+    img.src = src;
+  });
+};
 
-    // 블러된 이미지 data URL 생성 (html2canvas는 CSS filter 미지원)
-    // 원본과 동일한 크기의 캔버스에 블러를 적용해, 브라우저의 CSS filter:blur() 렌더링과
-    // 최대한 동일한 결과(이미지 크기/구도 변화 없음)를 만든다.
-    const createBlurredDataURL = (src, blurPx) => {
-      return new Promise((resolve) => {
-        if (!src || blurPx <= 0) return resolve(src);
-        const img = new Image();
-        img.crossOrigin = 'anonymous';
-        img.onload = () => {
-          try {
-            const c = document.createElement('canvas');
-            c.width = img.naturalWidth;
-            c.height = img.naturalHeight;
-            const ctx = c.getContext('2d');
-            ctx.filter = `blur(${blurPx}px)`;
-            ctx.drawImage(img, 0, 0);
-            resolve(c.toDataURL('image/jpeg', 0.92));
-          } catch (e) {
-            resolve(src);
-          }
-        };
-        img.onerror = () => resolve(src);
-        img.src = src;
-      });
-    };
-
-    const renderFormattedText = (content, baseStyle, highlightColor) => {
-      if (!content) return null;
-      const regex = /(\[.*?\])|(~.*?~)/g;
-      const parts = content.split(regex).filter(Boolean);
-
-      return parts.map((part, index) => {
-        if (part.startsWith('[') && part.endsWith(']')) {
-          const text = part.slice(1, -1);
-          return (
-            <span key={index} style={{
-              ...baseStyle,
-              backgroundColor: highlightColor || '#ff3b30',
-              color: '#ffffff',
-              padding: '1px 5px',
-              borderRadius: '4px',
-              display: 'inline',
-            }}>{text}</span>
-          );
-        }
-        if (part.startsWith('~') && part.endsWith('~')) {
-          const text = part.slice(1, -1);
-          return (
-            <span key={index} style={{
-              ...baseStyle,
-              textDecoration: 'underline',
-              textUnderlineOffset: '3px',
-              display: 'inline',
-            }}>{text}</span>
-          );
-        }
-        return <span key={index} style={{ display: 'inline' }}>{part}</span>;
-      });
-    };
-
-    function App() {
-      const [cards, setCards] = useState([createNewCard()]);
-      const [selectedId, setSelectedId] = useState(cards[0].id);
-      const [activeTab, setActiveTab] = useState('layout');
-      const [selectedTextKey, setSelectedTextKey] = useState('title');
-      const [isExporting, setIsExporting] = useState(false);
-      const previewRef = useRef(null);
-
-      const selectedCard = cards.find(c => c.id === selectedId) || cards[0];
-
-      const updateCard = (updates) => {
-        setCards(prev => prev.map(c => c.id === selectedId ? { ...c, ...updates } : c));
-      };
-
-      const updateGradient = (field, value) => {
-        setCards(prev => prev.map(c => {
-          if (c.id !== selectedId) return c;
-          return { ...c, gradient: { ...c.gradient, [field]: value } };
-        }));
-      };
-
-      const updateText = (key, field, value) => {
-        setCards(prev => prev.map(c => {
-          if (c.id !== selectedId) return c;
-          return {
-            ...c,
-            texts: { ...c.texts, [key]: { ...c.texts[key], [field]: value } }
-          };
-        }));
-      };
-
-      const addCard = () => {
-        const newCard = createNewCard();
-        setCards(prev => [...prev, newCard]);
-        setSelectedId(newCard.id);
-      };
-
-      const duplicateCard = (id) => {
-        const original = cards.find(c => c.id === id);
-        const newCard = { ...JSON.parse(JSON.stringify(original)), id: Date.now() + Math.random() };
-        setCards(prev => [...prev, newCard]);
-        setSelectedId(newCard.id);
-      };
-
-      const deleteCard = (id) => {
-        if (cards.length <= 1) return alert('최소 1개의 카드는 필요합니다.');
-        const newCards = cards.filter(c => c.id !== id);
-        setCards(newCards);
-        if (selectedId === id) setSelectedId(newCards[0].id);
-      };
-
-      const handleFileUpload = (e) => {
-        const file = e.target.files && e.target.files[0];
-        if (!file) return;
-        if (!file.type.startsWith('image/')) {
-          alert('이미지 파일만 업로드할 수 있습니다.');
-          e.target.value = '';
-          return;
-        }
-        const reader = new FileReader();
-        reader.onload = () => {
-          updateCard({ backgroundImage: reader.result });
-        };
-        reader.onerror = () => alert('파일을 읽는 중 오류가 발생했습니다.');
-        reader.readAsDataURL(file);
-        e.target.value = '';
-      };
-
-      const downloadCard = async () => {
-        if (!previewRef.current || isExporting) return;
-        setIsExporting(true);
-        try {
-          // 폰트 로딩 대기
-          if (document.fonts && document.fonts.ready) {
-            await document.fonts.ready;
-          }
-
-          const card = selectedCard;
-          const el = previewRef.current;
-
-          // 원본 이미지를 data URL로 확보 (가능하면)
-          let baseSrc = await loadImageAsDataURL(card.backgroundImage);
-          if (!baseSrc) baseSrc = card.backgroundImage;
-
-          // 메인 블러 적용 버전
-          const mainSrc = card.blur > 0
-            ? await createBlurredDataURL(baseSrc, card.blur)
-            : baseSrc;
-
-          // 여백 블러용 (contain)
-          const marginSrc = (card.imageFit === 'contain' && card.marginBlur)
-            ? await createBlurredDataURL(baseSrc, 25)
-            : null;
-
-          // 캡처용으로 블러 처리된 data URL을 배경이미지로 교체 (CSS filter 없이)
-          const layers = el.querySelectorAll('[data-card-img]');
-          const originals = [];
-          layers.forEach((layer) => {
-            originals.push({ layer, bg: layer.style.backgroundImage, styleFilter: layer.style.filter });
-            const role = layer.getAttribute('data-card-img');
-            if (role === 'margin' && marginSrc) {
-              layer.style.backgroundImage = `url(${marginSrc})`;
-              layer.style.filter = 'none';
-            } else if (role === 'main') {
-              layer.style.backgroundImage = `url(${mainSrc})`;
-              layer.style.filter = 'none';
-            }
-          });
-
-          // 데이터 URL 이미지 디코딩 대기 (배경이미지는 decode 이벤트가 없으므로 프리로드로 대기)
-          await Promise.all(
-            [mainSrc, marginSrc].filter(Boolean).map(
-              (src) =>
-                new Promise((res) => {
-                  const preload = new Image();
-                  preload.onload = () => res();
-                  preload.onerror = () => res();
-                  preload.src = src;
-                })
-            )
-          );
-
-          // 한 프레임 대기 후 캡처
-          await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
-
-          const canvas = await html2canvas(el, {
-            scale: 3,
-            useCORS: true,
-            allowTaint: false,
-            backgroundColor: null,
-            logging: false,
-            imageTimeout: 15000,
-          });
-
-          // 원본 복원
-          originals.forEach(({ layer, bg, styleFilter }) => {
-            layer.style.backgroundImage = bg;
-            layer.style.filter = styleFilter;
-          });
-
-          const link = document.createElement('a');
-          link.download = `card-${Date.now()}.png`;
-          link.href = canvas.toDataURL('image/png', 1.0);
-          link.click();
-        } catch (err) {
-          console.error(err);
-          alert('저장 중 오류가 발생했습니다. 외부 이미지는 CORS 제한이 있을 수 있습니다. 파일을 직접 업로드해 보세요.');
-        } finally {
-          setIsExporting(false);
-        }
-      };
-
-      // card 기준 스타일 (버그 수정: 항상 selectedCard만 쓰던 문제)
-      const getBaseStyle = (card, key) => {
-        const t = card.texts[key];
-        return {
-          fontSize: t.fontSize,
-          fontFamily: t.fontFamily,
-          color: t.color,
-          fontWeight: t.bold ? 700 : 400,
-          textAlign: t.align || 'left',
-        };
-      };
-
-      const renderCard = (card) => {
-        const t = card.texts;
-        const layout = card.layout;
-        const size = sizePresets.find(s => s.id === card.size) || sizePresets[0];
-        const g = card.gradient;
-
-        const gradientStyle = g.enabled
-          ? `linear-gradient(${g.direction}, ${g.startColor}${Math.round(g.startOpacity * 255).toString(16).padStart(2, '0')} 0%, ${g.endColor}${Math.round(g.endOpacity * 255).toString(16).padStart(2, '0')} 100%)`
-          : 'transparent';
-
-        const Text = ({ textKey, className = '', style = {} }) => {
-          const base = getBaseStyle(card, textKey);
-          return (
-            <div className={className} style={{ ...base, ...style, whiteSpace: 'pre-line' }}>
-              {renderFormattedText(t[textKey].content, base, t[textKey].highlightColor)}
-            </div>
-          );
-        };
-
-        const bgPos =
-          card.imagePosition === 'top' ? 'center top' :
-          card.imagePosition === 'bottom' ? 'center bottom' : 'center center';
-
-        const transformOrigin =
-          card.imagePosition === 'top' ? 'center top' :
-          card.imagePosition === 'bottom' ? 'center bottom' : 'center center';
-
-        const scale = card.imageFit === 'cover' ? (card.imageScale || 1) : 1;
-        const hasImage = !!card.backgroundImage;
-
-        return (
-          <div
-            ref={previewRef}
-            className="relative overflow-hidden rounded-2xl card-shadow bg-black"
-            style={{ aspectRatio: size.ratio, width: '100%', maxWidth: size.maxW }}
-          >
-            {/* ===== 이미지 레이어 (배경이미지 기반 — html2canvas와 렌더링 일치) ===== */}
-            <div className="absolute inset-0 overflow-hidden">
-              {!hasImage && (
-                <div className="absolute inset-0 flex items-center justify-center text-gray-500 text-sm">
-                  이미지를 업로드해주세요
-                </div>
-              )}
-
-              {/* Contain 여백 블러 */}
-              {hasImage && card.imageFit === 'contain' && card.marginBlur && (
-                <div
-                  data-card-img="margin"
-                  className="absolute inset-0 pointer-events-none"
-                  style={{
-                    backgroundImage: `url(${card.backgroundImage})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    backgroundRepeat: 'no-repeat',
-                    filter: 'blur(25px)',
-                    transform: 'scale(1.15)',
-                  }}
-                />
-              )}
-
-              {/* 메인 이미지 */}
-              {hasImage && (
-                <div
-                  data-card-img="main"
-                  className="absolute inset-0 pointer-events-none"
-                  style={{
-                    backgroundImage: `url(${card.backgroundImage})`,
-                    backgroundSize: card.imageFit === 'cover' ? 'cover' : 'contain',
-                    backgroundPosition: bgPos,
-                    backgroundRepeat: 'no-repeat',
-                    transform: card.imageFit === 'cover' ? `scale(${scale})` : 'none',
-                    transformOrigin,
-                    filter: card.blur > 0 ? `blur(${card.blur}px)` : 'none',
-                  }}
-                />
-              )}
-            </div>
-
-            {/* 그라데이션 오버레이 */}
-            <div className="absolute inset-0" style={{ background: gradientStyle }} />
-
-            {/* 레이아웃별 텍스트 */}
-            {layout === 'news' && (
-              <div className="relative h-full flex flex-col p-6 text-white">
-                <div className="flex items-center gap-3 mb-auto">
-                  <Text textKey="category" />
-                  <div className="w-8 h-0.5 bg-red-500" />
-                </div>
-                <div className="mt-auto">
-                  <Text textKey="live" className="mb-2" />
-                  <Text textKey="title" className="leading-tight mb-4" />
-                  <div className="w-10 h-0.5 bg-red-500 mb-4" />
-                  <Text textKey="description" className="mb-6 leading-relaxed" />
-                  <div className="flex justify-between items-center">
-                    <Text textKey="source" />
-                    <Text textKey="brand" />
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {layout === 'big-title' && (
-              <div className="relative h-full flex flex-col p-6 text-white justify-center">
-                <div className="absolute top-6 left-6 right-6 flex items-center gap-3">
-                  <Text textKey="category" />
-                  <div className="w-8 h-0.5 bg-red-500" />
-                </div>
-                <div className="text-center px-2">
-                  <Text textKey="live" className="mb-3" />
-                  <Text textKey="title" className="leading-none mb-6" style={{ fontSize: Math.max(t.title.fontSize, 58) }} />
-                  <div className="w-12 h-0.5 bg-red-500 mx-auto mb-5" />
-                  <Text textKey="description" className="leading-relaxed max-w-[90%] mx-auto opacity-90" style={{ fontSize: Math.min(t.description.fontSize, 15) }} />
-                </div>
-                <div className="absolute bottom-6 left-6 right-6 flex justify-between items-center">
-                  <Text textKey="source" />
-                  <Text textKey="brand" />
-                </div>
-              </div>
-            )}
-
-            {layout === 'bottom' && (
-              <div className="relative h-full flex flex-col p-6 text-white">
-                <div className="flex-1" />
-                <div>
-                  <div className="flex items-center gap-3 mb-3">
-                    <Text textKey="category" />
-                    <div className="w-8 h-0.5 bg-red-500" />
-                  </div>
-                  <Text textKey="live" className="mb-2" />
-                  <Text textKey="title" className="leading-tight mb-3" />
-                  <Text textKey="description" className="mb-5 leading-relaxed opacity-90" style={{ fontSize: Math.min(t.description.fontSize, 14) }} />
-                  <div className="flex justify-between items-center">
-                    <Text textKey="source" />
-                    <Text textKey="brand" />
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {layout === 'center' && (
-              <div className="relative h-full flex flex-col items-center justify-center p-8 text-white text-center">
-                <div className="flex items-center gap-3 mb-6">
-                  <Text textKey="category" />
-                  <div className="w-8 h-0.5 bg-red-500" />
-                </div>
-                <Text textKey="live" className="mb-3" />
-                <Text textKey="title" className="leading-tight mb-5" />
-                <div className="w-12 h-0.5 bg-red-500 mb-5" />
-                <Text textKey="description" className="mb-8 leading-relaxed max-w-[90%]" />
-                <div className="flex gap-8 items-center">
-                  <Text textKey="source" />
-                  <Text textKey="brand" />
-                </div>
-              </div>
-            )}
-          </div>
-        );
-      };
-
-      const tabs = [
-        { id: 'layout', label: '레이아웃' },
-        { id: 'text', label: '텍스트' },
-        { id: 'image', label: '이미지' },
-        { id: 'style', label: '스타일' },
-        { id: 'export', label: '내보내기' },
-      ];
-
+const renderFormattedText = (content, highlightColor) => {
+  if (!content) return null;
+  const regex = /(\[.*?\])|(~.*?~)/g;
+  const parts = content.split(regex).filter(Boolean);
+  return parts.map((part, index) => {
+    if (part.startsWith('[') && part.endsWith(']')) {
       return (
-        <div className="min-h-screen flex flex-col">
-          <header className="bg-white/80 backdrop-blur-xl border-b border-gray-200/80 sticky top-0 z-50">
-            <div className="max-w-[1600px] mx-auto px-6 h-14 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-sm">C</div>
-                <span className="font-semibold text-gray-900">Card Editor</span>
-              </div>
-              <nav className="flex items-center gap-1 bg-gray-100/80 p-1 rounded-full">
-                {tabs.map(tab => (
-                  <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-                    className={`px-5 py-1.5 rounded-full text-sm font-medium transition-all ${activeTab === tab.id ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'}`}>
-                    {tab.label}
-                  </button>
-                ))}
-              </nav>
-              <button
-                onClick={downloadCard}
-                disabled={isExporting}
-                className="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white text-sm font-medium rounded-full transition"
-              >
-                {isExporting ? '저장 중…' : '저장하기'}
-              </button>
-            </div>
-          </header>
-
-          <div className="flex-1 flex max-w-[1600px] mx-auto w-full">
-            <aside className="w-64 border-r border-gray-200/80 bg-white/50 p-4 flex flex-col">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-sm font-semibold text-gray-700">내 카드</h2>
-                <button onClick={addCard} className="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center text-lg hover:bg-blue-700">+</button>
-              </div>
-              <div className="space-y-3 overflow-y-auto flex-1">
-                {cards.map(card => (
-                  <div key={card.id} onClick={() => setSelectedId(card.id)}
-                    className={`relative group rounded-xl overflow-hidden cursor-pointer border-2 transition ${selectedId === card.id ? 'border-blue-500' : 'border-transparent hover:border-gray-300'}`}>
-                    <div className="aspect-[3/4] bg-gray-200 relative">
-                      <div className="absolute inset-0 bg-cover bg-center opacity-80" style={{ backgroundImage: `url(${card.backgroundImage})` }} />
-                      <div className="absolute inset-0 bg-black/40" />
-                      <div className="absolute bottom-2 left-2 right-2 text-white text-xs font-medium truncate">
-                        {card.texts.title.content.replace(/[\[\]~]/g, '').split('\n')[0]}
-                      </div>
-                    </div>
-                    <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition">
-                      <button onClick={(e) => { e.stopPropagation(); duplicateCard(card.id); }} className="w-7 h-7 bg-white/90 rounded-full text-xs flex items-center justify-center hover:bg-white">⧉</button>
-                      <button onClick={(e) => { e.stopPropagation(); deleteCard(card.id); }} className="w-7 h-7 bg-white/90 rounded-full text-xs flex items-center justify-center hover:bg-red-100 text-red-600">×</button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </aside>
-
-            <main className="flex-1 flex items-center justify-center p-8 bg-gradient-to-b from-gray-50 to-gray-100">
-              {renderCard(selectedCard)}
-            </main>
-
-            <aside className="w-80 border-l border-gray-200/80 bg-white/70 backdrop-blur p-5 overflow-y-auto">
-              {activeTab === 'layout' && (
-                <div className="space-y-6">
-                  <div>
-                    <h3 className="font-semibold text-gray-900 mb-3">레이아웃 선택</h3>
-                    <div className="grid grid-cols-2 gap-3">
-                      {[{ id: 'news', name: '뉴스형' }, { id: 'big-title', name: '큰 타이틀' }, { id: 'bottom', name: '하단 텍스트' }, { id: 'center', name: '중앙 집중' }].map(l => (
-                        <button key={l.id} onClick={() => updateCard({ layout: l.id })}
-                          className={`p-4 rounded-xl border-2 text-sm font-medium transition ${selectedCard.layout === l.id ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-gray-200 hover:border-gray-300'}`}>
-                          {l.name}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900 mb-3">이미지 사이즈</h3>
-                    <div className="space-y-2">
-                      {sizePresets.map(s => (
-                        <button key={s.id} onClick={() => updateCard({ size: s.id })}
-                          className={`w-full text-left px-4 py-3 rounded-xl border-2 text-sm transition ${selectedCard.size === s.id ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-gray-200 hover:border-gray-300'}`}>
-                          {s.name}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {activeTab === 'text' && (
-                <div className="space-y-5">
-                  <h3 className="font-semibold text-gray-900">텍스트 편집</h3>
-                  <div className="bg-blue-50 text-blue-800 text-xs p-3 rounded-lg leading-relaxed space-y-1">
-                    <div><strong>부분 강조 사용법</strong></div>
-                    <div>• 하이라이트: <code className="bg-blue-100 px-1 rounded">[텍스트]</code></div>
-                    <div>• 밑줄: <code className="bg-blue-100 px-1 rounded">~텍스트~</code></div>
-                  </div>
-
-                  <div>
-                    <label className="text-xs font-medium text-gray-500 mb-1 block">편집할 텍스트</label>
-                    <select value={selectedTextKey} onChange={(e) => setSelectedTextKey(e.target.value)}
-                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white">
-                      <option value="category">카테고리</option>
-                      <option value="live">라이브 태그</option>
-                      <option value="title">타이틀</option>
-                      <option value="description">설명</option>
-                      <option value="source">출처</option>
-                      <option value="brand">브랜드</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="text-xs font-medium text-gray-500 mb-1 block">내용</label>
-                    <textarea
-                      value={selectedCard.texts[selectedTextKey].content}
-                      onChange={(e) => updateText(selectedTextKey, 'content', e.target.value)}
-                      rows={4}
-                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm resize-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-xs font-medium text-gray-500 mb-1 block">글꼴</label>
-                    <select value={selectedCard.texts[selectedTextKey].fontFamily}
-                      onChange={(e) => updateText(selectedTextKey, 'fontFamily', e.target.value)}
-                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm">
-                      {freeFonts.map(f => <option key={f.value} value={f.value}>{f.name}</option>)}
-                    </select>
-                  </div>
-
-                  <div>
-                    <div className="flex justify-between text-xs font-medium text-gray-500 mb-1">
-                      <span>크기</span>
-                      <span>{selectedCard.texts[selectedTextKey].fontSize}px</span>
-                    </div>
-                    <input type="range" min="10" max="90" value={selectedCard.texts[selectedTextKey].fontSize}
-                      onChange={(e) => updateText(selectedTextKey, 'fontSize', Number(e.target.value))} className="w-full" />
-                  </div>
-
-                  <div>
-                    <label className="text-xs font-medium text-gray-500 mb-2 block">정렬</label>
-                    <div className="flex gap-2">
-                      {[{ value: 'left', label: '왼쪽' }, { value: 'center', label: '가운데' }, { value: 'right', label: '오른쪽' }].map(a => (
-                        <button key={a.value} onClick={() => updateText(selectedTextKey, 'align', a.value)}
-                          className={`flex-1 py-2 rounded-lg text-sm border transition ${selectedCard.texts[selectedTextKey].align === a.value ? 'bg-blue-600 text-white border-blue-600' : 'bg-white border-gray-200'}`}>
-                          {a.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="space-y-3">
-                    <label className="text-xs font-medium text-gray-500 block">강조</label>
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <button onClick={() => updateText(selectedTextKey, 'bold', !selectedCard.texts[selectedTextKey].bold)}
-                        className={`px-4 py-1.5 rounded-lg text-sm font-bold border ${selectedCard.texts[selectedTextKey].bold ? 'bg-gray-900 text-white border-gray-900' : 'bg-white border-gray-200'}`}>B</button>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs text-gray-500">글자색</span>
-                        <input type="color" value={selectedCard.texts[selectedTextKey].color}
-                          onChange={(e) => updateText(selectedTextKey, 'color', e.target.value)} className="w-8 h-8 rounded cursor-pointer border-0" />
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs text-gray-500">하이라이트 색</span>
-                        <input type="color" value={selectedCard.texts[selectedTextKey].highlightColor || '#ff3b30'}
-                          onChange={(e) => updateText(selectedTextKey, 'highlightColor', e.target.value)} className="w-8 h-8 rounded cursor-pointer border-0" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {activeTab === 'image' && (
-                <div className="space-y-6">
-                  <h3 className="font-semibold text-gray-900">배경 이미지</h3>
-
-                  <div>
-                    <label className="text-xs font-medium text-gray-500 mb-1 block">파일 업로드</label>
-                    <input type="file" accept="image/*" onChange={handleFileUpload} className="w-full text-sm" />
-                  </div>
-
-                  <div>
-                    <label className="text-xs font-medium text-gray-500 mb-2 block">이미지 맞춤 방식</label>
-                    <div className="grid grid-cols-2 gap-2">
-                      <button
-                        onClick={() => updateCard({ imageFit: 'cover' })}
-                        className={`py-3 rounded-xl text-sm border transition ${selectedCard.imageFit === 'cover' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white border-gray-200'}`}
-                      >
-                        전체 채우기<br/><span className="text-xs opacity-80">(Cover)</span>
-                      </button>
-                      <button
-                        onClick={() => updateCard({ imageFit: 'contain' })}
-                        className={`py-3 rounded-xl text-sm border transition ${selectedCard.imageFit === 'contain' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white border-gray-200'}`}
-                      >
-                        원본 비율<br/><span className="text-xs opacity-80">(Contain)</span>
-                      </button>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="text-xs font-medium text-gray-500 mb-2 block">이미지 위치</label>
-                    <div className="grid grid-cols-3 gap-2">
-                      {[
-                        { value: 'top', label: '상단' },
-                        { value: 'center', label: '중앙' },
-                        { value: 'bottom', label: '하단' },
-                      ].map(pos => (
-                        <button
-                          key={pos.value}
-                          onClick={() => updateCard({ imagePosition: pos.value })}
-                          className={`py-2.5 rounded-lg text-sm border transition ${
-                            selectedCard.imagePosition === pos.value
-                              ? 'bg-blue-600 text-white border-blue-600'
-                              : 'bg-white border-gray-200'
-                          }`}
-                        >
-                          {pos.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {selectedCard.imageFit === 'cover' && (
-                    <div>
-                      <div className="flex justify-between text-xs font-medium text-gray-500 mb-1">
-                        <span>확대 / 축소</span>
-                        <span>{Math.round((selectedCard.imageScale || 1) * 100)}%</span>
-                      </div>
-                      <input
-                        type="range" min="0.6" max="1.8" step="0.05"
-                        value={selectedCard.imageScale || 1}
-                        onChange={(e) => updateCard({ imageScale: Number(e.target.value) })}
-                        className="w-full"
-                      />
-                    </div>
-                  )}
-
-                  {selectedCard.imageFit === 'contain' && (
-                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
-                      <div>
-                        <div className="text-sm font-medium text-gray-800">여백 블러 처리</div>
-                        <div className="text-xs text-gray-500">원본 비율로 생긴 여백을 블러로 채움</div>
-                      </div>
-                      <label className="relative inline-flex items-center cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={!!selectedCard.marginBlur}
-                          onChange={(e) => updateCard({ marginBlur: e.target.checked })}
-                          className="sr-only peer"
-                        />
-                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                      </label>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {activeTab === 'style' && (
-                <div className="space-y-6">
-                  <h3 className="font-semibold text-gray-900">배경 스타일</h3>
-                  <div>
-                    <div className="flex justify-between text-xs font-medium text-gray-500 mb-1">
-                      <span>배경 블러</span>
-                      <span>{selectedCard.blur}px</span>
-                    </div>
-                    <input type="range" min="0" max="20" value={selectedCard.blur}
-                      onChange={(e) => updateCard({ blur: Number(e.target.value) })} className="w-full" />
-                  </div>
-                  <div className="space-y-4 pt-2 border-t border-gray-200">
-                    <div className="flex items-center justify-between">
-                      <h4 className="text-sm font-medium text-gray-800">그라데이션</h4>
-                      <label className="flex items-center gap-2 text-sm">
-                        <input type="checkbox" checked={selectedCard.gradient.enabled}
-                          onChange={(e) => updateGradient('enabled', e.target.checked)} /> 사용
-                      </label>
-                    </div>
-                    {selectedCard.gradient.enabled && (
-                      <>
-                        <div>
-                          <label className="text-xs font-medium text-gray-500 mb-1 block">방향</label>
-                          <select value={selectedCard.gradient.direction} onChange={(e) => updateGradient('direction', e.target.value)}
-                            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm">
-                            <option value="to bottom">위에서 아래</option>
-                            <option value="to top">아래에서 위</option>
-                            <option value="to right">왼쪽에서 오른쪽</option>
-                            <option value="to left">오른쪽에서 왼쪽</option>
-                            <option value="to bottom right">대각선 ↘</option>
-                            <option value="to bottom left">대각선 ↙</option>
-                          </select>
-                        </div>
-                        <div className="grid grid-cols-2 gap-3">
-                          <div>
-                            <label className="text-xs font-medium text-gray-500 mb-1 block">시작 색상</label>
-                            <input type="color" value={selectedCard.gradient.startColor}
-                              onChange={(e) => updateGradient('startColor', e.target.value)} className="w-full h-10 rounded cursor-pointer" />
-                          </div>
-                          <div>
-                            <label className="text-xs font-medium text-gray-500 mb-1 block">끝 색상</label>
-                            <input type="color" value={selectedCard.gradient.endColor}
-                              onChange={(e) => updateGradient('endColor', e.target.value)} className="w-full h-10 rounded cursor-pointer" />
-                          </div>
-                        </div>
-                        <div>
-                          <div className="flex justify-between text-xs font-medium text-gray-500 mb-1">
-                            <span>시작 투명도</span>
-                            <span>{Math.round(selectedCard.gradient.startOpacity * 100)}%</span>
-                          </div>
-                          <input type="range" min="0" max="1" step="0.05" value={selectedCard.gradient.startOpacity}
-                            onChange={(e) => updateGradient('startOpacity', Number(e.target.value))} className="w-full" />
-                        </div>
-                        <div>
-                          <div className="flex justify-between text-xs font-medium text-gray-500 mb-1">
-                            <span>끝 투명도</span>
-                            <span>{Math.round(selectedCard.gradient.endOpacity * 100)}%</span>
-                          </div>
-                          <input type="range" min="0" max="1" step="0.05" value={selectedCard.gradient.endOpacity}
-                            onChange={(e) => updateGradient('endOpacity', Number(e.target.value))} className="w-full" />
-                        </div>
-                      </>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {activeTab === 'export' && (
-                <div className="space-y-5">
-                  <h3 className="font-semibold text-gray-900">내보내기</h3>
-                  <button
-                    onClick={downloadCard}
-                    disabled={isExporting}
-                    className="w-full py-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white font-medium rounded-xl transition"
-                  >
-                    {isExporting ? '저장 중…' : 'PNG로 저장하기'}
-                  </button>
-                  <p className="text-xs text-gray-500 leading-relaxed">
-                    저장 시 블러는 캔버스로 미리 적용해 미리보기와 최대한 같게 맞춥니다.
-                  </p>
-                </div>
-              )}
-            </aside>
-          </div>
-        </div>
+        <span key={index} className="highlight-chip" style={{ backgroundColor: highlightColor || '#ff3b30' }}>
+          {part.slice(1, -1)}
+        </span>
       );
     }
+    if (part.startsWith('~') && part.endsWith('~')) {
+      return <span key={index} className="underline-chip">{part.slice(1, -1)}</span>;
+    }
+    return <span key={index} style={{ display: 'inline' }}>{part}</span>;
+  });
+};
 
-    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
-  </script>
+function App() {
+  const [cards, setCards] = useState([createNewCard()]);
+  const [selectedId, setSelectedId] = useState(cards[0].id);
+  const [activeTab, setActiveTab] = useState('layout');
+  const [selectedTextKey, setSelectedTextKey] = useState('title');
+  const [isExporting, setIsExporting] = useState(false);
+  const previewRef = useRef(null);
+
+  const selectedCard = cards.find(c => c.id === selectedId) || cards[0];
+
+  const updateCard = (updates) => {
+    setCards(prev => prev.map(c => c.id === selectedId ? { ...c, ...updates } : c));
+  };
+  const updateGradient = (field, value) => {
+    setCards(prev => prev.map(c => c.id === selectedId ? { ...c, gradient: { ...c.gradient, [field]: value } } : c));
+  };
+  const updateText = (key, field, value) => {
+    setCards(prev => prev.map(c => c.id === selectedId
+      ? { ...c, texts: { ...c.texts, [key]: { ...c.texts[key], [field]: value } } }
+      : c));
+  };
+
+  const addCard = () => {
+    const newCard = createNewCard();
+    setCards(prev => [...prev, newCard]);
+    setSelectedId(newCard.id);
+  };
+  const duplicateCard = (id) => {
+    const original = cards.find(c => c.id === id);
+    const newCard = { ...JSON.parse(JSON.stringify(original)), id: Date.now() + Math.random() };
+    setCards(prev => [...prev, newCard]);
+    setSelectedId(newCard.id);
+  };
+  const deleteCard = (id) => {
+    if (cards.length <= 1) return alert('최소 1개의 카드는 필요합니다.');
+    const next = cards.filter(c => c.id !== id);
+    setCards(next);
+    if (selectedId === id) setSelectedId(next[0].id);
+  };
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      alert('이미지 파일만 업로드할 수 있습니다.');
+      e.target.value = '';
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => updateCard({ backgroundImage: reader.result });
+    reader.onerror = () => alert('파일을 읽는 중 오류가 발생했습니다.');
+    reader.readAsDataURL(file);
+    e.target.value = '';
+  };
+
+  const downloadCard = async () => {
+    if (!previewRef.current || isExporting) return;
+    setIsExporting(true);
+    try {
+      if (document.fonts && document.fonts.ready) {
+        await document.fonts.ready;
+      }
+
+      const card = selectedCard;
+      const el = previewRef.current;
+
+      let baseSrc = await loadImageAsDataURL(card.backgroundImage);
+      if (!baseSrc) baseSrc = card.backgroundImage;
+
+      const mainSrc = card.blur > 0 ? await createBlurredDataURL(baseSrc, card.blur) : baseSrc;
+      const marginSrc = (card.imageFit === 'contain' && card.marginBlur)
+        ? await createBlurredDataURL(baseSrc, 25)
+        : null;
+
+      // 캡처용으로 배경이미지를 블러 처리된 data URL로 임시 교체 (CSS filter는 html2canvas 미지원)
+      const layers = el.querySelectorAll('[data-card-img]');
+      const originals = [];
+      layers.forEach((layer) => {
+        originals.push({ layer, bg: layer.style.backgroundImage, filter: layer.style.filter });
+        const role = layer.getAttribute('data-card-img');
+        if (role === 'margin' && marginSrc) {
+          layer.style.backgroundImage = `url(${marginSrc})`;
+          layer.style.filter = 'none';
+        } else if (role === 'main') {
+          layer.style.backgroundImage = `url(${mainSrc})`;
+          layer.style.filter = 'none';
+        }
+      });
+
+      await Promise.all(
+        [mainSrc, marginSrc].filter(Boolean).map((src) => new Promise((res) => {
+          const pre = new Image();
+          pre.onload = () => res();
+          pre.onerror = () => res();
+          pre.src = src;
+        }))
+      );
+
+      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+      const canvas = await html2canvas(el, {
+        scale: 3,
+        useCORS: true,
+        allowTaint: false,
+        backgroundColor: null,
+        logging: false,
+        imageTimeout: 15000,
+      });
+
+      originals.forEach(({ layer, bg, filter }) => {
+        layer.style.backgroundImage = bg;
+        layer.style.filter = filter;
+      });
+
+      const link = document.createElement('a');
+      link.download = `card-${Date.now()}.png`;
+      link.href = canvas.toDataURL('image/png', 1.0);
+      link.click();
+    } catch (err) {
+      console.error(err);
+      alert('저장 중 오류가 발생했습니다. 외부 이미지는 CORS 제한이 있을 수 있습니다. 파일을 직접 업로드해 보세요.');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const getTextStyle = (t) => ({
+    fontSize: t.fontSize,
+    fontFamily: t.fontFamily,
+    color: t.color,
+    fontWeight: t.bold ? 700 : 400,
+    textAlign: t.align || 'left',
+  });
+
+  const Text = ({ card, textKey, className = '', style = {} }) => {
+    const t = card.texts[textKey];
+    const base = getTextStyle(t);
+    return (
+      <div className={`text-block ${className}`} style={{ ...base, ...style }}>
+        {renderFormattedText(t.content, t.highlightColor)}
+      </div>
+    );
+  };
+
+  const renderCard = (card) => {
+    const t = card.texts;
+    const size = sizePresets.find(s => s.id === card.size) || sizePresets[0];
+    const g = card.gradient;
+    const hasImage = !!card.backgroundImage;
+
+    const gradientStyle = g.enabled
+      ? `linear-gradient(${g.direction}, ${g.startColor}${Math.round(g.startOpacity * 255).toString(16).padStart(2, '0')} 0%, ${g.endColor}${Math.round(g.endOpacity * 255).toString(16).padStart(2, '0')} 100%)`
+      : 'transparent';
+
+    const bgPos = card.imagePosition === 'top' ? 'center top' : card.imagePosition === 'bottom' ? 'center bottom' : 'center center';
+    const scale = card.imageFit === 'cover' ? (card.imageScale || 1) : 1;
+
+    return (
+      <div
+        ref={previewRef}
+        className="card-canvas"
+        style={{ aspectRatio: size.ratio, maxWidth: size.maxW }}
+      >
+        <div className="image-stack">
+          {!hasImage && <div className="image-empty">이미지를 업로드해주세요</div>}
+
+          {hasImage && card.imageFit === 'contain' && card.marginBlur && (
+            <div
+              data-card-img="margin"
+              className="image-layer"
+              style={{
+                backgroundImage: `url(${card.backgroundImage})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                filter: 'blur(25px)',
+                transform: 'scale(1.15)',
+              }}
+            />
+          )}
+
+          {hasImage && (
+            <div
+              data-card-img="main"
+              className="image-layer"
+              style={{
+                backgroundImage: `url(${card.backgroundImage})`,
+                backgroundSize: card.imageFit === 'cover' ? 'cover' : 'contain',
+                backgroundPosition: bgPos,
+                transform: card.imageFit === 'cover' ? `scale(${scale})` : 'none',
+                transformOrigin: bgPos,
+                filter: card.blur > 0 ? `blur(${card.blur}px)` : 'none',
+              }}
+            />
+          )}
+        </div>
+
+        <div className="gradient-layer" style={{ background: gradientStyle }} />
+
+        {card.layout === 'news' && (
+          <div className="card-content">
+            <div className="eyebrow-row push-top">
+              <Text card={card} textKey="category" />
+              <div className="eyebrow-rule" />
+            </div>
+            <div>
+              <Text card={card} textKey="live" style={{ marginBottom: 8 }} />
+              <Text card={card} textKey="title" style={{ lineHeight: 1.15, marginBottom: 16 }} />
+              <div className="divider-rule" style={{ width: 40, marginBottom: 16 }} />
+              <Text card={card} textKey="description" style={{ lineHeight: 1.6, marginBottom: 24 }} />
+              <div className="footer-row">
+                <Text card={card} textKey="source" />
+                <Text card={card} textKey="brand" />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {card.layout === 'big-title' && (
+          <div className="card-content layout-big-title-body">
+            <div className="eyebrow-row layout-big-title-eyebrow">
+              <Text card={card} textKey="category" />
+              <div className="eyebrow-rule" />
+            </div>
+            <div className="center-col" style={{ padding: '0 8px' }}>
+              <Text card={card} textKey="live" style={{ marginBottom: 12 }} />
+              <Text card={card} textKey="title" style={{ lineHeight: 1, marginBottom: 24, fontSize: Math.max(t.title.fontSize, 58) }} />
+              <div className="divider-rule" style={{ width: 48, margin: '0 auto 20px' }} />
+              <Text card={card} textKey="description" style={{ lineHeight: 1.6, maxWidth: '90%', margin: '0 auto', opacity: 0.9, fontSize: Math.min(t.description.fontSize, 15) }} />
+            </div>
+            <div className="footer-row layout-big-title-footer">
+              <Text card={card} textKey="source" />
+              <Text card={card} textKey="brand" />
+            </div>
+          </div>
+        )}
+
+        {card.layout === 'bottom' && (
+          <div className="card-content">
+            <div style={{ flex: 1 }} />
+            <div>
+              <div className="eyebrow-row" style={{ marginBottom: 12 }}>
+                <Text card={card} textKey="category" />
+                <div className="eyebrow-rule" />
+              </div>
+              <Text card={card} textKey="live" style={{ marginBottom: 8 }} />
+              <Text card={card} textKey="title" style={{ lineHeight: 1.15, marginBottom: 12 }} />
+              <Text card={card} textKey="description" style={{ lineHeight: 1.6, marginBottom: 20, opacity: 0.9, fontSize: Math.min(t.description.fontSize, 14) }} />
+              <div className="footer-row">
+                <Text card={card} textKey="source" />
+                <Text card={card} textKey="brand" />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {card.layout === 'center' && (
+          <div className="card-content layout-center-body">
+            <div className="eyebrow-row" style={{ marginBottom: 24 }}>
+              <Text card={card} textKey="category" />
+              <div className="eyebrow-rule" />
+            </div>
+            <Text card={card} textKey="live" style={{ marginBottom: 12 }} />
+            <Text card={card} textKey="title" style={{ lineHeight: 1.15, marginBottom: 20 }} />
+            <div className="divider-rule" style={{ width: 48, marginBottom: 20 }} />
+            <Text card={card} textKey="description" style={{ lineHeight: 1.6, maxWidth: '90%', marginBottom: 32 }} />
+            <div className="center-inline">
+              <Text card={card} textKey="source" />
+              <Text card={card} textKey="brand" />
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const tabs = [
+    { id: 'layout', label: '레이아웃' },
+    { id: 'text', label: '텍스트' },
+    { id: 'image', label: '이미지' },
+    { id: 'style', label: '스타일' },
+    { id: 'export', label: '내보내기' },
+  ];
+
+  return (
+    <div className="app">
+      <header className="app-header">
+        <div className="header-inner">
+          <div className="brand">
+            <div className="brand-mark">C</div>
+            <span className="brand-name">Card Editor</span>
+          </div>
+          <nav className="tab-nav">
+            {tabs.map(tab => (
+              <button key={tab.id} className={activeTab === tab.id ? 'active' : ''} onClick={() => setActiveTab(tab.id)}>
+                {tab.label}
+              </button>
+            ))}
+          </nav>
+          <button className="btn btn-primary" onClick={downloadCard} disabled={isExporting}>
+            {isExporting ? '저장 중…' : '저장하기'}
+          </button>
+        </div>
+      </header>
+
+      <div className="app-body">
+        <aside className="sidebar">
+          <div className="sidebar-head">
+            <span className="sidebar-title">내 카드</span>
+            <button className="icon-round" onClick={addCard}>+</button>
+          </div>
+          <div className="card-list">
+            {cards.map(card => (
+              <div key={card.id} className={`card-thumb ${selectedId === card.id ? 'active' : ''}`} onClick={() => setSelectedId(card.id)}>
+                <div className="card-thumb-frame">
+                  <div className="card-thumb-bg" style={{ backgroundImage: card.backgroundImage ? `url(${card.backgroundImage})` : 'none' }} />
+                  <div className="card-thumb-shade" />
+                  <div className="card-thumb-caption">{card.texts.title.content.replace(/[\[\]~]/g, '').split('\n')[0]}</div>
+                </div>
+                <div className="card-thumb-actions">
+                  <button className="thumb-action" onClick={(e) => { e.stopPropagation(); duplicateCard(card.id); }} title="복제">⧉</button>
+                  <button className="thumb-action danger" onClick={(e) => { e.stopPropagation(); deleteCard(card.id); }} title="삭제">×</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </aside>
+
+        <main className="main-stage">
+          {renderCard(selectedCard)}
+        </main>
+
+        <aside className="panel">
+          {activeTab === 'layout' && (
+            <div>
+              <h3>레이아웃 선택</h3>
+              <div className="grid-2" style={{ marginBottom: 24 }}>
+                {layoutOptions.map(l => (
+                  <button
+                    key={l.id}
+                    className={`choice-card ${selectedCard.layout === l.id ? 'active' : ''}`}
+                    onClick={() => updateCard({ layout: l.id })}
+                  >
+                    {l.name}
+                  </button>
+                ))}
+              </div>
+              <h3>이미지 사이즈</h3>
+              <div className="choice-list">
+                {sizePresets.map(s => (
+                  <button
+                    key={s.id}
+                    className={`choice-row ${selectedCard.size === s.id ? 'active' : ''}`}
+                    onClick={() => updateCard({ size: s.id })}
+                  >
+                    {s.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'text' && (
+            <div>
+              <h3>텍스트 편집</h3>
+              <div className="info-box">
+                <strong>부분 강조 사용법</strong>
+                <div>· 하이라이트: <code>[텍스트]</code></div>
+                <div>· 밑줄: <code>~텍스트~</code></div>
+              </div>
+
+              <div className="field">
+                <label className="field-label">편집할 텍스트</label>
+                <select className="control" value={selectedTextKey} onChange={(e) => setSelectedTextKey(e.target.value)}>
+                  <option value="category">카테고리</option>
+                  <option value="live">라이브 태그</option>
+                  <option value="title">타이틀</option>
+                  <option value="description">설명</option>
+                  <option value="source">출처</option>
+                  <option value="brand">브랜드</option>
+                </select>
+              </div>
+
+              <div className="field">
+                <label className="field-label">내용</label>
+                <textarea
+                  className="control"
+                  rows={4}
+                  value={selectedCard.texts[selectedTextKey].content}
+                  onChange={(e) => updateText(selectedTextKey, 'content', e.target.value)}
+                />
+              </div>
+
+              <div className="field">
+                <label className="field-label">글꼴</label>
+                <select className="control" value={selectedCard.texts[selectedTextKey].fontFamily} onChange={(e) => updateText(selectedTextKey, 'fontFamily', e.target.value)}>
+                  {freeFonts.map(f => <option key={f.value} value={f.value}>{f.name}</option>)}
+                </select>
+              </div>
+
+              <div className="field">
+                <div className="field-row">
+                  <span className="field-label" style={{ margin: 0 }}>크기</span>
+                  <span className="value">{selectedCard.texts[selectedTextKey].fontSize}px</span>
+                </div>
+                <input type="range" className="control" min="10" max="90" value={selectedCard.texts[selectedTextKey].fontSize} onChange={(e) => updateText(selectedTextKey, 'fontSize', Number(e.target.value))} />
+              </div>
+
+              <div className="field">
+                <label className="field-label">정렬</label>
+                <div className="segmented">
+                  {[{ value: 'left', label: '왼쪽' }, { value: 'center', label: '가운데' }, { value: 'right', label: '오른쪽' }].map(a => (
+                    <button key={a.value} className={selectedCard.texts[selectedTextKey].align === a.value ? 'active' : ''} onClick={() => updateText(selectedTextKey, 'align', a.value)}>
+                      {a.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="field">
+                <label className="field-label">강조</label>
+                <div className="swatch-row" style={{ marginTop: 0 }}>
+                  <button className={`bold-toggle ${selectedCard.texts[selectedTextKey].bold ? 'active' : ''}`} onClick={() => updateText(selectedTextKey, 'bold', !selectedCard.texts[selectedTextKey].bold)}>B</button>
+                  <div className="swatch-field">
+                    <span className="label">글자색</span>
+                    <input type="color" value={selectedCard.texts[selectedTextKey].color} onChange={(e) => updateText(selectedTextKey, 'color', e.target.value)} />
+                  </div>
+                  <div className="swatch-field">
+                    <span className="label">하이라이트 색</span>
+                    <input type="color" value={selectedCard.texts[selectedTextKey].highlightColor || '#ff3b30'} onChange={(e) => updateText(selectedTextKey, 'highlightColor', e.target.value)} />
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'image' && (
+            <div>
+              <h3>배경 이미지</h3>
+
+              <div className="field">
+                <label className="field-label">파일 업로드</label>
+                <input type="file" accept="image/*" className="file-input" onChange={handleFileUpload} />
+              </div>
+
+              <div className="field">
+                <label className="field-label">이미지 맞춤 방식</label>
+                <div className="grid-2">
+                  <button className={`choice-card ${selectedCard.imageFit === 'cover' ? 'active' : ''}`} onClick={() => updateCard({ imageFit: 'cover' })}>
+                    전체 채우기<span className="sub">(Cover)</span>
+                  </button>
+                  <button className={`choice-card ${selectedCard.imageFit === 'contain' ? 'active' : ''}`} onClick={() => updateCard({ imageFit: 'contain' })}>
+                    원본 비율<span className="sub">(Contain)</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="field">
+                <label className="field-label">이미지 위치</label>
+                <div className="grid-3">
+                  {[{ value: 'top', label: '상단' }, { value: 'center', label: '중앙' }, { value: 'bottom', label: '하단' }].map(pos => (
+                    <button key={pos.value} className={`choice-card ${selectedCard.imagePosition === pos.value ? 'active' : ''}`} style={{ padding: '10px 0' }} onClick={() => updateCard({ imagePosition: pos.value })}>
+                      {pos.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {selectedCard.imageFit === 'cover' && (
+                <div className="field">
+                  <div className="field-row">
+                    <span className="field-label" style={{ margin: 0 }}>확대 / 축소</span>
+                    <span className="value">{Math.round((selectedCard.imageScale || 1) * 100)}%</span>
+                  </div>
+                  <input type="range" className="control" min="0.6" max="1.8" step="0.05" value={selectedCard.imageScale || 1} onChange={(e) => updateCard({ imageScale: Number(e.target.value) })} />
+                </div>
+              )}
+
+              {selectedCard.imageFit === 'contain' && (
+                <div className="field">
+                  <div className="switch-row">
+                    <div>
+                      <div className="title">여백 블러 처리</div>
+                      <div className="desc">원본 비율로 생긴 여백을 블러로 채움</div>
+                    </div>
+                    <label className="switch">
+                      <input type="checkbox" checked={!!selectedCard.marginBlur} onChange={(e) => updateCard({ marginBlur: e.target.checked })} />
+                      <span className="switch-track"></span>
+                    </label>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {activeTab === 'style' && (
+            <div>
+              <h3>배경 스타일</h3>
+              <div className="field">
+                <div className="field-row">
+                  <span className="field-label" style={{ margin: 0 }}>배경 블러</span>
+                  <span className="value">{selectedCard.blur}px</span>
+                </div>
+                <input type="range" className="control" min="0" max="20" value={selectedCard.blur} onChange={(e) => updateCard({ blur: Number(e.target.value) })} />
+              </div>
+
+              <hr className="section-divider" />
+
+              <div className="field-row" style={{ marginBottom: 14 }}>
+                <h4>그라데이션</h4>
+                <label className="checkbox-row">
+                  <input type="checkbox" checked={selectedCard.gradient.enabled} onChange={(e) => updateGradient('enabled', e.target.checked)} /> 사용
+                </label>
+              </div>
+
+              {selectedCard.gradient.enabled && (
+                <React.Fragment>
+                  <div className="field">
+                    <label className="field-label">방향</label>
+                    <select className="control" value={selectedCard.gradient.direction} onChange={(e) => updateGradient('direction', e.target.value)}>
+                      <option value="to bottom">위에서 아래</option>
+                      <option value="to top">아래에서 위</option>
+                      <option value="to right">왼쪽에서 오른쪽</option>
+                      <option value="to left">오른쪽에서 왼쪽</option>
+                      <option value="to bottom right">대각선 ↘</option>
+                      <option value="to bottom left">대각선 ↙</option>
+                    </select>
+                  </div>
+                  <div className="field grid-2" style={{ display: 'grid' }}>
+                    <div>
+                      <label className="field-label">시작 색상</label>
+                      <input type="color" style={{ width: '100%', height: 38 }} value={selectedCard.gradient.startColor} onChange={(e) => updateGradient('startColor', e.target.value)} />
+                    </div>
+                    <div>
+                      <label className="field-label">끝 색상</label>
+                      <input type="color" style={{ width: '100%', height: 38 }} value={selectedCard.gradient.endColor} onChange={(e) => updateGradient('endColor', e.target.value)} />
+                    </div>
+                  </div>
+                  <div className="field">
+                    <div className="field-row">
+                      <span className="field-label" style={{ margin: 0 }}>시작 투명도</span>
+                      <span className="value">{Math.round(selectedCard.gradient.startOpacity * 100)}%</span>
+                    </div>
+                    <input type="range" className="control" min="0" max="1" step="0.05" value={selectedCard.gradient.startOpacity} onChange={(e) => updateGradient('startOpacity', Number(e.target.value))} />
+                  </div>
+                  <div className="field">
+                    <div className="field-row">
+                      <span className="field-label" style={{ margin: 0 }}>끝 투명도</span>
+                      <span className="value">{Math.round(selectedCard.gradient.endOpacity * 100)}%</span>
+                    </div>
+                    <input type="range" className="control" min="0" max="1" step="0.05" value={selectedCard.gradient.endOpacity} onChange={(e) => updateGradient('endOpacity', Number(e.target.value))} />
+                  </div>
+                </React.Fragment>
+              )}
+            </div>
+          )}
+
+          {activeTab === 'export' && (
+            <div>
+              <h3>내보내기</h3>
+              <button className="btn btn-primary" style={{ width: '100%', padding: '12px 0' }} onClick={downloadCard} disabled={isExporting}>
+                {isExporting ? '저장 중…' : 'PNG로 저장하기'}
+              </button>
+              <p className="helper-text">저장 시 블러는 캔버스로 미리 적용해 미리보기와 최대한 같게 맞춥니다.</p>
+            </div>
+          )}
+        </aside>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
 </body>
 </html>
