@@ -542,6 +542,76 @@
     color:rgba(255,255,255,.55);
   }
 
+    /* ===== TEMPLATE L: Luxe Editorial ===== */
+  #card.tpl-luxe{
+    background:#f4efe6;
+    padding:0;
+    color:#1c1a17;
+  }
+  #card.tpl-luxe .luxeFrame{
+    position:absolute;
+    inset:14px;
+    border:1px solid rgba(20,18,15,.18);
+    pointer-events:none;
+    z-index:1;
+  }
+  #card.tpl-luxe .luxeInner{
+    position:relative;
+    z-index:2;
+    height:100%;
+    box-sizing:border-box;
+    padding:42px 40px 30px;
+    display:flex;
+    flex-direction:column;
+  }
+  #card.tpl-luxe .luxeKicker{
+    font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-weight:700;
+    letter-spacing:.32em;
+    text-transform:uppercase;
+  }
+  #card.tpl-luxe .luxeRuleAccent{
+    width:36px;
+    height:2px;
+    margin-top:14px;
+  }
+  #card.tpl-luxe .luxeHeadline{
+    font-family:'Noto Serif KR','Nanum Myeongjo',Georgia,serif;
+    font-weight:400;
+    line-height:1.3;
+    letter-spacing:-.01em;
+    margin:22px 0 18px;
+    white-space:pre-wrap;
+    word-break:keep-all;
+  }
+  #card.tpl-luxe .luxeDeck{
+    font-family:'Noto Serif KR',Georgia,serif;
+    font-style:italic;
+    font-weight:400;
+    line-height:1.7;
+    color:#4a453c;
+    max-width:94%;
+    white-space:pre-wrap;
+    word-break:keep-all;
+  }
+  #card.tpl-luxe .luxeSpacer{flex:1;min-height:16px;}
+  #card.tpl-luxe .luxeMeta{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:6px 16px;
+    padding-top:16px;
+    border-top:1px solid rgba(20,18,15,.25);
+    font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:10.5px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:rgba(20,18,15,.55);
+  }
+  /* 워터마크/로고/포토크레딧은 어두운 배경 기준 색상이므로 밝은 배경용으로 재정의 */
+  #card.tpl-luxe .watermark{color:#1c1a17;text-shadow:none;opacity:.45;}
+  #card.tpl-luxe .photoCredit{color:rgba(20,18,15,.5);text-shadow:none;}
   /* Logo mark */
   #card .logoMark{
     position:absolute;z-index:11;pointer-events:none;
@@ -837,6 +907,7 @@
           <div class="ddItem" data-template="breaking"><span class="ic">▣</span>B · Breaking Photo</div>
           <div class="ddItem" data-template="fullbleed"><span class="ic">▣</span>C · Full Bleed Photo</div>
           <div class="ddItem" data-template="cover"><span class="ic">◈</span>I · Magazine Cover</div>
+          <div class="ddItem" data-template="luxe"><span class="ic">✦</span>L · Luxe Editorial</div>
           <div class="ddItem" data-template="thread"><span class="ic">≡</span>J · Thread 요약</div>
           <div class="ddItem" data-template="sources"><span class="ic">※</span>K · Source List</div>
           <div class="ddSep"></div>
@@ -1394,6 +1465,27 @@ function cardMarkup(s, pageIdx, total){
     </div>`;
   }
 
+  /* ===== L: Luxe Editorial ===== */
+  if(s.template === 'luxe'){
+    const kicker = escapeHtml(s.tagText || s.category || 'EDITORIAL');
+    const deck = (s.summary || '').trim();
+    const accentAlign = align === 'center' ? 'margin-left:auto;margin-right:auto;' : (align === 'right' ? 'margin-left:auto;' : '');
+    return `<div id="card" class="tpl-luxe" style="width:${w}px;height:${h}px;background:${s.bg};">
+      <div class="luxeFrame"></div>
+      <div class="luxeInner">
+        <div class="luxeKicker" style="color:${neon};font-size:${s.tagSize}px;${alignStyle}">${kicker}</div>
+        <div class="luxeRuleAccent" style="background:${neon};${accentAlign}"></div>
+        <div class="luxeHeadline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text};${alignStyle}">${headline}</div>
+        ${deck ? `<div class="luxeDeck" style="font-size:${s.subSize}px;font-family:${bodyFont};${alignStyle}">${parseInlineFormat(deck, neon)}</div>` : ''}
+        <div class="luxeSpacer"></div>
+        <div class="luxeMeta">
+          <span class="metaLeft">${escapeHtml(dateStr)}</span>
+          <span class="metaRight">${metaR}</span>
+        </div>
+      </div>
+      ${pc}${wm}${lg}
+    </div>`;
+  }
   /* Basic fallback */
   return `<div id="card" class="tpl-basic" style="width:${w}px;height:${h}px;background:${s.bg||'#faf9fc'};color:${s.text||'#1a1a1a'};font-family:${baseFont};">
     <div class="rowTop"><span class="badgeTop">${escapeHtml(s.tagText||s.category||'')}</span>${s.showPageNum!==false?`<span class="pageNum">${pageLabel}</span>`:''}</div>
@@ -1441,7 +1533,7 @@ function renderList(){
 function updateTemplateFields(){
   const t = slides[active].template;
   const needBullets = (t==='politics' || t==='thread' || t==='sources');
-  const needSummary = (t==='breaking' || t==='fullbleed' || t==='basic' || t==='cover');
+    const needSummary = (t==='breaking' || t==='fullbleed' || t==='basic' || t==='cover' || t==='luxe');
   $('bulletsField').style.display = needBullets ? '' : 'none';
   $('summaryField').style.display = needSummary ? '' : 'none';
   if($('bulletsField') && t==='sources'){
@@ -1763,6 +1855,14 @@ Array.from(document.querySelectorAll('#layoutMenu .ddItem')).forEach(item => {
       if(!(slides[active].bullets||'').trim()){
         slides[active].bullets = '관련 보도 제목 | https://example.com\n공식 브리핑 자료 | https://example.com/brief';
       }
+    }
+        if(t === 'luxe'){
+      if(!slides[active].tagText || slides[active].tagText === 'POLITICS INSIGHT') slides[active].tagText = 'EDITORIAL';
+      slides[active].titleSize = 34;
+      // 럭스 에디토리얼은 밝은 아이보리 배경이 어울립니다 (사용자가 색상을 직접 바꾸지 않은 경우에만 자동 전환)
+      if(slides[active].bg === '#111318') slides[active].bg = '#f4efe6';
+      if(slides[active].text === '#ffffff') slides[active].text = '#1c1a17';
+      if(slides[active].neon === '#E6FF00') slides[active].neon = '#b08d57';
     }
     Array.from(document.querySelectorAll('#layoutMenu .ddItem')).forEach(i => i.classList.toggle('active', i===item));
     closeAllDropdowns();
