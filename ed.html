@@ -307,6 +307,34 @@
     color:rgba(255,255,255,.6);
   }
 
+  /* Glass panel — html2canvas 호환 (backdrop-filter 미사용) */
+  #card .glassPanel{
+    border:1px solid rgba(255,255,255,.28);
+    border-radius:18px;
+    background:rgba(18,20,24,.62);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.16),
+      0 14px 36px rgba(0,0,0,.28);
+    padding:18px 18px 14px;
+  }
+  #card .glassPanel .headline{ margin-bottom:10px; }
+  #card .glassPanel .summary{ margin-bottom:12px; }
+  #card .glassPanel .metaRow{
+    border-top-color:rgba(255,255,255,.2);
+    margin-top:4px;
+  }
+  #card.tpl-breaking .lower.glassOn{
+    justify-content:flex-end;
+  }
+  #card.tpl-breaking .lower.glassOn .glassPanel{
+    margin-top:auto;
+  }
+  #card.tpl-fullbleed .fbContent.glassOn .glassPanel{
+    margin-top:auto;
+  }
+  #card.tpl-fullbleed .fbContent.glassOn .fbSpacer{ flex:1; }
+  #card.tpl-fullbleed .fbContent.glassOn > .tagYellow{ margin-bottom:0; }
+
   /* Watermark */
   #card .watermark{
     position:absolute;
@@ -651,6 +679,14 @@
             <option value="tl">좌측 상단</option>
           </select>
         </div>
+        <div class="field" id="glassField">
+          <label>글래스 패널 (사진 위 텍스트 가독성)</label>
+          <div class="formatRow">
+            <button type="button" class="formatBtn" id="glassOn">켜기</button>
+            <button type="button" class="formatBtn active" id="glassOff">끄기</button>
+          </div>
+          <div class="hint">B·C 템플릿에서 사진 위 글자가 안 보일 때 사용. 저장 호환용 반투명 패널입니다.</div>
+        </div>
       </div>
 
       <div class="sec">
@@ -817,6 +853,7 @@ function defaults(){
     showPageNum: true,
     watermark: '',
     watermarkPos: 'br',
+    glass: false,
     bg: '#111318',
     text: '#ffffff',
     neon: '#E6FF00',
@@ -906,9 +943,26 @@ function cardMarkup(s, pageIdx, total){
     } else {
       photoInner = `<div class="layer" style="background:linear-gradient(135deg,#2a2e36,#15171c);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.35);font-size:13px;font-family:${baseFont};">사진 업로드</div>`;
     }
-    const vig = s.vignetteStrength > 0
-      ? `<div class="vignette" style="background:radial-gradient(ellipse at center, transparent ${Math.max(20,60-s.vignetteStrength)}%, rgba(0,0,0,${0.3+s.vignetteStrength/120}) 100%);"></div>`
+    const ovB = Math.max(0, Math.min(80, s.imageOverlay || 0)) / 100;
+    const vigAmt = Math.max(0, Math.min(60, s.vignetteStrength || 0));
+    let vigLayers = [];
+    if(vigAmt > 0){
+      vigLayers.push(`radial-gradient(ellipse at center, transparent ${Math.max(20,60-vigAmt)}%, rgba(0,0,0,${0.3+vigAmt/120}) 100%)`);
+    }
+    if(ovB > 0.02){
+      vigLayers.push(`rgba(0,0,0,${ovB * 0.65})`);
+    }
+    const vig = vigLayers.length
+      ? `<div class="vignette" style="background:${vigLayers.join(',')};"></div>`
       : '';
+    const useGlass = !!s.glass;
+    const bodyInner = `
+        <div class="headline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text};">${headline}</div>
+        <div class="summary" style="font-size:${s.subSize}px;font-family:${bodyFont};border-left-color:${neon};">${parseInlineFormat(s.summary, neon)}</div>
+        <div class="metaRow">
+          <span>${escapeHtml(dateStr)}</span>
+          <span>${metaR}</span>
+        </div>`;
     return `<div id="card" class="tpl-breaking" style="width:${w}px;height:${h}px;background:${s.bg};">
       <div class="photoZone">
         ${photoInner}
@@ -916,13 +970,8 @@ function cardMarkup(s, pageIdx, total){
         <div class="redLine" style="background:${crimson};"></div>
         <div class="tagRed" style="background:${crimson};font-size:${s.tagSize}px;">${escapeHtml(s.tagText || 'BREAKING ISSUE')}</div>
       </div>
-      <div class="lower">
-        <div class="headline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text};">${headline}</div>
-        <div class="summary" style="font-size:${s.subSize}px;font-family:${bodyFont};border-left-color:${neon};">${parseInlineFormat(s.summary, neon)}</div>
-        <div class="metaRow">
-          <span>${escapeHtml(dateStr)}</span>
-          <span>${metaR}</span>
-        </div>
+      <div class="lower${useGlass?' glassOn':''}">
+        ${useGlass ? `<div class="glassPanel">${bodyInner}</div>` : bodyInner}
       </div>
       ${wm}
     </div>`;
@@ -938,18 +987,36 @@ function cardMarkup(s, pageIdx, total){
     let photoStyle = s.image
       ? `background-image:url('${s.image}');background-size:${bgSize};background-position:${pos};filter:${filt};`
       : `background:linear-gradient(160deg,#2a2e38,#12141a);`;
-    return `<div id="card" class="tpl-fullbleed" style="width:${w}px;height:${h}px;background:${s.bg};">
-      <div class="fbPhoto" style="${photoStyle}"></div>
-      <div class="fbScrim"></div>
-      <div class="fbContent">
-        <div class="tagYellow" style="background:${neon};font-size:${s.tagSize}px;">${escapeHtml(s.tagText || s.category || 'EDITORIAL')}</div>
-        <div class="fbSpacer"></div>
+    const useGlass = !!s.glass;
+    const ov = Math.max(0, Math.min(80, s.imageOverlay || 0)) / 100;
+    const vig = Math.max(0, Math.min(60, s.vignetteStrength || 0));
+    // base editorial gradient + overlay darken + vignette
+    const scrimLayers = [
+      `linear-gradient(180deg, rgba(0,0,0,${0.25+ov*0.35}) 0%, rgba(0,0,0,${0.1+ov*0.2}) 35%, rgba(0,0,0,${0.45+ov*0.3}) 70%, rgba(0,0,0,${0.82+ov*0.15}) 100%)`
+    ];
+    if(vig > 0){
+      const inner = Math.max(15, 55 - vig * 0.5);
+      const outerA = 0.25 + vig / 100;
+      scrimLayers.push(`radial-gradient(ellipse at center, transparent ${inner}%, rgba(0,0,0,${outerA}) 100%)`);
+    }
+    if(ov > 0.02){
+      scrimLayers.push(`rgba(0,0,0,${ov * 0.55})`);
+    }
+    const scrimStyle = `background:${scrimLayers.join(',')};`;
+    const fbBody = `
         <div class="headline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text};">${headline}</div>
         <div class="summary" style="font-size:${s.subSize}px;font-family:${bodyFont};border-left-color:${neon};">${parseInlineFormat(s.summary, neon)}</div>
         <div class="metaRow">
           <span>${escapeHtml(dateStr)}</span>
           <span>${metaR}</span>
-        </div>
+        </div>`;
+    return `<div id="card" class="tpl-fullbleed" style="width:${w}px;height:${h}px;background:${s.bg};">
+      <div class="fbPhoto" style="${photoStyle}"></div>
+      <div class="fbScrim" style="${scrimStyle}"></div>
+      <div class="fbContent${useGlass?' glassOn':''}">
+        <div class="tagYellow" style="background:${neon};font-size:${s.tagSize}px;">${escapeHtml(s.tagText || s.category || 'EDITORIAL')}</div>
+        <div class="fbSpacer"></div>
+        ${useGlass ? `<div class="glassPanel">${fbBody}</div>` : fbBody}
       </div>
       ${wm}
     </div>`;
@@ -1020,6 +1087,10 @@ function syncForm(){
   const showPN = s.showPageNum !== false;
   if($('pageNumOn')) $('pageNumOn').classList.toggle('active', showPN);
   if($('pageNumOff')) $('pageNumOff').classList.toggle('active', !showPN);
+  const glassOn = !!s.glass;
+  if($('glassOn')) $('glassOn').classList.toggle('active', glassOn);
+  if($('glassOff')) $('glassOff').classList.toggle('active', !glassOn);
+  if($('glassField')) $('glassField').style.display = (s.template==='breaking'||s.template==='fullbleed') ? '' : 'none';
   $('bgColor').value = s.bg; $('bgColorHex').textContent = s.bg;
   $('textColor').value = s.text; $('textColorHex').textContent = s.text;
   $('neonColor').value = s.neon; $('neonColorHex').textContent = s.neon;
@@ -1084,6 +1155,18 @@ if($('pageNumOff')) $('pageNumOff').addEventListener('click', () => {
   slides[active].showPageNum = false;
   $('pageNumOff').classList.add('active');
   $('pageNumOn').classList.remove('active');
+  renderMainCard(); renderList();
+});
+if($('glassOn')) $('glassOn').addEventListener('click', () => {
+  slides[active].glass = true;
+  $('glassOn').classList.add('active');
+  $('glassOff').classList.remove('active');
+  renderMainCard(); renderList();
+});
+if($('glassOff')) $('glassOff').addEventListener('click', () => {
+  slides[active].glass = false;
+  $('glassOff').classList.add('active');
+  $('glassOn').classList.remove('active');
   renderMainCard(); renderList();
 });
 
@@ -1216,7 +1299,7 @@ $('imageUpload').addEventListener('change', e => {
       canvas.height = Math.round(img.height*scale);
       canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);
       slides[active].image = canvas.toDataURL('image/jpeg', 0.88);
-      if(slides[active].template === 'politics' || slides[active].template === 'basic') slides[active].template = 'breaking';
+      // 사진 업로드 시 현재 템플릿 유지 (자동 전환하지 않음)
       syncForm(); renderMainCard(); renderList();
     };
     img.src = ev.target.result;
