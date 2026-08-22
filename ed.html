@@ -186,8 +186,8 @@
   .divider-rule { height: 2px; background: var(--red); }
   .footer-row { display: flex; align-items: center; justify-content: space-between; }
   .text-block { white-space: pre-line; }
-  .highlight-chip { padding: 1px 5px; border-radius: 4px; color: #fff; display: inline; }
-  .underline-chip { text-decoration: underline; text-underline-offset: 3px; display: inline; }
+  .highlight-chip { padding: 0px 4px; border-radius: 2px; color: #fff; display: inline; }
+  .underline-chip { text-decoration: none; border-bottom: 0.08em solid; padding-bottom: 0.1em; display: inline; }
 
   /* layout-specific tweaks */
   .layout-center-body { align-items: center; justify-content: center; text-align: center; }
@@ -418,12 +418,16 @@ const renderFormattedText = (content, highlightColor) => {
   const parts = content.split(regex).filter(Boolean);
   return parts.map((part, index) => {
     if (part.startsWith('[') && part.endsWith(']')) {
-      return (
-        <span key={index} className="highlight-chip" style={{ backgroundColor: highlightColor || '#ff3b30' }}>
-          {part.slice(1, -1)}
-        </span>
-      );
-    }
+  const bgColor = highlightColor || '#ff3b30';
+  return (
+    <span key={index} className="highlight-chip" style={{ 
+      // 40% 숫자를 올리면 두꺼워지고, 내리면 얇아져!
+      background: `linear-gradient(to top, ${bgColor} 40%, transparent 40%)` 
+    }}>
+      {part.slice(1, -1)}
+    </span>
+  );
+}
     if (part.startsWith('~') && part.endsWith('~')) {
       return <span key={index} className="underline-chip">{part.slice(1, -1)}</span>;
     }
