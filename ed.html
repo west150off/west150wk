@@ -152,16 +152,55 @@
   }
   #card.tpl-politics .metaRow{
     display:flex;
+    flex-wrap:wrap;
     justify-content:space-between;
-    align-items:center;
+    align-items:flex-start;
+    gap:6px 16px;
     margin-top:16px;
     padding-top:12px;
     border-top:1px solid rgba(255,255,255,.12);
     font-family:'Pretendard Variable','Pretendard',sans-serif;
     font-size:11px;
-    letter-spacing:.08em;
+    letter-spacing:.06em;
     text-transform:uppercase;
     color:rgba(255,255,255,.55);
+  }
+  #card .metaRow .metaLeft,
+  #card .metaRow .metaRight{
+    min-width:0;
+    max-width:100%;
+    word-break:break-word;
+    overflow-wrap:anywhere;
+  }
+  #card .metaRow .metaRight{
+    text-align:right;
+    flex:1 1 auto;
+  }
+  #card .metaRow .metaLeft{
+    flex:0 1 auto;
+    white-space:nowrap;
+  }
+  #card .photoCredit{
+    position:absolute;
+    z-index:9;
+    left:16px;
+    bottom:14px;
+    font-family:'Pretendard Variable','Pretendard',sans-serif;
+    font-size:9px;
+    letter-spacing:.04em;
+    color:rgba(255,255,255,.45);
+    text-shadow:0 1px 3px rgba(0,0,0,.5);
+    max-width:55%;
+    word-break:break-word;
+    pointer-events:none;
+  }
+  #card.tpl-breaking .photoCredit{
+    left:14px; bottom:auto; top:8px;
+    max-width:48%;
+  }
+  #card.tpl-fullbleed .photoCredit,
+  #card.tpl-cover .photoCredit{
+    left:18px; bottom:auto; top:auto;
   }
 
   /* ===== TEMPLATE B: Breaking Photo ===== */
@@ -237,14 +276,16 @@
   }
   #card.tpl-breaking .metaRow{
     display:flex;
+    flex-wrap:wrap;
     justify-content:space-between;
-    align-items:center;
+    align-items:flex-start;
+    gap:6px 16px;
     margin-top:16px;
     padding-top:12px;
     border-top:1px solid rgba(255,255,255,.12);
     font-family:'Pretendard Variable','Pretendard',sans-serif;
     font-size:11px;
-    letter-spacing:.08em;
+    letter-spacing:.06em;
     text-transform:uppercase;
     color:rgba(255,255,255,.55);
   }
@@ -301,13 +342,15 @@
   }
   #card.tpl-fullbleed .metaRow{
     display:flex;
+    flex-wrap:wrap;
     justify-content:space-between;
-    align-items:center;
+    align-items:flex-start;
+    gap:6px 16px;
     padding-top:12px;
     border-top:1px solid rgba(255,255,255,.18);
     font-family:'Pretendard Variable','Pretendard',sans-serif;
     font-size:11px;
-    letter-spacing:.08em;
+    letter-spacing:.06em;
     text-transform:uppercase;
     color:rgba(255,255,255,.6);
   }
@@ -402,10 +445,11 @@
   }
   #card.tpl-cover .cvSpacer{flex:1;min-height:12px;}
   #card.tpl-cover .cvMeta{
-    display:flex;justify-content:space-between;align-items:center;
+    display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;
+    gap:6px 16px;
     padding-top:12px;border-top:1px solid rgba(255,255,255,.28);
     font-family:'Pretendard Variable','Pretendard',sans-serif;
-    font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+    font-size:10px;letter-spacing:.1em;text-transform:uppercase;
     color:rgba(255,255,255,.62);
   }
 
@@ -443,10 +487,11 @@
     word-break:keep-all;padding-top:2px;
   }
   #card.tpl-thread .metaRow{
-    display:flex;justify-content:space-between;align-items:center;
+    display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;
+    gap:6px 16px;
     margin-top:18px;padding-top:12px;border-top:1px solid rgba(255,255,255,.12);
     font-family:'Pretendard Variable','Pretendard',sans-serif;
-    font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+    font-size:11px;letter-spacing:.06em;text-transform:uppercase;
     color:rgba(255,255,255,.55);
   }
 
@@ -489,10 +534,11 @@
     font-size:11px;color:rgba(255,255,255,.45);word-break:break-all;
   }
   #card.tpl-sources .metaRow{
-    display:flex;justify-content:space-between;align-items:center;
+    display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;
+    gap:6px 16px;
     margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,.12);
     font-family:'Pretendard Variable','Pretendard',sans-serif;
-    font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+    font-size:11px;letter-spacing:.06em;text-transform:uppercase;
     color:rgba(255,255,255,.55);
   }
 
@@ -687,6 +733,10 @@
               <input type="file" id="imageUpload" accept="image/*" style="display:none;">
               <button class="btn ghost small full" id="imageRemove">사진 삭제</button>
             </div>
+          </div>
+          <div class="field">
+            <label>사진 출처 (크레딧)</label>
+            <input type="text" id="photoCredit" value="" placeholder="Photo: Reuters / 홍길동">
           </div>
           <div class="field">
             <label>배치 방식</label>
@@ -1039,6 +1089,7 @@ function defaults(){
     bullets: '여야 원내대표 긴급 합의 도출\n본회의 표결 결과 가결\n시행령 마련 절차 착수',
     summary: '새 법안 통과 직후 여야 원내대표가 긴급 브리핑을 갖고 향후 일정을 설명했다.',
     source: 'Source: Newsroom',
+    photoCredit: '',
     date: todayStr(),
     tz: 'KR',
     showPageNum: true,
@@ -1112,6 +1163,18 @@ function metaRight(s, pageIdx, total){
   if(s.showPageNum !== false) parts.push(String(pageIdx+1).padStart(2,'0')+' / '+String(total).padStart(2,'0'));
   return parts.join(' · ') || '';
 }
+function metaRowHtml(s, pageIdx, total){
+  const dateStr = s.date || '';
+  const right = metaRight(s, pageIdx, total);
+  return `<div class="metaRow">
+    <span class="metaLeft">${escapeHtml(dateStr)}</span>
+    <span class="metaRight">${right}</span>
+  </div>`;
+}
+function photoCreditHtml(s){
+  if(!s.photoCredit || !String(s.photoCredit).trim()) return '';
+  return `<div class="photoCredit">${escapeHtml(s.photoCredit)}</div>`;
+}
 
 function cardMarkup(s, pageIdx, total){
   const w = s.cardWidth || 480;
@@ -1128,9 +1191,11 @@ function cardMarkup(s, pageIdx, total){
   const metaR = metaRight(s, pageIdx, total);
   const wm = watermarkHtml(s);
   const lg = logoHtml(s);
+  const pc = photoCreditHtml(s);
   const align = s.align || 'left';
   const alignStyle = 'text-align:'+align+';';
   const tagAlign = align === 'center' ? 'margin-left:auto;margin-right:auto;' : (align === 'right' ? 'margin-left:auto;' : '');
+  const metaBlock = metaRowHtml(s, pageIdx, total);
 
   /* ===== A: Politics Insight ===== */
   if(s.template === 'politics'){
@@ -1144,10 +1209,7 @@ function cardMarkup(s, pageIdx, total){
       <div class="bulletBox" style="border-color:${crimson};">
         ${bulletsHtml || '<div class="bulletItem"><span class="bulletMark" style="background:'+neon+'"></span><span>불릿을 입력하세요</span></div>'}
       </div>
-      <div class="metaRow">
-        <span>${escapeHtml(dateStr)}</span>
-        <span>${metaR}</span>
-      </div>
+      ${metaBlock}
       ${wm}${lg}
     </div>`;
   }
@@ -1184,16 +1246,14 @@ function cardMarkup(s, pageIdx, total){
     const bodyInner = `
         <div class="headline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text};${alignStyle}">${headline}</div>
         <div class="summary" style="font-size:${s.subSize}px;font-family:${bodyFont};${sumBorder}${alignStyle}">${parseInlineFormat(s.summary, neon)}</div>
-        <div class="metaRow">
-          <span>${escapeHtml(dateStr)}</span>
-          <span>${metaR}</span>
-        </div>`;
+        ${metaBlock}`;
     return `<div id="card" class="tpl-breaking" style="width:${w}px;height:${h}px;background:${s.bg};">
       <div class="photoZone">
         ${photoInner}
         ${vig}
         <div class="redLine" style="background:${crimson};"></div>
         <div class="tagRed" style="background:${crimson};font-size:${s.tagSize}px;">${escapeHtml(s.tagText || 'BREAKING ISSUE')}</div>
+        ${pc}
       </div>
       <div class="lower${useGlass?' glassOn':''}">
         ${useGlass ? `<div class="glassPanel">${bodyInner}</div>` : bodyInner}
@@ -1235,10 +1295,7 @@ function cardMarkup(s, pageIdx, total){
     const fbBody = `
         <div class="headline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text};${alignStyle}">${headline}</div>
         <div class="summary" style="font-size:${s.subSize}px;font-family:${bodyFont};${sumBorderFb}${alignStyle}">${parseInlineFormat(s.summary, neon)}</div>
-        <div class="metaRow">
-          <span>${escapeHtml(dateStr)}</span>
-          <span>${metaR}</span>
-        </div>`;
+        ${metaBlock}`;
     return `<div id="card" class="tpl-fullbleed" style="width:${w}px;height:${h}px;background:${s.bg};">
       <div class="fbPhoto" style="${photoStyle}"></div>
       <div class="fbScrim" style="${scrimStyle}"></div>
@@ -1247,7 +1304,7 @@ function cardMarkup(s, pageIdx, total){
         <div class="fbSpacer"></div>
         ${useGlass ? `<div class="glassPanel">${fbBody}</div>` : fbBody}
       </div>
-      ${wm}${lg}
+      ${pc}${wm}${lg}
     </div>`;
   }
 
@@ -1271,12 +1328,6 @@ function cardMarkup(s, pageIdx, total){
     }
     const brand = s.brandName || 'WEST150 DAILY';
     const deck = (s.summary || '').trim();
-    const coverMetaRight = (() => {
-      const parts = [];
-      if(s.source) parts.push(escapeHtml(s.source));
-      if(s.showPageNum !== false) parts.push(pageLabel);
-      return parts.join('  ·  ');
-    })();
     return `<div id="card" class="tpl-cover" style="width:${w}px;height:${h}px;background:${s.bg};">
       <div class="cvPhoto" style="${photoStyle}"></div>
       <div class="cvScrim" style="background:${scrimLayers.join(',')};"></div>
@@ -1295,11 +1346,11 @@ function cardMarkup(s, pageIdx, total){
         ${deck ? `<div class="cvDeck" style="font-size:${s.subSize}px;font-family:${bodyFont};${alignStyle}">${parseInlineFormat(deck, neon)}</div>` : ''}
         <div class="cvSpacer"></div>
         <div class="cvMeta">
-          <span>${escapeHtml(dateStr)}</span>
-          <span>${coverMetaRight}</span>
+          <span class="metaLeft">${escapeHtml(dateStr)}</span>
+          <span class="metaRight">${metaRight(s, pageIdx, total)}</span>
         </div>
       </div>
-      ${wm}${lg}
+      ${pc}${wm}${lg}
     </div>`;
   }
 
@@ -1313,7 +1364,7 @@ function cardMarkup(s, pageIdx, total){
       <div class="tagYellow" style="background:${neon};font-size:${s.tagSize}px;${tagAlign}">${escapeHtml(s.tagText || 'THREAD')}</div>
       <div class="headline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text};${alignStyle}">${headline}</div>
       <div class="thList">${items || '<div class="thItem"><div class="thNum">1</div><div class="thText">요약을 입력하세요</div></div>'}</div>
-      <div class="metaRow"><span>${escapeHtml(dateStr)}</span><span>${metaR}</span></div>
+      ${metaBlock}
       ${wm}${lg}
     </div>`;
   }
@@ -1338,7 +1389,7 @@ function cardMarkup(s, pageIdx, total){
       <div class="tagYellow" style="background:${neon};font-size:${s.tagSize}px;${tagAlign}">${escapeHtml(s.tagText || 'SOURCES')}</div>
       <div class="headline" style="font-size:${s.titleSize}px;font-family:${titleFont};color:${s.text};${alignStyle}">${headline}</div>
       <div class="srcList">${items || '<div class="srcItem"><div class="srcNum">01</div><div class="srcBody"><div class="srcTitle">출처를 입력하세요 (제목 | URL)</div></div></div>'}</div>
-      <div class="metaRow"><span>${escapeHtml(dateStr)}</span><span>${metaR}</span></div>
+      ${metaBlock}
       ${wm}${lg}
     </div>`;
   }
@@ -1410,6 +1461,7 @@ function syncForm(){
   $('categorySelect').value = s.category || '정치';
   $('tagText').value = s.tagText || '';
   $('sourceText').value = s.source || '';
+  if($('photoCredit')) $('photoCredit').value = s.photoCredit || '';
   $('dateText').value = s.date || '';
   if($('tzSelect')) $('tzSelect').value = s.tz || 'KR';
   $('titleText').value = s.title || '';
@@ -1464,6 +1516,7 @@ function bindText(id, prop){
 }
 bindText('tagText','tagText');
 bindText('sourceText','source');
+if($('photoCredit')) bindText('photoCredit','photoCredit');
 bindText('dateText','date');
 bindText('titleText','title');
 bindText('bulletsText','bullets');
