@@ -70,7 +70,7 @@
       id: Date.now() + Math.random(),
       layout: 'news',
       size: '3/4',
-      backgroundImage: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=1200&q=80',
+      backgroundImage: '',
       blur: 0,
       imageFit: 'cover',
       imagePosition: 'center',
@@ -267,31 +267,31 @@
             ? await createBlurredDataURL(baseSrc, 25)
             : null;
 
-          // 캡처용 임시 이미지로 교체 (CSS filter 없이)
-          const imgs = el.querySelectorAll('[data-card-img]');
+          // 캡처용으로 블러 처리된 data URL을 배경이미지로 교체 (CSS filter 없이)
+          const layers = el.querySelectorAll('[data-card-img]');
           const originals = [];
-          imgs.forEach((img) => {
-            originals.push({ img, src: img.src, styleFilter: img.style.filter });
-            const role = img.getAttribute('data-card-img');
+          layers.forEach((layer) => {
+            originals.push({ layer, bg: layer.style.backgroundImage, styleFilter: layer.style.filter });
+            const role = layer.getAttribute('data-card-img');
             if (role === 'margin' && marginSrc) {
-              img.src = marginSrc;
-              img.style.filter = 'none';
+              layer.style.backgroundImage = `url(${marginSrc})`;
+              layer.style.filter = 'none';
             } else if (role === 'main') {
-              img.src = mainSrc;
-              img.style.filter = 'none';
+              layer.style.backgroundImage = `url(${mainSrc})`;
+              layer.style.filter = 'none';
             }
           });
 
-          // 이미지 로드 대기
+          // 데이터 URL 이미지 디코딩 대기 (배경이미지는 decode 이벤트가 없으므로 프리로드로 대기)
           await Promise.all(
-            Array.from(el.querySelectorAll('img')).map(
-              (img) =>
-                img.complete
-                  ? Promise.resolve()
-                  : new Promise((res) => {
-                      img.onload = () => res();
-                      img.onerror = () => res();
-                    })
+            [mainSrc, marginSrc].filter(Boolean).map(
+              (src) =>
+                new Promise((res) => {
+                  const preload = new Image();
+                  preload.onload = () => res();
+                  preload.onerror = () => res();
+                  preload.src = src;
+                })
             )
           );
 
@@ -308,9 +308,9 @@
           });
 
           // 원본 복원
-          originals.forEach(({ img, src, styleFilter }) => {
-            img.src = src;
-            img.style.filter = styleFilter;
+          originals.forEach(({ layer, bg, styleFilter }) => {
+            layer.style.backgroundImage = bg;
+            layer.style.filter = styleFilter;
           });
 
           const link = document.createElement('a');
@@ -356,11 +356,16 @@
           );
         };
 
-        const objectPos =
+        const bgPos =
+          card.imagePosition === 'top' ? 'center top' :
+          card.imagePosition === 'bottom' ? 'center bottom' : 'center center';
+
+        const transformOrigin =
           card.imagePosition === 'top' ? 'center top' :
           card.imagePosition === 'bottom' ? 'center bottom' : 'center center';
 
         const scale = card.imageFit === 'cover' ? (card.imageScale || 1) : 1;
+        const hasImage = !!card.backgroundImage;
 
         return (
           <div
@@ -368,63 +373,46 @@
             className="relative overflow-hidden rounded-2xl card-shadow bg-black"
             style={{ aspectRatio: size.ratio, width: '100%', maxWidth: size.maxW }}
           >
-            {/* ===== 이미지 레이어 (img 기반 — 저장과 미리보기 일치) ===== */}
+            {/* ===== 이미지 레이어 (배경이미지 기반 — html2canvas와 렌더링 일치) ===== */}
             <div className="absolute inset-0 overflow-hidden">
+              {!hasImage && (
+                <div className="absolute inset-0 flex items-center justify-center text-gray-500 text-sm">
+                  이미지를 업로드해주세요
+                </div>
+              )}
+
               {/* Contain 여백 블러 */}
-              {card.imageFit === 'contain' && card.marginBlur && (
-                <img
+              {hasImage && card.imageFit === 'contain' && card.marginBlur && (
+                <div
                   data-card-img="margin"
-                  src={card.backgroundImage}
-                  alt=""
-                  crossOrigin="anonymous"
-                  className="absolute inset-0 w-full h-full pointer-events-none"
+                  className="absolute inset-0 pointer-events-none"
                   style={{
-                    objectFit: 'cover',
-                    objectPosition: 'center',
+                    backgroundImage: `url(${card.backgroundImage})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat',
                     filter: 'blur(25px)',
                     transform: 'scale(1.15)',
                   }}
-                  draggable={false}
                 />
               )}
 
               {/* 메인 이미지 */}
-              <img
-                data-card-img="main"
-                src={card.backgroundImage}
-                alt=""
-                crossOrigin="anonymous"
-                className="absolute pointer-events-none"
-                style={{
-                  // cover + scale: 중앙 기준 확대
-                  ...(card.imageFit === 'cover'
-                    ? {
-                        width: `${100 * scale}%`,
-                        height: `${100 * scale}%`,
-                        left: '50%',
-                        top: card.imagePosition === 'top' ? '0%' :
-                             card.imagePosition === 'bottom' ? '100%' : '50%',
-                        transform:
-                          card.imagePosition === 'top'
-                            ? 'translate(-50%, 0%)'
-                            : card.imagePosition === 'bottom'
-                            ? 'translate(-50%, -100%)'
-                            : 'translate(-50%, -50%)',
-                        objectFit: 'cover',
-                        objectPosition: objectPos,
-                      }
-                    : {
-                        width: '100%',
-                        height: '100%',
-                        left: 0,
-                        top: 0,
-                        objectFit: 'contain',
-                        objectPosition: objectPos,
-                      }),
-                  filter: card.blur > 0 ? `blur(${card.blur}px)` : 'none',
-                }}
-                draggable={false}
-              />
+              {hasImage && (
+                <div
+                  data-card-img="main"
+                  className="absolute inset-0 pointer-events-none"
+                  style={{
+                    backgroundImage: `url(${card.backgroundImage})`,
+                    backgroundSize: card.imageFit === 'cover' ? 'cover' : 'contain',
+                    backgroundPosition: bgPos,
+                    backgroundRepeat: 'no-repeat',
+                    transform: card.imageFit === 'cover' ? `scale(${scale})` : 'none',
+                    transformOrigin,
+                    filter: card.blur > 0 ? `blur(${card.blur}px)` : 'none',
+                  }}
+                />
+              )}
             </div>
 
             {/* 그라데이션 오버레이 */}
