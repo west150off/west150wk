@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Editorial Card Studio</title>
+  <style>
+    :root{
+      --bg:#f5f5f2; --panel:#fff; --line:#deded8; --muted:#77766f; --text:#171717;
+      --accent:#111; --soft:#efefea; --danger:#b42318;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif}
+    button,input,select,textarea{font:inherit}
+    button{cursor:pointer}
+    .app{height:100dvh;display:grid;grid-template-rows:58px 1fr;overflow:hidden}
+    .topbar{background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 16px;gap:12px}
+    .brand{font-size:15px;font-weight:800;letter-spacing:-.02em;white-space:nowrap}
+    .top-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .btn{height:36px;border:1px solid var(--line);background:#fff;border-radius:8px;padding:0 12px;font-size:13px;font-weight:700}
+    .btn:hover{background:#f7f7f3}.btn.primary{background:#111;color:#fff;border-color:#111}.btn.danger{color:var(--danger)}
+    .save-status{font-size:12px;color:#6b6a63;margin-right:4px;white-space:nowrap}
+    .workspace{display:grid;grid-template-columns:230px minmax(360px,1fr) 330px;min-height:0}
+    .left,.right{background:#fff;min-height:0;overflow:auto}.left{border-right:1px solid var(--line)}.right{border-left:1px solid var(--line)}
+    .left-head,.right-head{height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;border-bottom:1px solid var(--line);position:sticky;top:0;background:#fff;z-index:3}
+    .panel-title{font-size:12px;font-weight:800;letter-spacing:.03em;text-transform:uppercase}
+    .thumbs{padding:12px;display:flex;flex-direction:column;gap:10px}
+    .thumb{position:relative;border:1px solid var(--line);border-radius:9px;padding:7px;background:#fafaf8;transition:.15s}
+    .thumb.active{border:2px solid #111;padding:6px}.thumb canvas{width:100%;aspect-ratio:4/5;display:block;background:#eee;border-radius:4px}.thumb-num{position:absolute;left:11px;top:11px;background:rgba(0,0,0,.68);color:#fff;border-radius:4px;padding:2px 6px;font-size:10px;font-weight:800}.thumb-actions{display:flex;justify-content:flex-end;gap:5px;margin-top:6px}.mini{height:28px;padding:0 8px;border:1px solid var(--line);background:#fff;border-radius:6px;font-size:11px;font-weight:700}
+    .center{min-width:0;min-height:0;display:flex;flex-direction:column;background:#eaeae5}
+    .canvas-toolbar{height:54px;background:#f8f8f5;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:center;gap:8px}.canvas-wrap{min-height:0;flex:1;display:grid;place-items:center;overflow:auto;padding:28px}
+    .canvas-shell{position:relative;box-shadow:0 14px 40px rgba(0,0,0,.16);background:#fff;flex:0 0 auto}
+    canvas#editorCanvas{display:block;background:#fff;touch-action:none}
+    .hint{font-size:11px;color:#7b7a73;text-align:center;padding:8px 0 12px}
+    .right-content{padding:10px 14px 24px}.section{padding:13px 0;border-bottom:1px solid #ecece7}.section:last-child{border-bottom:0}.section h3{font-size:12px;margin:0 0 10px;font-weight:800}.field{margin-bottom:10px}.field:last-child{margin-bottom:0}.label{font-size:11px;font-weight:700;color:#5f5e58;margin-bottom:6px;display:flex;justify-content:space-between}.field-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.input,.select,.textarea{width:100%;border:1px solid var(--line);background:#fff;border-radius:7px;padding:9px 10px;outline:none}.textarea{min-height:84px;resize:vertical}.input:focus,.select:focus,.textarea:focus{border-color:#999}.color-row{display:flex;align-items:center;gap:8px}.color-row input[type=color]{width:42px;height:36px;border:1px solid var(--line);border-radius:7px;padding:2px;background:#fff}.range{width:100%}.range-row{display:grid;grid-template-columns:1fr 58px;gap:8px;align-items:center}.tiny-value{border:1px solid var(--line);border-radius:6px;padding:7px 8px;background:#fafaf8;text-align:center;font-size:11px}
+    .layer-list{display:flex;flex-direction:column;gap:6px}.layer{display:flex;align-items:center;justify-content:space-between;gap:8px;border:1px solid var(--line);border-radius:7px;padding:8px 9px;background:#fafaf8}.layer.active{border-color:#111;background:#fff}.layer-main{min-width:0}.layer-name{font-size:12px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.layer-meta{font-size:10px;color:#888;margin-top:2px}.layer-select{border:0;background:transparent;font-size:12px;font-weight:800}
+    .empty{font-size:12px;color:#8a8982;padding:12px 4px;text-align:center}
+    .photo-box{border:1px dashed #cfcfc8;background:#fafaf7;border-radius:8px;padding:14px;text-align:center}.photo-box input{width:100%;font-size:12px}
+    .check{display:flex;align-items:center;gap:8px;font-size:12px}.check input{width:16px;height:16px}
+    .toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#111;color:#fff;padding:10px 14px;border-radius:999px;font-size:12px;opacity:0;pointer-events:none;transition:.2s;z-index:30}.toast.show{opacity:1}
+    .mobile-note{display:none}
+    @media (max-width:1100px){.workspace{grid-template-columns:190px minmax(320px,1fr) 290px}}
+    @media (max-width:820px){
+      .app{grid-template-rows:56px 1fr}.workspace{grid-template-columns:1fr;grid-template-rows:44% 56%;overflow:auto}
+      .left{position:relative;border-right:0;border-bottom:1px solid var(--line)}.left-head{height:44px}.thumbs{flex-direction:row;overflow-x:auto}.thumb{min-width:118px}.thumb-actions{display:none}
+      .center{min-height:58vh}.right{border-left:0;border-top:1px solid var(--line);min-height:500px}.topbar{padding:0 10px}.top-actions{gap:5px}.btn{padding:0 9px;height:34px}.save-status{display:none}.mobile-note{display:block;font-size:10px;color:#777;margin-top:8px;line-height:1.5}
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">EDITORIAL CARD STUDIO</div>
+    <div class="top-actions">
+      <span class="save-status" id="saveStatus">자동 저장됨</span>
+      <button class="btn" id="undoBtn">실행 취소</button>
+      <button class="btn" id="redoBtn">다시 실행</button>
+      <button class="btn" id="addCardBtn">+ 카드</button>
+      <button class="btn primary" id="exportBtn">내보내기</button>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <aside class="left">
+      <div class="left-head"><span class="panel-title">Cards</span><button class="mini" id="leftAddBtn">+ 추가</button></div>
+      <div class="thumbs" id="thumbs"></div>
+    </aside>
+
+    <section class="center">
+      <div class="canvas-toolbar">
+        <button class="mini" id="zoomOut">−</button>
+        <span id="zoomLabel" style="font-size:11px;font-weight:800;min-width:46px;text-align:center">60%</span>
+        <button class="mini" id="zoomIn">+</button>
+        <button class="mini" id="fitBtn">화면 맞춤</button>
+      </div>
+      <div class="canvas-wrap" id="canvasWrap">
+        <div class="canvas-shell" id="canvasShell"><canvas id="editorCanvas" width="1080" height="1350"></canvas></div>
+      </div>
+      <div class="hint">요소를 선택한 뒤 드래그 · 핸들로 크기 조절 · 사진은 필터 적용 가능</div>
+    </section>
+
+    <aside class="right">
+      <div class="right-head"><span class="panel-title">Inspector</span><button class="mini" id="resetBtn">선택 초기화</button></div>
+      <div class="right-content">
+        <div class="section">
+          <h3>글 목록</h3>
+          <div class="layer-list" id="layerList"></div>
+        </div>
+
+        <div class="section">
+          <h3>텍스트</h3>
+          <div class="field"><div class="label">내용</div><textarea class="textarea" id="textValue" placeholder="텍스트를 입력하세요"></textarea></div>
+          <div class="field-row">
+            <div class="field"><div class="label">글꼴</div><select class="select" id="fontValue"><option>프리텐다드</option><option>RIDI바탕</option><option>Arial</option><option>Georgia</option></select></div>
+            <div class="field"><div class="label">굵기</div><select class="select" id="weightValue"><option value="400">Regular</option><option value="500">Medium</option><option value="700">Bold</option><option value="800">ExtraBold</option></select></div>
+          </div>
+          <div class="field"><div class="label">크기 <span id="fontSizeText">48px</span></div><div class="range-row"><input class="range" id="fontSize" type="range" min="12" max="180" value="48"><div class="tiny-value" id="fontSizeBox">48</div></div></div>
+          <div class="field"><div class="label">색상</div><div class="color-row"><input id="fontColor" type="color" value="#111111"><input class="input" id="fontColorHex" value="#111111"></div></div>
+          <div class="field-row">
+            <div class="field"><div class="label">정렬</div><select class="select" id="alignValue"><option value="left">왼쪽</option><option value="center">가운데</option><option value="right">오른쪽</option></select></div>
+            <div class="field"><div class="label">줄간격</div><input class="input" id="lineHeight" type="number" min="0.8" max="3" step="0.1" value="1.25"></div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>위치 / 크기</h3>
+          <div class="field-row">
+            <div class="field"><div class="label">X</div><input class="input" id="posX" type="number"></div>
+            <div class="field"><div class="label">Y</div><input class="input" id="posY" type="number"></div>
+          </div>
+          <div class="field-row">
+            <div class="field"><div class="label">W</div><input class="input" id="boxW" type="number"></div>
+            <div class="field"><div class="label">H</div><input class="input" id="boxH" type="number"></div>
+          </div>
+          <div class="field"><div class="label">회전 <span id="rotationText">0°</span></div><div class="range-row"><input class="range" id="rotation" type="range" min="-180" max="180" value="0"><div class="tiny-value" id="rotationBox">0</div></div></div>
+        </div>
+
+        <div class="section">
+          <h3>사진</h3>
+          <div class="photo-box"><input id="photoInput" type="file" accept="image/*"><div class="mobile-note">iPhone에서는 사진을 선택한 뒤, 내보내기에서 “사진에 저장”을 사용하세요.</div></div>
+          <div class="field" style="margin-top:10px"><div class="label">밝기 <span id="brightnessText">100%</span></div><input class="range" id="brightness" type="range" min="50" max="150" value="100"></div>
+          <div class="field"><div class="label">대비 <span id="contrastText">100%</span></div><input class="range" id="contrast" type="range" min="50" max="180" value="100"></div>
+          <div class="field"><div class="label">채도 <span id="saturationText">100%</span></div><input class="range" id="saturation" type="range" min="0" max="180" value="100"></div>
+          <div class="field"><div class="label">흑백 <span id="grayscaleText">0%</span></div><input class="range" id="grayscale" type="range" min="0" max="100" value="0"></div>
+          <div class="field"><div class="label">블러 <span id="blurText">0px</span></div><input class="range" id="blur" type="range" min="0" max="10" step="0.5" value="0"></div>
+          <div class="field"><div class="label">투명도 <span id="opacityText">100%</span></div><input class="range" id="opacity" type="range" min="0" max="100" value="100"></div>
+        </div>
+
+        <div class="section">
+          <h3>레이어</h3>
+          <div class="field"><button class="btn" id="addTextBtn" style="width:100%">+ 텍스트 추가</button></div>
+          <div class="field-row"><button class="btn" id="bringFront">맨 앞으로</button><button class="btn" id="sendBack">맨 뒤로</button></div>
+          <div class="field"><label class="check"><input id="snapToggle" type="checkbox" checked> 가운데 / 여백 스냅</label></div>
+        </div>
+      </div>
+    </aside>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const W=1080,H=1350;
+const STORAGE='editorial-card-studio-v1';
+const FONT_STACKS={
+  '프리텐다드':'Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif',
+  'RIDI바탕':'"RIDI Batang", "Apple SD Gothic Neo", Georgia, serif',
+  'Arial':'Arial, sans-serif','Georgia':'Georgia, serif'
+};
+
+const state={
+  slides:[makeSlide(1)], current:0, selectedId:null, zoom:.6,
+  history:[], future:[], lastSaved:Date.now()
+};
+
+function uid(prefix='id'){return prefix+Math.random().toString(36).slice(2,9)}
+function makeSlide(n){
+  return {id:uid('s'), bg:'#ffffff', elements:[
+    {id:uid('t'),type:'text',role:'headline',text:'뉴스의 핵심을\n한 장에 담다',x:84,y:110,w:900,h:260,font:'프리텐다드',size:84,weight:800,color:'#111111',align:'left',lineHeight:1.05,rotation:0,opacity:1},
+    {id:uid('t'),type:'text',role:'subhead',text:'복잡한 이야기를 선명하고 읽기 쉽게.',x:88,y:405,w:850,h:130,font:'프리텐다드',size:34,weight:500,color:'#4b4b46',align:'left',lineHeight:1.3,rotation:0,opacity:1},
+    {id:uid('t'),type:'text',role:'body',text:'본문을 입력하세요. 사진과 함께 배치하고, 글꼴·크기·색상·위치를 자유롭게 조절할 수 있습니다.',x:88,y:620,w:860,h:250,font:'RIDI바탕',size:36,weight:400,color:'#222222',align:'left',lineHeight:1.45,rotation:0,opacity:1},
+    {id:uid('t'),type:'text',role:'source',text:'출처: Editorial Card Studio',x:88,y:1240,w:700,h:40,font:'프리텐다드',size:18,weight:500,color:'#777777',align:'left',lineHeight:1.2,rotation:0,opacity:1},
+    {id:uid('t'),type:'text',role:'watermark',text:'EDITORIAL',x:760,y:1280,w:240,h:30,font:'프리텐다드',size:14,weight:800,color:'#999999',align:'right',lineHeight:1.2,rotation:0,opacity:.65}
+  ]}
+}
+
+function snapshot(){return JSON.stringify({slides:state.slides,current:state.current,selectedId:state.selectedId})}
+function restoreSnap(s){const v=JSON.parse(s);state.slides=v.slides;state.current=v.current;state.selectedId=v.selectedId}
+function commit(){state.history.push(snapshot()); if(state.history.length>50) state.history.shift(); state.future=[]; scheduleSave(); renderAll()}
+function scheduleSave(){clearTimeout(scheduleSave.t);scheduleSave.t=setTimeout(save,250)}
+function save(){
+  localStorage.setItem(STORAGE,JSON.stringify({slides:state.slides,current:state.current,selectedId:state.selectedId}));
+  state.lastSaved=Date.now(); document.getElementById('saveStatus').textContent='자동 저장됨 · '+new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
+}
+function load(){try{const raw=localStorage.getItem(STORAGE); if(raw){const v=JSON.parse(raw);state.slides=v.slides||state.slides;state.current=v.current||0;state.selectedId=v.selectedId||null}}catch(e){console.warn(e)}}
+function currentSlide(){return state.slides[state.current]}
+function selected(){return currentSlide()?.elements.find(e=>e.id===state.selectedId)||null}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('show'),1700)}
+
+function renderAll(){renderThumbs(); renderCanvas(); renderLayers(); renderInspector()}
+function renderThumbs(){
+  const wrap=document.getElementById('thumbs');wrap.innerHTML='';
+  state.slides.forEach((s,i)=>{
+    const d=document.createElement('div');d.className='thumb'+(i===state.current?' active':'');d.innerHTML=`<div class="thumb-num">${String(i+1).padStart(2,'0')}</div><canvas width="324" height="405"></canvas><div class="thumb-actions"><button class="mini" data-act="dup">복제</button><button class="mini" data-act="del">삭제</button></div>`;
+    d.addEventListener('click',e=>{if(e.target.dataset.act)return;state.current=i;state.selectedId=s.elements[0]?.id||null;renderAll()});
+    d.querySelector('[data-act="dup"]').addEventListener('click',e=>{e.stopPropagation();duplicateSlide(i)});
+    d.querySelector('[data-act="del"]').addEventListener('click',e=>{e.stopPropagation();deleteSlide(i)});
+    const c=d.querySelector('canvas');drawSlide(c,s,324/1080);wrap.appendChild(d);
+  })
+}
+function drawSlide(canvas,slide,scale=1){
+  const ctx=canvas.getContext('2d');ctx.clearRect(0,0,canvas.width,canvas.height);ctx.save();ctx.scale(scale,scale);ctx.fillStyle=slide.bg;ctx.fillRect(0,0,W,H);for(const el of slide.elements)drawElement(ctx,el,true);ctx.restore()
+}
+function wrapText(ctx,text,maxWidth){const lines=[];for(const p of String(text||'').split('\n')){if(!p){lines.push('');continue}let line='';for(const ch of p){const test=line+ch;if(ctx.measureText(test).width>maxWidth&&line){lines.push(line);line=ch}else line=test}lines.push(line)}return lines}
+function drawElement(ctx,el,thumb=false){
+  ctx.save();ctx.translate(el.x+el.w/2,el.y+el.h/2);ctx.rotate((el.rotation||0)*Math.PI/180);ctx.translate(-el.w/2,-el.h/2);ctx.globalAlpha=el.opacity??1;
+  if(el.type==='image'){if(el.img){ctx.filter=`brightness(${el.brightness||100}%) contrast(${el.contrast||100}%) saturate(${el.saturation||100}%) grayscale(${el.grayscale||0}%) blur(${el.blur||0}px)`;coverImage(ctx,el.img,0,0,el.w,el.h);ctx.filter='none'}else{ctx.fillStyle='#e8e8e3';ctx.fillRect(0,0,el.w,el.h);ctx.fillStyle='#999';ctx.font='24px sans-serif';ctx.fillText('사진을 추가하세요',24,48)}}else{ctx.font=`${el.weight||400} ${el.size||32}px ${FONT_STACKS[el.font]||FONT_STACKS['프리텐다드']}`;ctx.fillStyle=el.color||'#111';ctx.textAlign=el.align||'left';ctx.textBaseline='top';const lh=(el.size||32)*(el.lineHeight||1.25);const lines=wrapText(ctx,el.text||'',el.w);let y=0;for(const line of lines){let tx=el.align==='center'?el.w/2:el.align==='right'?el.w:0;ctx.fillText(line,tx,y);y+=lh}}
+  ctx.restore();
+}
+function coverImage(ctx,img,x,y,w,h){const ar=img.width/img.height,tar=w/h;let dw=w,dh=h;if(ar>tar)dw=h*ar;else dh=w/ar;ctx.drawImage(img,x+(w-dw)/2,y+(h-dh)/2,dw,dh)}
+function renderCanvas(){const c=document.getElementById('editorCanvas'),shell=document.getElementById('canvasShell');c.width=W;c.height=H;c.style.width=(W*state.zoom)+'px';c.style.height=(H*state.zoom)+'px';shell.style.width=(W*state.zoom)+'px';shell.style.height=(H*state.zoom)+'px';drawSlide(c,currentSlide(),1);const ctx=c.getContext('2d');if(state.selectedId){const e=selected();if(e){ctx.save();ctx.translate(e.x,e.y);ctx.strokeStyle='#111';ctx.lineWidth=2/state.zoom;ctx.setLineDash([7/state.zoom,5/state.zoom]);ctx.strokeRect(0,0,e.w,e.h);ctx.restore()}}document.getElementById('zoomLabel').textContent=Math.round(state.zoom*100)+'%'}
+function renderLayers(){const list=document.getElementById('layerList');list.innerHTML='';const names={headline:'헤드라인',subhead:'서브헤드',body:'본문',source:'출처',watermark:'워터마크'};const els=currentSlide().elements.slice().reverse();if(!els.length){list.innerHTML='<div class="empty">요소가 없습니다.</div>';return}els.forEach(el=>{const d=document.createElement('div');d.className='layer'+(el.id===state.selectedId?' active':'');d.innerHTML=`<div class="layer-main"><div class="layer-name">${el.type==='text'?(names[el.role]||'텍스트'):'사진'}</div><div class="layer-meta">${el.type==='text'?el.font+' · '+el.size+'px':'이미지 효과'}</div></div><select class="layer-select"><option value="">선택</option></select>`;d.addEventListener('click',()=>{state.selectedId=el.id;renderAll()});list.appendChild(d)})}
+function setVal(id,v){const el=document.getElementById(id);if(el)el.value=v}
+function renderInspector(){const e=selected();const textIds=['textValue','fontValue','weightValue','fontSize','fontColor','fontColorHex','alignValue','lineHeight','posX','posY','boxW','boxH','rotation','brightness','contrast','saturation','grayscale','blur','opacity'];if(!e){textIds.forEach(id=>{const x=document.getElementById(id);if(x)x.disabled=true});return}textIds.forEach(id=>{const x=document.getElementById(id);if(x)x.disabled=false});
+  const isText=e.type==='text';['textValue','fontValue','weightValue','fontSize','fontColor','fontColorHex','alignValue','lineHeight'].forEach(id=>{const x=document.getElementById(id);if(x)x.closest('.field')?.classList.toggle('section-off',!isText)});
+  if(isText){setVal('textValue',e.text);setVal('fontValue',e.font);setVal('weightValue',e.weight);setVal('fontSize',e.size);setVal('fontColor',e.color);setVal('fontColorHex',e.color);setVal('alignValue',e.align);setVal('lineHeight',e.lineHeight);document.getElementById('fontSizeText').textContent=e.size+'px';document.getElementById('fontSizeBox').textContent=e.size}else{setVal('brightness',e.brightness||100);setVal('contrast',e.contrast||100);setVal('saturation',e.saturation||100);setVal('grayscale',e.grayscale||0);setVal('blur',e.blur||0);setVal('opacity',Math.round((e.opacity??1)*100));document.getElementById('brightnessText').textContent=(e.brightness||100)+'%';document.getElementById('contrastText').textContent=(e.contrast||100)+'%';document.getElementById('saturationText').textContent=(e.saturation||100)+'%';document.getElementById('grayscaleText').textContent=(e.grayscale||0)+'%';document.getElementById('blurText').textContent=(e.blur||0)+'px';document.getElementById('opacityText').textContent=Math.round((e.opacity??1)*100)+'%'}
+  setVal('posX',Math.round(e.x));setVal('posY',Math.round(e.y));setVal('boxW',Math.round(e.w));setVal('boxH',Math.round(e.h));setVal('rotation',Math.round(e.rotation||0));document.getElementById('rotationText').textContent=Math.round(e.rotation||0)+'°';document.getElementById('rotationBox').textContent=Math.round(e.rotation||0)
+}
+
+function duplicateSlide(i){const cp=JSON.parse(JSON.stringify(state.slides[i]));cp.id=uid('s');cp.elements.forEach(e=>e.id=uid('e'));state.slides.splice(i+1,0,cp);state.current=i+1;state.selectedId=cp.elements[0]?.id||null;commit()}
+function deleteSlide(i){if(state.slides.length===1){toast('카드는 최소 1장 필요합니다.');return}state.slides.splice(i,1);state.current=Math.min(state.current,state.slides.length-1);state.selectedId=currentSlide().elements[0]?.id||null;commit()}
+function addSlide(){const s=makeSlide(state.slides.length+1);state.slides.push(s);state.current=state.slides.length-1;state.selectedId=s.elements[0].id;commit()}
+function addText(){const e={id:uid('t'),type:'text',role:'custom',text:'새 텍스트',x:100,y:950,w:760,h:120,font:'프리텐다드',size:42,weight:700,color:'#111111',align:'left',lineHeight:1.25,rotation:0,opacity:1};currentSlide().elements.push(e);state.selectedId=e.id;commit()}
+function moveLayer(front){const s=currentSlide(),e=selected();if(!e)return;const i=s.elements.findIndex(x=>x.id===e.id);s.elements.splice(i,1);front?s.elements.push(e):s.elements.unshift(e);commit()}
+
+function pointerToCanvas(evt){const r=document.getElementById('editorCanvas').getBoundingClientRect();return{x:(evt.clientX-r.left)/state.zoom,y:(evt.clientY-r.top)/state.zoom}}
+let drag={on:false,dx:0,dy:0};
+const canvas=document.getElementById('editorCanvas');
+canvas.addEventListener('pointerdown',e=>{const p=pointerToCanvas(e);const els=currentSlide().elements.slice().reverse();const hit=els.find(el=>p.x>=el.x&&p.x<=el.x+el.w&&p.y>=el.y&&p.y<=el.y+el.h);if(!hit){state.selectedId=null;renderAll();return}state.selectedId=hit.id;drag={on:true,dx:p.x-hit.x,dy:p.y-hit.y};canvas.setPointerCapture(e.pointerId);renderAll()});
+canvas.addEventListener('pointermove',e=>{if(!drag.on)return;const e1=selected();if(!e1)return;const p=pointerToCanvas(e);e1.x=Math.max(0,Math.min(W-e1.w,p.x-drag.dx));e1.y=Math.max(0,Math.min(H-e1.h,p.y-drag.dy));renderCanvas();});
+canvas.addEventListener('pointerup',e=>{if(drag.on){drag.on=false;commit()}});
+
+function bind(id,prop,transform=x=>x){document.getElementById(id).addEventListener('input',e=>{const el=selected();if(!el)return;el[prop]=transform(e.target.value);renderCanvas();renderLayers();renderInspector();scheduleSave()});document.getElementById(id).addEventListener('change',()=>{commit()})}
+bind('textValue','text',x=>x);bind('fontValue','font',x=>x);bind('weightValue','weight',x=>+x);bind('fontSize','size',x=>+x);bind('alignValue','align',x=>x);bind('lineHeight','lineHeight',x=>+x);bind('posX','x',x=>+x);bind('posY','y',x=>+x);bind('boxW','w',x=>+x);bind('boxH','h',x=>+x);bind('rotation','rotation',x=>+x);
+bind('brightness','brightness',x=>+x);bind('contrast','contrast',x=>+x);bind('saturation','saturation',x=>+x);bind('grayscale','grayscale',x=>+x);bind('blur','blur',x=>+x);bind('opacity','opacity',x=>+x/100);
+
+document.getElementById('fontColor').addEventListener('input',e=>{const el=selected();if(!el)return;el.color=e.target.value;setVal('fontColorHex',el.color);renderCanvas();scheduleSave()});
+document.getElementById('fontColorHex').addEventListener('change',e=>{const el=selected();if(!el)return;let v=e.target.value.trim();if(!/^#[0-9a-fA-F]{6}$/.test(v))v='#111111';el.color=v;setVal('fontColor',v);commit()});
+
+document.getElementById('photoInput').addEventListener('change',e=>{const file=e.target.files?.[0];if(!file)return;const img=new Image();img.onload=()=>{const el={id:uid('i'),type:'image',role:'photo',img,x:0,y:0,w:W,h:H,rotation:0,opacity:1,brightness:100,contrast:100,saturation:100,grayscale:0,blur:0};currentSlide().elements.unshift(el);state.selectedId=el.id;commit();e.target.value=''};img.src=URL.createObjectURL(file)});
+
+document.getElementById('addTextBtn').onclick=addText;document.getElementById('addCardBtn').onclick=addSlide;document.getElementById('leftAddBtn').onclick=addSlide;document.getElementById('bringFront').onclick=()=>moveLayer(true);document.getElementById('sendBack').onclick=()=>moveLayer(false);document.getElementById('resetBtn').onclick=()=>{state.selectedId=null;renderAll()};
+document.getElementById('zoomIn').onclick=()=>{state.zoom=Math.min(1.2,state.zoom+.1);renderCanvas()};document.getElementById('zoomOut').onclick=()=>{state.zoom=Math.max(.25,state.zoom-.1);renderCanvas()};document.getElementById('fitBtn').onclick=fitCanvas;
+function fitCanvas(){const w=document.getElementById('canvasWrap').clientWidth-40,h=document.getElementById('canvasWrap').clientHeight-40;state.zoom=Math.min(w/W,h/H,1);renderCanvas()}
+
+document.getElementById('undoBtn').onclick=()=>{if(!state.history.length)return;state.future.push(snapshot());restoreSnap(state.history.pop());renderAll();save()};
+document.getElementById('redoBtn').onclick=()=>{if(!state.future.length)return;state.history.push(snapshot());restoreSnap(state.future.pop());renderAll();save()};
+
+document.getElementById('exportBtn').onclick=exportMenu;
+function renderExportCanvas(slide){const c=document.createElement('canvas');c.width=W;c.height=H;drawSlide(c,slide,1);return c}
+async function exportMenu(){
+  const choice=prompt('내보내기: 1=JPG  2=PNG  3=PDF(페이지별 PNG 묶음 안내)  4=아이폰 사진에 저장');
+  if(!choice)return;
+  const c=renderExportCanvas(currentSlide());
+  if(choice==='1'||choice==='2'){const mime=choice==='1'?'image/jpeg':'image/png';c.toBlob(blob=>downloadBlob(blob,`editorial-card-${state.current+1}.${choice==='1'?'jpg':'png'}`),mime,.95);return}
+  if(choice==='4'){await saveToIOS(c);return}
+  toast('브라우저 단일 파일 버전에서는 PDF를 직접 만들지 않고 PNG/JPG로 내보냅니다. 여러 장 PDF는 프로젝트 확장 버전에서 연결하세요.');
+}
+function downloadBlob(blob,name){const a=document.createElement('a');const url=URL.createObjectURL(blob);a.href=url;a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(url);a.remove()},1000);toast('파일 저장 준비 완료')}
+async function saveToIOS(c){const blob=await new Promise(r=>c.toBlob(r,'image/jpeg',.95));const file=new File([blob],`editorial-card-${state.current+1}.jpg`,{type:'image/jpeg'});if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:'Editorial Card'});toast('공유 메뉴에서 사진에 저장하세요.')}catch(e){toast('저장이 취소되었습니다.')}}else{downloadBlob(blob,file.name);toast('iPhone에서는 공유/다운로드 메뉴로 저장하세요.')}}
+
+window.addEventListener('resize',()=>{if(window.innerWidth<900)fitCanvas()});
+load(); if(!state.selectedId)state.selectedId=currentSlide().elements[0]?.id||null;renderAll();setTimeout(fitCanvas,60);save();
+</script>
+</body>
+</html>
