@@ -127,6 +127,7 @@
   .card > div{ width:100%; height:100%; }
   .img-fit{ position:relative; overflow:hidden; background-color:#111; width:100%; height:100%; isolation:isolate; }
   .img-fit .img-el{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+  .img-fit-original .img-el{ width:auto !important; height:auto !important; inset:auto; }
   .img-fit .img-overlay{ position:absolute; inset:0; pointer-events:none; }
   .tpl-broadcast{ position:relative; }
 
@@ -356,17 +357,20 @@ const FILTERS = {
 --------------------------------------------------------- */
 function imgFitHTML(src, style, extraClass=''){
   const fit = style.imgFit || 'cover';
-  const objectFit = fit === 'fill' ? 'fill' : fit;
+  const objectFit = fit === 'fill' ? 'fill' : (fit === 'original' ? 'none' : fit);
   const zoom = style.imgZoom || 100;
   const posX = style.imgPosX ?? 50;
   const posY = style.imgPosY ?? 50;
   const filterCss = (FILTERS[style.imgFilter]||FILTERS.none).css;
-  const transform = objectFit === 'contain' ? 'none' : `scale(${zoom/100})`;
+  const transform = fit === 'original'
+    ? `translate(-50%, -50%) scale(${zoom/100})`
+    : (objectFit === 'contain' ? 'none' : `scale(${zoom/100})`);
+  const originalClass = fit === 'original' ? ' img-fit-original' : '';
   const overlay = style.imgFilter === 'duo'
     ? `<div class="img-overlay" style="background:${style.accentColor||'#e5372f'};mix-blend-mode:color;opacity:.75;"></div>`
     : '';
-  return `<div class="img-fit ${extraClass}">
-    <img class="img-el" src="${src}" style="object-fit:${objectFit};object-position:${posX}% ${posY}%;filter:${filterCss};transform:${transform};transform-origin:${posX}% ${posY}%;">
+  return `<div class="img-fit${originalClass} ${extraClass}">
+    <img class="img-el" src="${src}" style="object-fit:${objectFit};object-position:${posX}% ${posY}%;filter:${filterCss};transform:${transform};transform-origin:center center;left:${posX}%;top:${posY}%;right:auto;bottom:auto;">
     ${overlay}
   </div>`;
 }
@@ -850,6 +854,7 @@ function buildImagePanel(){
     <div class="field"><select data-sk="imgFit">
       <option value="cover" ${s.imgFit==='cover'?'selected':''}>꽉 채우기 (Cover)</option>
       <option value="contain" ${s.imgFit==='contain'?'selected':''}>전체 보기 (Contain)</option>
+      <option value="original" ${s.imgFit==='original'?'selected':''}>원본 크기</option>
       <option value="fill" ${s.imgFit==='fill'?'selected':''}>늘려서 채우기 (Fill)</option>
     </select></div>
 
