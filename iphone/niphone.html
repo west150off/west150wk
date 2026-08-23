@@ -128,6 +128,11 @@
   .img-fit{ position:relative; overflow:hidden; background-color:#111; width:100%; height:100%; }
   .img-fit .img-el{ position:absolute; inset:0; width:100%; height:100%; display:block; }
   .img-fit .img-overlay{ position:absolute; inset:0; pointer-events:none; }
+  .img-fit-original .img-el{
+    width:auto !important; height:auto !important; min-width:0; min-height:0;
+    max-width:none !important; max-height:none !important;
+    left:50% !important; top:50% !important; right:auto !important; bottom:auto !important;
+  }
   .tpl-broadcast{ position:relative; }
 
   /* ===== 01 Breaking News ===== */
@@ -151,16 +156,19 @@
   .tpl-breaking .arrow{ flex-shrink:0; width:38px; height:38px; background:var(--accent); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:16px; color:#fff; }
 
   /* ===== 03 Broadcast Screen ===== */
-  .tpl-broadcast{ background:#04060c; color:#fff; }
-  .tpl-broadcast .bgimg{ position:absolute; inset:0; z-index:0; }
-  .tpl-broadcast .veil{ position:absolute; inset:0; z-index:1; background:linear-gradient(180deg, rgba(2,4,10,.45) 0%, rgba(2,4,10,.15) 30%, rgba(2,4,10,.55) 62%, rgba(2,4,10,.97) 100%); }
-  .tpl-broadcast .inner{ position:relative; z-index:2; display:flex; flex-direction:column; height:100%; }
+  .tpl-broadcast{ background:#04060c; color:#fff; position:relative; display:flex; flex-direction:column; overflow:hidden; }
+  .tpl-broadcast .bgimg{ position:relative; left:auto; right:auto; top:auto; width:100%; height:44%; z-index:0; overflow:hidden; flex:0 0 44%; }
+  .tpl-broadcast .veil{ position:absolute; left:0; right:0; top:0; height:44%; z-index:1; background:linear-gradient(180deg, rgba(2,4,10,.20) 0%, rgba(2,4,10,.08) 48%, rgba(2,4,10,.78) 100%); pointer-events:none; }
+  .tpl-broadcast .inner{ position:absolute; inset:0; z-index:2; display:flex; flex-direction:column; height:100%; }
   .tpl-broadcast .top{ padding:44px 20px 0; display:flex; justify-content:space-between; align-items:center; }
   .tpl-broadcast .logo{ font-size:12px; font-weight:800; letter-spacing:.04em; }
   .tpl-broadcast .live{ display:flex; align-items:center; gap:6px; font-size:11px; font-weight:700; }
   .tpl-broadcast .live .dot{ width:7px; height:7px; border-radius:50%; background:var(--accent); }
   .tpl-broadcast .spacer{ flex:1; }
-  .tpl-broadcast .bottom-group{ padding:0 0 26px; }
+  .tpl-broadcast .bottom-group{
+    position:absolute; left:0; right:0; bottom:0;
+    padding:16px 0 26px; background:#04060c;
+  }
   .tpl-broadcast .headline{ padding:0 20px; margin-bottom:14px; text-transform:uppercase; }
   .tpl-broadcast .headline div{ line-height:1.1; letter-spacing:-0.01em; }
   .tpl-broadcast .badge-row{ padding:0 20px; display:flex; align-items:center; gap:10px; margin-bottom:10px; }
@@ -282,8 +290,12 @@
    유틸
 --------------------------------------------------------- */
 const esc = s => (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-const lines = s => (s||'').split('\n').map(l=>`<div>${esc(l)}</div>`).join('');
-const linesP = s => (s||'').split('\n').map(l=>`<p style="margin:0;">${esc(l)}</p>`).join('');
+const lines = s => (s||'').split('\n').map(l =>
+  l === '' ? `<div style="min-height:1em;">&nbsp;</div>` : `<div>${esc(l)}</div>`
+).join('');
+const linesP = s => (s||'').split('\n').map(l =>
+  l === '' ? `<p style="margin:0;min-height:1em;">&nbsp;</p>` : `<p style="margin:0;">${esc(l)}</p>`
+).join('');
 const nl2br = s => esc(s||'').replace(/\n/g,'<br>');
 
 function fontStack(name){
@@ -352,17 +364,20 @@ const FILTERS = {
 --------------------------------------------------------- */
 function imgFitHTML(src, style, extraClass=''){
   const fit = style.imgFit || 'cover';
-  const objectFit = fit === 'fill' ? 'fill' : fit;
+  const isOriginal = fit === 'original';
+  const objectFit = fit === 'fill' ? 'fill' : (isOriginal ? 'none' : fit);
   const zoom = style.imgZoom || 100;
   const posX = style.imgPosX ?? 50;
   const posY = style.imgPosY ?? 50;
   const filterCss = (FILTERS[style.imgFilter]||FILTERS.none).css;
-  const transform = objectFit === 'contain' ? 'none' : `scale(${zoom/100})`;
+  const transform = isOriginal ? `translate(-50%, -50%) scale(${zoom/100})` :
+    (objectFit === 'contain' ? 'none' : `scale(${zoom/100})`);
+  const originalClass = isOriginal ? ' img-fit-original' : '';
   const overlay = style.imgFilter === 'duo'
     ? `<div class="img-overlay" style="background:${style.accentColor||'#e5372f'};mix-blend-mode:color;opacity:.75;"></div>`
     : '';
-  return `<div class="img-fit ${extraClass}">
-    <img class="img-el" src="${src}" style="object-fit:${objectFit};object-position:${posX}% ${posY}%;filter:${filterCss};transform:${transform};transform-origin:${posX}% ${posY}%;">
+  return `<div class="img-fit${originalClass} ${extraClass}">
+    <img class="img-el" src="${src}" style="object-fit:${objectFit};object-position:${posX}% ${posY}%;filter:${filterCss};transform:${transform};transform-origin:center center;left:${posX}%;top:${posY}%;right:auto;bottom:auto;">
     ${overlay}
   </div>`;
 }
@@ -846,6 +861,7 @@ function buildImagePanel(){
     <div class="field"><select data-sk="imgFit">
       <option value="cover" ${s.imgFit==='cover'?'selected':''}>꽉 채우기 (Cover)</option>
       <option value="contain" ${s.imgFit==='contain'?'selected':''}>전체 보기 (Contain)</option>
+      <option value="original" ${s.imgFit==='original'?'selected':''}>원본 크기</option>
       <option value="fill" ${s.imgFit==='fill'?'selected':''}>늘려서 채우기 (Fill)</option>
     </select></div>
 
