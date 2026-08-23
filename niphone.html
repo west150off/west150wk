@@ -40,7 +40,7 @@
   .device-badge{ display:flex; align-items:center; gap:6px; background:var(--panel2); border:1px solid var(--line); border-radius:8px; padding:8px 10px; font-size:11.5px; color:var(--text-dim); margin-bottom:18px; }
   .device-badge b{ color:var(--text); }
 
-  .tabs{ display:grid; grid-template-columns:repeat(5,1fr); gap:6px; margin-bottom:6px; }
+  .tabs{ display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:6px; }
   .tab{ background:var(--panel2); border:1px solid var(--line); border-radius:8px; padding:8px 3px 7px; text-align:center; cursor:pointer; color:var(--text-dim); transition:.15s; }
   .tab .num{ font-size:10px; font-weight:800; display:block; color:var(--accent-ui); }
   .tab .name{ font-size:9.3px; font-weight:600; display:block; margin-top:2px; line-height:1.2; }
@@ -157,17 +157,17 @@
 
   /* ===== 03 Broadcast Screen ===== */
   .tpl-broadcast{ background:#04060c; color:#fff; position:relative; display:flex; flex-direction:column; overflow:hidden; }
-  .tpl-broadcast .bgimg{ position:relative; left:auto; right:auto; top:auto; width:100%; height:44%; z-index:0; overflow:hidden; flex:0 0 44%; }
+  .tpl-broadcast .bgimg{ position:relative; width:100%; height:44%; z-index:0; overflow:hidden; flex:0 0 44%; }
   .tpl-broadcast .veil{ position:absolute; left:0; right:0; top:0; height:44%; z-index:1; background:linear-gradient(180deg, rgba(2,4,10,.20) 0%, rgba(2,4,10,.08) 48%, rgba(2,4,10,.78) 100%); pointer-events:none; }
-  .tpl-broadcast .inner{ position:absolute; inset:0; z-index:2; display:flex; flex-direction:column; height:100%; }
-  .tpl-broadcast .top{ padding:44px 20px 0; display:flex; justify-content:space-between; align-items:center; }
+  .tpl-broadcast .inner{ position:relative; z-index:2; display:flex; flex-direction:column; height:56%; min-height:0; }
+  .tpl-broadcast .top{ padding:18px 20px 0; display:flex; justify-content:space-between; align-items:center; }
   .tpl-broadcast .logo{ font-size:12px; font-weight:800; letter-spacing:.04em; }
   .tpl-broadcast .live{ display:flex; align-items:center; gap:6px; font-size:11px; font-weight:700; }
   .tpl-broadcast .live .dot{ width:7px; height:7px; border-radius:50%; background:var(--accent); }
-  .tpl-broadcast .spacer{ flex:1; }
+  .tpl-broadcast .spacer{ display:none; }
   .tpl-broadcast .bottom-group{
-    position:absolute; left:0; right:0; bottom:0;
-    padding:16px 0 26px; background:#04060c;
+    position:relative; left:auto; right:auto; bottom:auto;
+    padding:0 0 26px; background:#04060c; margin-top:auto;
   }
   .tpl-broadcast .headline{ padding:0 20px; margin-bottom:14px; text-transform:uppercase; }
   .tpl-broadcast .headline div{ line-height:1.1; letter-spacing:-0.01em; }
@@ -214,6 +214,80 @@
   .tpl-column .quote .mark{ font-size:28px; color:var(--accent); line-height:.6; flex-shrink:0; }
   .tpl-column .quote .quote-text p{ font-style:italic; line-height:1.45; margin:0; }
   .tpl-column .source{ margin-top:12px; font-size:10px; color:#6b6558; }
+
+
+  /* ===== 09 Editorial Card ===== */
+  .tpl-editorial{background:#f4f0e8;color:#141414;display:flex;flex-direction:column;padding:24px;overflow:hidden;}
+  .tpl-editorial .mast{display:flex;justify-content:space-between;align-items:center;font-size:10px;font-weight:800;letter-spacing:.04em;}
+  .tpl-editorial .mast .date{font-weight:500;color:#6d6a63;}
+  .tpl-editorial .hero{height:42%;margin:18px 0 16px;border-radius:18px;overflow:hidden;position:relative;flex-shrink:0;}
+  .tpl-editorial .section{font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#9d3e27;margin-bottom:8px;}
+  .tpl-editorial .headline{font-family:'RIDIBatang','Noto Serif KR',serif;line-height:1.02;margin-bottom:10px;}
+  .tpl-editorial .desc{line-height:1.52;color:#4a4741;flex:1;}
+  .tpl-editorial .source{font-size:9px;color:#77736d;padding-top:12px;border-top:1px solid #d6d0c5;margin-top:12px;}
+
+  /* ===== 10 Split News ===== */
+  .tpl-split{background:#111418;color:#fff;display:flex;flex-direction:column;padding:18px;overflow:hidden;}
+  .tpl-split .mast{display:flex;justify-content:space-between;align-items:center;font-size:10px;font-weight:800;}
+  .tpl-split .content-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;flex:1;min-height:0;margin-top:18px;}
+  .tpl-split .copy{display:flex;flex-direction:column;min-width:0;}
+  .tpl-split .section{color:#ff6256;font-size:9px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;}
+  .tpl-split .headline{line-height:1.03;margin-bottom:12px;}
+  .tpl-split .desc{color:#c9cbd0;line-height:1.55;flex:1;}
+  .tpl-split .source{font-size:9px;color:#80848d;margin-top:12px;}
+  .tpl-split .image{min-width:0;border-radius:18px;overflow:hidden;position:relative;}
+  .tpl-split .footer{display:flex;justify-content:space-between;align-items:center;border-top:1px solid #2e3339;margin-top:14px;padding-top:10px;font-size:9px;color:#9da1aa;}
+
+  /* ===== 11 Photo Lead ===== */
+  .tpl-photo-lead{background:#08090b;color:#fff;display:flex;flex-direction:column;overflow:hidden;}
+  .tpl-photo-lead .image{height:59%;position:relative;overflow:hidden;flex-shrink:0;}
+  .tpl-photo-lead .overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.03) 45%,rgba(0,0,0,.88) 100%);pointer-events:none;}
+  .tpl-photo-lead .mast{position:absolute;top:18px;left:18px;right:18px;z-index:3;display:flex;justify-content:space-between;font-size:10px;font-weight:800;}
+  .tpl-photo-lead .headline-block{position:absolute;left:18px;right:18px;bottom:18px;z-index:3;}
+  .tpl-photo-lead .section{display:inline-block;background:var(--accent);padding:4px 7px;border-radius:3px;font-size:8px;font-weight:800;margin-bottom:8px;}
+  .tpl-photo-lead .headline{line-height:1.02;}
+  .tpl-photo-lead .body{padding:16px 18px 20px;display:flex;flex-direction:column;min-height:0;flex:1;}
+  .tpl-photo-lead .desc{color:#c6c8cc;line-height:1.52;flex:1;}
+  .tpl-photo-lead .meta{display:flex;justify-content:space-between;gap:10px;border-top:1px solid #25272a;margin-top:12px;padding-top:10px;color:#8e9196;font-size:9px;}
+
+  /* ===== 12 Minimal News ===== */
+  .tpl-minimal{background:#f7f7f4;color:#111;display:flex;flex-direction:column;padding:24px;overflow:hidden;}
+  .tpl-minimal .mast{display:flex;justify-content:space-between;align-items:center;font-size:10px;font-weight:800;}
+  .tpl-minimal .rule{border-top:1px solid #cfcfc8;margin:14px 0;}
+  .tpl-minimal .section{font-size:9px;font-weight:800;letter-spacing:.08em;color:#777;margin-bottom:10px;}
+  .tpl-minimal .headline{font-family:'RIDIBatang','Noto Serif KR',serif;line-height:1.07;margin-bottom:14px;}
+  .tpl-minimal .image{height:35%;border-radius:4px;overflow:hidden;position:relative;flex-shrink:0;}
+  .tpl-minimal .desc{line-height:1.55;color:#41413e;flex:1;padding-top:14px;}
+  .tpl-minimal .source{font-size:9px;color:#777;border-top:1px solid #cfcfc8;padding-top:10px;margin-top:10px;}
+
+  /* ===== 13 Dark Editorial ===== */
+  .tpl-dark-editorial{background:#101113;color:#f5f5f5;display:flex;flex-direction:column;padding:18px;overflow:hidden;}
+  .tpl-dark-editorial .mast{display:flex;justify-content:space-between;align-items:center;font-size:10px;font-weight:800;}
+  .tpl-dark-editorial .hero{height:46%;margin:14px 0;position:relative;border-radius:16px;overflow:hidden;}
+  .tpl-dark-editorial .hero .veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 45%,rgba(0,0,0,.82) 100%);pointer-events:none;}
+  .tpl-dark-editorial .hero .tag{position:absolute;left:12px;top:12px;z-index:2;background:var(--accent);padding:4px 7px;border-radius:3px;font-size:8px;font-weight:800;}
+  .tpl-dark-editorial .hero .headline{position:absolute;left:12px;right:12px;bottom:12px;z-index:2;line-height:1.04;}
+  .tpl-dark-editorial .desc{color:#bfc2c6;line-height:1.5;flex:1;}
+  .tpl-dark-editorial .source{font-size:9px;color:#7f8388;margin-top:10px;}
+
+  /* ===== 14 Stacked Report ===== */
+  .tpl-stacked{background:#e9edf1;color:#14181c;display:flex;flex-direction:column;padding:20px;overflow:hidden;}
+  .tpl-stacked .mast{display:flex;justify-content:space-between;align-items:center;font-size:10px;font-weight:800;}
+  .tpl-stacked .image{height:33%;margin:14px 0 12px;border-radius:12px;overflow:hidden;position:relative;flex-shrink:0;}
+  .tpl-stacked .section{font-size:9px;font-weight:800;letter-spacing:.08em;color:#315f92;margin-bottom:8px;}
+  .tpl-stacked .headline{line-height:1.08;margin-bottom:10px;}
+  .tpl-stacked .desc{line-height:1.52;color:#454b52;flex:1;}
+  .tpl-stacked .meta{display:flex;justify-content:space-between;border-top:1px solid #c8cdd2;padding-top:10px;margin-top:10px;font-size:9px;color:#727a82;}
+
+  /* ===== 15 Report Card ===== */
+  .tpl-report-card{background:#ffffff;color:#111;display:flex;flex-direction:column;padding:20px;overflow:hidden;}
+  .tpl-report-card .mast{display:flex;justify-content:space-between;align-items:center;font-size:10px;font-weight:800;}
+  .tpl-report-card .report-label{margin-top:18px;font-size:9px;font-weight:800;letter-spacing:.1em;color:#a22c22;}
+  .tpl-report-card .headline{font-family:'RIDIBatang','Noto Serif KR',serif;line-height:1.02;margin:8px 0 12px;}
+  .tpl-report-card .image{height:29%;border-radius:10px;overflow:hidden;position:relative;flex-shrink:0;}
+  .tpl-report-card .caption{font-size:8px;color:#7a7a7a;margin-top:5px;}
+  .tpl-report-card .desc{line-height:1.52;color:#414141;flex:1;margin-top:12px;}
+  .tpl-report-card .source{font-size:9px;border-top:1px solid #d7d7d7;padding-top:10px;color:#707070;}
 
   /* ===== 08 Mobile News Card ===== */
   .tpl-mobile{ background:#0a0b0d; color:#fff; display:flex; flex-direction:column; }
@@ -393,7 +467,7 @@ function textStyle(style, prefix){
 /* ---------------------------------------------------------
    템플릿 정의
 --------------------------------------------------------- */
-const order = ['breaking','broadcast','magazine','column','mobile'];
+const order = ['breaking','broadcast','magazine','column','mobile','editorial','split','photoLead','minimal','darkEditorial','stacked','reportCard'];
 
 const defaultStyle = (overrides={}) => Object.assign({
   headlineFont:'Pretendard', headlineSize:34, headlineColor:'#ffffff', headlineUnderline:false,
@@ -468,8 +542,7 @@ const templates = {
     render(d, s){
       return `
       <div class="tpl-broadcast">
-        <div class="bgimg">${imgFitHTML(d.image, s)}</div>
-        <div class="veil"></div>
+        <div class="bgimg">${imgFitHTML(d.image, s)}<div class="veil"></div></div>
         <div class="inner">
           <div class="top">
             <div class="logo">${esc(d.logo)}</div>
@@ -605,6 +678,250 @@ const templates = {
             <span class="read">${esc(d.read)}</span>
           </div>
         </div>
+      </div>`;
+    }
+  }
+  ,
+
+  editorial: {
+    label:'09 EDITORIAL CARD', tabNum:'09', tabName:'에디토리얼',
+    defaults:{
+      logo:'WEST150DAILY', date:'2026. 08. 23', section:'WORLD',
+      headline:'도시는 지금\n새로운 시대를 준비한다',
+      desc:'기후 변화와 기술 혁신이 도시의 미래를 빠르게 바꾸고 있다. 새로운 정책과 인프라는 다음 세대를 위한 방향을 다시 설계하고 있다.',
+      source:'출처: WEST150DAILY',
+      image: placeholderImage('사진을 업로드하세요', 1200, 900, '#b7b0a3')
+    },
+    defaultStyle: defaultStyle({headlineFont:'RIDIBatang',headlineColor:'#141414',headlineSize:28,bodyColor:'#4a4741',bodySize:12.5,accentColor:'#9d3e27'}),
+    fields:[
+      {k:'logo',label:'로고 텍스트',type:'text'},
+      {k:'date',label:'날짜',type:'text'},
+      {k:'section',label:'섹션',type:'text'},
+      {k:'headline',label:'헤드라인 (줄바꿈 가능)',type:'textarea'},
+      {k:'desc',label:'본문 (줄바꿈 가능)',type:'textarea'},
+      {k:'source',label:'출처',type:'text'}
+    ],
+    imageFields:[{k:'image',label:'사진'}],
+    render(d,s){
+      return `
+      <div class="tpl-editorial">
+        <div class="mast"><span>${esc(d.logo)}</span><span class="date">${esc(d.date)}</span></div>
+        <div class="hero">${imgFitHTML(d.image,s)}</div>
+        <div class="section">${esc(d.section)}</div>
+        <div class="headline" style="${textStyle(s,'headline')}">${lines(d.headline)}</div>
+        <div class="desc" style="${textStyle(s,'body')}">${lines(d.desc)}</div>
+        ${d.source ? `<div class="source">${esc(d.source)}</div>` : ''}
+      </div>`;
+    }
+  },
+
+  split: {
+    label:'10 SPLIT NEWS', tabNum:'10', tabName:'스플릿뉴스',
+    defaults:{
+      logo:'WEST150DAILY', date:'2026. 08. 23', section:'POLITICS',
+      headline:'미국의 새로운 정책,\n시장의 방향을 바꾸다',
+      desc:'정부의 새로운 정책 발표 이후 시장과 업계의 움직임이 빨라지고 있다. 전문가들은 단기 변동성과 장기 구조 변화가 함께 나타날 수 있다고 분석한다.',
+      source:'출처: WEST150DAILY',
+      image: placeholderImage('사진을 업로드하세요', 900, 1200, '#26303b')
+    },
+    defaultStyle: defaultStyle({headlineSize:24,bodySize:12,accentColor:'#ff6256'}),
+    fields:[
+      {k:'logo',label:'로고 텍스트',type:'text'},
+      {k:'date',label:'날짜',type:'text'},
+      {k:'section',label:'섹션',type:'text'},
+      {k:'headline',label:'헤드라인 (줄바꿈 가능)',type:'textarea'},
+      {k:'desc',label:'본문 (줄바꿈 가능)',type:'textarea'},
+      {k:'source',label:'출처',type:'text'}
+    ],
+    imageFields:[{k:'image',label:'사진'}],
+    render(d,s){
+      return `
+      <div class="tpl-split">
+        <div class="mast"><span>${esc(d.logo)}</span><span>${esc(d.date)}</span></div>
+        <div class="content-grid">
+          <div class="copy">
+            <div class="section">${esc(d.section)}</div>
+            <div class="headline" style="${textStyle(s,'headline')}">${lines(d.headline)}</div>
+            <div class="desc" style="${textStyle(s,'body')}">${lines(d.desc)}</div>
+            ${d.source ? `<div class="source">${esc(d.source)}</div>` : ''}
+          </div>
+          <div class="image">${imgFitHTML(d.image,s)}</div>
+        </div>
+        <div class="footer"><span>NEWS / ${esc(d.section)}</span><span>${esc(d.date)}</span></div>
+      </div>`;
+    }
+  },
+
+  photoLead: {
+    label:'11 PHOTO LEAD', tabNum:'11', tabName:'포토리드',
+    defaults:{
+      logo:'WEST150DAILY', date:'2026. 08. 23', section:'WORLD',
+      headline:'현장에서 본\n변화의 순간',
+      desc:'현장의 사진 한 장이 전하는 사건의 맥락과 사람들의 이야기를 짧고 선명하게 기록한다.',
+      source:'출처: WEST150DAILY',
+      image: placeholderImage('사진을 업로드하세요', 1200, 1600, '#25272a')
+    },
+    defaultStyle: defaultStyle({headlineSize:27,bodySize:12,accentColor:'#e5372f'}),
+    fields:[
+      {k:'logo',label:'로고 텍스트',type:'text'},
+      {k:'date',label:'날짜',type:'text'},
+      {k:'section',label:'섹션',type:'text'},
+      {k:'headline',label:'헤드라인 (줄바꿈 가능)',type:'textarea'},
+      {k:'desc',label:'설명 (줄바꿈 가능)',type:'textarea'},
+      {k:'source',label:'출처',type:'text'}
+    ],
+    imageFields:[{k:'image',label:'메인 사진'}],
+    render(d,s){
+      return `
+      <div class="tpl-photo-lead">
+        <div class="image">
+          ${imgFitHTML(d.image,s)}
+          <div class="overlay"></div>
+          <div class="mast"><span>${esc(d.logo)}</span><span>${esc(d.date)}</span></div>
+          <div class="headline-block">
+            <div class="section">${esc(d.section)}</div>
+            <div class="headline" style="${textStyle(s,'headline')}">${lines(d.headline)}</div>
+          </div>
+        </div>
+        <div class="body">
+          <div class="desc" style="${textStyle(s,'body')}">${lines(d.desc)}</div>
+          <div class="meta"><span>${esc(d.source)}</span><span>WEST150DAILY</span></div>
+        </div>
+      </div>`;
+    }
+  },
+
+  minimal: {
+    label:'12 MINIMAL NEWS', tabNum:'12', tabName:'미니멀뉴스',
+    defaults:{
+      logo:'WEST150DAILY', date:'2026. 08. 23', section:'ECONOMY',
+      headline:'금리와 물가의 변화,\n시장은 어떻게 반응하나',
+      desc:'주요 지표가 공개되면서 금융시장은 정책 방향과 실물경제의 다음 움직임에 주목하고 있다.',
+      source:'출처: WEST150DAILY',
+      image: placeholderImage('사진을 업로드하세요', 1000, 700, '#d3d1cb')
+    },
+    defaultStyle: defaultStyle({headlineFont:'RIDIBatang',headlineColor:'#111',headlineSize:25,bodyColor:'#41413e',bodySize:12.5,accentColor:'#111'}),
+    fields:[
+      {k:'logo',label:'로고 텍스트',type:'text'},
+      {k:'date',label:'날짜',type:'text'},
+      {k:'section',label:'섹션',type:'text'},
+      {k:'headline',label:'헤드라인 (줄바꿈 가능)',type:'textarea'},
+      {k:'desc',label:'본문 (줄바꿈 가능)',type:'textarea'},
+      {k:'source',label:'출처',type:'text'}
+    ],
+    imageFields:[{k:'image',label:'사진'}],
+    render(d,s){
+      return `
+      <div class="tpl-minimal">
+        <div class="mast"><span>${esc(d.logo)}</span><span>${esc(d.date)}</span></div>
+        <div class="rule"></div>
+        <div class="section">${esc(d.section)}</div>
+        <div class="headline" style="${textStyle(s,'headline')}">${lines(d.headline)}</div>
+        <div class="image">${imgFitHTML(d.image,s)}</div>
+        <div class="desc" style="${textStyle(s,'body')}">${lines(d.desc)}</div>
+        ${d.source ? `<div class="source">${esc(d.source)}</div>` : ''}
+      </div>`;
+    }
+  },
+
+  darkEditorial: {
+    label:'13 DARK EDITORIAL', tabNum:'13', tabName:'다크에디토리얼',
+    defaults:{
+      logo:'WEST150DAILY', date:'2026. 08. 23', section:'CULTURE',
+      headline:'도시의 밤,\n새로운 문화가 시작됐다',
+      desc:'공간과 사람, 기술이 만나는 곳에서 새로운 문화가 빠르게 확산되고 있다. 현장에서는 작은 변화가 큰 흐름으로 이어지고 있다.',
+      source:'출처: WEST150DAILY',
+      image: placeholderImage('사진을 업로드하세요', 1200, 1000, '#242424')
+    },
+    defaultStyle: defaultStyle({headlineSize:26,bodySize:12,accentColor:'#e5372f'}),
+    fields:[
+      {k:'logo',label:'로고 텍스트',type:'text'},
+      {k:'date',label:'날짜',type:'text'},
+      {k:'section',label:'섹션',type:'text'},
+      {k:'headline',label:'헤드라인 (줄바꿈 가능)',type:'textarea'},
+      {k:'desc',label:'본문 (줄바꿈 가능)',type:'textarea'},
+      {k:'source',label:'출처',type:'text'}
+    ],
+    imageFields:[{k:'image',label:'사진'}],
+    render(d,s){
+      return `
+      <div class="tpl-dark-editorial">
+        <div class="mast"><span>${esc(d.logo)}</span><span>${esc(d.date)}</span></div>
+        <div class="hero">
+          ${imgFitHTML(d.image,s)}
+          <div class="veil"></div>
+          <div class="tag">${esc(d.section)}</div>
+          <div class="headline" style="${textStyle(s,'headline')}">${lines(d.headline)}</div>
+        </div>
+        <div class="desc" style="${textStyle(s,'body')}">${lines(d.desc)}</div>
+        ${d.source ? `<div class="source">${esc(d.source)}</div>` : ''}
+      </div>`;
+    }
+  },
+
+  stacked: {
+    label:'14 STACKED REPORT', tabNum:'14', tabName:'스택드리포트',
+    defaults:{
+      logo:'WEST150DAILY', date:'2026. 08. 23', section:'TECH',
+      headline:'새로운 기술이\n일상을 다시 설계한다',
+      desc:'새로운 기술이 빠르게 상용화되면서 산업 현장의 업무 방식과 소비자의 일상도 함께 달라지고 있다.',
+      source:'출처: WEST150DAILY',
+      image: placeholderImage('사진을 업로드하세요', 1100, 800, '#b9c2ca')
+    },
+    defaultStyle: defaultStyle({headlineSize:24,bodySize:12,accentColor:'#315f92'}),
+    fields:[
+      {k:'logo',label:'로고 텍스트',type:'text'},
+      {k:'date',label:'날짜',type:'text'},
+      {k:'section',label:'섹션',type:'text'},
+      {k:'headline',label:'헤드라인 (줄바꿈 가능)',type:'textarea'},
+      {k:'desc',label:'본문 (줄바꿈 가능)',type:'textarea'},
+      {k:'source',label:'출처',type:'text'}
+    ],
+    imageFields:[{k:'image',label:'사진'}],
+    render(d,s){
+      return `
+      <div class="tpl-stacked">
+        <div class="mast"><span>${esc(d.logo)}</span><span>${esc(d.date)}</span></div>
+        <div class="image">${imgFitHTML(d.image,s)}</div>
+        <div class="section">${esc(d.section)}</div>
+        <div class="headline" style="${textStyle(s,'headline')}">${lines(d.headline)}</div>
+        <div class="desc" style="${textStyle(s,'body')}">${lines(d.desc)}</div>
+        <div class="meta"><span>${esc(d.source)}</span><span>${esc(d.date)}</span></div>
+      </div>`;
+    }
+  },
+
+  reportCard: {
+    label:'15 REPORT CARD', tabNum:'15', tabName:'리포트카드',
+    defaults:{
+      logo:'WEST150DAILY', date:'2026. 08. 23', section:'SPECIAL REPORT',
+      headline:'숫자 뒤에 숨은\n도시의 변화',
+      desc:'통계와 현장 취재를 통해 변화의 원인을 살펴보고, 숫자로 드러난 흐름이 실제 사람들의 삶에 어떤 영향을 주는지 정리했다.',
+      source:'출처: WEST150DAILY',
+      caption:'현장 사진 · WEST150DAILY',
+      image: placeholderImage('사진을 업로드하세요', 1200, 800, '#c9c9c9')
+    },
+    defaultStyle: defaultStyle({headlineFont:'RIDIBatang',headlineColor:'#111',headlineSize:24,bodyColor:'#414141',bodySize:12.2,accentColor:'#a22c22'}),
+    fields:[
+      {k:'logo',label:'로고 텍스트',type:'text'},
+      {k:'date',label:'날짜',type:'text'},
+      {k:'section',label:'리포트 라벨',type:'text'},
+      {k:'headline',label:'헤드라인 (줄바꿈 가능)',type:'textarea'},
+      {k:'desc',label:'본문 (줄바꿈 가능)',type:'textarea'},
+      {k:'caption',label:'사진 설명',type:'text'},
+      {k:'source',label:'출처',type:'text'}
+    ],
+    imageFields:[{k:'image',label:'리포트 사진'}],
+    render(d,s){
+      return `
+      <div class="tpl-report-card">
+        <div class="mast"><span>${esc(d.logo)}</span><span>${esc(d.date)}</span></div>
+        <div class="report-label">${esc(d.section)}</div>
+        <div class="headline" style="${textStyle(s,'headline')}">${lines(d.headline)}</div>
+        <div class="image">${imgFitHTML(d.image,s)}</div>
+        ${d.caption ? `<div class="caption">${esc(d.caption)}</div>` : ''}
+        <div class="desc" style="${textStyle(s,'body')}">${lines(d.desc)}</div>
+        ${d.source ? `<div class="source">${esc(d.source)}</div>` : ''}
       </div>`;
     }
   }
