@@ -128,6 +128,9 @@
   .img-fit{ position:relative; overflow:hidden; background-color:#111; width:100%; height:100%; }
   .img-fit .img-el{ position:absolute; inset:0; width:100%; height:100%; display:block; }
   .img-fit .img-overlay{ position:absolute; inset:0; pointer-events:none; }
+  .img-fit .img-fade{ position:absolute; left:0; right:0; bottom:0; height:38%; pointer-events:none; z-index:3; }
+  .img-fit .img-fade-black{ background:linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,.16) 28%, rgba(0,0,0,.58) 70%, rgba(0,0,0,1) 100%); }
+  .img-fit .img-fade-white{ background:linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,.16) 28%, rgba(255,255,255,.58) 70%, rgba(255,255,255,1) 100%); }
   .img-fit-original .img-el{
     width:auto !important; height:auto !important; min-width:0; min-height:0;
     max-width:none !important; max-height:none !important;
@@ -584,9 +587,16 @@ function imgFitHTML(src, style, extraClass=''){
   const overlay = style.imgFilter === 'duo'
     ? `<div class="img-overlay" style="background:${style.accentColor||'#e5372f'};mix-blend-mode:color;opacity:.75;"></div>`
     : '';
+  const fade = style.imgFade || 'none';
+  const fadeOverlay = fade === 'black'
+    ? `<div class="img-fade img-fade-black"></div>`
+    : fade === 'white'
+      ? `<div class="img-fade img-fade-white"></div>`
+      : '';
   return `<div class="img-fit${originalClass} ${extraClass}">
     <img class="img-el" src="${src}" style="object-fit:${objectFit};object-position:${posX}% ${posY}%;filter:${filterCss};transform:${transform};transform-origin:center center;left:${posX}%;top:${posY}%;right:auto;bottom:auto;">
     ${overlay}
+    ${fadeOverlay}
   </div>`;
 }
 
@@ -607,7 +617,7 @@ const defaultStyle = (overrides={}) => Object.assign({
   headlineFont:'Pretendard', headlineSize:34, headlineColor:'#ffffff', headlineUnderline:false,
   bodyFont:'Pretendard', bodySize:13, bodyColor:'#cccccc',
   accentColor:'#e5372f', tickerColor:'#1259d8',
-  imgFit:'cover', imgZoom:100, imgPosX:50, imgPosY:50, imgFilter:'none',
+  imgFit:'cover', imgZoom:100, imgPosX:50, imgPosY:50, imgFilter:'none', imgFade:'none',
 }, overrides);
 
 const templates = {
@@ -1303,6 +1313,14 @@ function buildImagePanel(){
     <div class="field"><select data-sk="imgFilter">
       ${Object.entries(FILTERS).map(([k,v])=>`<option value="${k}" ${s.imgFilter===k?'selected':''}>${v.label}</option>`).join('')}
     </select></div>
+    <div class="field"><label>이미지 끝 흐림</label>
+      <select data-sk="imgFade">
+        <option value="none" ${(s.imgFade||'none')==='none'?'selected':''}>없음</option>
+        <option value="black" ${s.imgFade==='black'?'selected':''}>검정색으로 흐림</option>
+        <option value="white" ${s.imgFade==='white'?'selected':''}>흰색으로 흐림</option>
+      </select>
+    </div>
+    <div class="hint" style="margin:-6px 0 12px;">사진 아래쪽이 선택한 색으로 자연스럽게 흐려져요.</div>
     <div class="hint" style="margin:-6px 0 12px;">듀오톤은 위 '디자인' 탭의 강조색으로 색이 입혀져요.</div>
   `;
 
