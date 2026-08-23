@@ -157,17 +157,17 @@
 
   /* ===== 03 Broadcast Screen ===== */
   .tpl-broadcast{ background:#04060c; color:#fff; position:relative; display:flex; flex-direction:column; overflow:hidden; }
-  .tpl-broadcast .bgimg{ position:relative; left:auto; right:auto; top:auto; width:100%; height:44%; z-index:0; overflow:hidden; flex:0 0 44%; }
+  .tpl-broadcast .bgimg{ position:relative; width:100%; height:44%; z-index:0; overflow:hidden; flex:0 0 44%; }
   .tpl-broadcast .veil{ position:absolute; left:0; right:0; top:0; height:44%; z-index:1; background:linear-gradient(180deg, rgba(2,4,10,.20) 0%, rgba(2,4,10,.08) 48%, rgba(2,4,10,.78) 100%); pointer-events:none; }
-  .tpl-broadcast .inner{ position:absolute; inset:0; z-index:2; display:flex; flex-direction:column; height:100%; }
-  .tpl-broadcast .top{ padding:44px 20px 0; display:flex; justify-content:space-between; align-items:center; }
+  .tpl-broadcast .inner{ position:relative; z-index:2; display:flex; flex-direction:column; height:56%; min-height:0; }
+  .tpl-broadcast .top{ padding:18px 20px 0; display:flex; justify-content:space-between; align-items:center; }
   .tpl-broadcast .logo{ font-size:12px; font-weight:800; letter-spacing:.04em; }
   .tpl-broadcast .live{ display:flex; align-items:center; gap:6px; font-size:11px; font-weight:700; }
   .tpl-broadcast .live .dot{ width:7px; height:7px; border-radius:50%; background:var(--accent); }
-  .tpl-broadcast .spacer{ flex:1; }
+  .tpl-broadcast .spacer{ display:none; }
   .tpl-broadcast .bottom-group{
-    position:absolute; left:0; right:0; bottom:0;
-    padding:16px 0 26px; background:#04060c;
+    position:relative; left:auto; right:auto; bottom:auto;
+    padding:0 0 26px; background:#04060c; margin-top:auto;
   }
   .tpl-broadcast .headline{ padding:0 20px; margin-bottom:14px; text-transform:uppercase; }
   .tpl-broadcast .headline div{ line-height:1.1; letter-spacing:-0.01em; }
@@ -468,8 +468,7 @@ const templates = {
     render(d, s){
       return `
       <div class="tpl-broadcast">
-        <div class="bgimg">${imgFitHTML(d.image, s)}</div>
-        <div class="veil"></div>
+        <div class="bgimg">${imgFitHTML(d.image, s)}<div class="veil"></div></div>
         <div class="inner">
           <div class="top">
             <div class="logo">${esc(d.logo)}</div>
