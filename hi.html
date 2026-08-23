@@ -436,24 +436,30 @@ label.check-row input{ width:16px;height:16px; accent-color:#3654ff; }
   color:#6a6a76; font-size:26px; text-align:center; padding:60px; line-height:1.5; background:#1a1a20;
 }
 .w-scrim{
+  display:none;
   position:absolute; inset:0;
   background:linear-gradient(to top, rgba(0,0,0,.88) 0%, rgba(0,0,0,.35) 42%, rgba(0,0,0,0) 68%);
 }
+.card[data-layout="world"] .w-scrim{ display:block; }
 .w-top{
+  display:none;
   position:absolute; top:0; left:0; right:0;
   padding:70px 68px 0;
-  display:flex; align-items:center; justify-content:space-between;
+  align-items:center; justify-content:space-between;
   z-index:4;
 }
+.card[data-layout="world"] .w-top{ display:flex; }
 .w-eyebrow{ display:flex; align-items:center; gap:14px; }
 .w-eyebrow-text{ letter-spacing:.5px; }
 .w-eyebrow-line{ width:60px; height:1px; background:rgba(255,255,255,.5); }
 .w-date{ opacity:.75; }
 .w-bottom{
+  display:none;
   position:absolute; left:0; right:0; bottom:0;
   padding:0 68px 72px;
   z-index:4;
 }
+.card[data-layout="world"] .w-bottom{ display:block; }
 .w-headline{ font-weight:800; line-height:1.16; white-space:pre-wrap; word-break:keep-all; margin-bottom:22px; }
 .w-body{ line-height:1.55; white-space:pre-wrap; word-break:keep-all; opacity:.85; }
 
@@ -547,7 +553,8 @@ label.check-row input{ width:16px;height:16px; accent-color:#3654ff; }
   position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
   color:#6a6a76; font-size:26px; text-align:center; padding:60px; line-height:1.5; background:#1a1a20;
 }
-.sp-scrim{ position:absolute; inset:0; background:linear-gradient(to top, rgba(0,0,0,.85) 0%, rgba(0,0,0,.15) 45%, rgba(0,0,0,0) 65%); }
+.sp-scrim{ display:none; position:absolute; inset:0; background:linear-gradient(to top, rgba(0,0,0,.85) 0%, rgba(0,0,0,.15) 45%, rgba(0,0,0,0) 65%); }
+.card[data-layout="sports"] .sp-scrim{ display:block; }
 .sp-label-pill{
   display:none;
   position:absolute; top:70px; left:68px;
@@ -558,11 +565,13 @@ label.check-row input{ width:16px;height:16px; accent-color:#3654ff; }
 }
 .card[data-layout="sports"] .sp-label-pill{ display:inline-block; }
 .sp-bottom{
+  display:none;
   position:absolute; left:0; right:0; bottom:0;
   padding:0 68px 72px;
-  display:flex; align-items:flex-end; justify-content:space-between; gap:20px;
+  align-items:flex-end; justify-content:space-between; gap:20px;
   z-index:4;
 }
+.card[data-layout="sports"] .sp-bottom{ display:flex; }
 .sp-headline{ font-weight:800; line-height:1.16; white-space:pre-wrap; word-break:keep-all; }
 .sp-sub-wrap{ margin-top:20px; }
 .sp-body{ line-height:1.55; white-space:pre-wrap; word-break:keep-all; opacity:.85; margin-bottom:10px; }
@@ -752,10 +761,7 @@ label.check-row input{ width:16px;height:16px; accent-color:#3654ff; }
     <div class="top-menu" id="topMenu">
       <button class="top-menu-item active" data-panel="writing">글쓰기</button>
       <button class="top-menu-item" data-panel="image">이미지</button>
-      <button class="top-menu-item" data-panel="font">글꼴</button>
-      <button class="top-menu-item" data-panel="weight">굵기</button>
-      <button class="top-menu-item" data-panel="size">크기</button>
-      <button class="top-menu-item" data-panel="color">색상</button>
+      <button class="top-menu-item" data-panel="style">스타일</button>
       <button class="top-menu-item" data-panel="layout">레이아웃</button>
       <button class="top-menu-item menu-save" data-panel="save">저장</button>
     </div>
@@ -1045,11 +1051,11 @@ label.check-row input{ width:16px;height:16px; accent-color:#3654ff; }
       </div>
 
       <!-- 글꼴 -->
-      <div class="tool-panel" data-tool-panel="font">
+      <div class="tool-panel" data-tool-panel="style">
         <div class="panel-heading">
           <div>
-            <div class="panel-title">글꼴</div>
-            <div class="panel-subtitle">텍스트별 폰트를 설정합니다</div>
+            <div class="panel-title">스타일</div>
+            <div class="panel-subtitle">폰트·굵기·크기·색상을 한 번에 설정합니다</div>
           </div>
         </div>
 
@@ -1062,17 +1068,9 @@ label.check-row input{ width:16px;height:16px; accent-color:#3654ff; }
           <div class="field"><div class="field-label">본문</div><select id="bodyFont"></select></div>
           <div class="field"><div class="field-label">출처 링크</div><select id="linkFont"></select></div>
         </div>
-      </div>
 
-      <!-- 굵기 -->
-      <div class="tool-panel" data-tool-panel="weight">
-        <div class="panel-heading">
-          <div>
-            <div class="panel-title">굵기</div>
-            <div class="panel-subtitle">텍스트의 두께를 설정합니다</div>
-          </div>
-        </div>
         <div class="section">
+          <div class="section-title"><span class="dot"></span>굵기</div>
           <div class="field"><div class="field-label">브랜드명</div><select id="brandWeight"></select></div>
           <div class="field"><div class="field-label">카테고리 라벨</div><select id="labelWeight"></select></div>
           <div class="field"><div class="field-label">헤드라인</div><select id="headlineWeight"></select></div>
@@ -1080,17 +1078,9 @@ label.check-row input{ width:16px;height:16px; accent-color:#3654ff; }
           <div class="field"><div class="field-label">본문</div><select id="bodyWeight"></select></div>
           <div class="field"><div class="field-label">출처 링크</div><select id="linkWeight"></select></div>
         </div>
-      </div>
 
-      <!-- 크기 -->
-      <div class="tool-panel" data-tool-panel="size">
-        <div class="panel-heading">
-          <div>
-            <div class="panel-title">크기</div>
-            <div class="panel-subtitle">텍스트 크기를 조절합니다</div>
-          </div>
-        </div>
         <div class="section">
+          <div class="section-title"><span class="dot"></span>크기</div>
           <div class="field">
             <div class="field-label">브랜드명 <span class="val" id="brandSizeVal">28px</span></div>
             <input type="range" id="brandSize" min="14" max="50" value="28">
@@ -1114,16 +1104,6 @@ label.check-row input{ width:16px;height:16px; accent-color:#3654ff; }
           <div class="field">
             <div class="field-label">출처 링크 <span class="val" id="linkSizeVal">26px</span></div>
             <input type="range" id="linkSize" min="12" max="44" value="26">
-          </div>
-        </div>
-      </div>
-
-      <!-- 색상 -->
-      <div class="tool-panel" data-tool-panel="color">
-        <div class="panel-heading">
-          <div>
-            <div class="panel-title">색상</div>
-            <div class="panel-subtitle">패널과 텍스트 색상을 설정합니다</div>
           </div>
         </div>
 
