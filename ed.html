@@ -163,7 +163,314 @@ input[type="range"]::-moz-range-thumb{
   background:#0f0f13; border:1px solid #2c2c35; color:#b6b6c0; cursor:pointer;
 }
 .chip.active{ background:#e0334c; border-color:#e0334c; color:#fff; }
+/* =========================================================
+   TOP MENU EDITOR LAYOUT
+   ========================================================= */
 
+.app{
+  display:flex;
+  flex-direction:column;
+  height:100vh;
+}
+
+
+/* ---------- Topbar ---------- */
+
+.topbar{
+
+  height:64px;
+  min-height:64px;
+
+  display:flex;
+  align-items:center;
+
+  background:#151519;
+
+  border-bottom:1px solid #292930;
+
+  padding:0 20px;
+
+  z-index:20;
+
+}
+
+
+.topbar-brand{
+
+  width:230px;
+  min-width:230px;
+
+  display:flex;
+  align-items:center;
+
+  gap:10px;
+
+}
+
+
+.topbar-brand .brand-mark{
+
+  width:32px;
+  height:32px;
+
+  border-radius:8px;
+
+}
+
+
+.topbar-brand-text .brand-name{
+
+  font-size:13px;
+  font-weight:800;
+
+  letter-spacing:.3px;
+
+}
+
+
+.topbar-brand-text .brand-sub{
+
+  font-size:9px;
+  color:#777780;
+
+  margin-top:2px;
+
+}
+
+
+.top-menu{
+
+  height:100%;
+
+  display:flex;
+  align-items:stretch;
+
+  gap:2px;
+
+}
+
+
+.top-menu-item{
+
+  position:relative;
+
+  border:0;
+  background:transparent;
+
+  color:#898991;
+
+  padding:0 17px;
+
+  font-family:'Pretendard',sans-serif;
+
+  font-size:12.5px;
+  font-weight:600;
+
+  cursor:pointer;
+
+  transition:
+    color .18s ease,
+    background .18s ease;
+
+}
+
+
+.top-menu-item:hover{
+
+  color:#f1f1f3;
+  background:#1c1c21;
+
+}
+
+
+.top-menu-item.active{
+
+  color:#fff;
+
+}
+
+
+.top-menu-item.active::after{
+
+  content:"";
+
+  position:absolute;
+
+  left:14px;
+  right:14px;
+  bottom:0;
+
+  height:2px;
+
+  background:#e0334c;
+
+  border-radius:2px 2px 0 0;
+
+}
+
+
+.top-menu-item.menu-save{
+
+  margin-left:8px;
+
+  color:#f2f2f4;
+
+}
+
+
+/* ---------- Workspace ---------- */
+
+.workspace{
+
+  flex:1;
+
+  min-height:0;
+
+  display:flex;
+
+}
+
+
+/* ---------- Sidebar ---------- */
+
+.sidebar{
+
+  width:392px;
+  min-width:392px;
+
+  height:100%;
+
+  overflow-y:auto;
+
+  background:#17171c;
+
+  border-right:1px solid #26262e;
+
+  padding:20px 20px 120px;
+
+}
+
+
+.sidebar::-webkit-scrollbar{
+  width:8px;
+}
+
+
+.sidebar::-webkit-scrollbar-thumb{
+
+  background:#33333c;
+  border-radius:8px;
+
+}
+
+
+/* ---------- Tool panels ---------- */
+
+.tool-panel{
+
+  display:none;
+
+}
+
+
+.tool-panel.active{
+
+  display:block;
+
+}
+
+
+.panel-heading{
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  padding:3px 2px 18px;
+
+}
+
+
+.panel-title{
+
+  font-size:18px;
+  font-weight:800;
+
+  letter-spacing:-.4px;
+
+  color:#f4f4f6;
+
+}
+
+
+.panel-subtitle{
+
+  margin-top:5px;
+
+  font-size:10.5px;
+
+  color:#75757f;
+
+  letter-spacing:-.1px;
+
+}
+
+
+/* 기존 모바일 구조 보정 */
+
+@media (max-width:900px){
+
+  .app{
+    flex-direction:column;
+  }
+
+  .topbar{
+    height:auto;
+    min-height:58px;
+
+    flex-wrap:wrap;
+
+    padding:8px 12px;
+  }
+
+  .topbar-brand{
+    width:auto;
+    min-width:170px;
+  }
+
+  .top-menu{
+    width:100%;
+    overflow-x:auto;
+
+    height:44px;
+  }
+
+  .top-menu-item{
+    flex-shrink:0;
+    padding:0 13px;
+  }
+
+  .workspace{
+    flex-direction:column;
+  }
+
+  .sidebar{
+
+    width:100%;
+    min-width:0;
+
+    height:46vh;
+
+    border-right:none;
+    border-bottom:1px solid #26262e;
+
+  }
+
+  .preview-wrap{
+    height:54vh;
+  }
+
+}
 /* ---------- Preview ---------- */
 .preview-wrap{
   flex:1; height:100%; display:flex; align-items:center; justify-content:center;
@@ -192,11 +499,68 @@ input[type="range"]::-moz-range-thumb{
 }
 .card-bg-wrap:active{ cursor:grabbing; }
 .card-bg-wrap img{
-  position:absolute; top:50%; left:50%;
-  min-width:100%; min-height:100%;
-  transform:translate(-50%,-50%) scale(var(--zoom,1.15)) translate(var(--offx,0%), var(--offy,0%));
+  position:absolute;
+  top:50%;
+  left:50%;
+  width:auto;
+  height:auto;
+  max-width:none;
+  max-height:none;
+  transform:translate(-50%,-50%)
+    scale(var(--zoom,1.15))
+    translate(var(--offx,0%), var(--offy,0%));
   filter:var(--imgfilter, none);
-  user-select:none; pointer-events:none;
+  user-select:none;
+  pointer-events:none;
+}
+.card-bg-wrap img.mode-top{
+  top:0;
+  left:50%;
+
+  width:100%;
+  height:auto;
+
+  transform:
+    translateX(-50%)
+    scale(var(--zoom,1.15))
+    translate(var(--offx,0%), var(--offy,0%));
+
+  transform-origin:center top;
+}
+
+
+.card-bg-wrap img.mode-original{
+  top:50%;
+  left:50%;
+
+  width:auto;
+  height:auto;
+
+  transform:
+    translate(-50%,-50%)
+    scale(var(--zoom,1.15))
+    translate(var(--offx,0%), var(--offy,0%));
+
+  transform-origin:center center;
+}
+
+
+.card-bg-wrap img.mode-cover{
+  top:50%;
+  left:50%;
+
+  width:100%;
+  height:100%;
+
+  object-fit:cover;
+  object-position:center center;
+
+  transform:
+    translate(-50%,-50%)
+    scale(var(--zoom,1.15))
+    translate(var(--offx,0%), var(--offy,0%));
+
+  transform-origin:center center;
 }
 .card-bg-wrap .noimg{
   position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
@@ -300,234 +664,1010 @@ input[type="range"]::-moz-range-thumb{
 <body>
 
 <div class="app">
-  <!-- ================= SIDEBAR ================= -->
-  <div class="sidebar">
-    <div class="brand">
+
+  <!-- ================= TOP MENU ================= -->
+  <div class="topbar">
+
+    <div class="topbar-brand">
       <div class="brand-mark">W</div>
-      <div>
-        <div class="brand-name">COVER NEWS 편집기</div>
-        <div class="brand-sub">GLOBAL POLITICS 스타일 카드</div>
+
+      <div class="topbar-brand-text">
+        <div class="brand-name">COVER NEWS</div>
+        <div class="brand-sub">WEST150 EDITOR</div>
       </div>
     </div>
 
-    <!-- 템플릿 색상 -->
-    <div class="section">
-      <div class="section-title"><span class="dot"></span>템플릿 컬러</div>
-      <div class="field">
-        <div class="field-label">포인트 컬러 프리셋</div>
-        <div class="swatches" id="swatchRow"></div>
-      </div>
-      <div class="field">
-        <div class="field-label">직접 선택</div>
-        <input type="color" class="color-input" id="accentCustom" value="#e0334c">
-      </div>
-      <div class="field">
-        <div class="field-label">배경 톤</div>
-        <div class="tone-grid" id="toneRow"></div>
-      </div>
+    <div class="top-menu" id="topMenu">
+
+      <button class="top-menu-item active" data-panel="writing">
+        글쓰기
+      </button>
+
+      <button class="top-menu-item" data-panel="image">
+        이미지
+      </button>
+
+      <button class="top-menu-item" data-panel="font">
+        글꼴
+      </button>
+
+      <button class="top-menu-item" data-panel="weight">
+        굵기
+      </button>
+
+      <button class="top-menu-item" data-panel="size">
+        크기
+      </button>
+
+      <button class="top-menu-item" data-panel="color">
+        색상
+      </button>
+
+      <button class="top-menu-item" data-panel="template">
+        템플릿
+      </button>
+
+      <button class="top-menu-item" data-panel="etc">
+        기타
+      </button>
+
+      <button class="top-menu-item menu-save" data-panel="save">
+        저장
+      </button>
+
     </div>
 
-    <!-- 이미지 -->
-    <div class="section">
-      <div class="section-title"><span class="dot"></span>배경 이미지</div>
-      <div class="field">
-        <label class="upload-btn" for="imgInput">📷 이미지 업로드</label>
-        <input type="file" id="imgInput" accept="image/*" style="display:none;">
-        <div class="upload-hint">미리보기에서 드래그로 위치 이동 가능</div>
-      </div>
-      <div class="field">
-        <div class="field-label">확대/축소 <span class="val" id="zoomVal">1.15x</span></div>
-        <input type="range" id="zoomRange" min="1" max="2.5" step="0.01" value="1.15">
-      </div>
-      <div class="row2">
-        <div class="field">
-          <div class="field-label">가로 위치</div>
-          <input type="range" id="offXRange" min="-50" max="50" step="1" value="0">
+  </div>
+
+
+  <!-- ================= WORKSPACE ================= -->
+  <div class="workspace">
+
+    <!-- ================= LEFT TOOL PANEL ================= -->
+    <div class="sidebar" id="sidebar">
+
+
+      <!-- ================================================= -->
+      <!-- 글쓰기 -->
+      <!-- ================================================= -->
+
+      <div class="tool-panel active" data-tool-panel="writing">
+
+        <div class="panel-heading">
+          <div>
+            <div class="panel-title">글쓰기</div>
+            <div class="panel-subtitle">뉴스 카드의 텍스트를 편집합니다</div>
+          </div>
         </div>
-        <div class="field">
-          <div class="field-label">세로 위치</div>
-          <input type="range" id="offYRange" min="-50" max="50" step="1" value="0">
-        </div>
-      </div>
-      <div class="field">
-        <div class="field-label">이미지 효과</div>
-        <div class="chip-row" id="filterChips"></div>
-      </div>
-      <div class="field">
-        <div class="field-label">스크림(음영) 방향</div>
-        <div class="chip-row" id="scrimChips"></div>
-      </div>
-      <div class="field">
-        <div class="field-label">스크림 강도 <span class="val" id="scrimVal">55%</span></div>
-        <input type="range" id="scrimRange" min="0" max="90" step="1" value="55">
-      </div>
-    </div>
 
-    <!-- 킥커 -->
-    <div class="section">
-      <div class="section-title"><span class="dot"></span>킥커 (상단 라벨)</div>
-      <div class="field"><textarea id="kickerText" rows="1">GLOBAL POLITICS</textarea></div>
-      <div class="row2">
-        <div class="field"><select id="kickerFont"></select></div>
-        <div class="field"><select id="kickerWeight"></select></div>
-      </div>
-      <div class="row2">
-        <div class="field"><input type="color" class="color-input" id="kickerColor" value="#f2f2f4"></div>
-        <div class="field">
-          <div class="field-label">크기 <span class="val" id="kickerSizeVal">30px</span></div>
-          <input type="range" id="kickerSize" min="14" max="60" value="30">
-        </div>
-      </div>
-    </div>
 
-    <!-- 핸들 -->
-    <div class="section">
-      <div class="section-title"><span class="dot"></span>핸들 / 계정</div>
-      <div class="field"><textarea id="handleText" rows="1">@rpick</textarea></div>
-      <div class="row2">
-        <div class="field"><select id="handleFont"></select></div>
-        <div class="field"><select id="handleWeight"></select></div>
-      </div>
-      <div class="row2">
-        <div class="field"><input type="color" class="color-input" id="handleColor" value="#d8d8de"></div>
-        <div class="field">
-          <div class="field-label">크기 <span class="val" id="handleSizeVal">26px</span></div>
-          <input type="range" id="handleSize" min="12" max="48" value="26">
-        </div>
-      </div>
-    </div>
+        <div class="section">
 
-    <!-- 헤드라인 -->
-    <div class="section">
-      <div class="section-title"><span class="dot"></span>헤드라인</div>
-      <div class="field"><textarea id="headlineText" rows="3">트럼프,
+          <div class="section-title">
+            <span class="dot"></span>텍스트 내용
+          </div>
+
+
+          <div class="field">
+
+            <div class="field-label">킥커</div>
+
+            <textarea
+              id="kickerText"
+              rows="1"
+            >GLOBAL POLITICS</textarea>
+
+          </div>
+
+
+          <div class="field">
+
+            <div class="field-label">핸들 / 계정</div>
+
+            <textarea
+              id="handleText"
+              rows="1"
+            >@rpick</textarea>
+
+          </div>
+
+
+          <div class="field">
+
+            <div class="field-label">헤드라인</div>
+
+            <textarea
+              id="headlineText"
+              rows="3"
+            >트럼프,
 EU에 "큰 대가"
-경고</textarea></div>
-      <div class="row2">
-        <div class="field"><select id="headlineFont"></select></div>
-        <div class="field"><select id="headlineWeight"></select></div>
-      </div>
-      <div class="row2">
-        <div class="field"><input type="color" class="color-input" id="headlineColor" value="#ffffff"></div>
-        <div class="field">
-          <div class="field-label">크기 <span class="val" id="headlineSizeVal">92px</span></div>
-          <input type="range" id="headlineSize" min="30" max="220" value="92">
-        </div>
-      </div>
-    </div>
+경고</textarea>
 
-    <!-- 서브타이틀 국문 -->
-    <div class="section">
-      <div class="section-title"><span class="dot"></span>서브타이틀 (국문)</div>
-      <div class="field"><textarea id="subKrText" rows="2">EU 빅테크 과징금 보복 예고,
-한국 디지털 규제도 영향권 주목</textarea></div>
-      <div class="row2">
-        <div class="field"><select id="subKrFont"></select></div>
-        <div class="field"><select id="subKrWeight"></select></div>
-      </div>
-      <div class="row2">
-        <div class="field"><input type="color" class="color-input" id="subKrColor" value="#d4d4da"></div>
-        <div class="field">
-          <div class="field-label">크기 <span class="val" id="subKrSizeVal">34px</span></div>
-          <input type="range" id="subKrSize" min="14" max="80" value="34">
-        </div>
-      </div>
-    </div>
-
-    <!-- 서브타이틀 영문 -->
-    <div class="section">
-      <div class="section-title"><span class="dot"></span>서브타이틀 (영문)</div>
-      <div class="field"><textarea id="subEnText" rows="2">TRUMP WARNS EU OVER GOOGLE FINE,
-SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
-      <div class="row2">
-        <div class="field"><select id="subEnFont"></select></div>
-        <div class="field"><select id="subEnWeight"></select></div>
-      </div>
-      <div class="row2">
-        <div class="field"><input type="color" class="color-input" id="subEnColor" value="#8f8f9a"></div>
-        <div class="field">
-          <div class="field-label">크기 <span class="val" id="subEnSizeVal">24px</span></div>
-          <input type="range" id="subEnSize" min="10" max="60" value="24">
-        </div>
-      </div>
-    </div>
-
-    <!-- 바이라인 -->
-    <div class="section">
-      <div class="section-title"><span class="dot"></span>매체 / 바이라인</div>
-      <div class="field"><textarea id="bylineText" rows="1">조선일보  |  김은중 기자  |  2026.07.25 오전 5:14</textarea></div>
-      <div class="row2">
-        <div class="field"><select id="bylineFont"></select></div>
-        <div class="field"><select id="bylineWeight"></select></div>
-      </div>
-      <div class="row2">
-        <div class="field"><input type="color" class="color-input" id="bylineColor" value="#b6b6c0"></div>
-        <div class="field">
-          <div class="field-label">크기 <span class="val" id="bylineSizeVal">26px</span></div>
-          <input type="range" id="bylineSize" min="12" max="46" value="26">
-        </div>
-      </div>
-      <div class="field" style="margin-top:4px;">
-        <label style="display:flex; align-items:center; gap:8px; font-size:12px; color:#c8c8d0;">
-          <input type="checkbox" id="dividerToggle" checked style="width:16px;height:16px;">
-          구분선 표시
-        </label>
-      </div>
-    </div>
-
-    <!-- 저장 -->
-    <div class="section">
-      <div class="section-title"><span class="dot"></span>저장</div>
-      <button class="btn btn-primary" id="exportBtn">⬇ 이미지로 저장 (PNG)</button>
-      <button class="btn btn-secondary" id="resetBtn">기본값으로 초기화</button>
-      <div class="upload-hint" style="margin-top:10px; line-height:1.6;">
-        아이폰 · 맥북에서도 안전하게 저장돼요.<br>
-        저장 버튼을 누르면 이미지 확인창이 뜨고,<br>
-        거기서 길게 누르거나(아이폰) 우클릭(맥)해서 저장할 수 있어요.
-      </div>
-    </div>
-  </div>
-
-  <!-- ================= PREVIEW ================= -->
-  <div class="preview-wrap">
-    <div class="stage" id="stage">
-      <div class="card-shell" id="cardShell">
-        <div class="card" id="card">
-          <div class="card-bg-wrap" id="bgWrap">
-            <div class="noimg" id="noImgMsg">여기에 배경 사진을 올려보세요<br><span style="font-size:15px;">(사이드바 &gt; 배경 이미지 &gt; 업로드)</span></div>
           </div>
-          <div class="card-duotone" id="duotoneLayer"></div>
-          <div class="card-scrim" id="scrimLayer"></div>
 
-          <div class="card-top">
-            <div class="kicker-wrap">
-              <div class="kicker" id="kickerOut">GLOBAL POLITICS</div>
-              <div class="kicker-bar"></div>
+
+          <div class="field">
+
+            <div class="field-label">
+              서브타이틀 · 국문
             </div>
-            <div class="handle" id="handleOut">@rpick</div>
+
+            <textarea
+              id="subKrText"
+              rows="2"
+            >EU 빅테크 과징금 보복 예고,
+한국 디지털 규제도 영향권 주목</textarea>
+
           </div>
 
-          <div class="card-bottom">
-            <div class="text-group">
-              <div class="accent-bar"></div>
-              <div class="text-col">
-                <div class="headline" id="headlineOut"></div>
-                <div class="subtitle-kr" id="subKrOut"></div>
-                <div class="subtitle-en" id="subEnOut"></div>
+
+          <div class="field">
+
+            <div class="field-label">
+              서브타이틀 · 영문
+            </div>
+
+            <textarea
+              id="subEnText"
+              rows="2"
+            >TRUMP WARNS EU OVER GOOGLE FINE,
+SOUTH KOREA WATCHES TRADE FALLOUT</textarea>
+
+          </div>
+
+
+          <div class="field">
+
+            <div class="field-label">
+              매체 / 바이라인
+            </div>
+
+            <textarea
+              id="bylineText"
+              rows="1"
+            >조선일보  |  김은중 기자  |  2026.07.25 오전 5:14</textarea>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- ================================================= -->
+      <!-- 이미지 -->
+      <!-- ================================================= -->
+
+      <div class="tool-panel" data-tool-panel="image">
+
+        <div class="panel-heading">
+
+          <div>
+            <div class="panel-title">이미지</div>
+            <div class="panel-subtitle">배경 이미지와 음영을 설정합니다</div>
+          </div>
+
+        </div>
+
+
+        <div class="section">
+
+          <div class="section-title">
+            <span class="dot"></span>배경 이미지
+          </div>
+
+
+          <div class="field">
+
+            <label
+              class="upload-btn"
+              for="imgInput"
+            >
+              📷 이미지 업로드
+            </label>
+
+            <input
+              type="file"
+              id="imgInput"
+              accept="image/*"
+              style="display:none;"
+            >
+
+            <div class="upload-hint">
+              미리보기에서 드래그로 위치 이동 가능
+            </div>
+
+          </div>
+
+
+          <div class="field">
+
+            <div class="field-label">
+              이미지 표시 방식
+            </div>
+
+            <select id="imageMode">
+
+              <option value="top">
+                상단
+              </option>
+
+              <option value="original">
+                원본
+              </option>
+
+              <option value="cover" selected>
+                꽉채우기
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <div class="field">
+
+            <div class="field-label">
+
+              확대/축소
+
+              <span
+                class="val"
+                id="zoomVal"
+              >
+                1.15x
+              </span>
+
+            </div>
+
+            <input
+              type="range"
+              id="zoomRange"
+              min="1"
+              max="2.5"
+              step="0.01"
+              value="1.15"
+            >
+
+          </div>
+
+
+          <div class="row2">
+
+            <div class="field">
+
+              <div class="field-label">
+                가로 위치
               </div>
+
+              <input
+                type="range"
+                id="offXRange"
+                min="-50"
+                max="50"
+                step="1"
+                value="0"
+              >
+
             </div>
-            <div class="divider" id="dividerOut"></div>
-            <div class="byline" id="bylineOut"></div>
+
+
+            <div class="field">
+
+              <div class="field-label">
+                세로 위치
+              </div>
+
+              <input
+                type="range"
+                id="offYRange"
+                min="-50"
+                max="50"
+                step="1"
+                value="0"
+              >
+
+            </div>
+
+          </div>
+
+
+          <div class="field">
+
+            <div class="field-label">
+              이미지 효과
+            </div>
+
+            <div
+              class="chip-row"
+              id="filterChips"
+            ></div>
+
+          </div>
+
+
+          <div class="field">
+
+            <div class="field-label">
+              스크림 방향
+            </div>
+
+            <div
+              class="chip-row"
+              id="scrimChips"
+            ></div>
+
+          </div>
+
+
+          <div class="field">
+
+            <div class="field-label">
+
+              스크림 강도
+
+              <span
+                class="val"
+                id="scrimVal"
+              >
+                55%
+              </span>
+
+            </div>
+
+            <input
+              type="range"
+              id="scrimRange"
+              min="0"
+              max="90"
+              step="1"
+              value="55"
+            >
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- ================================================= -->
+      <!-- 글꼴 -->
+      <!-- ================================================= -->
+
+      <div class="tool-panel" data-tool-panel="font">
+
+        <div class="panel-heading">
+          <div>
+            <div class="panel-title">글꼴</div>
+            <div class="panel-subtitle">텍스트별 폰트를 설정합니다</div>
           </div>
         </div>
+
+
+        <div class="section">
+
+          <div class="section-title">
+            <span class="dot"></span>폰트
+          </div>
+
+
+          <div class="field">
+            <div class="field-label">킥커</div>
+            <select id="kickerFont"></select>
+          </div>
+
+
+          <div class="field">
+            <div class="field-label">핸들 / 계정</div>
+            <select id="handleFont"></select>
+          </div>
+
+
+          <div class="field">
+            <div class="field-label">헤드라인</div>
+            <select id="headlineFont"></select>
+          </div>
+
+
+          <div class="field">
+            <div class="field-label">서브타이틀 · 국문</div>
+            <select id="subKrFont"></select>
+          </div>
+
+
+          <div class="field">
+            <div class="field-label">서브타이틀 · 영문</div>
+            <select id="subEnFont"></select>
+          </div>
+
+
+          <div class="field">
+            <div class="field-label">매체 / 바이라인</div>
+            <select id="bylineFont"></select>
+          </div>
+
+        </div>
+
       </div>
-      <div class="zoombar">
-        <button id="zoomOutBtn">−</button>
-        <span id="previewScaleLabel">화면 배율 45%</span>
-        <button id="zoomInBtn">+</button>
+
+
+
+      <!-- ================================================= -->
+      <!-- 굵기 -->
+      <!-- ================================================= -->
+
+      <div class="tool-panel" data-tool-panel="weight">
+
+        <div class="panel-heading">
+          <div>
+            <div class="panel-title">굵기</div>
+            <div class="panel-subtitle">텍스트의 두께를 설정합니다</div>
+          </div>
+        </div>
+
+
+        <div class="section">
+
+          <div class="field">
+            <div class="field-label">킥커</div>
+            <select id="kickerWeight"></select>
+          </div>
+
+          <div class="field">
+            <div class="field-label">핸들 / 계정</div>
+            <select id="handleWeight"></select>
+          </div>
+
+          <div class="field">
+            <div class="field-label">헤드라인</div>
+            <select id="headlineWeight"></select>
+          </div>
+
+          <div class="field">
+            <div class="field-label">서브타이틀 · 국문</div>
+            <select id="subKrWeight"></select>
+          </div>
+
+          <div class="field">
+            <div class="field-label">서브타이틀 · 영문</div>
+            <select id="subEnWeight"></select>
+          </div>
+
+          <div class="field">
+            <div class="field-label">매체 / 바이라인</div>
+            <select id="bylineWeight"></select>
+          </div>
+
+        </div>
+
       </div>
+
+
+
+      <!-- ================================================= -->
+      <!-- 크기 -->
+      <!-- ================================================= -->
+
+      <div class="tool-panel" data-tool-panel="size">
+
+        <div class="panel-heading">
+          <div>
+            <div class="panel-title">크기</div>
+            <div class="panel-subtitle">텍스트 크기를 조절합니다</div>
+          </div>
+        </div>
+
+
+        <div class="section">
+
+          <div class="field">
+
+            <div class="field-label">
+              킥커
+              <span class="val" id="kickerSizeVal">30px</span>
+            </div>
+
+            <input
+              type="range"
+              id="kickerSize"
+              min="14"
+              max="60"
+              value="30"
+            >
+
+          </div>
+
+
+          <div class="field">
+
+            <div class="field-label">
+              핸들 / 계정
+              <span class="val" id="handleSizeVal">26px</span>
+            </div>
+
+            <input
+              type="range"
+              id="handleSize"
+              min="12"
+              max="48"
+              value="26"
+            >
+
+          </div>
+
+
+          <div class="field">
+
+            <div class="field-label">
+              헤드라인
+              <span class="val" id="headlineSizeVal">92px</span>
+            </div>
+
+            <input
+              type="range"
+              id="headlineSize"
+              min="30"
+              max="220"
+              value="92"
+            >
+
+          </div>
+
+
+          <div class="field">
+
+            <div class="field-label">
+              서브타이틀 · 국문
+              <span class="val" id="subKrSizeVal">34px</span>
+            </div>
+
+            <input
+              type="range"
+              id="subKrSize"
+              min="14"
+              max="80"
+              value="34"
+            >
+
+          </div>
+
+
+          <div class="field">
+
+            <div class="field-label">
+              서브타이틀 · 영문
+              <span class="val" id="subEnSizeVal">24px</span>
+            </div>
+
+            <input
+              type="range"
+              id="subEnSize"
+              min="10"
+              max="60"
+              value="24"
+            >
+
+          </div>
+
+
+          <div class="field">
+
+            <div class="field-label">
+              매체 / 바이라인
+              <span class="val" id="bylineSizeVal">26px</span>
+            </div>
+
+            <input
+              type="range"
+              id="bylineSize"
+              min="12"
+              max="46"
+              value="26"
+            >
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- ================================================= -->
+      <!-- 색상 -->
+      <!-- ================================================= -->
+
+      <div class="tool-panel" data-tool-panel="color">
+
+        <div class="panel-heading">
+          <div>
+            <div class="panel-title">색상</div>
+            <div class="panel-subtitle">텍스트 색상을 설정합니다</div>
+          </div>
+        </div>
+
+
+        <div class="section">
+
+          <div class="row2">
+
+            <div class="field">
+              <div class="field-label">킥커</div>
+              <input
+                type="color"
+                class="color-input"
+                id="kickerColor"
+                value="#f2f2f4"
+              >
+            </div>
+
+            <div class="field">
+              <div class="field-label">핸들 / 계정</div>
+              <input
+                type="color"
+                class="color-input"
+                id="handleColor"
+                value="#d8d8de"
+              >
+            </div>
+
+          </div>
+
+
+          <div class="row2">
+
+            <div class="field">
+              <div class="field-label">헤드라인</div>
+              <input
+                type="color"
+                class="color-input"
+                id="headlineColor"
+                value="#ffffff"
+              >
+            </div>
+
+            <div class="field">
+              <div class="field-label">서브타이틀 · 국문</div>
+              <input
+                type="color"
+                class="color-input"
+                id="subKrColor"
+                value="#d4d4da"
+              >
+            </div>
+
+          </div>
+
+
+          <div class="row2">
+
+            <div class="field">
+              <div class="field-label">서브타이틀 · 영문</div>
+              <input
+                type="color"
+                class="color-input"
+                id="subEnColor"
+                value="#8f8f9a"
+              >
+            </div>
+
+            <div class="field">
+              <div class="field-label">매체 / 바이라인</div>
+              <input
+                type="color"
+                class="color-input"
+                id="bylineColor"
+                value="#b6b6c0"
+              >
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- ================================================= -->
+      <!-- 템플릿 -->
+      <!-- ================================================= -->
+
+      <div class="tool-panel" data-tool-panel="template">
+
+        <div class="panel-heading">
+          <div>
+            <div class="panel-title">템플릿</div>
+            <div class="panel-subtitle">카드 전체 분위기를 설정합니다</div>
+          </div>
+        </div>
+
+
+        <div class="section">
+
+          <div class="section-title">
+            <span class="dot"></span>포인트 컬러
+          </div>
+
+          <div class="field">
+
+            <div class="field-label">
+              프리셋
+            </div>
+
+            <div
+              class="swatches"
+              id="swatchRow"
+            ></div>
+
+          </div>
+
+
+          <div class="field">
+
+            <div class="field-label">
+              직접 선택
+            </div>
+
+            <input
+              type="color"
+              class="color-input"
+              id="accentCustom"
+              value="#e0334c"
+            >
+
+          </div>
+
+
+          <div class="field">
+
+            <div class="field-label">
+              배경 톤
+            </div>
+
+            <div
+              class="tone-grid"
+              id="toneRow"
+            ></div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- ================================================= -->
+      <!-- 기타 -->
+      <!-- ================================================= -->
+
+      <div class="tool-panel" data-tool-panel="etc">
+
+        <div class="panel-heading">
+          <div>
+            <div class="panel-title">기타</div>
+            <div class="panel-subtitle">보조 표시 옵션</div>
+          </div>
+        </div>
+
+
+        <div class="section">
+
+          <div class="section-title">
+            <span class="dot"></span>표시
+          </div>
+
+
+          <label style="
+            display:flex;
+            align-items:center;
+            gap:8px;
+            font-size:12px;
+            color:#c8c8d0;
+          ">
+
+            <input
+              type="checkbox"
+              id="dividerToggle"
+              checked
+              style="width:16px;height:16px;"
+            >
+
+            구분선 표시
+
+          </label>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- ================================================= -->
+      <!-- 저장 -->
+      <!-- ================================================= -->
+
+      <div class="tool-panel" data-tool-panel="save">
+
+        <div class="panel-heading">
+          <div>
+            <div class="panel-title">저장</div>
+            <div class="panel-subtitle">완성된 카드를 이미지로 저장합니다</div>
+          </div>
+        </div>
+
+
+        <div class="section">
+
+          <button
+            class="btn btn-primary"
+            id="exportBtn"
+          >
+            ⬇ 이미지로 저장 (PNG)
+          </button>
+
+
+          <button
+            class="btn btn-secondary"
+            id="resetBtn"
+          >
+            기본값으로 초기화
+          </button>
+
+
+          <div
+            class="upload-hint"
+            style="margin-top:10px;line-height:1.6;"
+          >
+            아이폰 · 맥북에서도 안전하게 저장돼요.<br>
+            저장 버튼을 누르면 이미지 확인창이 뜨고,<br>
+            거기서 길게 누르거나(아이폰) 우클릭(맥)해서 저장할 수 있어요.
+          </div>
+
+        </div>
+
+      </div>
+
     </div>
+
+
+
+    <!-- ================= PREVIEW ================= -->
+
+    <div class="preview-wrap">
+
+      <div class="stage" id="stage">
+
+        <div class="card-shell" id="cardShell">
+
+          <div class="card" id="card">
+
+            <div class="card-bg-wrap" id="bgWrap">
+
+              <div
+                class="noimg"
+                id="noImgMsg"
+              >
+                여기에 배경 사진을 올려보세요
+                <br>
+                <span style="font-size:15px;">
+                  (사이드바 &gt; 이미지 &gt; 업로드)
+                </span>
+              </div>
+
+            </div>
+
+
+            <div
+              class="card-duotone"
+              id="duotoneLayer"
+            ></div>
+
+
+            <div
+              class="card-scrim"
+              id="scrimLayer"
+            ></div>
+
+
+            <div class="card-top">
+
+              <div class="kicker-wrap">
+
+                <div
+                  class="kicker"
+                  id="kickerOut"
+                >
+                  GLOBAL POLITICS
+                </div>
+
+                <div class="kicker-bar"></div>
+
+              </div>
+
+
+              <div
+                class="handle"
+                id="handleOut"
+              >
+                @rpick
+              </div>
+
+            </div>
+
+
+            <div class="card-bottom">
+
+              <div class="text-group">
+
+                <div class="accent-bar"></div>
+
+                <div class="text-col">
+
+                  <div
+                    class="headline"
+                    id="headlineOut"
+                  ></div>
+
+                  <div
+                    class="subtitle-kr"
+                    id="subKrOut"
+                  ></div>
+
+                  <div
+                    class="subtitle-en"
+                    id="subEnOut"
+                  ></div>
+
+                </div>
+
+              </div>
+
+
+              <div
+                class="divider"
+                id="dividerOut"
+              ></div>
+
+
+              <div
+                class="byline"
+                id="bylineOut"
+              ></div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="zoombar">
+
+          <button id="zoomOutBtn">
+            −
+          </button>
+
+          <span id="previewScaleLabel">
+            화면 배율 45%
+          </span>
+
+          <button id="zoomInBtn">
+            +
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
   </div>
+
 </div>
 
 <!-- ================= EXPORT MODAL ================= -->
@@ -555,7 +1695,41 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
 (function(){
+/* =========================================================
+   TOP MENU / TOOL PANEL
+   ========================================================= */
 
+const topMenuItems = document.querySelectorAll('.top-menu-item');
+const toolPanels = document.querySelectorAll('.tool-panel');
+
+topMenuItems.forEach(item => {
+
+  item.addEventListener('click', () => {
+
+    const target = item.dataset.panel;
+
+    topMenuItems.forEach(menu => {
+      menu.classList.remove('active');
+    });
+
+    toolPanels.forEach(panel => {
+      panel.classList.remove('active');
+    });
+
+    item.classList.add('active');
+
+    const targetPanel =
+      document.querySelector(
+        `.tool-panel[data-tool-panel="${target}"]`
+      );
+
+    if (targetPanel) {
+      targetPanel.classList.add('active');
+    }
+
+  });
+
+});
   /* ---------------- 폰트 목록 ---------------- */
   const FONTS = [
     { label:'프리텐다드 (기본 고딕)', value:"'Pretendard', sans-serif" },
@@ -715,6 +1889,24 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
   const noImgMsg = document.getElementById('noImgMsg');
   let bgImg = null;
   let offX = 0, offY = 0, zoom = 1.15;
+  document.getElementById('zoomRange').addEventListener('input', e=>{
+  zoom = parseFloat(e.target.value);
+
+  document.getElementById('zoomVal').textContent =
+    zoom.toFixed(2) + 'x';
+
+  updateTransform();
+});
+
+document.getElementById('offXRange').addEventListener('input', e=>{
+  offX = parseFloat(e.target.value);
+  updateTransform();
+});
+
+document.getElementById('offYRange').addEventListener('input', e=>{
+  offY = parseFloat(e.target.value);
+  updateTransform();
+});
 
   document.getElementById('imgInput').addEventListener('change', e=>{
     const file = e.target.files[0];
@@ -723,6 +1915,7 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
     reader.onload = ev=>{
       if (bgImg) bgImg.remove();
       bgImg = document.createElement('img');
+      bgImg.classList.add('mode-cover');
       bgImg.crossOrigin = 'anonymous';
       bgImg.src = ev.target.result;
       bgWrap.appendChild(bgImg);
@@ -733,21 +1926,21 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
   });
 
   function updateTransform(){
-    document.getElementById('card').style.setProperty('--zoom', zoom);
-    document.getElementById('card').style.setProperty('--offx', offX+'%');
-    document.getElementById('card').style.setProperty('--offy', offY+'%');
-  }
-  document.getElementById('zoomRange').addEventListener('input', e=>{
-    zoom = parseFloat(e.target.value);
-    document.getElementById('zoomVal').textContent = zoom.toFixed(2)+'x';
-    updateTransform();
-  });
-  document.getElementById('offXRange').addEventListener('input', e=>{
-    offX = parseFloat(e.target.value); updateTransform();
-  });
-  document.getElementById('offYRange').addEventListener('input', e=>{
-    offY = parseFloat(e.target.value); updateTransform();
-  });
+  const mode = document.getElementById('imageMode').value;
+
+  document.getElementById('card').style.setProperty('--zoom', zoom);
+  document.getElementById('card').style.setProperty('--offx', offX + '%');
+  document.getElementById('card').style.setProperty('--offy', offY + '%');
+
+  if (bgImg) {
+  bgImg.classList.remove('mode-top', 'mode-original', 'mode-cover');
+  bgImg.classList.add('mode-' + mode);
+}
+}
+
+document.getElementById('imageMode').addEventListener('change', () => {
+  updateTransform();
+});
 
   // 드래그로 위치 이동
   let dragging = false, dragStart = {x:0,y:0}, startOff = {x:0,y:0};
