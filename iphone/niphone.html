@@ -63,7 +63,7 @@
     width:100%; background:#0d0e10; border:1px solid var(--line); border-radius:7px; color:var(--text);
     font-family:inherit; font-size:13px; padding:9px 10px; resize:vertical; outline:none;
   }
-  .field textarea{ min-height:52px; line-height:1.4; }
+  .field textarea{ min-height:52px; line-height:1.4; overflow:hidden; }
   .field input[type=text]:focus, .field textarea:focus, .field select:focus{ border-color:var(--accent-ui); }
   .field input[type=range]{ width:100%; accent-color: var(--accent-ui); }
   .field .hint{ font-size:10.5px; color:#63646a; margin-top:5px; }
@@ -204,7 +204,7 @@
   .tpl-column .dropcap{ float:left; font-size:2.9em; font-weight:700; line-height:.8; padding:4px 6px 0 0; }
   .tpl-column .quote{ border-top:1px solid #cfc7b8; margin-top:16px; padding-top:14px; display:flex; gap:10px; align-items:flex-start; }
   .tpl-column .quote .mark{ font-size:28px; color:var(--accent); line-height:.6; flex-shrink:0; }
-  .tpl-column .quote p{ font-style:italic; line-height:1.45; margin:0; }
+  .tpl-column .quote .quote-text p{ font-style:italic; line-height:1.45; margin:0; }
   .tpl-column .source{ margin-top:12px; font-size:10px; color:#6b6558; }
 
   /* ===== 08 Mobile News Card ===== */
@@ -530,7 +530,7 @@ const templates = {
     ],
     imageFields:[{k:'avatar', label:'프로필 사진'}],
     render(d, s){
-      const body = d.body || '';
+      const body = (d.body || '').replace(/^\n+/, ''); // 첫 글자가 줄바꿈이면 드롭캡이 비어보이는 문제 방지
       const first = body.charAt(0);
       const rest = body.slice(1);
       return `
@@ -545,7 +545,7 @@ const templates = {
           <div><b>By ${esc(d.author)}</b><span>${esc(d.role)}</span></div>
         </div>
         <div class="body" style="${textStyle(s,'body')}"><span class="dropcap" style="font-family:${fontStack(s.headlineFont)};color:${s.accentColor};">${esc(first)}</span>${nl2br(rest)}</div>
-        <div class="quote"><span class="mark">&#8221;</span><p style="font-family:${fontStack(s.headlineFont)};font-size:${s.bodySize}px;color:${s.headlineColor};">${linesP(d.quote)}</p></div>
+        <div class="quote"><span class="mark">&#8221;</span><div class="quote-text" style="font-family:${fontStack(s.headlineFont)};font-size:${s.bodySize}px;color:${s.headlineColor};">${linesP(d.quote)}</div></div>
         ${d.source ? `<div class="source">${esc(d.source)}</div>` : ''}
       </div>`;
     }
@@ -653,6 +653,11 @@ let currentPanel = 'content';
 /* ---------------------------------------------------------
    업로드 전 기본 이미지: 외부 URL 없이 자체 SVG 플레이스홀더 사용
 --------------------------------------------------------- */
+/* 기본 플레이스홀더(SVG data URI)도 data: 로 시작하기 때문에, 실제 사용자가 업로드한 사진(jpeg/png 등)인지 구분해서 안내 문구가 잘못 뜨지 않도록 함 */
+function isUploadedImage(src){
+  return !!src && src.startsWith('data:') && !src.startsWith('data:image/svg+xml');
+}
+
 function placeholderImage(label, w, h, bg){
   const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='${w}' height='${h}'>`+
     `<rect width='100%' height='100%' fill='${bg}'/>`+
@@ -702,7 +707,7 @@ function buildContentPanel(){
   const el = document.getElementById('panel-content');
   el.innerHTML = `<div class="section-title">${t.label} 내용</div>` + t.fields.map(f=>{
     if(f.type==='textarea'){
-      return `<div class="field"><label>${f.label}</label><textarea data-k="${f.k}">${esc(d[f.k])}</textarea></div>`;
+      return `<div class="field"><label>${f.label}</label><textarea data-k="${f.k}" rows="3">${esc(d[f.k])}</textarea></div>`;
     }
     return `<div class="field"><label>${f.label}</label><input type="text" data-k="${f.k}" value="${esc(d[f.k])}"></div>`;
   }).join('');
@@ -722,11 +727,21 @@ function buildContentPanel(){
   }
 
   el.querySelectorAll('[data-k]').forEach(input=>{
+    if(input.tagName === 'TEXTAREA'){
+      autoGrow(input); // 엔터로 줄이 늘어나면 박스 높이도 즉시 같이 늘어나도록 처리
+    }
     input.addEventListener('input', ()=>{
       state[current].data[input.dataset.k] = input.value;
+      if(input.tagName === 'TEXTAREA') autoGrow(input);
       renderCard();
     });
   });
+}
+
+/* 엔터(줄바꿈)를 쳐도 박스가 그대로라 눈에 안 보이는 문제 방지: 입력한 줄 수만큼 textarea 높이를 자동으로 늘림 */
+function autoGrow(el){
+  el.style.height = 'auto';
+  el.style.height = el.scrollHeight + 'px';
 }
 
 /* ---------------------------------------------------------
@@ -821,7 +836,7 @@ function buildImagePanel(){
       <div class="btn-row" style="margin-top:0;">
         <button type="button" class="btn-mini" data-upload="${f.k}" style="flex:1;padding:10px;">📁 파일 업로드</button>
       </div>
-      <div class="hint" data-uploaded-hint="${f.k}">${(d[f.k]||'').startsWith('data:') ? '이미지가 업로드되어 있어요.' : '아직 업로드된 이미지가 없어요.'}</div>
+      <div class="hint" data-uploaded-hint="${f.k}">${isUploadedImage(d[f.k]) ? '이미지가 업로드되어 있어요.' : '아직 업로드된 이미지가 없어요 (기본 이미지 표시 중).'}</div>
       <input type="file" accept="image/*" data-file-for="${f.k}">
     </div>
   `).join('');
@@ -915,6 +930,10 @@ document.getElementById('downloadBtn').addEventListener('click', async ()=>{
   btn.textContent = '변환 준비중...';
 
   try {
+    if (typeof html2canvas === 'undefined') {
+      throw new Error('이미지 변환 라이브러리를 불러오지 못했어요. 인터넷 연결을 확인한 뒤 페이지를 새로고침해서 다시 시도해주세요.');
+    }
+
     btn.textContent = '폰트 로딩중...';
     try { await document.fonts.ready; } catch(e) {}
     await new Promise(r => setTimeout(r, 150));
@@ -922,19 +941,28 @@ document.getElementById('downloadBtn').addEventListener('click', async ()=>{
     btn.textContent = '이미지 생성중...';
     const card = document.getElementById('card');
     if (!card) throw new Error('카드 요소를 찾을 수 없습니다');
+    if (!card.offsetWidth || !card.offsetHeight) {
+      throw new Error('카드가 화면에 제대로 표시되지 않았어요. 잠시 후 다시 시도해주세요.');
+    }
 
     const d = (typeof DEVICES !== 'undefined' && DEVICES[currentDevice])
       ? DEVICES[currentDevice]
       : { exportW: 1179 };
     const targetWidth = d.exportW || 1179;
-    const scale = targetWidth / (card.offsetWidth || 300);
+    const scale = targetWidth / card.offsetWidth;
 
     const canvas = await html2canvas(card, {
       useCORS: true,
       allowTaint: false,
       backgroundColor: null,
-      scale
+      scale,
+      imageTimeout: 15000,
+      logging: false
     });
+
+    if (!canvas || !canvas.width || !canvas.height) {
+      throw new Error('이미지 생성에 실패했어요 (빈 이미지). 다시 시도해주세요.');
+    }
 
     const fileName = `${current}-template.png`;
     const dataUrl = canvas.toDataURL('image/png');
