@@ -1,0 +1,942 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<title>WEST150 Editorial — Mobile</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fonts-archive/RIDIBatang/RIDIBatang.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&family=Noto+Serif+KR:wght@200..900&family=Black+Han+Sans&family=Do+Hyeon&family=Gothic+A1:wght@100..900&family=Nanum+Gothic:wght@400;700;800&family=Nanum+Myeongjo:wght@400;700;800&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root{
+  --bg:#090a0c; --panel:#0f1115; --panel2:#12151a; --line:#24272e;
+  --acc:#e32539; --text:#f4f4f5; --sub:#9aa0aa; --safe-b:env(safe-area-inset-bottom,0px); --safe-t:env(safe-area-inset-top,0px);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family:Pretendard,'Noto Sans KR',sans-serif;overscroll-behavior:none}
+body{overflow:hidden;display:flex;flex-direction:column}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;-webkit-appearance:none}
+input,select,textarea{-webkit-appearance:none}
+
+.app{height:100dvh;display:flex;flex-direction:column;min-height:0}
+
+/* ===== TOP BAR ===== */
+.topbar{flex-shrink:0;padding-top:calc(8px + var(--safe-t));height:calc(48px + var(--safe-t));display:flex;align-items:center;gap:6px;padding-left:12px;padding-right:8px;border-bottom:1px solid var(--line);background:#0c0d0f;z-index:50}
+.brand{font-size:13px;font-weight:800;letter-spacing:.1em;display:flex;align-items:center;gap:6px}
+.brand .dot{width:7px;height:7px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc)}
+.brand b{color:var(--acc)}
+.topfill{flex:1}
+.iconbtn{width:34px;height:34px;border-radius:8px;border:1px solid #2b2f37;background:#171a1f;display:inline-flex;align-items:center;justify-content:center;font-size:14px}
+.iconbtn:disabled{opacity:.3}
+.iconbtn.primary{background:var(--acc);border-color:var(--acc);font-weight:800;width:auto;padding:0 12px;font-size:11px;letter-spacing:.03em}
+
+/* ===== STAGE ===== */
+.stageWrap{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;position:relative;background:radial-gradient(circle at 50% 15%,#2b2f36 0,#1c1f24 40%,#101215 82%);padding:10px}
+.stageOuter{position:relative;flex-shrink:0}
+.stage{position:relative;width:540px;height:960px;overflow:hidden;background:#161616;box-shadow:0 20px 60px #000c;transform-origin:center center;flex-shrink:0;border-radius:2px}
+.bg,.bgblur,.photo,.photo img,.fade,.overlay,.vig{position:absolute}
+.bg,.bgblur{inset:0;background:center/cover no-repeat}
+.bgblur{inset:-8%;transform:scale(1.08)}
+.photo{left:0;right:0;top:0;height:63%;z-index:2;overflow:hidden}
+.photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;display:block}
+.fade{inset:0;background:linear-gradient(transparent 59%,rgba(7,8,10,.96) 100%);z-index:3}
+.overlay{inset:0;z-index:4;pointer-events:none}
+.vig{inset:0;z-index:5;box-shadow:inset 0 0 130px #000b;pointer-events:none}
+.linebar{position:absolute;left:6.4%;top:58.8%;height:14%;width:3px;background:var(--acc);z-index:7}
+.txt{position:absolute;z-index:8;max-width:82%;white-space:pre-wrap;line-height:1.08;cursor:grab;user-select:none;touch-action:none;padding:4px;margin:-4px}
+.txt.sel{outline:2px dashed #ffffffaa;outline-offset:4px;border-radius:2px}
+.kicker{left:9%;top:4.2%;font-size:11px;letter-spacing:.17em}
+.wm{right:6.5%;top:4.2%;font-size:11px;letter-spacing:.15em}
+.headtxt{left:9%;top:59%;font-size:42px;letter-spacing:-.045em;font-weight:900}
+.sub{left:9%;top:71.7%;font-size:12px;letter-spacing:.05em;max-width:76%}
+.bodytxt{left:9%;top:76%;font-size:14px;line-height:1.55;max-width:79%}
+.src{left:9%;bottom:3.3%;font-size:11px}
+.credit{left:9%;bottom:5.8%;font-size:10px;opacity:.85}
+.time{right:6.5%;bottom:3.3%;font-size:11px}
+
+.zoomHud{display:none}
+
+/* ===== CARD STRIP ===== */
+.cardStripWrap{flex-shrink:0;border-top:1px solid var(--line);background:var(--panel);padding:8px 8px}
+.cardStrip{display:flex;gap:8px;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;padding-bottom:2px}
+.cthumb{flex-shrink:0;width:46px;scroll-snap-align:start}
+.cthumb .box{position:relative;width:46px;height:82px;border-radius:6px;overflow:hidden;border:2px solid #2a2e35;background:#20242b}
+.cthumb.active .box{border-color:var(--acc)}
+.cthumb img{width:100%;height:100%;object-fit:cover;display:block}
+.cthumb .num{position:absolute;top:2px;left:3px;font-size:8px;background:#0009;padding:1px 3px;border-radius:3px}
+.cthumb .del{position:absolute;top:-5px;right:-5px;width:17px;height:17px;border-radius:50%;background:#e32539;border:1px solid #0c0d0f;font-size:10px;line-height:1;display:flex;align-items:center;justify-content:center}
+.addCardBtn{flex-shrink:0;width:46px;height:82px;border-radius:6px;border:1.5px dashed #383d46;background:none;color:#6a6f78;font-size:20px;display:flex;align-items:center;justify-content:center;scroll-snap-align:start}
+
+/* ===== TAB BAR ===== */
+.tabbar{flex-shrink:0;display:flex;border-top:1px solid var(--line);background:#0c0d0f;padding-bottom:var(--safe-b)}
+.tabbar button{flex:1;border:0;background:none;color:#7f858f;padding:10px 2px 8px;font-size:10px;display:flex;flex-direction:column;align-items:center;gap:3px;letter-spacing:.02em}
+.tabbar button .ic{font-size:17px}
+.tabbar button.active{color:#fff}
+.tabbar button.active .ic{color:var(--acc)}
+
+/* ===== BOTTOM SHEET ===== */
+.scrim{position:fixed;inset:0;background:#000000a6;opacity:0;pointer-events:none;transition:opacity .18s;z-index:60}
+.scrim.show{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;background:var(--panel2);border-top:1px solid #2c3139;border-radius:16px 16px 0 0;z-index:70;transform:translateY(100%);transition:transform .22s cubic-bezier(.32,.72,0,1);max-height:62vh;display:flex;flex-direction:column}
+.sheet.show{transform:translateY(0)}
+.sheetHandle{flex-shrink:0;display:flex;justify-content:center;padding:9px 0 4px}
+.sheetHandle span{width:34px;height:4px;border-radius:3px;background:#3a3f48}
+.sheetTitle{flex-shrink:0;padding:0 16px 8px;font-size:11px;font-weight:800;letter-spacing:.1em;color:#c8cbd0}
+.sheetBody{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 14px calc(18px + var(--safe-b))}
+
+/* ===== FORM ELEMENTS ===== */
+.label{font-size:10px;color:#8b9099;display:block;margin:0 0 5px}
+.input,.select,.ta,.color{width:100%;background:#0e1014;border:1px solid #2a2e35;border-radius:8px;padding:10px;font-size:13px;outline:none}
+.ta{min-height:60px;resize:vertical}
+.color{height:38px;padding:2px}
+.field{margin-bottom:14px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.row3{display:grid;grid-template-columns:1.4fr 1fr 44px;gap:8px}
+.rangeRow{display:flex;align-items:center;gap:8px}
+.rangeRow input[type=range]{flex:1}
+.rangeRow .v{font-size:10px;color:#8b9099;width:34px;text-align:right;flex-shrink:0}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:2px 0 12px;-webkit-overflow-scrolling:touch}
+.chip{flex-shrink:0;border:1px solid #2c3139;background:#15181d;color:#a9adb5;padding:7px 12px;border-radius:20px;font-size:11.5px;font-weight:600}
+.chip.active{background:var(--acc);border-color:var(--acc);color:#fff}
+.seg{display:flex;background:#0d0f12;border:1px solid #262a31;border-radius:9px;padding:2px}
+.seg button{flex:1;border:0;background:none;color:#838992;padding:8px 4px;border-radius:7px;font-size:11.5px}
+.seg button.active{background:#2a2e35;color:#fff}
+.toggleRow{display:flex;justify-content:space-between;align-items:center;padding:10px 2px;border-top:1px solid #21242b}
+.switch{position:relative;width:40px;height:23px;border-radius:12px;background:#2a2e35;flex-shrink:0}
+.switch.on{background:var(--acc)}
+.switch i{position:absolute;top:2px;left:2px;width:19px;height:19px;border-radius:50%;background:#fff;transition:.15s}
+.switch.on i{left:19px}
+.sectionGap{height:6px}
+.hintline{font-size:10.5px;color:#6a6f78;margin:2px 0 12px;line-height:1.5}
+
+.tplGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:6px}
+.tplCard{border:1.5px solid #2a2e35;border-radius:10px;overflow:hidden;background:#0d0f12;padding:0;text-align:left}
+.tplCard.active{border-color:var(--acc)}
+.tplCard .sw{height:52px;position:relative}
+.tplCard .sw i{position:absolute;left:7px;right:7px;bottom:7px;height:16px;border-left:2px solid var(--_acc,#e32539);border-bottom:1.5px solid #999}
+.tplCard span{display:block;padding:6px 7px;font-size:9.5px;color:#c3c7cd}
+
+.uploadBig{width:100%;border:1.5px dashed #383d46;background:#0d0f12;border-radius:12px;padding:22px 10px;text-align:center;color:#9aa0aa;font-size:12px;margin-bottom:14px}
+.uploadBig b{display:block;color:#fff;font-size:13px;margin-bottom:2px}
+
+.actionGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+.actionBtn{border:1px solid #2c3139;background:#15181d;border-radius:9px;padding:11px;font-size:12px;text-align:center}
+.actionBtn.danger{color:#ff8a93;border-color:#4a2229}
+
+.toast{position:fixed;left:50%;bottom:calc(80px + var(--safe-b));transform:translate(-50%,20px);opacity:0;background:#1a1d23;border:1px solid #343943;padding:9px 14px;border-radius:20px;font-size:11.5px;transition:.2s;z-index:200;pointer-events:none;box-shadow:0 8px 24px #0008}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+.previewOverlay{position:fixed;inset:0;background:#050506;z-index:150;display:none;flex-direction:column}
+.previewOverlay.show{display:flex}
+.previewTop{flex-shrink:0;padding-top:calc(10px + var(--safe-t));height:calc(48px + var(--safe-t));display:flex;align-items:center;padding:0 12px;gap:8px;border-bottom:1px solid var(--line)}
+.previewBody{flex:1;min-height:0;overflow:auto;display:flex;align-items:center;justify-content:center;padding:16px}
+#previewStage{box-shadow:0 20px 60px #000a;flex-shrink:0}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="topbar">
+    <div class="brand"><span class="dot"></span>WEST150 <b>EDIT</b></div>
+    <div class="topfill"></div>
+    <button class="iconbtn" id="undoBtn" title="실행취소">↶</button>
+    <button class="iconbtn" id="redoBtn" title="다시실행">↷</button>
+    <button class="iconbtn" id="previewBtn" title="미리보기">👁</button>
+    <button class="iconbtn primary" id="pngBtn">PNG 저장</button>
+  </header>
+
+  <div class="stageWrap" id="stageWrap">
+    <div class="stageOuter" id="stageOuter">
+      <div class="stage" id="stage">
+        <div class="bgblur" id="bgblur"></div>
+        <div class="bg" id="bg"></div>
+        <div class="photo" id="photoWrap"><img id="photo"></div>
+        <div class="fade" id="fade"></div>
+        <div class="overlay" id="overlay"></div>
+        <div class="vig" id="vig"></div>
+        <div class="linebar" id="line"></div>
+        <div class="txt kicker" id="kicker" data-k="kicker"></div>
+        <div class="txt wm" id="wm" data-k="wm"></div>
+        <div class="txt headtxt" id="headline" data-k="headline"></div>
+        <div class="txt sub" id="sub" data-k="sub"></div>
+        <div class="txt bodytxt" id="body" data-k="body"></div>
+        <div class="txt src" id="source" data-k="source"></div>
+        <div class="txt credit" id="credit" data-k="credit"></div>
+        <div class="txt time" id="time" data-k="time"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cardStripWrap">
+    <div class="cardStrip" id="cardStrip"></div>
+  </div>
+
+  <nav class="tabbar" id="tabbar">
+    <button data-tab="text"><span class="ic">Aa</span>텍스트</button>
+    <button data-tab="photo"><span class="ic">🖼</span>사진</button>
+    <button data-tab="style"><span class="ic">🎨</span>스타일</button>
+    <button data-tab="layout"><span class="ic">▦</span>레이아웃</button>
+  </nav>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet">
+  <div class="sheetHandle"><span></span></div>
+  <div class="sheetTitle" id="sheetTitle">TEXT</div>
+  <div class="sheetBody" id="sheetBody"></div>
+</div>
+
+<input type="file" id="file" accept="image/*" hidden>
+<div class="toast" id="toast"></div>
+
+<div class="previewOverlay" id="previewOverlay">
+  <div class="previewTop">
+    <button class="iconbtn" data-close-preview>×</button>
+    <div class="topfill"></div>
+    <span id="previewLabel" style="font-size:11px;color:#9aa0aa"></span>
+    <button class="iconbtn primary" id="previewPng">PNG 저장</button>
+  </div>
+  <div class="previewBody" id="previewBody"></div>
+</div>
+
+<script>
+const PLACEHOLDER = 'data:image/svg+xml,' + encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920">' +
+  '<rect fill="#2a2e35" width="100%" height="100%"/>' +
+  '<text x="50%" y="48%" fill="#6a6f78" font-family="sans-serif" font-size="42" text-anchor="middle">PHOTO</text>' +
+  '<text x="50%" y="54%" fill="#555a63" font-family="sans-serif" font-size="22" text-anchor="middle">사진을 업로드하세요</text>' +
+  '</svg>'
+);
+
+const F = [
+  ['Pretendard','Pretendard'],['RIDI Batang','RIDI Batang'],['Noto Sans KR','Noto Sans KR'],
+  ['Noto Serif KR','Noto Serif KR'],['Gothic A1','Gothic A1'],['Nanum Gothic','Nanum Gothic'],
+  ['Nanum Myeongjo','Nanum Myeongjo'],['Black Han Sans','Black Han Sans'],['Do Hyeon','Do Hyeon'],
+  ['Arial','Arial'],['Georgia','Georgia'],['Times New Roman','Times New Roman'],['Helvetica','Helvetica']
+];
+
+const T = {
+  editorial:  {bg:'#161616',acc:'#e32539',head:'#ffffff',body:'#d1d4da',src:'#8f949d',font:'Pretendard',hs:42,hw:900,ph:63,fade:true,vig:true,k:'GLOBAL POLITICS',label:'Editorial'},
+  bloomberg:  {bg:'#050505',acc:'#ff6a00',head:'#ffffff',body:'#d1d3d7',src:'#8b8f95',font:'Pretendard',hs:44,hw:800,ph:61,fade:true,vig:true,k:'BUSINESS & POLITICS',label:'Bloomberg'},
+  vox:        {bg:'#0b0b0b',acc:'#ff4d00',head:'#ffffff',body:'#e6ddd7',src:'#b1aaa4',font:'Noto Serif KR',hs:43,hw:800,ph:58,fade:true,vig:false,k:'EXPLAINED',label:'Vox'},
+  economist:  {bg:'#f1eee7',acc:'#b51d2b',head:'#111111',body:'#414141',src:'#777',font:'Noto Serif KR',hs:41,hw:800,ph:58,fade:false,vig:false,k:'THE WORLD IN BRIEF',label:'Economist'},
+  washington: {bg:'#121418',acc:'#7c8ca0',head:'#f4f2ed',body:'#c4c7cc',src:'#8d9096',font:'Noto Serif KR',hs:40,hw:700,ph:65,fade:true,vig:true,k:'NATIONAL / WORLD',label:'Wash. Times'}
+};
+const TPL_ORDER = ['editorial','bloomberg','vox','economist','washington'];
+
+const FIELD_META = {
+  kicker:  {label:'킥커',      prop:'kicker',  input:'text'},
+  headline:{label:'헤드라인',  prop:'headline',input:'ta'},
+  sub:     {label:'서브라인',  prop:'sub',     input:'text'},
+  body:    {label:'본문',      prop:'body',    input:'ta'},
+  source:  {label:'출처 / 기자', prop:'source', input:'text'},
+  credit:  {label:'사진 출처', prop:'credit',  input:'text'},
+  wm:      {label:'워터마크',  prop:'wm',      input:'text'},
+  time:    {label:'시간',      prop:null,      input:'time'}
+};
+const FIELD_ORDER = ['headline','body','kicker','sub','source','credit','wm','time'];
+
+const base = () => ({
+  id: crypto.randomUUID(),
+  headline: '트럼프, EU에 "큰 대가" 경고',
+  body: 'EU 빅테크 과징금 보복 예고,\n한국 디지털 규제도 영향권 주목',
+  source: '연합뉴스TV  |  김준하 기자',
+  credit: 'Photo: Reuters',
+  wm: '@west150daily',
+  kicker: 'GLOBAL POLITICS',
+  sub: 'TRUMP WARNS EU OVER GOOGLE FINE',
+  time: new Date(Date.now() - new Date().getTimezoneOffset()*60000).toISOString().slice(0,16),
+  zone: 'KST',
+  fmt: '24',
+  photo: PLACEHOLDER,
+  fit: 'cover',
+  show: {kicker:true, sub:true, headline:true, body:true, source:true, credit:true, wm:true, time:true},
+  tpl: 'editorial',
+  styles: {
+    bg:'#161616', acc:'#e32539', op:0, ph:63,
+    exp:100, contrast:100, sat:100, sepia:0, blur:0, bgblur:24,
+    gray:false, vig:true, fade:true
+  },
+  text: {
+    kicker: {font:'Pretendard', size:11, weight:500, color:'#d4d6da'},
+    headline: {font:'Pretendard', size:42, weight:900, color:'#ffffff'},
+    sub: {font:'Pretendard', size:12, weight:500, color:'#d1d4da'},
+    body: {font:'Pretendard', size:14, weight:400, color:'#d1d4da'},
+    source: {font:'Pretendard', size:11, weight:500, color:'#8f949d'},
+    credit: {font:'Pretendard', size:10, weight:400, color:'#8f949d'},
+    wm: {font:'Pretendard', size:11, weight:500, color:'#d4d6da'},
+    time: {font:'Pretendard', size:11, weight:500, color:'#8f949d'}
+  },
+  pos: {
+    kicker:[9, 4.2], wm:[6.5, 4.2], headline:[9, 59], sub:[9, 71.7],
+    body:[9, 76], source:[9, 96.7], credit:[9, 94.2], time:[6.5, 96.7]
+  }
+});
+
+let S = { cards: [base()], i: 0, zoom: 1, sel: 'headline', drag: null, tab: null, ratio: '9:16' };
+
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+function C() { return S.cards[S.i]; }
+
+/* ===== history ===== */
+const MAX_HISTORY = 40;
+let historyStack = [], historyIndex = -1, applyingHistory = false, historyTimer = null;
+function snapState(){ return JSON.stringify({cards:S.cards, i:S.i, ratio:S.ratio}); }
+function pushHistory(){
+  if (applyingHistory) return;
+  const snap = snapState();
+  if (historyIndex >= 0 && historyStack[historyIndex] === snap) return;
+  historyStack = historyStack.slice(0, historyIndex+1);
+  historyStack.push(snap);
+  if (historyStack.length > MAX_HISTORY) historyStack.shift();
+  historyIndex = historyStack.length - 1;
+  updateHistBtns();
+}
+function scheduleHistory(){ if (applyingHistory) return; clearTimeout(historyTimer); historyTimer = setTimeout(pushHistory, 300); }
+function restoreHistory(idx){
+  if (idx<0 || idx>=historyStack.length) return;
+  applyingHistory = true;
+  try{
+    const d = JSON.parse(historyStack[idx]);
+    S.cards = d.cards; S.i = Math.min(Math.max(0,d.i), S.cards.length-1); S.ratio = d.ratio || S.ratio;
+    historyIndex = idx;
+    applyRatioDom(); cards(); render(); renderSheet(); updateHistBtns();
+  } finally { applyingHistory = false; }
+}
+function undo(){
+  if (historyIndex<=0) return;
+  const snap = snapState();
+  if (historyStack[historyIndex] !== snap) pushHistory();
+  if (historyIndex<=0) return;
+  restoreHistory(historyIndex-1); toast('실행 취소');
+}
+function redo(){ if (historyIndex>=historyStack.length-1) return; restoreHistory(historyIndex+1); toast('다시 실행'); }
+function updateHistBtns(){
+  $('#undoBtn').disabled = historyIndex<=0;
+  $('#redoBtn').disabled = historyIndex>=historyStack.length-1;
+}
+
+function toast(t){
+  const e = $('#toast'); e.textContent = t; e.classList.add('show');
+  clearTimeout(toast._t); toast._t = setTimeout(()=>e.classList.remove('show'), 1400);
+}
+
+function toHex(c){
+  if (!c) return '#ffffff';
+  c = String(c).trim();
+  if (c[0] !== '#') return '#ffffff';
+  if (c.length === 4) return '#'+c[1]+c[1]+c[2]+c[2]+c[3]+c[3];
+  if (c.length === 7) return c;
+  return '#ffffff';
+}
+function ensureTextStyles(card){
+  const d = base().text;
+  if (!card.text) card.text = {};
+  for (const k of Object.keys(d)){
+    if (!card.text[k]) card.text[k] = Object.assign({}, d[k]);
+    else {
+      card.text[k].font = card.text[k].font || d[k].font;
+      card.text[k].size = card.text[k].size || d[k].size;
+      card.text[k].weight = card.text[k].weight || d[k].weight;
+      card.text[k].color = toHex(card.text[k].color || d[k].color);
+    }
+  }
+}
+
+function timeText(){
+  const c = C();
+  const d = new Date(c.time);
+  if (isNaN(d.getTime())) return c.time || '';
+  const zmap = {KST:'Asia/Seoul', ET:'America/New_York', CT:'America/Chicago', MT:'America/Denver', PT:'America/Los_Angeles'};
+  const z = zmap[c.zone] || 'Asia/Seoul';
+  try{
+    const p = new Intl.DateTimeFormat('en-CA', {timeZone:z, year:'numeric', month:'2-digit', day:'2-digit', hour:'numeric', minute:'2-digit', hour12: c.fmt==='12'}).formatToParts(d).reduce((a,x)=>(a[x.type]=x.value,a),{});
+    if (c.fmt==='12') return `${p.year}.${p.month}.${p.day} ${p.dayPeriod} ${p.hour}:${p.minute} ${c.zone}`;
+    return `${p.year}.${p.month}.${p.day} ${String(p.hour).padStart(2,'0')}:${p.minute} ${c.zone}`;
+  }catch(e){ return c.time; }
+}
+
+function setTxt(id, text, style, pos, key){
+  const e = $('#'+id);
+  if (!e) return;
+  e.textContent = text || '';
+  e.style.fontFamily = `"${style.font}"`;
+  e.style.fontSize = (style.size||12)+'px';
+  e.style.fontWeight = style.weight||500;
+  e.style.color = toHex(style.color||'#ffffff');
+  e.classList.toggle('sel', S.sel === key);
+  const show = C().show?.[key] !== false;
+  e.style.display = show ? '' : 'none';
+  if (key==='wm' || key==='time'){
+    e.style.left='auto'; e.style.right=(pos[0]??6.5)+'%'; e.style.top=(pos[1]??4)+'%'; e.style.bottom='auto';
+  } else {
+    e.style.left=(pos[0]??9)+'%'; e.style.top=(pos[1]??50)+'%'; e.style.right='auto'; e.style.bottom='auto';
+  }
+}
+
+function applyRatioDom(){
+  const w = 540, h = S.ratio==='9:16'?960:S.ratio==='4:5'?675:540;
+  const stage = $('#stage');
+  stage.style.width = w+'px'; stage.style.height = h+'px';
+  fitZoom();
+}
+function fitZoom(auto){
+  const wrap = $('#stageWrap');
+  const stage = $('#stage');
+  const availW = wrap.clientWidth - 20, availH = wrap.clientHeight - 20;
+  const z = Math.min(availW/stage.offsetWidth || 540, availH/stage.offsetHeight || 960);
+  S.zoom = Math.max(0.2, Math.min(1.4, +z.toFixed(3)));
+  render();
+}
+
+function render(){
+  const c = C();
+  ensureTextStyles(c);
+  if (!applyingHistory) scheduleHistory();
+  const stage = $('#stage');
+  stage.style.transform = `scale(${S.zoom})`;
+
+  const bgColor = (c.styles && c.styles.bg) || '#161616';
+  stage.style.background = bgColor;
+  $('#bg').style.backgroundColor = bgColor;
+  $('#bg').style.backgroundImage = 'none';
+
+  const bgblurEl = $('#bgblur');
+  const photoSrc = c.photo || PLACEHOLDER;
+  bgblurEl.style.backgroundImage = 'url("'+photoSrc.replace(/"/g,'\\"')+'")';
+  bgblurEl.style.backgroundSize = 'cover'; bgblurEl.style.backgroundPosition = 'center';
+  const bb = (c.styles && c.styles.bgblur) || 0;
+  bgblurEl.style.filter = 'blur('+bb+'px) brightness(0.55)';
+  bgblurEl.style.display = (c.fit !== 'cover' || bb>0) ? 'block' : 'none';
+
+  const photoWrap = $('#photoWrap'), photo = $('#photo');
+  photoWrap.style.height = (c.styles.ph||63)+'%';
+  const src = c.photo || PLACEHOLDER;
+  if (photo.getAttribute('data-src') !== src){ photo.setAttribute('data-src', src); photo.src = src; }
+  photo.onerror = function(){ this.onerror=null; this.src=PLACEHOLDER; this.setAttribute('data-src',PLACEHOLDER); };
+  if (c.fit==='native'){ photo.style.objectFit='none'; }
+  else if (c.fit==='contain'){ photo.style.objectFit='contain'; }
+  else { photo.style.objectFit='cover'; }
+  photo.style.objectPosition='center center';
+  const st = c.styles||{};
+  photo.style.filter = [
+    'brightness('+((st.exp??100)/100)+')',
+    'contrast('+((st.contrast??100)/100)+')',
+    'saturate('+((st.sat??100)/100)+')',
+    'sepia('+(st.sepia||0)+'%)',
+    'grayscale('+(st.gray?100:0)+'%)',
+    'blur('+(st.blur||0)+'px)'
+  ].join(' ');
+
+  $('#fade').style.display = c.styles.fade ? 'block':'none';
+  $('#vig').style.display = c.styles.vig ? 'block':'none';
+  $('#line').style.background = c.styles.acc || '#e32539';
+  $('#overlay').style.background = '#000';
+  $('#overlay').style.opacity = (c.styles.op||0)/100;
+
+  setTxt('kicker', c.kicker, c.text.kicker, c.pos.kicker, 'kicker');
+  setTxt('wm', c.wm, c.text.wm, c.pos.wm, 'wm');
+  setTxt('headline', c.headline, c.text.headline, c.pos.headline, 'headline');
+  setTxt('sub', c.sub, c.text.sub, c.pos.sub, 'sub');
+  setTxt('body', c.body, c.text.body, c.pos.body, 'body');
+  setTxt('source', c.source, c.text.source, c.pos.source, 'source');
+  setTxt('credit', c.credit, c.text.credit||c.text.source, c.pos.credit||[9,94], 'credit');
+  setTxt('time', timeText(), c.text.time, c.pos.time, 'time');
+}
+
+/* ===== card strip ===== */
+function cards(){
+  const w = $('#cardStrip');
+  w.innerHTML = '';
+  S.cards.forEach((c,i)=>{
+    const e = document.createElement('div');
+    e.className = 'cthumb'+(i===S.i?' active':'');
+    e.innerHTML = `<div class="box"><img><span class="num">${i+1}</span>${S.cards.length>1?'<button class="del">×</button>':''}</div>`;
+    const img = e.querySelector('img');
+    img.src = c.photo || PLACEHOLDER;
+    img.onerror = function(){ this.onerror=null; this.src=PLACEHOLDER; };
+    e.onclick = (ev)=>{ if (ev.target.closest('.del')) return; S.i=i; cards(); render(); renderSheet(); };
+    const delBtn = e.querySelector('.del');
+    if (delBtn) delBtn.onclick = (ev)=>{ ev.stopPropagation(); del(i); };
+    w.appendChild(e);
+  });
+  const add = document.createElement('button');
+  add.className = 'addCardBtn'; add.textContent = '＋';
+  add.onclick = ()=>{ S.cards.push(structuredClone(C())); S.cards[S.cards.length-1].id=crypto.randomUUID(); S.i=S.cards.length-1; cards(); render(); toast('카드 복제'); };
+  w.appendChild(add);
+}
+function del(i){
+  if (S.cards.length===1) return toast('최소 1장은 유지됩니다');
+  S.cards.splice(i,1);
+  S.i = Math.max(0, Math.min(i, S.cards.length-1));
+  cards(); render(); renderSheet(); toast('카드 삭제');
+}
+function addNewCard(){
+  S.cards.push(base()); S.i = S.cards.length-1; cards(); render(); renderSheet(); toast('새 카드 추가');
+}
+
+/* ===== templates ===== */
+function applyTpl(name){
+  const c = C(); const t = T[name];
+  if (!t) return;
+  c.tpl = name;
+  Object.assign(c.styles, {bg:t.bg, acc:t.acc, ph:t.ph, fade:t.fade, vig:t.vig});
+  c.kicker = c.kicker && c.kicker !== T[Object.keys(T).find(k=>T[k].k===c.kicker)]?.k ? c.kicker : t.k;
+  ['kicker','headline','sub','body','source','wm','time'].forEach(k=>{ if (c.text[k]) c.text[k].font = t.font; });
+  c.text.headline.size = t.hs; c.text.headline.weight = t.hw; c.text.headline.color = t.head;
+  c.text.body.color = t.body; c.text.sub.color = t.body;
+  c.text.source.color = t.src; c.text.kicker.color = t.src;
+  c.text.wm.color = t.head==='#111111' ? '#333333' : '#d4d6da';
+  c.text.time.color = t.src;
+  render(); cards(); renderSheet(); toast(t.label+' 템플릿 적용');
+}
+
+/* ===== sheet / tabs ===== */
+function openTab(tab){
+  if (S.tab === tab){ closeSheet(); return; }
+  S.tab = tab;
+  $$('.tabbar button').forEach(b=>b.classList.toggle('active', b.dataset.tab===tab));
+  $('#sheetTitle').textContent = ({text:'TEXT',photo:'PHOTO',style:'STYLE · TEMPLATE',layout:'LAYOUT · CARDS'})[tab];
+  renderSheet();
+  $('#sheet').classList.add('show'); $('#scrim').classList.add('show');
+}
+function closeSheet(){
+  S.tab = null;
+  $$('.tabbar button').forEach(b=>b.classList.remove('active'));
+  $('#sheet').classList.remove('show'); $('#scrim').classList.remove('show');
+}
+function renderSheet(){
+  if (!S.tab) return;
+  if (S.tab==='text') renderTextSheet();
+  else if (S.tab==='photo') renderPhotoSheet();
+  else if (S.tab==='style') renderStyleSheet();
+  else if (S.tab==='layout') renderLayoutSheet();
+}
+
+function renderTextSheet(){
+  const c = C(); ensureTextStyles(c);
+  const key = S.sel || 'headline';
+  const meta = FIELD_META[key];
+  const body = $('#sheetBody');
+  let html = `<div class="chips" id="fieldChips">` + FIELD_ORDER.map(k=>
+    `<button class="chip${k===key?' active':''}" data-field="${k}">${FIELD_META[k].label}</button>`
+  ).join('') + `</div>`;
+
+  if (key === 'time'){
+    html += `
+      <div class="field">
+        <label class="label">날짜 / 시간</label>
+        <input class="input" id="f_time" type="datetime-local" value="${c.time||''}">
+      </div>
+      <div class="row2 field">
+        <div>
+          <label class="label">시간대</label>
+          <select class="select" id="f_zone">
+            <option value="KST">한국 (KST)</option>
+            <option value="ET">미국 동부 (ET)</option>
+            <option value="CT">미국 중부 (CT)</option>
+            <option value="MT">미국 산악 (MT)</option>
+            <option value="PT">미국 서부 (PT)</option>
+          </select>
+        </div>
+        <div>
+          <label class="label">형식</label>
+          <select class="select" id="f_fmt">
+            <option value="24">24시간</option>
+            <option value="12">오전/오후</option>
+          </select>
+        </div>
+      </div>`;
+  } else {
+    html += `
+      <div class="field">
+        <label class="label">${meta.label} 내용</label>
+        ${meta.input==='ta' ? `<textarea class="ta" id="f_content">${escapeHtml(c[meta.prop]||'')}</textarea>` : `<input class="input" id="f_content" value="${escapeAttr(c[meta.prop]||'')}">`}
+      </div>`;
+  }
+
+  html += `
+    <div class="row3 field">
+      <div><label class="label">글꼴</label><select class="select" id="f_font">${F.map(x=>`<option value="${x[1]}">${x[0]}</option>`).join('')}</select></div>
+      <div><label class="label">크기</label><input class="input" id="f_size" type="number" min="6" max="300"></div>
+      <div><label class="label">색상</label><input class="color" id="f_color" type="color"></div>
+    </div>`;
+  if (key !== 'time'){
+    html += `
+      <div class="field">
+        <label class="label">굵기</label>
+        <div class="rangeRow"><input type="range" id="f_weight" min="100" max="900" step="100"><span class="v" id="f_weightV"></span></div>
+      </div>`;
+  }
+  html += `
+    <div class="toggleRow">
+      <span style="font-size:12.5px">화면에 표시</span>
+      <div class="switch" id="f_show"><i></i></div>
+    </div>
+    <div class="hintline">카드 위에서 텍스트를 직접 눌러 드래그하면 위치를 옮길 수 있어요.</div>`;
+
+  body.innerHTML = html;
+
+  $$('#fieldChips .chip').forEach(ch=>{
+    ch.onclick = ()=>{ S.sel = ch.dataset.field; render(); renderTextSheet(); };
+  });
+
+  if (key === 'time'){
+    $('#f_time').oninput = e=>{ c.time = e.target.value; render(); };
+    $('#f_zone').value = c.zone||'KST'; $('#f_zone').onchange = e=>{ c.zone=e.target.value; render(); };
+    $('#f_fmt').value = c.fmt||'24'; $('#f_fmt').onchange = e=>{ c.fmt=e.target.value; render(); };
+  } else {
+    const ce = $('#f_content');
+    ce.oninput = e=>{ c[meta.prop] = e.target.value; cards(); render(); };
+  }
+
+  const st = c.text[key];
+  $('#f_font').value = st.font; $('#f_font').onchange = e=>{ st.font=e.target.value; render(); };
+  $('#f_size').value = st.size; $('#f_size').oninput = e=>{
+    let v = parseInt(e.target.value,10); if (isNaN(v)) v=12; v=Math.max(6,Math.min(300,v));
+    st.size = v; render();
+  };
+  $('#f_color').value = toHex(st.color); $('#f_color').oninput = e=>{ st.color=toHex(e.target.value); render(); };
+  if (key !== 'time'){
+    $('#f_weight').value = st.weight; $('#f_weightV').textContent = st.weight;
+    $('#f_weight').oninput = e=>{ st.weight=+e.target.value; $('#f_weightV').textContent=e.target.value; render(); };
+  }
+  const showSw = $('#f_show');
+  const isShown = c.show?.[key] !== false;
+  showSw.classList.toggle('on', isShown);
+  showSw.onclick = ()=>{
+    if (!c.show) c.show={};
+    c.show[key] = c.show[key]===false ? true : false;
+    renderTextSheet(); render();
+  };
+}
+
+function renderPhotoSheet(){
+  const c = C();
+  const body = $('#sheetBody');
+  body.innerHTML = `
+    <button class="uploadBig" id="p_upload"><b>사진 업로드</b>탭해서 갤러리에서 선택</button>
+    <div class="field">
+      <label class="label">맞춤 방식</label>
+      <div class="seg" id="p_fit">
+        <button data-f="cover">꽉 채우기</button>
+        <button data-f="contain">전체보기</button>
+        <button data-f="native">원본</button>
+      </div>
+    </div>
+    <div class="field"><label class="label">사진 영역 높이</label>
+      <div class="rangeRow"><input type="range" id="p_ph" min="30" max="80"><span class="v" id="p_phV"></span></div>
+    </div>
+    <div class="field"><label class="label">노출</label>
+      <div class="rangeRow"><input type="range" id="p_exp" min="50" max="160"><span class="v" id="p_expV"></span></div>
+    </div>
+    <div class="field"><label class="label">대비</label>
+      <div class="rangeRow"><input type="range" id="p_contrast" min="50" max="160"><span class="v" id="p_contrastV"></span></div>
+    </div>
+    <div class="field"><label class="label">채도</label>
+      <div class="rangeRow"><input type="range" id="p_sat" min="0" max="180"><span class="v" id="p_satV"></span></div>
+    </div>
+    <div class="field"><label class="label">세피아</label>
+      <div class="rangeRow"><input type="range" id="p_sepia" min="0" max="100"><span class="v" id="p_sepiaV"></span></div>
+    </div>
+    <div class="field"><label class="label">사진 블러</label>
+      <div class="rangeRow"><input type="range" id="p_blur" min="0" max="14"><span class="v" id="p_blurV"></span></div>
+    </div>
+    <div class="field"><label class="label">여백 블러 (사진이 캔버스보다 작을 때)</label>
+      <div class="rangeRow"><input type="range" id="p_bgblur" min="0" max="36"><span class="v" id="p_bgblurV"></span></div>
+    </div>
+    <div class="toggleRow"><span style="font-size:12.5px">흑백</span><div class="switch" id="p_gray"><i></i></div></div>
+  `;
+  $('#p_upload').onclick = upload;
+  $$('#p_fit button').forEach(b=>{
+    b.classList.toggle('active', b.dataset.f === (c.fit||'cover'));
+    b.onclick = ()=>{ c.fit=b.dataset.f; renderPhotoSheet(); render(); toast('맞춤: '+b.dataset.f); };
+  });
+  const rangeBind = (id, prop, min, max, suffix)=>{
+    const el = $('#'+id), vv = $('#'+id+'V');
+    const val = c.styles[prop] ?? (prop==='exp'||prop==='contrast'||prop==='sat' ? 100 : (prop==='ph'?63:0));
+    el.value = val; vv.textContent = val + (suffix||'');
+    el.oninput = e=>{ c.styles[prop] = +e.target.value; vv.textContent = e.target.value + (suffix||''); render(); };
+  };
+  rangeBind('p_ph','ph',30,80,'%');
+  rangeBind('p_exp','exp',50,160);
+  rangeBind('p_contrast','contrast',50,160);
+  rangeBind('p_sat','sat',0,180);
+  rangeBind('p_sepia','sepia',0,100);
+  rangeBind('p_blur','blur',0,14);
+  rangeBind('p_bgblur','bgblur',0,36);
+  const graySw = $('#p_gray');
+  graySw.classList.toggle('on', !!c.styles.gray);
+  graySw.onclick = ()=>{ c.styles.gray = !c.styles.gray; graySw.classList.toggle('on', c.styles.gray); render(); };
+}
+
+function renderStyleSheet(){
+  const c = C();
+  const body = $('#sheetBody');
+  body.innerHTML = `
+    <label class="label">템플릿</label>
+    <div class="tplGrid" id="s_tplGrid"></div>
+    <div class="field"></div>
+    <div class="row2 field">
+      <div><label class="label">배경색</label><input class="color" id="s_bg" type="color"></div>
+      <div><label class="label">강조선 색</label><input class="color" id="s_acc" type="color"></div>
+    </div>
+    <div class="field"><label class="label">어둡게 오버레이</label>
+      <div class="rangeRow"><input type="range" id="s_op" min="0" max="100"><span class="v" id="s_opV"></span></div>
+    </div>
+    <div class="toggleRow"><span style="font-size:12.5px">하단 다크 페이드</span><div class="switch" id="s_fade"><i></i></div></div>
+    <div class="toggleRow"><span style="font-size:12.5px">비네팅</span><div class="switch" id="s_vig"><i></i></div></div>
+  `;
+  const grid = $('#s_tplGrid');
+  TPL_ORDER.forEach(name=>{
+    const t = T[name];
+    const b = document.createElement('button');
+    b.className = 'tplCard' + (c.tpl===name ? ' active':'');
+    b.innerHTML = `<div class="sw" style="background:${t.bg}"><i style="border-color:${t.acc}"></i></div><span>${t.label}</span>`;
+    b.onclick = ()=>applyTpl(name);
+    grid.appendChild(b);
+  });
+  $('#s_bg').value = c.styles.bg||'#161616'; $('#s_bg').oninput = e=>{ c.styles.bg=e.target.value; render(); };
+  $('#s_acc').value = c.styles.acc||'#e32539'; $('#s_acc').oninput = e=>{ c.styles.acc=e.target.value; render(); };
+  $('#s_op').value = c.styles.op||0; $('#s_opV').textContent = (c.styles.op||0)+'%';
+  $('#s_op').oninput = e=>{ c.styles.op=+e.target.value; $('#s_opV').textContent=e.target.value+'%'; render(); };
+  const fadeSw = $('#s_fade'); fadeSw.classList.toggle('on', !!c.styles.fade);
+  fadeSw.onclick = ()=>{ c.styles.fade=!c.styles.fade; fadeSw.classList.toggle('on', c.styles.fade); render(); };
+  const vigSw = $('#s_vig'); vigSw.classList.toggle('on', !!c.styles.vig);
+  vigSw.onclick = ()=>{ c.styles.vig=!c.styles.vig; vigSw.classList.toggle('on', c.styles.vig); render(); };
+}
+
+function renderLayoutSheet(){
+  const body = $('#sheetBody');
+  body.innerHTML = `
+    <label class="label">캔버스 비율</label>
+    <div class="seg" id="l_ratio">
+      <button data-r="4:5">4 : 5</button>
+      <button data-r="9:16">9 : 16</button>
+      <button data-r="1:1">1 : 1</button>
+    </div>
+    <div class="field"></div>
+    <div class="actionGrid">
+      <button class="actionBtn" id="l_add">＋ 새 카드</button>
+      <button class="actionBtn" id="l_dup">⧉ 카드 복제</button>
+      <button class="actionBtn" id="l_all">전체 카드 PNG</button>
+      <button class="actionBtn" id="l_save">프로젝트 저장</button>
+      <button class="actionBtn" id="l_load">저장본 불러오기</button>
+      <button class="actionBtn danger" id="l_del">현재 카드 삭제</button>
+    </div>
+  `;
+  $$('#l_ratio button').forEach(b=>{
+    b.classList.toggle('active', b.dataset.r===S.ratio);
+    b.onclick = ()=>{ S.ratio=b.dataset.r; applyRatioDom(); renderLayoutSheet(); toast('비율: '+b.dataset.r); };
+  });
+  $('#l_add').onclick = addNewCard;
+  $('#l_dup').onclick = ()=>{ S.cards.splice(S.i+1,0,Object.assign(structuredClone(C()),{id:crypto.randomUUID()})); S.i++; cards(); render(); toast('카드 복제'); };
+  $('#l_all').onclick = exportAll;
+  $('#l_save').onclick = save;
+  $('#l_load').onclick = load;
+  $('#l_del').onclick = ()=>del(S.i);
+}
+
+function escapeHtml(s){ return String(s).replace(/[&<>]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+function escapeAttr(s){ return String(s).replace(/"/g,'&quot;'); }
+
+/* ===== upload ===== */
+function upload(){ $('#file').click(); }
+function onFileSelected(e){
+  const f = e.target.files && e.target.files[0];
+  if (!f) return;
+  if (!f.type.startsWith('image/')){ toast('이미지 파일만 업로드 가능합니다'); e.target.value=''; return; }
+  const r = new FileReader();
+  r.onload = ()=>{
+    try{
+      const c = C(); c.photo = r.result; c.fit = 'cover';
+      cards(); render(); if (S.tab==='photo') renderPhotoSheet();
+      toast('사진 업로드 완료');
+    }catch(err){ console.error(err); toast('사진 적용 실패'); }
+  };
+  r.onerror = ()=>toast('파일 읽기 실패');
+  r.readAsDataURL(f);
+  e.target.value = '';
+}
+
+/* ===== drag (touch/pointer) ===== */
+function bindDrag(){
+  $$('.txt').forEach(e=>{
+    e.onpointerdown = ev=>{
+      ev.stopPropagation();
+      const k = e.dataset.k; if (!k) return;
+      S.sel = k;
+      const p = C().pos[k] || [9,50];
+      const stageRect = $('#stage').getBoundingClientRect();
+      S.drag = { k, sx: ev.clientX, sy: ev.clientY, ox: p[0], oy: p[1], isRight: (k==='wm'||k==='time'), rw: stageRect.width, rh: stageRect.height };
+      e.setPointerCapture(ev.pointerId);
+      render();
+      if (S.tab === 'text') renderTextSheet();
+    };
+    e.onpointermove = ev=>{
+      if (!S.drag || S.drag.k !== e.dataset.k) return;
+      let dx = (ev.clientX - S.drag.sx) / S.drag.rw * 100;
+      let dy = (ev.clientY - S.drag.sy) / S.drag.rh * 100;
+      if (S.drag.isRight) dx = -dx;
+      let nx = S.drag.ox + dx, ny = S.drag.oy + dy;
+      nx = S.drag.isRight ? Math.max(0, Math.min(45, nx)) : Math.max(0, Math.min(90, nx));
+      ny = Math.max(0, Math.min(98, ny));
+      C().pos[S.drag.k] = [nx, ny];
+      render();
+    };
+    e.onpointerup = ()=>{ S.drag = null; };
+    e.onpointercancel = ()=>{ S.drag = null; };
+  });
+}
+
+/* ===== export (iOS 공유 시트 기반) ===== */
+async function renderStageBlob(filename){
+  await document.fonts.ready;
+  const stage = $('#stage');
+  const prev = stage.style.transform;
+  stage.style.transform = 'translate(-50%,-50%) scale(1)';
+  const cv = await html2canvas(stage, { scale: 2, useCORS:true, allowTaint:true, backgroundColor:null, logging:false });
+  stage.style.transform = prev;
+  const blob = await new Promise(resolve => cv.toBlob(resolve, 'image/png'));
+  return { blob, filename };
+}
+
+async function deliverImages(items){
+  try{
+    const files = items.map(it => new File([it.blob], it.filename, { type:'image/png' }));
+    if (navigator.canShare && navigator.canShare({ files })){
+      await navigator.share({ files, title:'WEST150 카드' });
+      toast('공유 시트에서 저장을 완료하세요');
+      return;
+    }
+  }catch(err){
+    if (err && err.name === 'AbortError') return;
+    console.warn('share unavailable, falling back to overlay', err);
+  }
+  showSaveOverlay(items);
+}
+
+function showSaveOverlay(items){
+  const ov = $('#previewOverlay');
+  const pb = $('#previewBody');
+  pb.innerHTML = '';
+  pb.style.flexDirection = 'column';
+  pb.style.gap = '14px';
+  const hint = document.createElement('div');
+  hint.style.cssText = 'color:#9aa0aa;font-size:12px;text-align:center;padding:0 10px 4px;line-height:1.5';
+  hint.textContent = '이미지를 길게 눌러 "사진에 저장"을 선택하세요';
+  pb.appendChild(hint);
+  items.forEach(it=>{
+    const url = URL.createObjectURL(it.blob);
+    const img = document.createElement('img');
+    img.src = url;
+    img.style.cssText = 'max-width:88vw;max-height:56vh;border-radius:6px;box-shadow:0 20px 60px #000a;-webkit-touch-callout:default;display:block';
+    pb.appendChild(img);
+  });
+  $('#previewLabel').textContent = '';
+  ov.classList.add('show');
+}
+
+async function exportP(){
+  try{
+    const item = await renderStageBlob(`west150-card-${String(S.i+1).padStart(2,'0')}.png`);
+    await deliverImages([item]);
+  }catch(err){ console.error(err); toast('PNG 생성 실패 — 새로고침 후 재시도'); }
+}
+async function exportAll(){
+  const old = S.i;
+  try{
+    const items = [];
+    for (let i=0;i<S.cards.length;i++){
+      S.i = i; cards(); render();
+      await new Promise(r=>setTimeout(r,120));
+      items.push(await renderStageBlob(`west150-card-${String(i+1).padStart(2,'0')}.png`));
+    }
+    S.i = old; cards(); render();
+    await deliverImages(items);
+  }catch(err){
+    console.error(err); toast('PNG 생성 실패');
+    S.i = old; cards(); render();
+  }
+}
+
+/* ===== save / load ===== */
+function save(){
+  try{ localStorage.setItem('west150-editor-mobile', JSON.stringify({cards:S.cards, ratio:S.ratio})); toast('프로젝트 저장 완료'); }
+  catch(e){ console.error(e); toast('저장 실패 (용량 초과 가능)'); }
+}
+function load(){
+  try{
+    const x = localStorage.getItem('west150-editor-mobile');
+    if (!x) return toast('저장된 프로젝트가 없습니다');
+    const parsed = JSON.parse(x);
+    const list = Array.isArray(parsed) ? parsed : parsed.cards;
+    if (!Array.isArray(list) || !list.length) return toast('저장본이 올바르지 않습니다');
+    S.cards = list; S.ratio = (parsed.ratio) || S.ratio; S.i = 0;
+    applyRatioDom(); cards(); render(); renderSheet();
+    toast('프로젝트 불러오기 완료');
+  }catch(e){ console.error(e); toast('불러오기 실패'); }
+}
+
+/* ===== preview ===== */
+function openPreview(){
+  const ov = $('#previewOverlay');
+  const pb = $('#previewBody');
+  pb.innerHTML = '';
+  pb.style.flexDirection = 'row';
+  pb.style.gap = '0';
+  const stage = $('#stage');
+  const clone = stage.cloneNode(true);
+  clone.id = 'previewStage';
+  clone.querySelectorAll('[id]').forEach(el => el.removeAttribute('id'));
+  const availW = window.innerWidth - 32, availH = window.innerHeight - 120;
+  const z = Math.min(availW/stage.offsetWidth, availH/stage.offsetHeight, 1);
+  clone.style.transform = `scale(${z})`;
+  clone.style.transformOrigin = 'center center';
+  clone.style.position = 'static';
+  clone.style.left = 'auto'; clone.style.top = 'auto';
+  clone.querySelectorAll('.txt.sel').forEach(el=>el.classList.remove('sel'));
+  clone.querySelectorAll('.txt').forEach(el=>{ el.style.cursor='default'; el.onpointerdown=null; });
+  pb.appendChild(clone);
+  $('#previewLabel').textContent = `${S.i+1} / ${S.cards.length}`;
+  ov.classList.add('show');
+}
+
+function init(){
+  applyRatioDom();
+  cards();
+  render();
+  bindDrag();
+
+  $('#file').onchange = onFileSelected;
+  $('#pngBtn').onclick = exportP;
+  $('#previewPng').onclick = exportP;
+  $('#previewBtn').onclick = openPreview;
+  $$('[data-close-preview]').forEach(b=>b.onclick = ()=>$('#previewOverlay').classList.remove('show'));
+
+  $('#undoBtn').onclick = undo;
+  $('#redoBtn').onclick = redo;
+
+  $$('.tabbar button').forEach(b=>b.onclick = ()=>openTab(b.dataset.tab));
+  $('#scrim').onclick = closeSheet;
+
+  let resizeTimer;
+  window.addEventListener('resize', ()=>{ clearTimeout(resizeTimer); resizeTimer=setTimeout(()=>fitZoom(), 150); });
+
+  document.addEventListener('keydown', e=>{
+    const mod = e.ctrlKey || e.metaKey;
+    if (mod && e.key.toLowerCase()==='z' && !e.shiftKey){ e.preventDefault(); undo(); }
+    else if (mod && (e.key.toLowerCase()==='y' || (e.key.toLowerCase()==='z' && e.shiftKey))){ e.preventDefault(); redo(); }
+    else if (e.key === 'Escape'){ closeSheet(); $('#previewOverlay').classList.remove('show'); }
+  });
+
+  updateHistBtns();
+  pushHistory();
+}
+init();
+</script>
+</body>
+</html>
