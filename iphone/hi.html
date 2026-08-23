@@ -310,10 +310,29 @@ label.check-row input{ width:16px;height:16px; accent-color:#3654ff; }
 .panel-footer{
   display:flex; align-items:center; justify-content:space-between;
   gap:16px;
+  flex-wrap:wrap;
 }
 .panel-link{
   opacity:.6; letter-spacing:.2px;
 }
+.panel-source{
+  opacity:.55; letter-spacing:.2px;
+  font-size:0.9em;
+}
+
+/* 공통 브랜드·출처 (각 레이아웃용) */
+.layout-brand{
+  letter-spacing:.4px;
+  white-space:pre-wrap;
+}
+.layout-source{
+  opacity:.6;
+  letter-spacing:.2px;
+  white-space:pre-wrap;
+  font-size:0.92em;
+}
+.layout-source:empty,
+.layout-brand:empty{ display:none; }
 
 /* ===================================================
    HORIZONTAL CARD LAYOUT (레이아웃 B)
@@ -436,24 +455,30 @@ label.check-row input{ width:16px;height:16px; accent-color:#3654ff; }
   color:#6a6a76; font-size:26px; text-align:center; padding:60px; line-height:1.5; background:#1a1a20;
 }
 .w-scrim{
+  display:none;
   position:absolute; inset:0;
   background:linear-gradient(to top, rgba(0,0,0,.88) 0%, rgba(0,0,0,.35) 42%, rgba(0,0,0,0) 68%);
 }
+.card[data-layout="world"] .w-scrim{ display:block; }
 .w-top{
+  display:none;
   position:absolute; top:0; left:0; right:0;
   padding:70px 68px 0;
-  display:flex; align-items:center; justify-content:space-between;
+  align-items:center; justify-content:space-between;
   z-index:4;
 }
+.card[data-layout="world"] .w-top{ display:flex; }
 .w-eyebrow{ display:flex; align-items:center; gap:14px; }
 .w-eyebrow-text{ letter-spacing:.5px; }
 .w-eyebrow-line{ width:60px; height:1px; background:rgba(255,255,255,.5); }
 .w-date{ opacity:.75; }
 .w-bottom{
+  display:none;
   position:absolute; left:0; right:0; bottom:0;
   padding:0 68px 72px;
   z-index:4;
 }
+.card[data-layout="world"] .w-bottom{ display:block; }
 .w-headline{ font-weight:800; line-height:1.16; white-space:pre-wrap; word-break:keep-all; margin-bottom:22px; }
 .w-body{ line-height:1.55; white-space:pre-wrap; word-break:keep-all; opacity:.85; }
 
@@ -547,7 +572,8 @@ label.check-row input{ width:16px;height:16px; accent-color:#3654ff; }
   position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
   color:#6a6a76; font-size:26px; text-align:center; padding:60px; line-height:1.5; background:#1a1a20;
 }
-.sp-scrim{ position:absolute; inset:0; background:linear-gradient(to top, rgba(0,0,0,.85) 0%, rgba(0,0,0,.15) 45%, rgba(0,0,0,0) 65%); }
+.sp-scrim{ display:none; position:absolute; inset:0; background:linear-gradient(to top, rgba(0,0,0,.85) 0%, rgba(0,0,0,.15) 45%, rgba(0,0,0,0) 65%); }
+.card[data-layout="sports"] .sp-scrim{ display:block; }
 .sp-label-pill{
   display:none;
   position:absolute; top:70px; left:68px;
@@ -558,11 +584,13 @@ label.check-row input{ width:16px;height:16px; accent-color:#3654ff; }
 }
 .card[data-layout="sports"] .sp-label-pill{ display:inline-block; }
 .sp-bottom{
+  display:none;
   position:absolute; left:0; right:0; bottom:0;
   padding:0 68px 72px;
-  display:flex; align-items:flex-end; justify-content:space-between; gap:20px;
+  align-items:flex-end; justify-content:space-between; gap:20px;
   z-index:4;
 }
+.card[data-layout="sports"] .sp-bottom{ display:flex; }
 .sp-headline{ font-weight:800; line-height:1.16; white-space:pre-wrap; word-break:keep-all; }
 .sp-sub-wrap{ margin-top:20px; }
 .sp-body{ line-height:1.55; white-space:pre-wrap; word-break:keep-all; opacity:.85; margin-bottom:10px; }
@@ -774,11 +802,16 @@ label.check-row input{ width:16px;height:16px; accent-color:#3654ff; }
         </div>
 
         <div class="section" id="brandSection">
-          <div class="section-title"><span class="dot"></span>브랜드 표기</div>
+          <div class="section-title"><span class="dot"></span>브랜드 · 계정 · 출처</div>
           <div class="field">
-            <div class="field-label">상단 브랜드명</div>
+            <div class="field-label">브랜드명 / 계정</div>
             <textarea id="brandText" rows="1">WEST150DAILY</textarea>
           </div>
+          <div class="field">
+            <div class="field-label">출처 (사진 · 기사)</div>
+            <textarea id="sourceText" rows="1">Photo · west150daily</textarea>
+          </div>
+          <div class="upload-hint" style="margin-top:4px;line-height:1.5;">모든 템플릿에 브랜드명과 출처가 표시됩니다. 비우면 해당 영역이 숨겨집니다.</div>
         </div>
 
         <div class="section" id="labelSection" style="display:none;">
@@ -872,6 +905,28 @@ label.check-row input{ width:16px;height:16px; accent-color:#3654ff; }
           </div>
         </div>
 
+        <div class="section" id="dateHelperSection">
+          <div class="section-title"><span class="dot"></span>날짜 · 시간 도우미</div>
+          <div class="field">
+            <div class="field-label">포맷 선택</div>
+            <div class="seg-row">
+              <div class="seg-btn active" data-date-locale="ko">한국 (한국어)</div>
+              <div class="seg-btn" data-date-locale="en">미국 (English)</div>
+            </div>
+          </div>
+          <div class="field">
+            <div class="field-label">포함할 내용</div>
+            <div class="seg-row">
+              <div class="seg-btn active" data-date-mode="date">날짜만</div>
+              <div class="seg-btn" data-date-mode="datetime">날짜 + 시간</div>
+            </div>
+          </div>
+          <div class="field">
+            <button class="btn btn-secondary" id="fillDateBtn" style="margin-top:0;">📅 현재 날짜·시간으로 채우기</button>
+            <div class="upload-hint" style="margin-top:8px;line-height:1.5;">현재 레이아웃의 날짜 필드에 맞춰 자동으로 채워집니다. 한국/미국 포맷과 시간 포함 여부를 선택할 수 있어요.</div>
+          </div>
+        </div>
+
         <div class="section" id="commonTextSection">
           <div class="section-title"><span class="dot"></span>텍스트 내용</div>
 
@@ -891,7 +946,7 @@ label.check-row input{ width:16px;height:16px; accent-color:#3654ff; }
           </div>
 
           <div class="field">
-            <div class="field-label">출처 링크</div>
+            <div class="field-label">웹사이트 링크 (폰·가로형)</div>
             <textarea id="linkText" rows="1">www.west150daily.com</textarea>
           </div>
         </div>
@@ -1037,6 +1092,69 @@ label.check-row input{ width:16px;height:16px; accent-color:#3654ff; }
           <div class="row2">
             <div class="field"><div class="field-label">가로 위치</div><input type="range" id="brkOffXRange" min="-50" max="50" step="1" value="0"></div>
             <div class="field"><div class="field-label">세로 위치</div><input type="range" id="brkOffYRange" min="-50" max="50" step="1" value="0"></div>
+          </div>
+        </div>
+
+        <!-- 공통 이미지 보정 · 변형 (모든 레이아웃 공용) -->
+        <div class="section" id="imgAdjustSection">
+          <div class="section-title"><span class="dot"></span>이미지 보정 · 변형</div>
+
+          <div class="field">
+            <div class="field-label">필터 프리셋</div>
+            <div class="chip-row" id="filterPresetRow">
+              <div class="chip active" data-preset="none">원본</div>
+              <div class="chip" data-preset="grayscale">흑백</div>
+              <div class="chip" data-preset="sepia">세피아</div>
+              <div class="chip" data-preset="vintage">빈티지</div>
+              <div class="chip" data-preset="cool">쿨톤</div>
+              <div class="chip" data-preset="warm">웜톤</div>
+              <div class="chip" data-preset="contrast">고대비</div>
+              <div class="chip" data-preset="soft">소프트</div>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="field-label">밝기 <span class="val" id="adjBrightnessVal">100%</span></div>
+            <input type="range" id="adjBrightness" min="50" max="150" step="1" value="100">
+          </div>
+          <div class="field">
+            <div class="field-label">대비 <span class="val" id="adjContrastVal">100%</span></div>
+            <input type="range" id="adjContrast" min="50" max="150" step="1" value="100">
+          </div>
+          <div class="field">
+            <div class="field-label">채도 <span class="val" id="adjSaturateVal">100%</span></div>
+            <input type="range" id="adjSaturate" min="0" max="200" step="1" value="100">
+          </div>
+          <div class="field">
+            <div class="field-label">흐림 (블러) <span class="val" id="adjBlurVal">0px</span></div>
+            <input type="range" id="adjBlur" min="0" max="12" step="0.5" value="0">
+          </div>
+          <div class="field">
+            <div class="field-label">투명도 <span class="val" id="adjOpacityVal">100%</span></div>
+            <input type="range" id="adjOpacity" min="20" max="100" step="1" value="100">
+          </div>
+
+          <div class="field">
+            <div class="field-label">회전 <span class="val" id="adjRotateVal">0°</span></div>
+            <input type="range" id="adjRotate" min="0" max="360" step="1" value="0">
+          </div>
+
+          <div class="field">
+            <div class="field-label">반전</div>
+            <div class="seg-row">
+              <div class="seg-btn" id="adjFlipHBtn">좌우 반전</div>
+              <div class="seg-btn" id="adjFlipVBtn">상하 반전</div>
+            </div>
+          </div>
+
+          <div class="row2" style="margin-top:10px;">
+            <button class="btn btn-secondary" id="adjFillBtn" style="margin-top:0;">전체 채우기</button>
+            <button class="btn btn-secondary" id="adjResetBtn" style="margin-top:0;">원본으로</button>
+          </div>
+          <div class="upload-hint" style="margin-top:8px;line-height:1.5;">
+            확대·축소·위치는 위쪽 컨트롤을 사용하세요.<br>
+            「전체 채우기」는 줌·위치를 초기화하고 영역을 꽉 채웁니다.<br>
+            「원본으로」는 보정·변형·줌·위치를 모두 되돌립니다.
           </div>
         </div>
       </div>
@@ -1225,15 +1343,18 @@ label.check-row input{ width:16px;height:16px; accent-color:#3654ff; }
               <div class="panel-body" id="bodyOut">오늘 오전 발표된 주요 소식을 정리했습니다. 자세한 내용은 본문에서 확인하세요.</div>
               <div class="panel-footer">
                 <div class="panel-link" id="linkOut">www.west150daily.com</div>
+                <div class="panel-source layout-source" id="sourceOut">Photo · west150daily</div>
               </div>
             </div>
 
             <!-- horizontal layout (재사용: headline/date/body 텍스트 공유) -->
             <div class="h-card-left">
+              <div class="layout-brand" id="hBrandOut" style="margin-bottom:18px; opacity:.85;"></div>
               <div class="h-label style-plain" id="labelOut">TOP STORY</div>
               <div class="h-headline" id="hHeadlineOut">Breaking News</div>
               <div class="h-date" id="hDateOut">Saturday, 24th Aug 2025</div>
               <div class="h-body" id="hBodyOut">오늘 오전 발표된 주요 소식을 정리했습니다.</div>
+              <div class="layout-source" id="hSourceOut" style="margin-top:auto; padding-top:28px;"></div>
             </div>
             <div class="h-card-right">
               <div class="h-img-wrap" id="hImgWrap">
@@ -1251,11 +1372,15 @@ label.check-row input{ width:16px;height:16px; accent-color:#3654ff; }
                 <div class="w-eyebrow-text" id="wEyebrowOut">World</div>
                 <div class="w-eyebrow-line"></div>
               </div>
-              <div class="w-date" id="wDateOut">May 4, 2025</div>
+              <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
+                <div class="layout-brand" id="wBrandOut"></div>
+                <div class="w-date" id="wDateOut">May 4, 2025</div>
+              </div>
             </div>
             <div class="w-bottom">
               <div class="w-headline" id="wHeadlineOut">The New Era of Quiet Luxury</div>
               <div class="w-body" id="wBodyOut">How understated style is reshaping global fashion.</div>
+              <div class="layout-source" id="wSourceOut" style="margin-top:20px;"></div>
             </div>
 
             <!-- Environment layout -->
@@ -1268,9 +1393,11 @@ label.check-row input{ width:16px;height:16px; accent-color:#3654ff; }
               <div class="env-eyebrow">
                 <div class="env-eyebrow-dot"></div>
                 <div id="envEyebrowOut">Environment</div>
+                <div class="layout-brand" id="envBrandOut" style="margin-left:auto; opacity:.7;"></div>
               </div>
               <div class="env-headline" id="envHeadlineOut">Renewable Energy Hits Record Growth</div>
               <div class="env-body" id="envBodyOut">Global clean energy capacity soars to new heights in 2025.</div>
+              <div class="layout-source" id="envSourceOut" style="margin-top:24px;"></div>
             </div>
 
             <!-- Sports layout -->
@@ -1279,25 +1406,31 @@ label.check-row input{ width:16px;height:16px; accent-color:#3654ff; }
             </div>
             <div class="sp-scrim"></div>
             <div class="sp-label-pill" id="spLabelOut">Sports</div>
+            <div class="layout-brand" id="spBrandOut" style="position:absolute; top:78px; right:68px; z-index:4;"></div>
             <div class="sp-bottom">
               <div>
                 <div class="sp-headline" id="spHeadlineOut">A New Champion Rises</div>
                 <div class="sp-sub-wrap">
                   <div class="sp-body" id="spBodyOut">Rising star claims first Grand Slam title.</div>
                   <div class="sp-date" id="spDateOut">May 4, 2025</div>
+                  <div class="layout-source" id="spSourceOut" style="margin-top:12px;"></div>
                 </div>
               </div>
             </div>
 
             <!-- Breaking layout -->
             <div class="brk-top">
-              <div class="brk-label" id="brkLabelOut">Breaking News</div>
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:20px;">
+                <div class="brk-label" id="brkLabelOut">Breaking News</div>
+                <div class="layout-brand" id="brkBrandOut"></div>
+              </div>
               <div class="brk-headline-row">
                 <div class="brk-headline-bar"></div>
                 <div class="brk-headline" id="brkHeadlineOut">Major Earthquake Strikes Coastal Region</div>
               </div>
               <div class="brk-body" id="brkBodyOut">Authorities warn of aftershocks as rescue efforts continue.</div>
               <div class="brk-date" id="brkDateOut">May 4, 2025</div>
+              <div class="layout-source" id="brkSourceOut" style="margin-top:14px;"></div>
             </div>
             <div class="brk-img-area">
               <div class="brk-img-wrap" id="brkImgWrap">
@@ -1453,6 +1586,7 @@ const wImgSection = document.getElementById('wImgSection');
 const envImgSection = document.getElementById('envImgSection');
 const spImgSection = document.getElementById('spImgSection');
 const brkImgSection = document.getElementById('brkImgSection');
+const imgAdjustSection = document.getElementById('imgAdjustSection');
 
 const LAYOUT_TEXT_SECTIONS = { phone:null, horizontal:labelSection, world:worldSection, env:envSection, sports:sportsSection, breaking:brkSection };
 const LAYOUT_IMG_SECTIONS = { phone:[phoneImgSection,bgImgSection], horizontal:[hImgSection], world:[wImgSection], env:[envImgSection], sports:[spImgSection], breaking:[brkImgSection] };
@@ -1466,7 +1600,8 @@ document.querySelectorAll('.seg-btn[data-layout]').forEach(btn=>{
 
     // 비율 선택은 phone/horizontal 외 나머지 레이아웃에서도 사용 가능하게 유지 (horizontal만 예외)
     ratioSection.style.display = layout === 'horizontal' ? 'none' : '';
-    brandSection.style.display = layout === 'phone' ? '' : 'none';
+    // 브랜드·출처는 모든 레이아웃에서 사용
+    brandSection.style.display = '';
     // 공용 텍스트(헤드라인/날짜/본문/링크)는 phone·horizontal 카드에만 실제로 반영되므로
     // world/env/sports/breaking 디자인에서는 숨겨서 "글이 안 써진다"는 혼동을 막음
     commonTextSection.style.display = (layout === 'phone' || layout === 'horizontal') ? '' : 'none';
@@ -1479,6 +1614,11 @@ document.querySelectorAll('.seg-btn[data-layout]').forEach(btn=>{
     // 이미지 섹션 전환
     [phoneImgSection, bgImgSection, hImgSection, wImgSection, envImgSection, spImgSection, brkImgSection].forEach(s=>{ if(s) s.style.display = 'none'; });
     (LAYOUT_IMG_SECTIONS[layout] || []).forEach(s=>{ if(s) s.style.display = ''; });
+    // 보정·변형 패널은 이미지가 있는 모든 레이아웃에서 표시
+    if (imgAdjustSection) imgAdjustSection.style.display = '';
+
+    // 레이아웃 전환 시 보정 UI를 현재 레이아웃 상태에 맞춤
+    if (typeof syncAdjustUI === 'function') syncAdjustUI();
 
     fitScale();
   });
@@ -1486,6 +1626,8 @@ document.querySelectorAll('.seg-btn[data-layout]').forEach(btn=>{
 
 /* ---------------- 카테고리 라벨 텍스트 / 스타일 ---------------- */
 const labelOut = document.getElementById('labelOut');
+/* 라벨 스타일(폰트/굵기/크기/색)을 가로형 라벨 + Sports/Breaking 라벨 + World/Env 아이브로우에 공통 적용 */
+const LABEL_STYLE_OUTS = ['labelOut','spLabelOut','brkLabelOut','wEyebrowOut','envEyebrowOut'];
 function renderLabel(){
   const textEl = document.getElementById('labelText');
   const fontEl = document.getElementById('labelFont');
@@ -1493,11 +1635,18 @@ function renderLabel(){
   const colorEl = document.getElementById('labelColor');
   const sizeEl = document.getElementById('labelSize');
   const sizeVal = document.getElementById('labelSizeVal');
-  labelOut.textContent = textEl.value;
-  labelOut.style.fontFamily = fontEl.value;
-  labelOut.style.fontWeight = weightEl.value;
-  labelOut.style.color = colorEl.value;
-  labelOut.style.fontSize = sizeEl.value + 'px';
+  // 가로형 전용 텍스트는 labelText에서, 나머지는 각자 텍스트 유지
+  if (labelOut) {
+    labelOut.textContent = textEl.value;
+  }
+  LABEL_STYLE_OUTS.forEach(id=>{
+    const out = document.getElementById(id);
+    if (!out) return;
+    out.style.fontFamily = fontEl.value;
+    out.style.fontWeight = weightEl.value;
+    out.style.color = colorEl.value;
+    out.style.fontSize = sizeEl.value + 'px';
+  });
   if (sizeVal) sizeVal.textContent = sizeEl.value + 'px';
 }
 ['labelText','labelFont','labelWeight','labelColor','labelSize'].forEach(id=>{
@@ -1532,6 +1681,7 @@ setPanelBg('#2c2a4a');
 card.style.setProperty('--card-bg', '#f7f6f3');
 
 /* ---------------- 폰 화면 이미지 업/다운/줌 ---------------- */
+const imgUploaders = {}; // 레이아웃별 줌/위치/이미지 접근용
 const phoneImgWrap = document.getElementById('phoneImgWrap');
 const phoneNoImg = document.getElementById('phoneNoImg');
 let phoneImg = null;
@@ -1567,10 +1717,28 @@ document.getElementById('phoneImgInput').addEventListener('change', e=>{
   reader.readAsDataURL(file);
 });
 
+// phone 업로더 인터페이스 (보정 시스템과 통일)
+imgUploaders['phone'] = {
+  getZoom: () => pZoom,
+  getOffX: () => pOffX,
+  getOffY: () => pOffY,
+  setZoomOff: (z, x, y) => {
+    pZoom = z; pOffX = x; pOffY = y;
+    document.getElementById('pZoomRange').value = z;
+    document.getElementById('pZoomVal').textContent = z.toFixed(2) + 'x';
+    document.getElementById('pOffXRange').value = x;
+    document.getElementById('pOffYRange').value = y;
+    updatePhoneTransform();
+  },
+  getImg: () => phoneImg,
+  wrap: phoneImgWrap
+};
+
 function updatePhoneTransform(){
   card.style.setProperty('--pzoom', pZoom);
   card.style.setProperty('--poffx', pOffX + '%');
   card.style.setProperty('--poffy', pOffY + '%');
+  if (typeof applyImageEffects === 'function') applyImageEffects('phone');
 }
 updatePhoneTransform();
 
@@ -1651,10 +1819,27 @@ document.getElementById('hImgInput').addEventListener('change', e=>{
   reader.readAsDataURL(file);
 });
 
+imgUploaders['horizontal'] = {
+  getZoom: () => hZoom,
+  getOffX: () => hOffX,
+  getOffY: () => hOffY,
+  setZoomOff: (z, x, y) => {
+    hZoom = z; hOffX = x; hOffY = y;
+    document.getElementById('hZoomRange').value = z;
+    document.getElementById('hZoomVal').textContent = z.toFixed(2) + 'x';
+    document.getElementById('hOffXRange').value = x;
+    document.getElementById('hOffYRange').value = y;
+    updateHTransform();
+  },
+  getImg: () => hImg,
+  wrap: hImgWrap
+};
+
 function updateHTransform(){
   card.style.setProperty('--hzoom', hZoom);
   card.style.setProperty('--hoffx', hOffX + '%');
   card.style.setProperty('--hoffy', hOffY + '%');
+  if (typeof applyImageEffects === 'function') applyImageEffects('horizontal');
 }
 updateHTransform();
 
@@ -1699,7 +1884,8 @@ function bindSimpleText(textId, outId){
 ].forEach(([t,o])=>bindSimpleText(t,o));
 
 /* ---------------- 신규 레이아웃 · 이미지 업로드/줌/드래그 헬퍼 ---------------- */
-function setupImageUploader(prefix, cssVarPrefix){
+// setupImageUploader — 줌/위치 상태를 imgUploaders에 등록
+function setupImageUploader(prefix, cssVarPrefix, layoutKey){
   const wrap = document.getElementById(prefix+'ImgWrap');
   const noImgEl = document.getElementById(prefix+'NoImg');
   const inputEl = document.getElementById(prefix+'ImgInput');
@@ -1710,11 +1896,13 @@ function setupImageUploader(prefix, cssVarPrefix){
   if (!wrap || !inputEl) return;
 
   let img = null, offX = 0, offY = 0, zoom = 1;
+  const key = layoutKey || prefix;
 
   function updateTransform(){
     card.style.setProperty('--'+cssVarPrefix+'zoom', zoom);
     card.style.setProperty('--'+cssVarPrefix+'offx', offX + '%');
     card.style.setProperty('--'+cssVarPrefix+'offy', offY + '%');
+    if (typeof applyImageEffects === 'function') applyImageEffects(key);
   }
   updateTransform();
 
@@ -1764,48 +1952,347 @@ function setupImageUploader(prefix, cssVarPrefix){
   ['pointerup','pointercancel','pointerleave'].forEach(ev=>{
     wrap.addEventListener(ev, ()=>{ dragging=false; });
   });
+
+  imgUploaders[key] = {
+    getZoom: () => zoom,
+    getOffX: () => offX,
+    getOffY: () => offY,
+    setZoomOff: (z, x, y) => {
+      zoom = z; offX = x; offY = y;
+      if (zoomRange) zoomRange.value = z;
+      if (zoomVal) zoomVal.textContent = z.toFixed(2) + 'x';
+      if (offXRange) offXRange.value = x;
+      if (offYRange) offYRange.value = y;
+      updateTransform();
+    },
+    getImg: () => img,
+    wrap
+  };
 }
 
-setupImageUploader('w','w');
-setupImageUploader('env','e');
-setupImageUploader('sp','sp');
-setupImageUploader('brk','brk');
+setupImageUploader('w','w','world');
+setupImageUploader('env','e','env');
+setupImageUploader('sp','sp','sports');
+setupImageUploader('brk','brk','breaking');
+
+/* ---------------- 이미지 보정 · 변형 시스템 ---------------- */
+const FILTER_PRESETS = {
+  none:      { brightness:100, contrast:100, saturate:100, blur:0,   hue:0 },
+  grayscale: { brightness:100, contrast:110, saturate:0,   blur:0,   hue:0 },
+  sepia:     { brightness:105, contrast:95,  saturate:40,  blur:0,   hue:25 },
+  vintage:   { brightness:95,  contrast:110, saturate:70,  blur:0.4, hue:15 },
+  cool:      { brightness:100, contrast:105, saturate:90,  blur:0,   hue:-20 },
+  warm:      { brightness:105, contrast:100, saturate:130, blur:0,   hue:20 },
+  contrast:  { brightness:100, contrast:140, saturate:110, blur:0,   hue:0 },
+  soft:      { brightness:108, contrast:90,  saturate:95,  blur:1.2, hue:0 },
+};
+
+// 레이아웃별 보정 상태
+const imgAdjustState = {};
+function defaultAdjust(){
+  return {
+    brightness: 100, contrast: 100, saturate: 100, blur: 0, opacity: 100, hue: 0,
+    rotate: 0, flipH: false, flipV: false, preset: 'none'
+  };
+}
+['phone','horizontal','world','env','sports','breaking'].forEach(k=>{
+  imgAdjustState[k] = defaultAdjust();
+});
+
+function getActiveImgKey(){
+  const layout = (card && card.dataset.layout) || 'phone';
+  if (layout === 'phone') return 'phone';
+  if (layout === 'horizontal') return 'horizontal';
+  if (layout === 'world') return 'world';
+  if (layout === 'env') return 'env';
+  if (layout === 'sports') return 'sports';
+  if (layout === 'breaking') return 'breaking';
+  return 'phone';
+}
+
+function applyImageEffects(key){
+  const k = key || getActiveImgKey();
+  const st = imgAdjustState[k] || defaultAdjust();
+  const up = imgUploaders[k];
+  if (!up) return;
+  const img = up.getImg ? up.getImg() : null;
+  if (!img) return;
+
+  const zoom = up.getZoom ? up.getZoom() : 1;
+  const offX = up.getOffX ? up.getOffX() : 0;
+  const offY = up.getOffY ? up.getOffY() : 0;
+  const sx = st.flipH ? -1 : 1;
+  const sy = st.flipV ? -1 : 1;
+
+  // 인라인 transform이 CSS 변수 기반 transform을 덮어씀
+  img.style.transform =
+    `translate(-50%,-50%) scale(${zoom}) translate(${offX}%, ${offY}%) rotate(${st.rotate}deg) scaleX(${sx}) scaleY(${sy})`;
+  img.style.filter =
+    `brightness(${st.brightness}%) contrast(${st.contrast}%) saturate(${st.saturate}%) blur(${st.blur}px) hue-rotate(${st.hue||0}deg)`;
+  img.style.opacity = (st.opacity / 100).toString();
+}
+
+function syncAdjustUI(){
+  const k = getActiveImgKey();
+  const st = imgAdjustState[k] || defaultAdjust();
+
+  const setRange = (id, val, valId, suffix) => {
+    const el = document.getElementById(id);
+    const vEl = document.getElementById(valId);
+    if (el) el.value = val;
+    if (vEl) vEl.textContent = val + (suffix || '');
+  };
+  setRange('adjBrightness', st.brightness, 'adjBrightnessVal', '%');
+  setRange('adjContrast', st.contrast, 'adjContrastVal', '%');
+  setRange('adjSaturate', st.saturate, 'adjSaturateVal', '%');
+  setRange('adjBlur', st.blur, 'adjBlurVal', 'px');
+  setRange('adjOpacity', st.opacity, 'adjOpacityVal', '%');
+  setRange('adjRotate', st.rotate, 'adjRotateVal', '°');
+
+  document.querySelectorAll('#filterPresetRow .chip').forEach(c=>{
+    c.classList.toggle('active', c.dataset.preset === st.preset);
+  });
+  const flipHBtn = document.getElementById('adjFlipHBtn');
+  const flipVBtn = document.getElementById('adjFlipVBtn');
+  if (flipHBtn) flipHBtn.classList.toggle('active', !!st.flipH);
+  if (flipVBtn) flipVBtn.classList.toggle('active', !!st.flipV);
+
+  applyImageEffects(k);
+}
+
+// 슬라이더 이벤트
+['adjBrightness','adjContrast','adjSaturate','adjBlur','adjOpacity','adjRotate'].forEach(id=>{
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.addEventListener('input', ()=>{
+    const k = getActiveImgKey();
+    const st = imgAdjustState[k];
+    st.brightness = parseFloat(document.getElementById('adjBrightness').value);
+    st.contrast   = parseFloat(document.getElementById('adjContrast').value);
+    st.saturate   = parseFloat(document.getElementById('adjSaturate').value);
+    st.blur       = parseFloat(document.getElementById('adjBlur').value);
+    st.opacity    = parseFloat(document.getElementById('adjOpacity').value);
+    st.rotate     = parseFloat(document.getElementById('adjRotate').value);
+    st.preset     = 'custom';
+    document.querySelectorAll('#filterPresetRow .chip').forEach(c=>c.classList.remove('active'));
+    document.getElementById('adjBrightnessVal').textContent = st.brightness + '%';
+    document.getElementById('adjContrastVal').textContent   = st.contrast + '%';
+    document.getElementById('adjSaturateVal').textContent   = st.saturate + '%';
+    document.getElementById('adjBlurVal').textContent       = st.blur + 'px';
+    document.getElementById('adjOpacityVal').textContent    = st.opacity + '%';
+    document.getElementById('adjRotateVal').textContent     = st.rotate + '°';
+    applyImageEffects(k);
+  });
+});
+
+// 필터 프리셋
+document.querySelectorAll('#filterPresetRow .chip').forEach(chip=>{
+  chip.addEventListener('click', ()=>{
+    const preset = chip.dataset.preset;
+    const k = getActiveImgKey();
+    const st = imgAdjustState[k];
+    const p = FILTER_PRESETS[preset] || FILTER_PRESETS.none;
+    st.brightness = p.brightness;
+    st.contrast   = p.contrast;
+    st.saturate   = p.saturate;
+    st.blur       = p.blur;
+    st.hue        = p.hue || 0;
+    st.preset     = preset;
+    // opacity / rotate / flip 은 유지
+    syncAdjustUI();
+  });
+});
+
+// 좌우 / 상하 반전
+document.getElementById('adjFlipHBtn').addEventListener('click', ()=>{
+  const k = getActiveImgKey();
+  imgAdjustState[k].flipH = !imgAdjustState[k].flipH;
+  document.getElementById('adjFlipHBtn').classList.toggle('active', imgAdjustState[k].flipH);
+  applyImageEffects(k);
+});
+document.getElementById('adjFlipVBtn').addEventListener('click', ()=>{
+  const k = getActiveImgKey();
+  imgAdjustState[k].flipV = !imgAdjustState[k].flipV;
+  document.getElementById('adjFlipVBtn').classList.toggle('active', imgAdjustState[k].flipV);
+  applyImageEffects(k);
+});
+
+// 전체 채우기 = 줌 1 + 위치 0
+document.getElementById('adjFillBtn').addEventListener('click', ()=>{
+  const k = getActiveImgKey();
+  const up = imgUploaders[k];
+  if (up && up.setZoomOff) up.setZoomOff(1, 0, 0);
+  else applyImageEffects(k);
+});
+
+// 원본으로 = 보정 + 줌/위치 모두 초기화
+document.getElementById('adjResetBtn').addEventListener('click', ()=>{
+  const k = getActiveImgKey();
+  imgAdjustState[k] = defaultAdjust();
+  const up = imgUploaders[k];
+  if (up && up.setZoomOff) up.setZoomOff(1, 0, 0);
+  syncAdjustUI();
+});
+
+// 초기 동기화
+syncAdjustUI();
 
 /* ---------------- 텍스트 바인딩 ---------------- */
 /* outIds: 배열로 넘기면 같은 텍스트/스타일을 여러 출력 요소에 동시 반영 (가로형 카드 미러링용) */
-function bindText(prefix, outIds){
-  const ids = Array.isArray(outIds) ? outIds : [outIds];
+/* 스타일만 적용할 추가 아웃(다른 레이아웃 전용 텍스트는 각자 입력값을 유지) */
+function bindText(prefix, textOutIds, styleOnlyOutIds){
+  const textIds = Array.isArray(textOutIds) ? textOutIds : [textOutIds];
+  const styleIds = (styleOnlyOutIds || []).concat(textIds);
   const textEl = document.getElementById(prefix+'Text');
   const fontEl = document.getElementById(prefix+'Font');
   const weightEl = document.getElementById(prefix+'Weight');
   const colorEl = document.getElementById(prefix+'Color');
   const sizeEl = document.getElementById(prefix+'Size');
   const sizeVal = document.getElementById(prefix+'SizeVal');
-  const outs = ids.map(id=>document.getElementById(id)).filter(Boolean);
+  const textOuts = textIds.map(id=>document.getElementById(id)).filter(Boolean);
+  const styleOuts = styleIds.map(id=>document.getElementById(id)).filter(Boolean);
 
   function render(){
-    outs.forEach(out=>{
-      out.textContent = textEl.value;
-      out.style.fontFamily = fontEl.value;
-      out.style.fontWeight = weightEl.value;
-      out.style.color = colorEl.value;
-      out.style.fontSize = sizeEl.value + 'px';
+    // 텍스트는 phone/horizontal 전용 아웃에만 반영 (다른 레이아웃은 각자 textarea 사용)
+    if (textEl) {
+      textOuts.forEach(out=>{ out.textContent = textEl.value; });
+    }
+    // 스타일(폰트·굵기·색·크기)은 모든 관련 아웃에 공통 적용 → 템플릿마다 글꼴 크기 등이 먹히도록
+    styleOuts.forEach(out=>{
+      if (fontEl) out.style.fontFamily = fontEl.value;
+      if (weightEl) out.style.fontWeight = weightEl.value;
+      if (colorEl) out.style.color = colorEl.value;
+      if (sizeEl) out.style.fontSize = sizeEl.value + 'px';
     });
-    if (sizeVal) sizeVal.textContent = sizeEl.value + 'px';
+    if (sizeVal && sizeEl) sizeVal.textContent = sizeEl.value + 'px';
   }
-  [textEl, fontEl, weightEl, colorEl, sizeEl].forEach(el=>{
+  [textEl, fontEl, weightEl, colorEl, sizeEl].filter(Boolean).forEach(el=>{
     el.addEventListener('input', render);
     el.addEventListener('change', render);
   });
   render();
 }
 
-bindText('brand','brandOut');
-bindText('headline', ['headlineOut','hHeadlineOut']);
-bindText('date', ['dateOut','hDateOut']);
-bindText('body', ['bodyOut','hBodyOut']);
+bindText('brand', ['brandOut','hBrandOut','wBrandOut','envBrandOut','spBrandOut','brkBrandOut']);
+bindText('headline', ['headlineOut','hHeadlineOut'], ['wHeadlineOut','envHeadlineOut','spHeadlineOut','brkHeadlineOut']);
+bindText('date', ['dateOut','hDateOut'], ['wDateOut','spDateOut','brkDateOut']);
+bindText('body', ['bodyOut','hBodyOut'], ['wBodyOut','envBodyOut','spBodyOut','brkBodyOut']);
 bindText('link','linkOut');
 renderLabel();
+
+/* 출처(사진·기사) — 모든 레이아웃 공통 */
+(function bindSource(){
+  const textEl = document.getElementById('sourceText');
+  const outs = ['sourceOut','hSourceOut','wSourceOut','envSourceOut','spSourceOut','brkSourceOut']
+    .map(id => document.getElementById(id)).filter(Boolean);
+  // 출처는 링크 스타일(폰트·크기·색)을 공유
+  const fontEl = document.getElementById('linkFont');
+  const weightEl = document.getElementById('linkWeight');
+  const colorEl = document.getElementById('linkColor');
+  const sizeEl = document.getElementById('linkSize');
+
+  function render(){
+    const v = (textEl && textEl.value) ? textEl.value.trim() : '';
+    outs.forEach(out => {
+      out.textContent = v;
+      out.style.display = v ? '' : 'none';
+      if (fontEl) out.style.fontFamily = fontEl.value;
+      if (weightEl) out.style.fontWeight = weightEl.value;
+      if (colorEl) out.style.color = colorEl.value;
+      if (sizeEl) out.style.fontSize = Math.max(12, (parseInt(sizeEl.value,10) || 26) - 4) + 'px';
+    });
+  }
+  if (textEl) {
+    textEl.addEventListener('input', render);
+    textEl.addEventListener('change', render);
+  }
+  [fontEl, weightEl, colorEl, sizeEl].filter(Boolean).forEach(el => {
+    el.addEventListener('input', render);
+    el.addEventListener('change', render);
+  });
+  render();
+})();
+
+/* ---------------- 날짜·시간 도우미 (한국 / 미국 포맷) ---------------- */
+let dateLocale = 'ko'; // 'ko' | 'en'
+let dateMode = 'date'; // 'date' | 'datetime'
+
+document.querySelectorAll('.seg-btn[data-date-locale]').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.seg-btn[data-date-locale]').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    dateLocale = btn.dataset.dateLocale;
+  });
+});
+document.querySelectorAll('.seg-btn[data-date-mode]').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.seg-btn[data-date-mode]').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    dateMode = btn.dataset.dateMode;
+  });
+});
+
+function formatCurrentDateTime(locale, mode){
+  const now = new Date();
+  if (locale === 'ko') {
+    // 한국식: 2026년 8월 24일 (월)  /  2026년 8월 24일 (월) 오전 4:15
+    const weekdays = ['일','월','화','수','목','금','토'];
+    const y = now.getFullYear();
+    const m = now.getMonth() + 1;
+    const d = now.getDate();
+    const w = weekdays[now.getDay()];
+    let str = `${y}년 ${m}월 ${d}일 (${w})`;
+    if (mode === 'datetime') {
+      let h = now.getHours();
+      const min = String(now.getMinutes()).padStart(2,'0');
+      const ampm = h < 12 ? '오전' : '오후';
+      h = h % 12; if (h === 0) h = 12;
+      str += ` ${ampm} ${h}:${min}`;
+    }
+    return str;
+  } else {
+    // 미국식: Monday, August 24, 2026  /  Monday, August 24, 2026 · 4:15 AM
+    const optsDate = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    let str = now.toLocaleDateString('en-US', optsDate);
+    if (mode === 'datetime') {
+      const optsTime = { hour: 'numeric', minute: '2-digit', hour12: true };
+      str += ' · ' + now.toLocaleTimeString('en-US', optsTime);
+    }
+    return str;
+  }
+}
+
+function fillDateFields(){
+  const formatted = formatCurrentDateTime(dateLocale, dateMode);
+  const layout = card.dataset.layout || 'phone';
+  // 레이아웃별 날짜 입력 필드 매핑
+  const dateInputMap = {
+    phone: ['dateText'],
+    horizontal: ['dateText'],
+    world: ['wDateText'],
+    env: [], // Environment형에는 날짜 필드 없음
+    sports: ['spDateText'],
+    breaking: ['brkDateText'],
+  };
+  const targets = dateInputMap[layout] || ['dateText'];
+  if (targets.length === 0) {
+    // 날짜 필드가 없는 레이아웃이면 공통 dateText에도 넣고 사용자에게 안내
+    const el = document.getElementById('dateText');
+    if (el) { el.value = formatted; el.dispatchEvent(new Event('input')); }
+    alert('이 레이아웃에는 날짜 필드가 없습니다. 공통 날짜 입력란에만 반영했습니다.');
+    return;
+  }
+  targets.forEach(id=>{
+    const el = document.getElementById(id);
+    if (el) {
+      el.value = formatted;
+      el.dispatchEvent(new Event('input'));
+      el.dispatchEvent(new Event('change'));
+    }
+  });
+}
+
+document.getElementById('fillDateBtn').addEventListener('click', fillDateFields);
 
 /* ---------------- 미리보기 화면 배율 ---------------- */
 const cardShell = document.getElementById('cardShell');
