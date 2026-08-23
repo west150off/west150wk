@@ -282,8 +282,12 @@
    유틸
 --------------------------------------------------------- */
 const esc = s => (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-const lines = s => (s||'').split('\n').map(l=>`<div>${esc(l)}</div>`).join('');
-const linesP = s => (s||'').split('\n').map(l=>`<p style="margin:0;">${esc(l)}</p>`).join('');
+const lines = s => (s||'').split('\n').map(l =>
+  l === '' ? `<div style="min-height:1em;">&nbsp;</div>` : `<div>${esc(l)}</div>`
+).join('');
+const linesP = s => (s||'').split('\n').map(l =>
+  l === '' ? `<p style="margin:0;min-height:1em;">&nbsp;</p>` : `<p style="margin:0;">${esc(l)}</p>`
+).join('');
 const nl2br = s => esc(s||'').replace(/\n/g,'<br>');
 
 function fontStack(name){
