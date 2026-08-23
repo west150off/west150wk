@@ -1,0 +1,1966 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>WEST150DAILY · 폰 카드 편집기</title>
+
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Noto+Serif+KR:wght@400;600;900&family=Black+Han+Sans&family=IBM+Plex+Sans+KR:wght@400;600;700&family=Nanum+Myeongjo:wght@400;700;800&display=swap" rel="stylesheet">
+
+<style>
+@font-face{
+  font-family:'RIDIBatang';
+  src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_twelve@1.0/RIDIBatang.woff') format('woff');
+  font-weight:400; font-style:normal; font-display:swap;
+}
+@font-face{
+  font-family:'GmarketSans';
+  src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansBold.woff') format('woff');
+  font-weight:700; font-style:normal; font-display:swap;
+}
+@font-face{
+  font-family:'GmarketSans';
+  src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');
+  font-weight:500; font-style:normal; font-display:swap;
+}
+
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{
+  font-family:'Pretendard','Noto Sans KR',sans-serif;
+  background:#101014;
+  color:#eceef1;
+  overflow:hidden;
+}
+
+.app{ display:flex; flex-direction:column; height:100vh; }
+
+/* ---------- Topbar ---------- */
+.topbar{
+  height:64px; min-height:64px;
+  display:flex; align-items:center;
+  background:#151519;
+  border-bottom:1px solid #292930;
+  padding:0 20px;
+  z-index:20;
+}
+.topbar-brand{ width:230px; min-width:230px; display:flex; align-items:center; gap:10px; }
+.brand-mark{
+  width:32px;height:32px;border-radius:8px;
+  background:linear-gradient(135deg,#3654ff,#141b6b);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:900;font-size:14px;color:#fff;
+}
+.topbar-brand-text .brand-name{ font-size:13px; font-weight:800; letter-spacing:.3px; }
+.topbar-brand-text .brand-sub{ font-size:9px; color:#777780; margin-top:2px; }
+
+.top-menu{ height:100%; display:flex; align-items:stretch; gap:2px; }
+.top-menu-item{
+  position:relative; border:0; background:transparent; color:#898991;
+  padding:0 17px; font-family:'Pretendard',sans-serif; font-size:12.5px; font-weight:600;
+  cursor:pointer; transition:color .18s ease, background .18s ease;
+}
+.top-menu-item:hover{ color:#f1f1f3; background:#1c1c21; }
+.top-menu-item.active{ color:#fff; }
+.top-menu-item.active::after{
+  content:""; position:absolute; left:14px; right:14px; bottom:0; height:2px;
+  background:#3654ff; border-radius:2px 2px 0 0;
+}
+.top-menu-item.menu-save{ margin-left:8px; color:#f2f2f4; }
+
+/* ---------- Workspace ---------- */
+.workspace{ flex:1; min-height:0; display:flex; }
+
+/* ---------- Sidebar ---------- */
+.sidebar{
+  width:392px; min-width:392px; height:100%; overflow-y:auto;
+  background:#17171c; border-right:1px solid #26262e; padding:20px 20px 120px;
+}
+.sidebar::-webkit-scrollbar{width:8px;}
+.sidebar::-webkit-scrollbar-thumb{background:#33333c; border-radius:8px;}
+
+.tool-panel{ display:none; }
+.tool-panel.active{ display:block; }
+
+.panel-heading{ display:flex; align-items:center; justify-content:space-between; padding:3px 2px 18px; }
+.panel-title{ font-size:18px; font-weight:800; letter-spacing:-.4px; color:#f4f4f6; }
+.panel-subtitle{ margin-top:5px; font-size:10.5px; color:#75757f; letter-spacing:-.1px; }
+
+.section{
+  border:1px solid #26262e; border-radius:14px; padding:16px 16px 18px;
+  margin-bottom:14px; background:#1b1b21;
+}
+.section-title{
+  font-size:12.5px; font-weight:700; letter-spacing:.4px; color:#f3f3f5;
+  margin-bottom:12px; display:flex; align-items:center; gap:7px;
+}
+.section-title .dot{width:6px;height:6px;border-radius:50%;background:#3654ff;}
+
+.field{margin-bottom:12px;}
+.field:last-child{margin-bottom:0;}
+.field-label{ font-size:11px; color:#9a9aa4; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center; }
+.field-label span.val{color:#5d7bff; font-weight:600;}
+
+textarea, input[type="text"]{
+  width:100%; resize:vertical; min-height:38px;
+  background:#0f0f13; border:1px solid #2c2c35; border-radius:9px;
+  color:#eceef1; font-size:12.5px; padding:9px 10px;
+  font-family:'Pretendard',sans-serif; line-height:1.4;
+}
+textarea:focus, input[type="text"]:focus{ outline:none; border-color:#3654ff; }
+
+select{
+  width:100%; background:#0f0f13; border:1px solid #2c2c35;
+  border-radius:9px; color:#eceef1; font-size:12.5px; padding:9px 10px;
+  font-family:'Pretendard',sans-serif;
+}
+
+input[type="range"]{
+  width:100%; -webkit-appearance:none; appearance:none;
+  height:4px; border-radius:4px; background:#2c2c35; outline:none;
+}
+input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance:none; width:16px; height:16px; border-radius:50%;
+  background:#3654ff; cursor:pointer; border:2px solid #fff;
+}
+input[type="range"]::-moz-range-thumb{
+  width:16px; height:16px; border-radius:50%;
+  background:#3654ff; cursor:pointer; border:2px solid #fff;
+}
+
+.row2{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.row3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
+
+.color-input{
+  -webkit-appearance:none; appearance:none;
+  width:100%; height:34px; padding:0; border:1px solid #2c2c35;
+  border-radius:9px; background:#0f0f13; cursor:pointer;
+}
+.color-input::-webkit-color-swatch-wrapper{padding:3px;}
+.color-input::-webkit-color-swatch{border:none; border-radius:6px;}
+
+.swatches{ display:grid; grid-template-columns:repeat(8,1fr); gap:8px; }
+.swatch{
+  width:100%; aspect-ratio:1; border-radius:50%;
+  border:2px solid transparent; cursor:pointer;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.15);
+}
+.swatch.active{ border-color:#fff; transform:scale(1.08); }
+
+.upload-btn{
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  width:100%; padding:11px; border-radius:9px;
+  background:#232329; border:1px dashed #3a3a44; color:#d8d8de;
+  font-size:12.5px; cursor:pointer; font-weight:600;
+}
+.upload-btn:hover{ background:#282830; border-color:#3654ff; }
+.upload-hint{ font-size:10.5px; color:#75757f; margin-top:6px; text-align:center; }
+
+.btn{
+  width:100%; padding:13px; border-radius:11px; border:none;
+  font-size:13.5px; font-weight:700; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+}
+.btn-primary{ background:linear-gradient(135deg,#3654ff,#141b6b); color:#fff; }
+.btn-primary:hover{ filter:brightness(1.1); }
+.btn-secondary{ background:#232329; color:#eceef1; border:1px solid #34343d; margin-top:8px; }
+.btn-secondary:hover{ background:#282830; }
+
+.chip-row{ display:flex; gap:6px; flex-wrap:wrap; }
+.chip{
+  padding:6px 10px; border-radius:20px; font-size:11px;
+  background:#0f0f13; border:1px solid #2c2c35; color:#b6b6c0; cursor:pointer;
+}
+.chip.active{ background:#3654ff; border-color:#3654ff; color:#fff; }
+
+.seg-row{ display:flex; gap:8px; }
+.seg-btn{
+  flex:1; padding:10px 6px; border-radius:9px; text-align:center;
+  background:#0f0f13; border:1px solid #2c2c35; color:#b6b6c0;
+  font-size:11.5px; font-weight:600; cursor:pointer;
+}
+.seg-btn.active{ background:#3654ff; border-color:#3654ff; color:#fff; }
+
+label.check-row{
+  display:flex; align-items:center; gap:8px; font-size:12px; color:#c8c8d0; margin-bottom:10px;
+}
+label.check-row:last-child{ margin-bottom:0; }
+label.check-row input{ width:16px;height:16px; accent-color:#3654ff; }
+
+/* ---------- Preview ---------- */
+.preview-wrap{
+  flex:1; height:100%; display:flex; align-items:center; justify-content:center;
+  background: radial-gradient(circle at 30% 20%, #1a1a22, #0b0b0e 70%);
+  position:relative; overflow:auto;
+}
+.stage{ position:relative; }
+.card-shell{
+  border-radius:22px; overflow:hidden;
+  box-shadow:0 30px 80px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.06);
+}
+
+/* Card base — size toggled via data-ratio */
+.card{
+  width:1080px; height:1920px;
+  position:relative;
+  background:var(--card-bg,#f7f6f3);
+  font-family:'Pretendard',sans-serif;
+  overflow:hidden;
+}
+.card[data-ratio="square"]{ height:1080px; }
+
+/* ===== Top brand row ===== */
+.card-brand-row{
+  position:absolute; top:0; left:0; right:0;
+  padding:64px 72px 0;
+  display:flex; align-items:center; gap:14px;
+  z-index:6;
+}
+.brand-glyph{
+  width:34px; height:34px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+}
+.brand-glyph svg{ width:100%; height:100%; }
+.brand-word{
+  white-space:pre-wrap; letter-spacing:1px;
+}
+
+/* ===== Phone mock area ===== */
+.phone-stage{
+  position:absolute;
+  left:50%; transform:translateX(-50%);
+  top:190px;
+  width:640px; height:900px;
+  display:flex; align-items:center; justify-content:center;
+  z-index:5;
+}
+.card[data-ratio="square"] .phone-stage{
+  top:96px; width:420px; height:480px;
+}
+
+.phone-frame{
+  position:relative;
+  width:560px; height:1160px;
+  border-radius:64px;
+  background:#0b0b0d;
+  box-shadow:0 40px 90px rgba(0,0,0,.35);
+  padding:18px;
+  transform:scale(var(--phone-scale,0.72));
+}
+.card[data-ratio="square"] .phone-frame{
+  transform:scale(var(--phone-scale-sq,0.46));
+}
+.phone-screen{
+  position:relative;
+  width:100%; height:100%;
+  border-radius:46px;
+  overflow:hidden;
+  background:#1c1c22;
+}
+.phone-screen .noimg{
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  color:#5a5a66; font-size:26px; text-align:center; padding:60px; line-height:1.5;
+  background:#1c1c22;
+}
+.phone-notch{
+  position:absolute; top:22px; left:50%; transform:translateX(-50%);
+  width:150px; height:34px; border-radius:20px; background:#0b0b0d; z-index:3;
+}
+.phone-side-btn{ position:absolute; background:#0b0b0d; border-radius:3px; }
+.phone-frame .btn-power{ right:-3px; top:230px; width:6px; height:110px; border-radius:0 4px 4px 0; }
+.phone-frame .btn-vol1{ left:-3px; top:200px; width:6px; height:60px; border-radius:4px 0 0 4px; }
+.phone-frame .btn-vol2{ left:-3px; top:270px; width:6px; height:90px; border-radius:4px 0 0 4px; }
+
+.phone-img-wrap{ position:absolute; inset:0; overflow:hidden; cursor:grab; }
+.phone-img-wrap:active{ cursor:grabbing; }
+.phone-img-wrap img{
+  position:absolute; top:50%; left:50%;
+  width:100%; height:100%;
+  object-fit:cover; object-position:center;
+  transform:translate(-50%,-50%) scale(var(--pzoom,1)) translate(var(--poffx,0%), var(--poffy,0%));
+  user-select:none; pointer-events:none;
+}
+
+/* ===== Bottom dark panel ===== */
+.card-panel{
+  position:absolute; left:0; right:0; bottom:0;
+  background:var(--panel-bg,#2c2a4a);
+  border-radius:36px 36px 0 0;
+  padding:64px 68px 76px;
+  z-index:6;
+}
+.card[data-ratio="square"] .card-panel{
+  padding:44px 56px 52px;
+}
+
+.panel-headline{
+  font-weight:800; line-height:1.14; white-space:pre-wrap;
+  word-break:keep-all; margin-bottom:22px;
+}
+.panel-date{
+  opacity:.7; margin-bottom:16px; letter-spacing:.3px;
+}
+.panel-body{
+  line-height:1.55; white-space:pre-wrap; word-break:keep-all; opacity:.88;
+  margin-bottom:34px;
+}
+.panel-footer{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:16px;
+}
+.panel-link{
+  opacity:.6; letter-spacing:.2px;
+}
+
+/* ===================================================
+   HORIZONTAL CARD LAYOUT (레이아웃 B)
+   =================================================== */
+.card[data-layout="horizontal"]{
+  width:1536px; height:1024px;
+  border-radius:28px;
+  background:var(--h-bg,#2c2a4a);
+  display:flex;
+  align-items:stretch;
+  padding:56px 60px;
+  gap:0;
+}
+.card[data-layout="horizontal"] .card-brand-row,
+.card[data-layout="horizontal"] .phone-stage,
+.card[data-layout="horizontal"] .card-panel{
+  display:none;
+}
+
+.h-card-left{
+  display:none;
+  flex:1;
+  flex-direction:column;
+  justify-content:flex-start;
+  padding-right:40px;
+  min-width:0;
+}
+.card[data-layout="horizontal"] .h-card-left{ display:flex; }
+
+.h-label{
+  display:inline-flex;
+  align-items:center;
+  align-self:flex-start;
+  padding:9px 18px;
+  border-radius:20px;
+  letter-spacing:1px;
+  margin-bottom:26px;
+  white-space:pre-wrap;
+}
+.h-label.style-plain{
+  background:transparent;
+  padding:0;
+}
+.h-label.style-pill{
+  background:var(--accent,#c23b52);
+}
+
+.h-headline{
+  font-weight:800;
+  line-height:1.18;
+  white-space:pre-wrap;
+  word-break:keep-all;
+  margin-bottom:28px;
+}
+.h-date{
+  opacity:.65;
+  margin-bottom:18px;
+}
+.h-body{
+  line-height:1.6;
+  white-space:pre-wrap;
+  word-break:keep-all;
+  opacity:.85;
+}
+
+.h-card-right{
+  display:none;
+  position:relative;
+  flex-shrink:0;
+  width:420px;
+  overflow:hidden;
+  border-radius:210px;
+}
+.card[data-layout="horizontal"] .h-card-right{ display:block; }
+
+.h-img-wrap{ position:absolute; inset:0; overflow:hidden; cursor:grab; background:#20202a; }
+.h-img-wrap:active{ cursor:grabbing; }
+.h-img-wrap img{
+  position:absolute; top:50%; left:50%;
+  width:100%; height:100%;
+  object-fit:cover; object-position:center;
+  transform:translate(-50%,-50%) scale(var(--hzoom,1)) translate(var(--hoffx,0%), var(--hoffy,0%));
+  user-select:none; pointer-events:none;
+}
+.h-img-wrap .noimg{
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  color:#6a6a76; font-size:20px; text-align:center; padding:40px; line-height:1.5;
+  background:#20202a;
+}
+
+/* ===================================================
+   WORLD LAYOUT (풀바디 이미지 + 하단 오버레이)
+   =================================================== */
+.card[data-layout="world"]{
+  width:1080px; height:1920px;
+  border-radius:28px;
+  overflow:hidden;
+  position:relative;
+  background:#0c0c0e;
+}
+.card[data-layout="world"][data-ratio="square"]{ height:1080px; }
+.card[data-layout="world"] .card-brand-row,
+.card[data-layout="world"] .phone-stage,
+.card[data-layout="world"] .card-panel,
+.card[data-layout="world"] .h-card-left,
+.card[data-layout="world"] .h-card-right{ display:none; }
+
+.w-img-wrap{ display:none; position:absolute; inset:0; overflow:hidden; cursor:grab; background:#1a1a20; }
+.card[data-layout="world"] .w-img-wrap{ display:block; }
+.w-img-wrap:active{ cursor:grabbing; }
+.w-img-wrap img{
+  position:absolute; top:50%; left:50%;
+  width:100%; height:100%;
+  object-fit:cover; object-position:center;
+  transform:translate(-50%,-50%) scale(var(--wzoom,1)) translate(var(--woffx,0%), var(--woffy,0%));
+  user-select:none; pointer-events:none;
+}
+.w-img-wrap .noimg{
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  color:#6a6a76; font-size:26px; text-align:center; padding:60px; line-height:1.5; background:#1a1a20;
+}
+.w-scrim{
+  position:absolute; inset:0;
+  background:linear-gradient(to top, rgba(0,0,0,.88) 0%, rgba(0,0,0,.35) 42%, rgba(0,0,0,0) 68%);
+}
+.w-top{
+  position:absolute; top:0; left:0; right:0;
+  padding:70px 68px 0;
+  display:flex; align-items:center; justify-content:space-between;
+  z-index:4;
+}
+.w-eyebrow{ display:flex; align-items:center; gap:14px; }
+.w-eyebrow-text{ letter-spacing:.5px; }
+.w-eyebrow-line{ width:60px; height:1px; background:rgba(255,255,255,.5); }
+.w-date{ opacity:.75; }
+.w-bottom{
+  position:absolute; left:0; right:0; bottom:0;
+  padding:0 68px 72px;
+  z-index:4;
+}
+.w-headline{ font-weight:800; line-height:1.16; white-space:pre-wrap; word-break:keep-all; margin-bottom:22px; }
+.w-body{ line-height:1.55; white-space:pre-wrap; word-break:keep-all; opacity:.85; }
+
+/* ===================================================
+   ENVIRONMENT LAYOUT (상단 이미지 + 하단 흰 패널, 웨이브 컷)
+   =================================================== */
+.card[data-layout="env"]{
+  width:1080px; height:1920px;
+  border-radius:28px;
+  overflow:hidden;
+  position:relative;
+  background:var(--env-panel-bg,#f7f5f0);
+}
+.card[data-layout="env"][data-ratio="square"]{ height:1080px; }
+.card[data-layout="env"] .card-brand-row,
+.card[data-layout="env"] .phone-stage,
+.card[data-layout="env"] .card-panel,
+.card[data-layout="env"] .h-card-left,
+.card[data-layout="env"] .h-card-right,
+.card[data-layout="env"] .w-img-wrap,
+.card[data-layout="env"] .w-scrim,
+.card[data-layout="env"] .w-top,
+.card[data-layout="env"] .w-bottom{ display:none; }
+
+.env-img-area{ display:none; position:relative; width:100%; height:58%; overflow:hidden; }
+.card[data-layout="env"] .env-img-area{ display:block; }
+.card[data-layout="env"][data-ratio="square"] .env-img-area{ height:50%; }
+.env-img-wrap{ position:absolute; inset:0; overflow:hidden; cursor:grab; background:#1a1a20; }
+.env-img-wrap:active{ cursor:grabbing; }
+.env-img-wrap img{
+  position:absolute; top:50%; left:50%;
+  width:100%; height:100%;
+  object-fit:cover; object-position:center;
+  transform:translate(-50%,-50%) scale(var(--ezoom,1)) translate(var(--eoffx,0%), var(--eoffy,0%));
+  user-select:none; pointer-events:none;
+}
+.env-img-wrap .noimg{
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  color:#6a6a76; font-size:26px; text-align:center; padding:60px; line-height:1.5; background:#1a1a20;
+}
+.env-wave{
+  position:absolute; left:0; right:0; bottom:-2px; height:120px;
+  z-index:3;
+}
+.env-panel{
+  display:none;
+  position:relative;
+  padding:56px 68px 72px;
+  background:var(--env-panel-bg,#f7f5f0);
+}
+.card[data-layout="env"] .env-panel{ display:block; }
+.env-eyebrow{ display:flex; align-items:center; gap:12px; margin-bottom:24px; }
+.env-eyebrow-dot{ width:10px; height:10px; border-radius:50%; background:var(--accent,#3654ff); }
+.env-headline{ font-weight:800; line-height:1.16; white-space:pre-wrap; word-break:keep-all; margin-bottom:26px; }
+.env-body{ line-height:1.6; white-space:pre-wrap; word-break:keep-all; opacity:.75; }
+
+/* ===================================================
+   SPORTS LAYOUT (풀 이미지 + 상단 알약 라벨)
+   =================================================== */
+.card[data-layout="sports"]{
+  width:1080px; height:1920px;
+  border-radius:28px;
+  overflow:hidden;
+  position:relative;
+  background:#0c0c0e;
+}
+.card[data-layout="sports"][data-ratio="square"]{ height:1080px; }
+.card[data-layout="sports"] .card-brand-row,
+.card[data-layout="sports"] .phone-stage,
+.card[data-layout="sports"] .card-panel,
+.card[data-layout="sports"] .h-card-left,
+.card[data-layout="sports"] .h-card-right,
+.card[data-layout="sports"] .w-img-wrap,
+.card[data-layout="sports"] .w-scrim,
+.card[data-layout="sports"] .w-top,
+.card[data-layout="sports"] .w-bottom,
+.card[data-layout="sports"] .env-img-area,
+.card[data-layout="sports"] .env-panel{ display:none; }
+
+.sp-img-wrap{ display:none; position:absolute; inset:0; overflow:hidden; cursor:grab; background:#1a1a20; }
+.card[data-layout="sports"] .sp-img-wrap{ display:block; }
+.sp-img-wrap:active{ cursor:grabbing; }
+.sp-img-wrap img{
+  position:absolute; top:50%; left:50%;
+  width:100%; height:100%;
+  object-fit:cover; object-position:center;
+  transform:translate(-50%,-50%) scale(var(--spzoom,1)) translate(var(--spoffx,0%), var(--spoffy,0%));
+  user-select:none; pointer-events:none;
+}
+.sp-img-wrap .noimg{
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  color:#6a6a76; font-size:26px; text-align:center; padding:60px; line-height:1.5; background:#1a1a20;
+}
+.sp-scrim{ position:absolute; inset:0; background:linear-gradient(to top, rgba(0,0,0,.85) 0%, rgba(0,0,0,.15) 45%, rgba(0,0,0,0) 65%); }
+.sp-label-pill{
+  display:none;
+  position:absolute; top:70px; left:68px;
+  padding:12px 26px; border-radius:30px;
+  background:var(--accent,#12b76a);
+  color:#0c0c0e; letter-spacing:.3px;
+  z-index:4;
+}
+.card[data-layout="sports"] .sp-label-pill{ display:inline-block; }
+.sp-bottom{
+  position:absolute; left:0; right:0; bottom:0;
+  padding:0 68px 72px;
+  display:flex; align-items:flex-end; justify-content:space-between; gap:20px;
+  z-index:4;
+}
+.sp-headline{ font-weight:800; line-height:1.16; white-space:pre-wrap; word-break:keep-all; }
+.sp-sub-wrap{ margin-top:20px; }
+.sp-body{ line-height:1.55; white-space:pre-wrap; word-break:keep-all; opacity:.85; margin-bottom:10px; }
+.sp-date{ opacity:.7; }
+
+/* ===================================================
+   BREAKING LAYOUT (하단 이미지 + 상단 텍스트, 빨간 라벨 + 세로 바)
+   =================================================== */
+.card[data-layout="breaking"]{
+  width:1080px; height:1920px;
+  border-radius:28px;
+  overflow:hidden;
+  position:relative;
+  background:var(--brk-bg,#101014);
+  display:flex;
+  flex-direction:column;
+}
+.card[data-layout="breaking"][data-ratio="square"]{ height:1080px; }
+.card[data-layout="breaking"] .card-brand-row,
+.card[data-layout="breaking"] .phone-stage,
+.card[data-layout="breaking"] .card-panel,
+.card[data-layout="breaking"] .h-card-left,
+.card[data-layout="breaking"] .h-card-right,
+.card[data-layout="breaking"] .w-img-wrap,
+.card[data-layout="breaking"] .w-scrim,
+.card[data-layout="breaking"] .w-top,
+.card[data-layout="breaking"] .w-bottom,
+.card[data-layout="breaking"] .env-img-area,
+.card[data-layout="breaking"] .env-panel,
+.card[data-layout="breaking"] .sp-img-wrap,
+.card[data-layout="breaking"] .sp-scrim,
+.card[data-layout="breaking"] .sp-label-pill,
+.card[data-layout="breaking"] .sp-bottom{ display:none; }
+
+.brk-top{
+  display:none;
+  position:relative;
+  flex:1;
+  padding:70px 68px 40px;
+  flex-direction:column;
+  justify-content:center;
+}
+.card[data-layout="breaking"] .brk-top{ display:flex; }
+.brk-label{
+  display:inline-flex;
+  align-self:flex-start;
+  padding:10px 20px;
+  border-radius:8px;
+  background:#c23b52;
+  color:#fff;
+  letter-spacing:.5px;
+  margin-bottom:28px;
+}
+.brk-headline-row{ display:flex; gap:22px; margin-bottom:24px; }
+.brk-headline-bar{ width:6px; flex-shrink:0; background:#c23b52; border-radius:3px; }
+.brk-headline{ font-weight:800; line-height:1.16; white-space:pre-wrap; word-break:keep-all; }
+.brk-body{ line-height:1.55; white-space:pre-wrap; word-break:keep-all; opacity:.75; margin-bottom:18px; }
+.brk-date{ opacity:.6; }
+
+.brk-img-area{
+  display:none;
+  position:relative;
+  width:100%; height:38%;
+  overflow:hidden;
+  flex-shrink:0;
+}
+.card[data-layout="breaking"] .brk-img-area{ display:block; }
+.card[data-layout="breaking"][data-ratio="square"] .brk-img-area{ height:34%; }
+.brk-img-wrap{ position:absolute; inset:0; overflow:hidden; cursor:grab; background:#1a1a20; }
+.brk-img-wrap:active{ cursor:grabbing; }
+.brk-img-wrap img{
+  position:absolute; top:50%; left:50%;
+  width:100%; height:100%;
+  object-fit:cover; object-position:center;
+  transform:translate(-50%,-50%) scale(var(--brkzoom,1)) translate(var(--brkoffx,0%), var(--brkoffy,0%));
+  user-select:none; pointer-events:none;
+}
+.brk-img-wrap .noimg{
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  color:#6a6a76; font-size:24px; text-align:center; padding:40px; line-height:1.5; background:#1a1a20;
+}
+
+/* ---------- zoom controls ---------- */
+.zoombar{
+  position:absolute; bottom:20px; left:50%; transform:translateX(-50%);
+  display:flex; align-items:center; gap:10px;
+  background:#1b1b21ee; border:1px solid #2c2c35; border-radius:30px;
+  padding:8px 16px; font-size:12px; color:#c8c8d0;
+  backdrop-filter:blur(6px);
+}
+.zoombar button{
+  width:26px;height:26px;border-radius:50%; border:none; background:#2c2c35; color:#fff;
+  cursor:pointer; font-size:14px; line-height:1;
+}
+
+/* ---------- export modal ---------- */
+.modal-overlay{
+  position:fixed; inset:0; background:rgba(0,0,0,.75);
+  display:none; align-items:center; justify-content:center; z-index:100;
+  padding:24px;
+}
+.modal-overlay.show{ display:flex; }
+.modal{
+  background:#17171c; border:1px solid #2c2c35; border-radius:18px;
+  padding:22px; max-width:420px; width:100%;
+  max-height:88vh; overflow-y:auto; text-align:center;
+}
+.modal h3{ font-size:15px; margin-bottom:6px; }
+.modal p{ font-size:12.5px; color:#9a9aa4; line-height:1.6; margin-bottom:16px; }
+.modal img{ width:100%; border-radius:12px; margin-bottom:16px; border:1px solid #2c2c35; }
+.modal .close-btn{ margin-top:10px; background:none; border:none; color:#75757f; font-size:12px; cursor:pointer; }
+.spinner{
+  width:34px;height:34px;border-radius:50%;
+  border:3px solid #2c2c35; border-top-color:#3654ff;
+  animation:spin .8s linear infinite; margin:20px auto;
+}
+@keyframes spin{ to{ transform:rotate(360deg); } }
+
+@media (max-width: 900px){
+  html,body{ height:100%; overflow:hidden; }
+  .app{ display:flex; flex-direction:column; height:100dvh; }
+
+  .topbar{ height:58px; min-height:58px; padding:0 10px; display:flex; align-items:center; flex-wrap:nowrap; overflow:hidden; }
+  .topbar-brand{ width:auto; min-width:auto; flex-shrink:0; }
+  .topbar-brand-text{ display:none; }
+  .topbar .brand-mark{ width:34px; height:34px; border-radius:9px; font-size:14px; }
+
+  .top-menu{
+    flex:1; min-width:0; height:58px; display:flex; align-items:stretch;
+    overflow-x:auto; overflow-y:hidden; scrollbar-width:none; margin-left:8px;
+  }
+  .top-menu::-webkit-scrollbar{ display:none; }
+  .top-menu-item{ flex:0 0 auto; min-width:62px; padding:0 12px; font-size:11px; white-space:nowrap; }
+  .top-menu-item.active::after{ left:10px; right:10px; height:2px; }
+  .top-menu-item.menu-save{ margin-left:0; }
+
+  .workspace{ flex:1; min-height:0; display:flex; flex-direction:column; }
+
+  .preview-wrap{ order:1; width:100%; height:54dvh; min-height:0; flex:1; overflow:auto; display:flex; align-items:center; justify-content:center; }
+  .stage{ position:relative; }
+  .card-shell{ border-radius:16px; }
+
+  .sidebar{
+    order:2; width:100%; min-width:0; height:46dvh; min-height:0; flex:none;
+    overflow-y:auto; overflow-x:hidden; border-right:none; border-top:1px solid #292930;
+    border-bottom:none; padding:14px 14px 80px; background:#17171c;
+  }
+  .sidebar::-webkit-scrollbar{ width:5px; }
+  .sidebar::-webkit-scrollbar-thumb{ background:#36363f; border-radius:8px; }
+
+  .panel-heading{ padding:2px 2px 14px; }
+  .panel-title{ font-size:16px; }
+  .panel-subtitle{ font-size:10px; }
+
+  .section{ padding:14px 13px 15px; border-radius:12px; margin-bottom:10px; }
+  .section-title{ font-size:12px; margin-bottom:10px; }
+  .field{ margin-bottom:10px; }
+  .field-label{ font-size:10.5px; margin-bottom:5px; }
+  textarea, input[type="text"], select{ font-size:12px; border-radius:8px; }
+  textarea{ min-height:38px; }
+  .row2{ gap:7px; }
+  .row3{ gap:7px; }
+  .upload-btn{ padding:10px; font-size:12px; }
+  .chip{ padding:5px 9px; font-size:10.5px; }
+  .swatches{ gap:7px; }
+  .color-input{ height:32px; }
+  .btn{ padding:12px; border-radius:9px; font-size:12.5px; }
+  .zoombar{ bottom:12px; padding:7px 12px; gap:8px; border-radius:24px; font-size:11px; }
+  .zoombar button{ width:28px; height:28px; }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ================= TOP MENU ================= -->
+  <div class="topbar">
+    <div class="topbar-brand">
+      <div class="brand-mark">W</div>
+      <div class="topbar-brand-text">
+        <div class="brand-name">WEST150DAILY</div>
+        <div class="brand-sub">PHONE CARD EDITOR</div>
+      </div>
+    </div>
+
+    <div class="top-menu" id="topMenu">
+      <button class="top-menu-item active" data-panel="writing">글쓰기</button>
+      <button class="top-menu-item" data-panel="image">이미지</button>
+      <button class="top-menu-item" data-panel="font">글꼴</button>
+      <button class="top-menu-item" data-panel="weight">굵기</button>
+      <button class="top-menu-item" data-panel="size">크기</button>
+      <button class="top-menu-item" data-panel="color">색상</button>
+      <button class="top-menu-item" data-panel="layout">레이아웃</button>
+      <button class="top-menu-item menu-save" data-panel="save">저장</button>
+    </div>
+  </div>
+
+  <!-- ================= WORKSPACE ================= -->
+  <div class="workspace">
+
+    <!-- ================= LEFT TOOL PANEL ================= -->
+    <div class="sidebar" id="sidebar">
+
+      <!-- 글쓰기 -->
+      <div class="tool-panel active" data-tool-panel="writing">
+        <div class="panel-heading">
+          <div>
+            <div class="panel-title">글쓰기</div>
+            <div class="panel-subtitle">카드 하단 텍스트를 편집합니다</div>
+          </div>
+        </div>
+
+        <div class="section" id="brandSection">
+          <div class="section-title"><span class="dot"></span>브랜드 표기</div>
+          <div class="field">
+            <div class="field-label">상단 브랜드명</div>
+            <textarea id="brandText" rows="1">WEST150DAILY</textarea>
+          </div>
+        </div>
+
+        <div class="section" id="labelSection" style="display:none;">
+          <div class="section-title"><span class="dot"></span>카테고리 라벨</div>
+          <div class="field">
+            <div class="field-label">라벨 텍스트</div>
+            <textarea id="labelText" rows="1">TOP STORY</textarea>
+          </div>
+          <div class="field">
+            <div class="field-label">라벨 스타일</div>
+            <div class="seg-row">
+              <div class="seg-btn active" data-labelstyle="plain">플레인 (텍스트만)</div>
+              <div class="seg-btn" data-labelstyle="pill">알약형 (배경색)</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section" id="worldSection" style="display:none;">
+          <div class="section-title"><span class="dot"></span>World형 텍스트</div>
+          <div class="field">
+            <div class="field-label">상단 카테고리</div>
+            <textarea id="wEyebrowText" rows="1">World</textarea>
+          </div>
+          <div class="field">
+            <div class="field-label">날짜</div>
+            <textarea id="wDateText" rows="1">May 4, 2025</textarea>
+          </div>
+          <div class="field">
+            <div class="field-label">헤드라인</div>
+            <textarea id="wHeadlineText" rows="2">The New Era of Quiet Luxury</textarea>
+          </div>
+          <div class="field">
+            <div class="field-label">본문</div>
+            <textarea id="wBodyText" rows="2">How understated style is reshaping global fashion.</textarea>
+          </div>
+        </div>
+
+        <div class="section" id="envSection" style="display:none;">
+          <div class="section-title"><span class="dot"></span>Environment형 텍스트</div>
+          <div class="field">
+            <div class="field-label">카테고리</div>
+            <textarea id="envEyebrowText" rows="1">Environment</textarea>
+          </div>
+          <div class="field">
+            <div class="field-label">헤드라인</div>
+            <textarea id="envHeadlineText" rows="2">Renewable Energy Hits Record Growth</textarea>
+          </div>
+          <div class="field">
+            <div class="field-label">본문</div>
+            <textarea id="envBodyText" rows="2">Global clean energy capacity soars to new heights in 2025.</textarea>
+          </div>
+        </div>
+
+        <div class="section" id="sportsSection" style="display:none;">
+          <div class="section-title"><span class="dot"></span>Sports형 텍스트</div>
+          <div class="field">
+            <div class="field-label">상단 알약 라벨</div>
+            <textarea id="spLabelText" rows="1">Sports</textarea>
+          </div>
+          <div class="field">
+            <div class="field-label">헤드라인</div>
+            <textarea id="spHeadlineText" rows="2">A New Champion Rises</textarea>
+          </div>
+          <div class="field">
+            <div class="field-label">본문</div>
+            <textarea id="spBodyText" rows="2">Rising star claims first Grand Slam title.</textarea>
+          </div>
+          <div class="field">
+            <div class="field-label">날짜</div>
+            <textarea id="spDateText" rows="1">May 4, 2025</textarea>
+          </div>
+        </div>
+
+        <div class="section" id="brkSection" style="display:none;">
+          <div class="section-title"><span class="dot"></span>Breaking형 텍스트</div>
+          <div class="field">
+            <div class="field-label">라벨</div>
+            <textarea id="brkLabelText" rows="1">Breaking News</textarea>
+          </div>
+          <div class="field">
+            <div class="field-label">헤드라인</div>
+            <textarea id="brkHeadlineText" rows="2">Major Earthquake Strikes Coastal Region</textarea>
+          </div>
+          <div class="field">
+            <div class="field-label">본문</div>
+            <textarea id="brkBodyText" rows="2">Authorities warn of aftershocks as rescue efforts continue.</textarea>
+          </div>
+          <div class="field">
+            <div class="field-label">날짜</div>
+            <textarea id="brkDateText" rows="1">May 4, 2025</textarea>
+          </div>
+        </div>
+
+        <div class="section" id="commonTextSection">
+          <div class="section-title"><span class="dot"></span>텍스트 내용</div>
+
+          <div class="field">
+            <div class="field-label">헤드라인</div>
+            <textarea id="headlineText" rows="2">Breaking News</textarea>
+          </div>
+
+          <div class="field">
+            <div class="field-label">날짜</div>
+            <textarea id="dateText" rows="1">Saturday, 24th Aug 2025</textarea>
+          </div>
+
+          <div class="field">
+            <div class="field-label">본문</div>
+            <textarea id="bodyText" rows="4">오늘 오전 발표된 주요 소식을 정리했습니다. 자세한 내용은 본문에서 확인하세요.</textarea>
+          </div>
+
+          <div class="field">
+            <div class="field-label">출처 링크</div>
+            <textarea id="linkText" rows="1">www.west150daily.com</textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- 이미지 -->
+      <div class="tool-panel" data-tool-panel="image">
+        <div class="panel-heading">
+          <div>
+            <div class="panel-title">이미지</div>
+            <div class="panel-subtitle">폰 화면 사진과 카드 배경을 설정합니다</div>
+          </div>
+        </div>
+
+        <div class="section" id="phoneImgSection">
+          <div class="section-title"><span class="dot"></span>폰 화면 사진</div>
+
+          <div class="field">
+            <label class="upload-btn" for="phoneImgInput">📱 폰 화면 사진 업로드</label>
+            <input type="file" id="phoneImgInput" accept="image/*" style="display:none;">
+            <div class="upload-hint">미리보기에서 드래그로 위치 이동 가능</div>
+          </div>
+
+          <div class="field">
+            <div class="field-label">확대/축소 <span class="val" id="pZoomVal">1.00x</span></div>
+            <input type="range" id="pZoomRange" min="1" max="2.5" step="0.01" value="1">
+          </div>
+
+          <div class="row2">
+            <div class="field">
+              <div class="field-label">가로 위치</div>
+              <input type="range" id="pOffXRange" min="-50" max="50" step="1" value="0">
+            </div>
+            <div class="field">
+              <div class="field-label">세로 위치</div>
+              <input type="range" id="pOffYRange" min="-50" max="50" step="1" value="0">
+            </div>
+          </div>
+        </div>
+
+        <div class="section" id="bgImgSection">
+          <div class="section-title"><span class="dot"></span>카드 배경 (폰 바깥)</div>
+
+          <div class="field">
+            <label class="upload-btn" for="bgImgInput">🖼 카드 배경 사진 업로드</label>
+            <input type="file" id="bgImgInput" accept="image/*" style="display:none;">
+            <div class="upload-hint">업로드하지 않으면 배경색이 그대로 사용됩니다</div>
+          </div>
+
+          <div class="field">
+            <button class="btn btn-secondary" id="clearBgBtn" style="margin-top:0;">배경 사진 제거</button>
+          </div>
+        </div>
+
+        <div class="section" id="hImgSection" style="display:none;">
+          <div class="section-title"><span class="dot"></span>가로형 카드 · 컷아웃 사진</div>
+
+          <div class="field">
+            <label class="upload-btn" for="hImgInput">🖼 컷아웃 사진 업로드</label>
+            <input type="file" id="hImgInput" accept="image/*" style="display:none;">
+            <div class="upload-hint">미리보기에서 드래그로 위치 이동 가능</div>
+          </div>
+
+          <div class="field">
+            <div class="field-label">확대/축소 <span class="val" id="hZoomVal">1.00x</span></div>
+            <input type="range" id="hZoomRange" min="1" max="2.5" step="0.01" value="1">
+          </div>
+
+          <div class="row2">
+            <div class="field">
+              <div class="field-label">가로 위치</div>
+              <input type="range" id="hOffXRange" min="-50" max="50" step="1" value="0">
+            </div>
+            <div class="field">
+              <div class="field-label">세로 위치</div>
+              <input type="range" id="hOffYRange" min="-50" max="50" step="1" value="0">
+            </div>
+          </div>
+        </div>
+
+        <div class="section" id="wImgSection" style="display:none;">
+          <div class="section-title"><span class="dot"></span>World형 · 배경 사진</div>
+          <div class="field">
+            <label class="upload-btn" for="wImgInput">🖼 배경 사진 업로드</label>
+            <input type="file" id="wImgInput" accept="image/*" style="display:none;">
+            <div class="upload-hint">미리보기에서 드래그로 위치 이동 가능</div>
+          </div>
+          <div class="field">
+            <div class="field-label">확대/축소 <span class="val" id="wZoomVal">1.00x</span></div>
+            <input type="range" id="wZoomRange" min="1" max="2.5" step="0.01" value="1">
+          </div>
+          <div class="row2">
+            <div class="field"><div class="field-label">가로 위치</div><input type="range" id="wOffXRange" min="-50" max="50" step="1" value="0"></div>
+            <div class="field"><div class="field-label">세로 위치</div><input type="range" id="wOffYRange" min="-50" max="50" step="1" value="0"></div>
+          </div>
+        </div>
+
+        <div class="section" id="envImgSection" style="display:none;">
+          <div class="section-title"><span class="dot"></span>Environment형 · 상단 사진</div>
+          <div class="field">
+            <label class="upload-btn" for="envImgInput">🖼 상단 사진 업로드</label>
+            <input type="file" id="envImgInput" accept="image/*" style="display:none;">
+            <div class="upload-hint">미리보기에서 드래그로 위치 이동 가능</div>
+          </div>
+          <div class="field">
+            <div class="field-label">확대/축소 <span class="val" id="envZoomVal">1.00x</span></div>
+            <input type="range" id="envZoomRange" min="1" max="2.5" step="0.01" value="1">
+          </div>
+          <div class="row2">
+            <div class="field"><div class="field-label">가로 위치</div><input type="range" id="envOffXRange" min="-50" max="50" step="1" value="0"></div>
+            <div class="field"><div class="field-label">세로 위치</div><input type="range" id="envOffYRange" min="-50" max="50" step="1" value="0"></div>
+          </div>
+        </div>
+
+        <div class="section" id="spImgSection" style="display:none;">
+          <div class="section-title"><span class="dot"></span>Sports형 · 배경 사진</div>
+          <div class="field">
+            <label class="upload-btn" for="spImgInput">🖼 배경 사진 업로드</label>
+            <input type="file" id="spImgInput" accept="image/*" style="display:none;">
+            <div class="upload-hint">미리보기에서 드래그로 위치 이동 가능</div>
+          </div>
+          <div class="field">
+            <div class="field-label">확대/축소 <span class="val" id="spZoomVal">1.00x</span></div>
+            <input type="range" id="spZoomRange" min="1" max="2.5" step="0.01" value="1">
+          </div>
+          <div class="row2">
+            <div class="field"><div class="field-label">가로 위치</div><input type="range" id="spOffXRange" min="-50" max="50" step="1" value="0"></div>
+            <div class="field"><div class="field-label">세로 위치</div><input type="range" id="spOffYRange" min="-50" max="50" step="1" value="0"></div>
+          </div>
+        </div>
+
+        <div class="section" id="brkImgSection" style="display:none;">
+          <div class="section-title"><span class="dot"></span>Breaking형 · 사진</div>
+          <div class="field">
+            <label class="upload-btn" for="brkImgInput">🖼 사진 업로드</label>
+            <input type="file" id="brkImgInput" accept="image/*" style="display:none;">
+            <div class="upload-hint">미리보기에서 드래그로 위치 이동 가능</div>
+          </div>
+          <div class="field">
+            <div class="field-label">확대/축소 <span class="val" id="brkZoomVal">1.00x</span></div>
+            <input type="range" id="brkZoomRange" min="1" max="2.5" step="0.01" value="1">
+          </div>
+          <div class="row2">
+            <div class="field"><div class="field-label">가로 위치</div><input type="range" id="brkOffXRange" min="-50" max="50" step="1" value="0"></div>
+            <div class="field"><div class="field-label">세로 위치</div><input type="range" id="brkOffYRange" min="-50" max="50" step="1" value="0"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 글꼴 -->
+      <div class="tool-panel" data-tool-panel="font">
+        <div class="panel-heading">
+          <div>
+            <div class="panel-title">글꼴</div>
+            <div class="panel-subtitle">텍스트별 폰트를 설정합니다</div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title"><span class="dot"></span>폰트</div>
+          <div class="field"><div class="field-label">브랜드명</div><select id="brandFont"></select></div>
+          <div class="field"><div class="field-label">카테고리 라벨</div><select id="labelFont"></select></div>
+          <div class="field"><div class="field-label">헤드라인</div><select id="headlineFont"></select></div>
+          <div class="field"><div class="field-label">날짜</div><select id="dateFont"></select></div>
+          <div class="field"><div class="field-label">본문</div><select id="bodyFont"></select></div>
+          <div class="field"><div class="field-label">출처 링크</div><select id="linkFont"></select></div>
+        </div>
+      </div>
+
+      <!-- 굵기 -->
+      <div class="tool-panel" data-tool-panel="weight">
+        <div class="panel-heading">
+          <div>
+            <div class="panel-title">굵기</div>
+            <div class="panel-subtitle">텍스트의 두께를 설정합니다</div>
+          </div>
+        </div>
+        <div class="section">
+          <div class="field"><div class="field-label">브랜드명</div><select id="brandWeight"></select></div>
+          <div class="field"><div class="field-label">카테고리 라벨</div><select id="labelWeight"></select></div>
+          <div class="field"><div class="field-label">헤드라인</div><select id="headlineWeight"></select></div>
+          <div class="field"><div class="field-label">날짜</div><select id="dateWeight"></select></div>
+          <div class="field"><div class="field-label">본문</div><select id="bodyWeight"></select></div>
+          <div class="field"><div class="field-label">출처 링크</div><select id="linkWeight"></select></div>
+        </div>
+      </div>
+
+      <!-- 크기 -->
+      <div class="tool-panel" data-tool-panel="size">
+        <div class="panel-heading">
+          <div>
+            <div class="panel-title">크기</div>
+            <div class="panel-subtitle">텍스트 크기를 조절합니다</div>
+          </div>
+        </div>
+        <div class="section">
+          <div class="field">
+            <div class="field-label">브랜드명 <span class="val" id="brandSizeVal">28px</span></div>
+            <input type="range" id="brandSize" min="14" max="50" value="28">
+          </div>
+          <div class="field">
+            <div class="field-label">카테고리 라벨 <span class="val" id="labelSizeVal">20px</span></div>
+            <input type="range" id="labelSize" min="12" max="40" value="20">
+          </div>
+          <div class="field">
+            <div class="field-label">헤드라인 <span class="val" id="headlineSizeVal">86px</span></div>
+            <input type="range" id="headlineSize" min="30" max="160" value="86">
+          </div>
+          <div class="field">
+            <div class="field-label">날짜 <span class="val" id="dateSizeVal">26px</span></div>
+            <input type="range" id="dateSize" min="12" max="48" value="26">
+          </div>
+          <div class="field">
+            <div class="field-label">본문 <span class="val" id="bodySizeVal">32px</span></div>
+            <input type="range" id="bodySize" min="14" max="60" value="32">
+          </div>
+          <div class="field">
+            <div class="field-label">출처 링크 <span class="val" id="linkSizeVal">26px</span></div>
+            <input type="range" id="linkSize" min="12" max="44" value="26">
+          </div>
+        </div>
+      </div>
+
+      <!-- 색상 -->
+      <div class="tool-panel" data-tool-panel="color">
+        <div class="panel-heading">
+          <div>
+            <div class="panel-title">색상</div>
+            <div class="panel-subtitle">패널과 텍스트 색상을 설정합니다</div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title"><span class="dot"></span>패널 배경</div>
+          <div class="field">
+            <div class="field-label">하단 패널 색</div>
+            <input type="color" class="color-input" id="panelBgColor" value="#2c2a4a">
+          </div>
+          <div class="field">
+            <div class="field-label">카드 배경색 (사진 없을 때)</div>
+            <input type="color" class="color-input" id="cardBgColor" value="#f7f6f3">
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title"><span class="dot"></span>텍스트 색상</div>
+          <div class="row2">
+            <div class="field"><div class="field-label">브랜드명</div><input type="color" class="color-input" id="brandColor" value="#1a1a1f"></div>
+            <div class="field"><div class="field-label">카테고리 라벨</div><input type="color" class="color-input" id="labelColor" value="#ffffff"></div>
+          </div>
+          <div class="row2">
+            <div class="field"><div class="field-label">헤드라인</div><input type="color" class="color-input" id="headlineColor" value="#ffffff"></div>
+          </div>
+          <div class="row2">
+            <div class="field"><div class="field-label">날짜</div><input type="color" class="color-input" id="dateColor" value="#ffffff"></div>
+            <div class="field"><div class="field-label">본문</div><input type="color" class="color-input" id="bodyColor" value="#ffffff"></div>
+          </div>
+          <div class="field"><div class="field-label">출처 링크</div><input type="color" class="color-input" id="linkColor" value="#ffffff"></div>
+        </div>
+      </div>
+
+      <!-- 레이아웃 -->
+      <div class="tool-panel" data-tool-panel="layout">
+        <div class="panel-heading">
+          <div>
+            <div class="panel-title">레이아웃</div>
+            <div class="panel-subtitle">카드 비율과 포인트 컬러를 설정합니다</div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title"><span class="dot"></span>카드 레이아웃</div>
+          <div class="seg-row" style="flex-wrap:wrap;">
+            <div class="seg-btn active" data-layout="phone" style="flex:1 1 45%;">폰 목업형</div>
+            <div class="seg-btn" data-layout="horizontal" style="flex:1 1 45%;">가로형 카드</div>
+            <div class="seg-btn" data-layout="world" style="flex:1 1 45%;">World형</div>
+            <div class="seg-btn" data-layout="env" style="flex:1 1 45%;">Environment형</div>
+            <div class="seg-btn" data-layout="sports" style="flex:1 1 45%;">Sports형</div>
+            <div class="seg-btn" data-layout="breaking" style="flex:1 1 45%;">Breaking형</div>
+          </div>
+        </div>
+
+        <div class="section" id="ratioSection">
+          <div class="section-title"><span class="dot"></span>카드 비율</div>
+          <div class="seg-row">
+            <div class="seg-btn active" data-ratio="story">스토리 (1080×1920)</div>
+            <div class="seg-btn" data-ratio="square">정사각형 (1080×1080)</div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title"><span class="dot"></span>포인트 컬러 (브랜드 마크)</div>
+          <div class="field">
+            <div class="field-label">프리셋</div>
+            <div class="swatches" id="swatchRow"></div>
+          </div>
+          <div class="field">
+            <div class="field-label">직접 선택</div>
+            <input type="color" class="color-input" id="accentCustom" value="#3654ff">
+          </div>
+        </div>
+      </div>
+
+      <!-- 저장 -->
+      <div class="tool-panel" data-tool-panel="save">
+        <div class="panel-heading">
+          <div>
+            <div class="panel-title">저장</div>
+            <div class="panel-subtitle">완성된 카드를 이미지로 저장합니다</div>
+          </div>
+        </div>
+
+        <div class="section">
+          <button class="btn btn-primary" id="exportBtn">⬇ 이미지로 저장 (PNG)</button>
+          <button class="btn btn-secondary" id="resetBtn">기본값으로 초기화</button>
+          <div class="upload-hint" style="margin-top:10px;line-height:1.6;">
+            아이폰 · 맥북에서도 안전하게 저장돼요.<br>
+            저장 버튼을 누르면 이미지 확인창이 뜨고,<br>
+            거기서 길게 누르거나(아이폰) 우클릭(맥)해서 저장할 수 있어요.
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ================= PREVIEW ================= -->
+    <div class="preview-wrap">
+      <div class="stage" id="stage">
+        <div class="card-shell" id="cardShell">
+
+          <div class="card" id="card" data-ratio="story" data-layout="phone">
+
+            <!-- brand row -->
+            <div class="card-brand-row">
+              <div class="brand-word" id="brandOut">WEST150DAILY</div>
+            </div>
+
+            <!-- phone mock -->
+            <div class="phone-stage">
+              <div class="phone-frame">
+                <div class="phone-notch"></div>
+                <div class="phone-side-btn btn-power"></div>
+                <div class="phone-side-btn btn-vol1"></div>
+                <div class="phone-side-btn btn-vol2"></div>
+                <div class="phone-screen">
+                  <div class="phone-img-wrap" id="phoneImgWrap">
+                    <div class="noimg" id="phoneNoImg">여기에<br>폰 화면 사진을<br>올려보세요</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- bottom panel -->
+            <div class="card-panel" id="cardPanel">
+              <div class="panel-headline" id="headlineOut">Breaking News</div>
+              <div class="panel-date" id="dateOut">Saturday, 24th Aug 2025</div>
+              <div class="panel-body" id="bodyOut">오늘 오전 발표된 주요 소식을 정리했습니다. 자세한 내용은 본문에서 확인하세요.</div>
+              <div class="panel-footer">
+                <div class="panel-link" id="linkOut">www.west150daily.com</div>
+              </div>
+            </div>
+
+            <!-- horizontal layout (재사용: headline/date/body 텍스트 공유) -->
+            <div class="h-card-left">
+              <div class="h-label style-plain" id="labelOut">TOP STORY</div>
+              <div class="h-headline" id="hHeadlineOut">Breaking News</div>
+              <div class="h-date" id="hDateOut">Saturday, 24th Aug 2025</div>
+              <div class="h-body" id="hBodyOut">오늘 오전 발표된 주요 소식을 정리했습니다.</div>
+            </div>
+            <div class="h-card-right">
+              <div class="h-img-wrap" id="hImgWrap">
+                <div class="noimg" id="hNoImg">여기에<br>사진을 올려보세요</div>
+              </div>
+            </div>
+
+            <!-- World layout -->
+            <div class="w-img-wrap" id="wImgWrap">
+              <div class="noimg" id="wNoImg">여기에<br>배경 사진을 올려보세요</div>
+            </div>
+            <div class="w-scrim"></div>
+            <div class="w-top">
+              <div class="w-eyebrow">
+                <div class="w-eyebrow-text" id="wEyebrowOut">World</div>
+                <div class="w-eyebrow-line"></div>
+              </div>
+              <div class="w-date" id="wDateOut">May 4, 2025</div>
+            </div>
+            <div class="w-bottom">
+              <div class="w-headline" id="wHeadlineOut">The New Era of Quiet Luxury</div>
+              <div class="w-body" id="wBodyOut">How understated style is reshaping global fashion.</div>
+            </div>
+
+            <!-- Environment layout -->
+            <div class="env-img-area">
+              <div class="env-img-wrap" id="envImgWrap">
+                <div class="noimg" id="envNoImg">여기에<br>상단 사진을 올려보세요</div>
+              </div>
+            </div>
+            <div class="env-panel">
+              <div class="env-eyebrow">
+                <div class="env-eyebrow-dot"></div>
+                <div id="envEyebrowOut">Environment</div>
+              </div>
+              <div class="env-headline" id="envHeadlineOut">Renewable Energy Hits Record Growth</div>
+              <div class="env-body" id="envBodyOut">Global clean energy capacity soars to new heights in 2025.</div>
+            </div>
+
+            <!-- Sports layout -->
+            <div class="sp-img-wrap" id="spImgWrap">
+              <div class="noimg" id="spNoImg">여기에<br>배경 사진을 올려보세요</div>
+            </div>
+            <div class="sp-scrim"></div>
+            <div class="sp-label-pill" id="spLabelOut">Sports</div>
+            <div class="sp-bottom">
+              <div>
+                <div class="sp-headline" id="spHeadlineOut">A New Champion Rises</div>
+                <div class="sp-sub-wrap">
+                  <div class="sp-body" id="spBodyOut">Rising star claims first Grand Slam title.</div>
+                  <div class="sp-date" id="spDateOut">May 4, 2025</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Breaking layout -->
+            <div class="brk-top">
+              <div class="brk-label" id="brkLabelOut">Breaking News</div>
+              <div class="brk-headline-row">
+                <div class="brk-headline-bar"></div>
+                <div class="brk-headline" id="brkHeadlineOut">Major Earthquake Strikes Coastal Region</div>
+              </div>
+              <div class="brk-body" id="brkBodyOut">Authorities warn of aftershocks as rescue efforts continue.</div>
+              <div class="brk-date" id="brkDateOut">May 4, 2025</div>
+            </div>
+            <div class="brk-img-area">
+              <div class="brk-img-wrap" id="brkImgWrap">
+                <div class="noimg" id="brkNoImg">여기에<br>사진을 올려보세요</div>
+              </div>
+            </div>
+
+          </div>
+          <!-- NOTE: hHeadlineOut/hDateOut/hBodyOut are mirrored from headlineOut/dateOut/bodyOut via JS -->
+
+
+        </div>
+
+        <div class="zoombar">
+          <button id="zoomOutBtn">−</button>
+          <span id="previewScaleLabel">화면 배율 45%</span>
+          <button id="zoomInBtn">+</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ================= EXPORT MODAL ================= -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div id="modalLoading">
+      <div class="spinner"></div>
+      <p>이미지를 만들고 있어요…</p>
+    </div>
+    <div id="modalResult" style="display:none;">
+      <h3>저장 준비 완료</h3>
+      <p>
+        <b>아이폰</b>: 아래 이미지를 길게 눌러 "사진에 저장"을 선택하세요.<br>
+        <b>맥북 / PC</b>: 이미지를 우클릭해서 "이미지를 다른 이름으로 저장"을 선택하거나, 아래 버튼을 눌러 바로 다운로드하세요.
+      </p>
+      <img id="resultImg" alt="완성된 카드">
+      <button class="btn btn-primary" id="downloadBtn">📥 바로 다운로드</button>
+      <button class="close-btn" id="closeModalBtn">닫기</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+(function(){
+/* ---------------- 상단 메뉴 ---------------- */
+const topMenuItems = document.querySelectorAll('.top-menu-item');
+const toolPanels = document.querySelectorAll('.tool-panel');
+topMenuItems.forEach(item=>{
+  item.addEventListener('click', ()=>{
+    const target = item.dataset.panel;
+    topMenuItems.forEach(m=>m.classList.remove('active'));
+    toolPanels.forEach(p=>p.classList.remove('active'));
+    item.classList.add('active');
+    const targetPanel = document.querySelector(`.tool-panel[data-tool-panel="${target}"]`);
+    if (targetPanel) targetPanel.classList.add('active');
+  });
+});
+
+/* ---------------- 폰트 목록 ---------------- */
+const FONTS = [
+  { label:'프리텐다드 (기본 고딕)', value:"'Pretendard', sans-serif" },
+  { label:'리디바탕 (명조/바탕체)', value:"'RIDIBatang', serif" },
+  { label:'노토 산스 KR', value:"'Noto Sans KR', sans-serif" },
+  { label:'노토 세리프 KR', value:"'Noto Serif KR', serif" },
+  { label:'지마켓 산스 (라운드 굵은체)', value:"'GmarketSans', sans-serif" },
+  { label:'블랙 한 산스 (헤드라인용 굵은체)', value:"'Black Han Sans', sans-serif" },
+  { label:'IBM 플렉스 산스 KR', value:"'IBM Plex Sans KR', sans-serif" },
+  { label:'나눔명조', value:"'Nanum Myeongjo', serif" },
+];
+const WEIGHTS = [
+  {label:'가늘게 (400)', value:'400'},
+  {label:'보통 (500)', value:'500'},
+  {label:'약간 굵게 (600)', value:'600'},
+  {label:'굵게 (700)', value:'700'},
+  {label:'매우 굵게 (800)', value:'800'},
+  {label:'블랙 (900)', value:'900'},
+];
+
+function fillSelect(sel, items, defaultValue){
+  items.forEach(it=>{
+    const o = document.createElement('option');
+    o.value = it.value; o.textContent = it.label;
+    if (it.value === defaultValue) o.selected = true;
+    sel.appendChild(o);
+  });
+}
+
+const fontTargets = ['brand','label','headline','date','body','link'];
+const defaultFontFor = {
+  brand:"'Pretendard', sans-serif", label:"'Pretendard', sans-serif", headline:"'Pretendard', sans-serif",
+  date:"'Pretendard', sans-serif", body:"'Pretendard', sans-serif", link:"'Pretendard', sans-serif"
+};
+const defaultWeightFor = { brand:'700', label:'700', headline:'800', date:'500', body:'500', link:'500' };
+
+fontTargets.forEach(t=>{
+  fillSelect(document.getElementById(t+'Font'), FONTS, defaultFontFor[t]);
+  fillSelect(document.getElementById(t+'Weight'), WEIGHTS, defaultWeightFor[t]);
+});
+
+/* ---------------- 포인트 컬러 프리셋 ---------------- */
+const ACCENTS = ['#3654ff','#e0334c','#f5a623','#12b76a','#8b5cf6','#ec4899','#0f172a','#f3f3f5'];
+const swatchRow = document.getElementById('swatchRow');
+ACCENTS.forEach((c,i)=>{
+  const d = document.createElement('div');
+  d.className = 'swatch' + (i===0?' active':'');
+  d.style.background = c;
+  d.dataset.color = c;
+  d.addEventListener('click', ()=>{
+    document.querySelectorAll('.swatch').forEach(s=>s.classList.remove('active'));
+    d.classList.add('active');
+    document.getElementById('accentCustom').value = c;
+    setAccent(c);
+  });
+  swatchRow.appendChild(d);
+});
+document.getElementById('accentCustom').addEventListener('input', e=>{
+  document.querySelectorAll('.swatch').forEach(s=>s.classList.remove('active'));
+  setAccent(e.target.value);
+});
+function setAccent(c){
+  document.getElementById('card').style.setProperty('--accent', c);
+}
+setAccent(ACCENTS[0]);
+
+/* ---------------- 카드 비율 ---------------- */
+const card = document.getElementById('card');
+document.querySelectorAll('.seg-btn[data-ratio]').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.seg-btn[data-ratio]').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    card.dataset.ratio = btn.dataset.ratio;
+    fitScale();
+  });
+});
+
+/* ---------------- 카드 레이아웃 전환 (6종) ---------------- */
+const ratioSection = document.getElementById('ratioSection');
+const brandSection = document.getElementById('brandSection');
+const commonTextSection = document.getElementById('commonTextSection');
+const labelSection = document.getElementById('labelSection');
+const worldSection = document.getElementById('worldSection');
+const envSection = document.getElementById('envSection');
+const sportsSection = document.getElementById('sportsSection');
+const brkSection = document.getElementById('brkSection');
+
+const phoneImgSection = document.getElementById('phoneImgSection');
+const bgImgSection = document.getElementById('bgImgSection');
+const hImgSection = document.getElementById('hImgSection');
+const wImgSection = document.getElementById('wImgSection');
+const envImgSection = document.getElementById('envImgSection');
+const spImgSection = document.getElementById('spImgSection');
+const brkImgSection = document.getElementById('brkImgSection');
+
+const LAYOUT_TEXT_SECTIONS = { phone:null, horizontal:labelSection, world:worldSection, env:envSection, sports:sportsSection, breaking:brkSection };
+const LAYOUT_IMG_SECTIONS = { phone:[phoneImgSection,bgImgSection], horizontal:[hImgSection], world:[wImgSection], env:[envImgSection], sports:[spImgSection], breaking:[brkImgSection] };
+
+document.querySelectorAll('.seg-btn[data-layout]').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.seg-btn[data-layout]').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const layout = btn.dataset.layout;
+    card.dataset.layout = layout;
+
+    // 비율 선택은 phone/horizontal 외 나머지 레이아웃에서도 사용 가능하게 유지 (horizontal만 예외)
+    ratioSection.style.display = layout === 'horizontal' ? 'none' : '';
+    brandSection.style.display = layout === 'phone' ? '' : 'none';
+    // 공용 텍스트(헤드라인/날짜/본문/링크)는 phone·horizontal 카드에만 실제로 반영되므로
+    // world/env/sports/breaking 디자인에서는 숨겨서 "글이 안 써진다"는 혼동을 막음
+    commonTextSection.style.display = (layout === 'phone' || layout === 'horizontal') ? '' : 'none';
+
+    // 텍스트 섹션 전환
+    [labelSection, worldSection, envSection, sportsSection, brkSection].forEach(s=>{ if(s) s.style.display = 'none'; });
+    const textSec = LAYOUT_TEXT_SECTIONS[layout];
+    if (textSec) textSec.style.display = '';
+
+    // 이미지 섹션 전환
+    [phoneImgSection, bgImgSection, hImgSection, wImgSection, envImgSection, spImgSection, brkImgSection].forEach(s=>{ if(s) s.style.display = 'none'; });
+    (LAYOUT_IMG_SECTIONS[layout] || []).forEach(s=>{ if(s) s.style.display = ''; });
+
+    fitScale();
+  });
+});
+
+/* ---------------- 카테고리 라벨 텍스트 / 스타일 ---------------- */
+const labelOut = document.getElementById('labelOut');
+function renderLabel(){
+  const textEl = document.getElementById('labelText');
+  const fontEl = document.getElementById('labelFont');
+  const weightEl = document.getElementById('labelWeight');
+  const colorEl = document.getElementById('labelColor');
+  const sizeEl = document.getElementById('labelSize');
+  const sizeVal = document.getElementById('labelSizeVal');
+  labelOut.textContent = textEl.value;
+  labelOut.style.fontFamily = fontEl.value;
+  labelOut.style.fontWeight = weightEl.value;
+  labelOut.style.color = colorEl.value;
+  labelOut.style.fontSize = sizeEl.value + 'px';
+  if (sizeVal) sizeVal.textContent = sizeEl.value + 'px';
+}
+['labelText','labelFont','labelWeight','labelColor','labelSize'].forEach(id=>{
+  const el = document.getElementById(id);
+  el.addEventListener('input', renderLabel);
+  el.addEventListener('change', renderLabel);
+});
+
+document.querySelectorAll('.seg-btn[data-labelstyle]').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.seg-btn[data-labelstyle]').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    labelOut.classList.remove('style-plain','style-pill');
+    labelOut.classList.add('style-' + btn.dataset.labelstyle);
+  });
+});
+
+/* ---------------- 패널/카드 배경색 ---------------- */
+/* "하단 패널 색"은 폰 목업형(--panel-bg)뿐 아니라 가로형(--h-bg)·Environment형(--env-panel-bg)·
+   Breaking형(--brk-bg)의 텍스트 배경에도 동일하게 반영되어야 함 (이전에는 --panel-bg만 설정되어
+   나머지 3개 디자인에서는 색을 바꿔도 카드에 반영되지 않던 버그) */
+function setPanelBg(v){
+  ['--panel-bg','--h-bg','--env-panel-bg','--brk-bg'].forEach(k=>card.style.setProperty(k, v));
+}
+document.getElementById('panelBgColor').addEventListener('input', e=>{
+  setPanelBg(e.target.value);
+});
+document.getElementById('cardBgColor').addEventListener('input', e=>{
+  card.style.setProperty('--card-bg', e.target.value);
+});
+setPanelBg('#2c2a4a');
+card.style.setProperty('--card-bg', '#f7f6f3');
+
+/* ---------------- 폰 화면 이미지 업/다운/줌 ---------------- */
+const phoneImgWrap = document.getElementById('phoneImgWrap');
+const phoneNoImg = document.getElementById('phoneNoImg');
+let phoneImg = null;
+let pOffX = 0, pOffY = 0, pZoom = 1;
+
+document.getElementById('pZoomRange').addEventListener('input', e=>{
+  pZoom = parseFloat(e.target.value);
+  document.getElementById('pZoomVal').textContent = pZoom.toFixed(2) + 'x';
+  updatePhoneTransform();
+});
+document.getElementById('pOffXRange').addEventListener('input', e=>{
+  pOffX = parseFloat(e.target.value);
+  updatePhoneTransform();
+});
+document.getElementById('pOffYRange').addEventListener('input', e=>{
+  pOffY = parseFloat(e.target.value);
+  updatePhoneTransform();
+});
+
+document.getElementById('phoneImgInput').addEventListener('change', e=>{
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev=>{
+    if (phoneImg) phoneImg.remove();
+    phoneImg = document.createElement('img');
+    phoneImg.crossOrigin = 'anonymous';
+    phoneImg.src = ev.target.result;
+    phoneImgWrap.appendChild(phoneImg);
+    phoneNoImg.style.display = 'none';
+    updatePhoneTransform();
+  };
+  reader.readAsDataURL(file);
+});
+
+function updatePhoneTransform(){
+  card.style.setProperty('--pzoom', pZoom);
+  card.style.setProperty('--poffx', pOffX + '%');
+  card.style.setProperty('--poffy', pOffY + '%');
+}
+updatePhoneTransform();
+
+let pDragging = false, pDragStart = {x:0,y:0}, pStartOff = {x:0,y:0};
+phoneImgWrap.addEventListener('pointerdown', e=>{
+  if (!phoneImg) return;
+  pDragging = true;
+  pDragStart = {x:e.clientX, y:e.clientY};
+  pStartOff = {x:pOffX, y:pOffY};
+  phoneImgWrap.setPointerCapture(e.pointerId);
+});
+phoneImgWrap.addEventListener('pointermove', e=>{
+  if (!pDragging) return;
+  const rect = phoneImgWrap.getBoundingClientRect();
+  const dx = (e.clientX - pDragStart.x) / rect.width * 100;
+  const dy = (e.clientY - pDragStart.y) / rect.height * 100;
+  pOffX = Math.max(-50, Math.min(50, pStartOff.x + dx));
+  pOffY = Math.max(-50, Math.min(50, pStartOff.y + dy));
+  document.getElementById('pOffXRange').value = pOffX;
+  document.getElementById('pOffYRange').value = pOffY;
+  updatePhoneTransform();
+});
+['pointerup','pointercancel','pointerleave'].forEach(ev=>{
+  phoneImgWrap.addEventListener(ev, ()=>{ pDragging=false; });
+});
+
+/* ---------------- 카드 배경(폰 바깥) 이미지 ---------------- */
+document.getElementById('bgImgInput').addEventListener('change', e=>{
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev=>{
+    card.style.setProperty('--card-bg', `url(${ev.target.result}) center / cover no-repeat, ${document.getElementById('cardBgColor').value}`);
+    card.style.background = card.style.getPropertyValue('--card-bg');
+  };
+  reader.readAsDataURL(file);
+});
+document.getElementById('clearBgBtn').addEventListener('click', ()=>{
+  const c = document.getElementById('cardBgColor').value;
+  card.style.background = c;
+  card.style.setProperty('--card-bg', c);
+  document.getElementById('bgImgInput').value = '';
+});
+
+/* ---------------- 가로형 카드 · 컷아웃 이미지 업/다운/줌 ---------------- */
+const hImgWrap = document.getElementById('hImgWrap');
+const hNoImg = document.getElementById('hNoImg');
+let hImg = null;
+let hOffX = 0, hOffY = 0, hZoom = 1;
+
+document.getElementById('hZoomRange').addEventListener('input', e=>{
+  hZoom = parseFloat(e.target.value);
+  document.getElementById('hZoomVal').textContent = hZoom.toFixed(2) + 'x';
+  updateHTransform();
+});
+document.getElementById('hOffXRange').addEventListener('input', e=>{
+  hOffX = parseFloat(e.target.value);
+  updateHTransform();
+});
+document.getElementById('hOffYRange').addEventListener('input', e=>{
+  hOffY = parseFloat(e.target.value);
+  updateHTransform();
+});
+
+document.getElementById('hImgInput').addEventListener('change', e=>{
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev=>{
+    if (hImg) hImg.remove();
+    hImg = document.createElement('img');
+    hImg.crossOrigin = 'anonymous';
+    hImg.src = ev.target.result;
+    hImgWrap.appendChild(hImg);
+    hNoImg.style.display = 'none';
+    updateHTransform();
+  };
+  reader.readAsDataURL(file);
+});
+
+function updateHTransform(){
+  card.style.setProperty('--hzoom', hZoom);
+  card.style.setProperty('--hoffx', hOffX + '%');
+  card.style.setProperty('--hoffy', hOffY + '%');
+}
+updateHTransform();
+
+let hDragging = false, hDragStart = {x:0,y:0}, hStartOff = {x:0,y:0};
+hImgWrap.addEventListener('pointerdown', e=>{
+  if (!hImg) return;
+  hDragging = true;
+  hDragStart = {x:e.clientX, y:e.clientY};
+  hStartOff = {x:hOffX, y:hOffY};
+  hImgWrap.setPointerCapture(e.pointerId);
+});
+hImgWrap.addEventListener('pointermove', e=>{
+  if (!hDragging) return;
+  const rect = hImgWrap.getBoundingClientRect();
+  const dx = (e.clientX - hDragStart.x) / rect.width * 100;
+  const dy = (e.clientY - hDragStart.y) / rect.height * 100;
+  hOffX = Math.max(-50, Math.min(50, hStartOff.x + dx));
+  hOffY = Math.max(-50, Math.min(50, hStartOff.y + dy));
+  document.getElementById('hOffXRange').value = hOffX;
+  document.getElementById('hOffYRange').value = hOffY;
+  updateHTransform();
+});
+['pointerup','pointercancel','pointerleave'].forEach(ev=>{
+  hImgWrap.addEventListener(ev, ()=>{ hDragging=false; });
+});
+
+/* ---------------- 신규 레이아웃 · 텍스트 바인딩 (간단 텍스트 전용) ---------------- */
+function bindSimpleText(textId, outId){
+  const textEl = document.getElementById(textId);
+  const out = document.getElementById(outId);
+  if (!textEl || !out) return;
+  function render(){ out.textContent = textEl.value; }
+  textEl.addEventListener('input', render);
+  textEl.addEventListener('change', render);
+  render();
+}
+[
+  ['wEyebrowText','wEyebrowOut'], ['wDateText','wDateOut'], ['wHeadlineText','wHeadlineOut'], ['wBodyText','wBodyOut'],
+  ['envEyebrowText','envEyebrowOut'], ['envHeadlineText','envHeadlineOut'], ['envBodyText','envBodyOut'],
+  ['spLabelText','spLabelOut'], ['spHeadlineText','spHeadlineOut'], ['spBodyText','spBodyOut'], ['spDateText','spDateOut'],
+  ['brkLabelText','brkLabelOut'], ['brkHeadlineText','brkHeadlineOut'], ['brkBodyText','brkBodyOut'], ['brkDateText','brkDateOut'],
+].forEach(([t,o])=>bindSimpleText(t,o));
+
+/* ---------------- 신규 레이아웃 · 이미지 업로드/줌/드래그 헬퍼 ---------------- */
+function setupImageUploader(prefix, cssVarPrefix){
+  const wrap = document.getElementById(prefix+'ImgWrap');
+  const noImgEl = document.getElementById(prefix+'NoImg');
+  const inputEl = document.getElementById(prefix+'ImgInput');
+  const zoomRange = document.getElementById(prefix+'ZoomRange');
+  const zoomVal = document.getElementById(prefix+'ZoomVal');
+  const offXRange = document.getElementById(prefix+'OffXRange');
+  const offYRange = document.getElementById(prefix+'OffYRange');
+  if (!wrap || !inputEl) return;
+
+  let img = null, offX = 0, offY = 0, zoom = 1;
+
+  function updateTransform(){
+    card.style.setProperty('--'+cssVarPrefix+'zoom', zoom);
+    card.style.setProperty('--'+cssVarPrefix+'offx', offX + '%');
+    card.style.setProperty('--'+cssVarPrefix+'offy', offY + '%');
+  }
+  updateTransform();
+
+  if (zoomRange) zoomRange.addEventListener('input', e=>{
+    zoom = parseFloat(e.target.value);
+    if (zoomVal) zoomVal.textContent = zoom.toFixed(2) + 'x';
+    updateTransform();
+  });
+  if (offXRange) offXRange.addEventListener('input', e=>{ offX = parseFloat(e.target.value); updateTransform(); });
+  if (offYRange) offYRange.addEventListener('input', e=>{ offY = parseFloat(e.target.value); updateTransform(); });
+
+  inputEl.addEventListener('change', e=>{
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev=>{
+      if (img) img.remove();
+      img = document.createElement('img');
+      img.crossOrigin = 'anonymous';
+      img.src = ev.target.result;
+      wrap.appendChild(img);
+      if (noImgEl) noImgEl.style.display = 'none';
+      updateTransform();
+    };
+    reader.readAsDataURL(file);
+  });
+
+  let dragging = false, dragStart = {x:0,y:0}, startOff = {x:0,y:0};
+  wrap.addEventListener('pointerdown', e=>{
+    if (!img) return;
+    dragging = true;
+    dragStart = {x:e.clientX, y:e.clientY};
+    startOff = {x:offX, y:offY};
+    wrap.setPointerCapture(e.pointerId);
+  });
+  wrap.addEventListener('pointermove', e=>{
+    if (!dragging) return;
+    const rect = wrap.getBoundingClientRect();
+    const dx = (e.clientX - dragStart.x) / rect.width * 100;
+    const dy = (e.clientY - dragStart.y) / rect.height * 100;
+    offX = Math.max(-50, Math.min(50, startOff.x + dx));
+    offY = Math.max(-50, Math.min(50, startOff.y + dy));
+    if (offXRange) offXRange.value = offX;
+    if (offYRange) offYRange.value = offY;
+    updateTransform();
+  });
+  ['pointerup','pointercancel','pointerleave'].forEach(ev=>{
+    wrap.addEventListener(ev, ()=>{ dragging=false; });
+  });
+}
+
+setupImageUploader('w','w');
+setupImageUploader('env','e');
+setupImageUploader('sp','sp');
+setupImageUploader('brk','brk');
+
+/* ---------------- 텍스트 바인딩 ---------------- */
+/* outIds: 배열로 넘기면 같은 텍스트/스타일을 여러 출력 요소에 동시 반영 (가로형 카드 미러링용) */
+function bindText(prefix, outIds){
+  const ids = Array.isArray(outIds) ? outIds : [outIds];
+  const textEl = document.getElementById(prefix+'Text');
+  const fontEl = document.getElementById(prefix+'Font');
+  const weightEl = document.getElementById(prefix+'Weight');
+  const colorEl = document.getElementById(prefix+'Color');
+  const sizeEl = document.getElementById(prefix+'Size');
+  const sizeVal = document.getElementById(prefix+'SizeVal');
+  const outs = ids.map(id=>document.getElementById(id)).filter(Boolean);
+
+  function render(){
+    outs.forEach(out=>{
+      out.textContent = textEl.value;
+      out.style.fontFamily = fontEl.value;
+      out.style.fontWeight = weightEl.value;
+      out.style.color = colorEl.value;
+      out.style.fontSize = sizeEl.value + 'px';
+    });
+    if (sizeVal) sizeVal.textContent = sizeEl.value + 'px';
+  }
+  [textEl, fontEl, weightEl, colorEl, sizeEl].forEach(el=>{
+    el.addEventListener('input', render);
+    el.addEventListener('change', render);
+  });
+  render();
+}
+
+bindText('brand','brandOut');
+bindText('headline', ['headlineOut','hHeadlineOut']);
+bindText('date', ['dateOut','hDateOut']);
+bindText('body', ['bodyOut','hBodyOut']);
+bindText('link','linkOut');
+renderLabel();
+
+/* ---------------- 미리보기 화면 배율 ---------------- */
+const cardShell = document.getElementById('cardShell');
+let previewScale = 0.45;
+function applyPreviewScale(){
+  cardShell.style.transform = `scale(${previewScale})`;
+  cardShell.style.transformOrigin = 'center center';
+  document.getElementById('previewScaleLabel').textContent = `화면 배율 ${Math.round(previewScale*100)}%`;
+}
+function getCardDims(){
+  const layout = card.dataset.layout;
+  if (layout === 'horizontal') {
+    return { w: 1536, h: 1024 };
+  }
+  // phone, world, env, sports, breaking 모두 스토리/정사각형 비율 토글 사용
+  return { w: 1080, h: card.dataset.ratio === 'square' ? 1080 : 1920 };
+}
+
+function fitScale(){
+  const wrap = document.querySelector('.preview-wrap');
+  const isMobile = window.innerWidth <= 900;
+  const { w, h } = getCardDims();
+
+  if(isMobile){
+    const availW = wrap.clientWidth - 28;
+    const availH = wrap.clientHeight - 50;
+    previewScale = Math.min(availW / w, availH / h, 0.62);
+  }else{
+    const availW = wrap.clientWidth - 80;
+    const availH = wrap.clientHeight - 90;
+    previewScale = Math.min(availW / w, availH / h, 0.7);
+  }
+  applyPreviewScale();
+}
+document.getElementById('zoomInBtn').addEventListener('click', ()=>{ previewScale = Math.min(1, previewScale+0.05); applyPreviewScale(); });
+document.getElementById('zoomOutBtn').addEventListener('click', ()=>{ previewScale = Math.max(0.15, previewScale-0.05); applyPreviewScale(); });
+window.addEventListener('resize', fitScale);
+fitScale();
+
+/* ---------------- 저장 ---------------- */
+const modalOverlay = document.getElementById('modalOverlay');
+const modalLoading = document.getElementById('modalLoading');
+const modalResult = document.getElementById('modalResult');
+const resultImg = document.getElementById('resultImg');
+
+document.getElementById('exportBtn').addEventListener('click', async () => {
+  modalOverlay.classList.add('show');
+  modalLoading.style.display = 'block';
+  modalResult.style.display = 'none';
+  modalLoading.innerHTML = '<div class="spinner"></div><p>이미지를 만들고 있어요…</p>';
+
+  let originalTransform = '';
+  try {
+    await document.fonts.ready;
+
+    originalTransform = cardShell.style.transform;
+    cardShell.style.transform = 'none';
+
+    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+    const cardEl = document.getElementById('card');
+    const { w: targetW, h: targetH } = getCardDims();
+
+    const canvas = await html2canvas(cardEl, {
+      backgroundColor: '#050506',
+      useCORS: true,
+      allowTaint: false,
+      scale: 2,
+      width: targetW,
+      height: targetH,
+      windowWidth: targetW,
+      windowHeight: targetH,
+      imageTimeout: 30000,
+      logging: false,
+      onclone: (clonedDoc) => {
+        const clonedCard = clonedDoc.getElementById('card');
+        if (clonedCard) {
+          clonedCard.style.transform = 'none';
+          clonedCard.style.width = targetW + 'px';
+          clonedCard.style.height = targetH + 'px';
+        }
+      }
+    });
+
+    cardShell.style.transform = originalTransform;
+
+    const dataUrl = canvas.toDataURL('image/png', 1.0);
+    resultImg.src = dataUrl;
+
+    modalLoading.style.display = 'none';
+    modalResult.style.display = 'block';
+
+    document.getElementById('downloadBtn').onclick = () => {
+      const a = document.createElement('a');
+      a.href = dataUrl;
+      a.download = 'west150daily-phonecard-' + Date.now() + '.png';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    };
+
+  } catch (err) {
+    console.error(err);
+    cardShell.style.transform = originalTransform || '';
+    modalLoading.innerHTML = `
+      <p style="color:#ff8080; line-height:1.6;">
+        이미지 생성 중 문제가 발생했어요.<br>
+        ${err && err.message ? err.message : '알 수 없는 오류'}
+      </p>
+      <button class="btn btn-secondary" onclick="location.reload()" style="margin-top:16px;">새로고침 후 다시 시도</button>
+    `;
+  }
+});
+
+document.getElementById('closeModalBtn').addEventListener('click', ()=>{
+  modalOverlay.classList.remove('show');
+});
+modalOverlay.addEventListener('click', e=>{
+  if (e.target === modalOverlay) modalOverlay.classList.remove('show');
+});
+
+document.getElementById('resetBtn').addEventListener('click', ()=>{
+  if (confirm('모든 설정을 기본값으로 되돌릴까요?')) location.reload();
+});
+
+})();
+</script>
+</body>
+</html>
