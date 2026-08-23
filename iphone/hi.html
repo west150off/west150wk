@@ -332,7 +332,29 @@ label.check-row input{ width:16px;height:16px; accent-color:#3654ff; }
   font-size:0.92em;
 }
 .layout-source:empty,
-.layout-brand:empty{ display:none; }
+.layout-brand:empty{ display:none !important; }
+
+/* 레이아웃 전용 브랜드/출처는 해당 레이아웃에서만 표시 */
+#hBrandOut, #hSourceOut,
+#wBrandOut, #wSourceOut,
+#envBrandOut, #envSourceOut,
+#spBrandOut, #spSourceOut,
+#brkBrandOut, #brkSourceOut { display: none; }
+
+.card[data-layout="horizontal"] #hBrandOut:not(:empty),
+.card[data-layout="horizontal"] #hSourceOut:not(:empty) { display: block; }
+
+.card[data-layout="world"] #wBrandOut:not(:empty),
+.card[data-layout="world"] #wSourceOut:not(:empty) { display: block; }
+
+.card[data-layout="env"] #envBrandOut:not(:empty),
+.card[data-layout="env"] #envSourceOut:not(:empty) { display: block; }
+
+.card[data-layout="sports"] #spBrandOut:not(:empty) { display: block; }
+.card[data-layout="sports"] #spSourceOut:not(:empty) { display: block; }
+
+.card[data-layout="breaking"] #brkBrandOut:not(:empty),
+.card[data-layout="breaking"] #brkSourceOut:not(:empty) { display: block; }
 
 /* ===================================================
    HORIZONTAL CARD LAYOUT (레이아웃 B)
@@ -673,18 +695,29 @@ label.check-row input{ width:16px;height:16px; accent-color:#3654ff; }
   color:#6a6a76; font-size:24px; text-align:center; padding:40px; line-height:1.5; background:#1a1a20;
 }
 
-/* ---------- zoom controls ---------- */
+/* ---------- zoom controls (프리뷰 영역 우측 상단, 카드와 겹치지 않음) ---------- */
 .zoombar{
-  position:absolute; bottom:20px; left:50%; transform:translateX(-50%);
-  display:flex; align-items:center; gap:10px;
-  background:#1b1b21ee; border:1px solid #2c2c35; border-radius:30px;
-  padding:8px 16px; font-size:12px; color:#c8c8d0;
-  backdrop-filter:blur(6px);
+  position:absolute;
+  top:16px; right:16px; left:auto; bottom:auto;
+  transform:none;
+  z-index:30;
+  display:flex; align-items:center; gap:8px;
+  background:#1b1b21f2; border:1px solid #2c2c35; border-radius:24px;
+  padding:7px 12px; font-size:12px; color:#c8c8d0;
+  backdrop-filter:blur(8px);
+  box-shadow:0 8px 24px rgba(0,0,0,.35);
+  pointer-events:auto;
 }
 .zoombar button{
-  width:26px;height:26px;border-radius:50%; border:none; background:#2c2c35; color:#fff;
+  width:28px;height:28px;border-radius:50%; border:none; background:#2c2c35; color:#fff;
   cursor:pointer; font-size:14px; line-height:1;
+  display:flex; align-items:center; justify-content:center;
 }
+.zoombar button:hover{ background:#3654ff; }
+.zoombar button.zoom-fit{
+  width:auto; padding:0 10px; border-radius:14px; font-size:11px; font-weight:600;
+}
+#previewScaleLabel{ min-width:72px; text-align:center; font-variant-numeric:tabular-nums; }
 
 /* ---------- export modal ---------- */
 .modal-overlay{
@@ -758,8 +791,9 @@ label.check-row input{ width:16px;height:16px; accent-color:#3654ff; }
   .swatches{ gap:7px; }
   .color-input{ height:32px; }
   .btn{ padding:12px; border-radius:9px; font-size:12.5px; }
-  .zoombar{ bottom:12px; padding:7px 12px; gap:8px; border-radius:24px; font-size:11px; }
-  .zoombar button{ width:28px; height:28px; }
+  .zoombar{ top:10px; right:10px; bottom:auto; left:auto; padding:6px 10px; gap:6px; border-radius:20px; font-size:11px; }
+  .zoombar button{ width:26px; height:26px; }
+  .zoombar button.zoom-fit{ padding:0 8px; font-size:10px; }
 }
 </style>
 </head>
@@ -1443,12 +1477,14 @@ label.check-row input{ width:16px;height:16px; accent-color:#3654ff; }
 
 
         </div>
+      </div>
 
-        <div class="zoombar">
-          <button id="zoomOutBtn">−</button>
-          <span id="previewScaleLabel">화면 배율 45%</span>
-          <button id="zoomInBtn">+</button>
-        </div>
+      <!-- 화면 배율: 카드 위가 아니라 프리뷰 영역 우측 상단에 고정 -->
+      <div class="zoombar" id="zoombar">
+        <button id="zoomOutBtn" title="축소">−</button>
+        <span id="previewScaleLabel">화면 배율 45%</span>
+        <button id="zoomInBtn" title="확대">+</button>
+        <button id="zoomFitBtn" title="화면에 맞추기" class="zoom-fit">맞춤</button>
       </div>
     </div>
 
@@ -1682,6 +1718,17 @@ card.style.setProperty('--card-bg', '#f7f6f3');
 
 /* ---------------- 폰 화면 이미지 업/다운/줌 ---------------- */
 const imgUploaders = {}; // 레이아웃별 줌/위치/이미지 접근용
+/* 보정 상태는 초기에 선언 (updatePhoneTransform → applyImageEffects 호출 시 TDZ 방지) */
+const imgAdjustState = {};
+function defaultAdjust(){
+  return {
+    brightness: 100, contrast: 100, saturate: 100, blur: 0, opacity: 100, hue: 0,
+    rotate: 0, flipH: false, flipV: false, preset: 'none'
+  };
+}
+['phone','horizontal','world','env','sports','breaking'].forEach(k=>{
+  imgAdjustState[k] = defaultAdjust();
+});
 const phoneImgWrap = document.getElementById('phoneImgWrap');
 const phoneNoImg = document.getElementById('phoneNoImg');
 let phoneImg = null;
@@ -1987,17 +2034,7 @@ const FILTER_PRESETS = {
   soft:      { brightness:108, contrast:90,  saturate:95,  blur:1.2, hue:0 },
 };
 
-// 레이아웃별 보정 상태
-const imgAdjustState = {};
-function defaultAdjust(){
-  return {
-    brightness: 100, contrast: 100, saturate: 100, blur: 0, opacity: 100, hue: 0,
-    rotate: 0, flipH: false, flipV: false, preset: 'none'
-  };
-}
-['phone','horizontal','world','env','sports','breaking'].forEach(k=>{
-  imgAdjustState[k] = defaultAdjust();
-});
+// 레이아웃별 보정 상태 (imgAdjustState / defaultAdjust 는 상단에서 이미 선언)
 
 function getActiveImgKey(){
   const layout = (card && card.dataset.layout) || 'phone';
@@ -2296,12 +2333,8 @@ document.getElementById('fillDateBtn').addEventListener('click', fillDateFields)
 
 /* ---------------- 미리보기 화면 배율 ---------------- */
 const cardShell = document.getElementById('cardShell');
+const stageEl = document.getElementById('stage');
 let previewScale = 0.45;
-function applyPreviewScale(){
-  cardShell.style.transform = `scale(${previewScale})`;
-  cardShell.style.transformOrigin = 'center center';
-  document.getElementById('previewScaleLabel').textContent = `화면 배율 ${Math.round(previewScale*100)}%`;
-}
 function getCardDims(){
   const layout = card.dataset.layout;
   if (layout === 'horizontal') {
@@ -2311,6 +2344,25 @@ function getCardDims(){
   return { w: 1080, h: card.dataset.ratio === 'square' ? 1080 : 1920 };
 }
 
+function applyPreviewScale(){
+  const { w, h } = getCardDims();
+  // transform scale만 쓰면 레이아웃 박스는 원본 크기 그대로라
+  // 프리뷰에서 카드 상·하단이 잘려 보입니다.
+  // → stage를 축소된 크기로 잡고, cardShell은 top-left 기준으로 스케일
+  if (stageEl) {
+    stageEl.style.width = Math.round(w * previewScale) + 'px';
+    stageEl.style.height = Math.round(h * previewScale) + 'px';
+    stageEl.style.position = 'relative';
+  }
+  cardShell.style.width = w + 'px';
+  cardShell.style.height = h + 'px';
+  cardShell.style.transform = `scale(${previewScale})`;
+  cardShell.style.transformOrigin = 'top left';
+  cardShell.style.position = 'absolute';
+  cardShell.style.left = '0';
+  cardShell.style.top = '0';
+  document.getElementById('previewScaleLabel').textContent = `화면 배율 ${Math.round(previewScale*100)}%`;
+}
 function fitScale(){
   const wrap = document.querySelector('.preview-wrap');
   const isMobile = window.innerWidth <= 900;
@@ -2329,6 +2381,8 @@ function fitScale(){
 }
 document.getElementById('zoomInBtn').addEventListener('click', ()=>{ previewScale = Math.min(1, previewScale+0.05); applyPreviewScale(); });
 document.getElementById('zoomOutBtn').addEventListener('click', ()=>{ previewScale = Math.max(0.15, previewScale-0.05); applyPreviewScale(); });
+const zoomFitBtn = document.getElementById('zoomFitBtn');
+if (zoomFitBtn) zoomFitBtn.addEventListener('click', ()=> fitScale());
 window.addEventListener('resize', fitScale);
 fitScale();
 
