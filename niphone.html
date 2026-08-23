@@ -99,7 +99,13 @@
     position:relative; width:300px; height:650px;
     background:#050505; border-radius:52px; padding:14px;
     box-shadow: 0 0 0 2px #2c2d30 inset, 0 40px 80px -30px rgba(0,0,0,.75);
+    transition: width .2s, height .2s, border-radius .2s;
   }
+  /* 기종별 (width 고정 300 기준) */
+  .phone.device-iphone{ width:300px; height:650px; border-radius:52px; }   /* 9:19.5 */
+  .phone.device-galaxy{ width:300px; height:667px; border-radius:44px; }   /* 9:20 */
+  .phone.device-common{ width:300px; height:533px; border-radius:28px; }   /* 9:16 */
+  
   .phone::before{ /* power button */
     content:''; position:absolute; right:-2px; top:150px; width:3px; height:56px; background:#3a3b3f; border-radius:2px 0 0 2px;
   }
@@ -218,7 +224,19 @@
   <div class="sidebar">
     <div class="brand"><span class="mark"></span><h1>NEWS TEMPLATE EDITOR</h1></div>
     <div class="brand-sub">뉴스형 템플릿 편집기 · 아이폰 전용</div>
-    <div class="device-badge">📱 캔버스 비율 <b>iPhone (9:19.5)</b> · 내보내기 <b>1179 × 2556px</b></div>
+    <div class="device-badge" style="flex-direction:column; align-items:stretch; gap:8px;">
+  <div style="display:flex; align-items:center; gap:6px;">
+    📱 기기 규격
+  </div>
+  <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px;">
+    <button type="button" class="btn-mini device-btn active" data-device="iphone" style="padding:8px 4px;">아이폰</button>
+    <button type="button" class="btn-mini device-btn" data-device="galaxy" style="padding:8px 4px;">갤럭시</button>
+    <button type="button" class="btn-mini device-btn" data-device="common" style="padding:8px 4px;">공용</button>
+  </div>
+  <div style="font-size:11px; color:var(--text-dim);">
+    내보내기 <b id="exportSizeLabel">1179 × 2556px</b>
+  </div>
+</div>
 
     <div class="tabs" id="tabs"></div>
 
@@ -555,6 +573,51 @@ order.forEach(k => {
   state[k] = { data:{...templates[k].defaults}, style:{...templates[k].defaultStyle} };
 });
 let current = 'breaking';
+const DEVICES = {
+  iphone: {
+    label: '아이폰',
+    className: 'device-iphone',
+    exportW: 1179,
+    exportH: 2556,
+  },
+  galaxy: {
+    label: '갤럭시',
+    className: 'device-galaxy',
+    exportW: 1080,
+    exportH: 2400,
+  },
+  common: {
+    label: '공용 (9:16)',
+    className: 'device-common',
+    exportW: 1080,
+    exportH: 1920,
+  },
+};
+
+let currentDevice = 'iphone';
+
+function applyDevice(){
+  const d = DEVICES[currentDevice];
+  const phone = document.querySelector('.phone');
+  phone.classList.remove('device-iphone', 'device-galaxy', 'device-common');
+  phone.classList.add(d.className);
+  const sizeLabel = document.getElementById('exportSizeLabel');
+  if (sizeLabel) sizeLabel.textContent = `${d.exportW} × ${d.exportH}px`;
+}
+
+document.querySelectorAll('.device-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    currentDevice = btn.dataset.device;
+    document.querySelectorAll('.device-btn').forEach(b=>{
+      const on = b === btn;
+      b.classList.toggle('active', on);
+      b.style.background = on ? 'var(--accent-ui)' : '';
+      b.style.borderColor = on ? 'var(--accent-ui)' : '';
+      b.style.color = on ? '#fff' : '';
+    });
+    applyDevice();
+  });
+});
 let currentPanel = 'content';
 
 /* ---------------------------------------------------------
@@ -810,16 +873,21 @@ document.getElementById('downloadBtn').addEventListener('click', async ()=>{
   btn.disabled = true;
   btn.textContent = '변환 준비중...';
 
-  btn.textContent = '폰트 로딩중...';
-  try { await document.fonts.ready; } catch(e) {}
-  await new Promise(r => setTimeout(r, 150));
-
-  btn.textContent = '이미지 생성중...';
-  const card = document.getElementById('card');
-  const targetWidth = 1179;
-  const scale = targetWidth / card.offsetWidth;
-
   try {
+    btn.textContent = '폰트 로딩중...';
+    try { await document.fonts.ready; } catch(e) {}
+    await new Promise(r => setTimeout(r, 150));
+
+    btn.textContent = '이미지 생성중...';
+    const card = document.getElementById('card');
+    if (!card) throw new Error('카드 요소를 찾을 수 없습니다');
+
+    const d = (typeof DEVICES !== 'undefined' && DEVICES[currentDevice])
+      ? DEVICES[currentDevice]
+      : { exportW: 1179 };
+    const targetWidth = d.exportW || 1179;
+    const scale = targetWidth / (card.offsetWidth || 300);
+
     const canvas = await html2canvas(card, {
       useCORS: true,
       allowTaint: false,
@@ -828,57 +896,69 @@ document.getElementById('downloadBtn').addEventListener('click', async ()=>{
     });
 
     const fileName = `${current}-template.png`;
-    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-    if (!blob) throw new Error('blob 생성 실패');
+    const dataUrl = canvas.toDataURL('image/png');
+    if (!dataUrl || dataUrl.length < 100) throw new Error('이미지 데이터 생성 실패');
 
-    const file = new File([blob], fileName, { type: 'image/png' });
-
-    // 1) 아이폰 등: 공유 시트 (사진에 저장)
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-      btn.textContent = '공유 시트 여는 중...';
-      await navigator.share({ files: [file], title: fileName });
-      btn.disabled = false;
-      btn.textContent = originalLabel;
-      return;
-    }
-
-    // 2) 데스크톱 등: 일반 다운로드
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.download = fileName;
-    link.href = url;
-    link.style.display = 'none';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    // 3) 구형 iOS 폴백: 새 탭에서 길게 눌러 저장
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1 && !window.MSStream);
 
+    // 아이폰/아이패드: 공유 시트
     if (isIOS) {
-      const win = window.open('');
-      if (win) {
-        win.document.write(`<!DOCTYPE html><html><head>
+      const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+      if (!blob) throw new Error('blob 생성 실패');
+      const file = new File([blob], fileName, { type: 'image/png' });
+
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        btn.textContent = '공유 시트 여는 중...';
+        try {
+          await navigator.share({ files: [file], title: fileName });
+        } catch (shareErr) {
+          // 사용자가 공유 취소한 경우는 에러로 보지 않음
+          if (shareErr && shareErr.name === 'AbortError') {
+            /* 취소 */
+          } else {
+            // 폴백: 새 탭
+            const url = URL.createObjectURL(blob);
+            const win = window.open('');
+            if (win) {
+              win.document.write(`<!DOCTYPE html><html><head>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${fileName}</title></head>
-<body style="margin:0;background:#111;display:flex;flex-direction:column;align-items:center;min-height:100vh;">
-<p style="color:#fff;font-family:sans-serif;padding:16px;text-align:center;line-height:1.5;">
-이미지를 <b>길게 눌러</b><br>「사진 앱에 저장」하세요
-</p>
-<img src="${url}" style="max-width:100%;height:auto;">
+<body style="margin:0;background:#111;text-align:center;">
+<p style="color:#fff;font-family:sans-serif;padding:16px;">이미지를 길게 눌러 저장하세요</p>
+<img src="${url}" style="max-width:100%;">
 </body></html>`);
-        win.document.close();
+              win.document.close();
+            }
+          }
+        }
       } else {
-        alert('팝업이 차단되어 있어요. 허용 후 다시 시도해주세요.');
+        const url = URL.createObjectURL(blob);
+        const win = window.open('');
+        if (win) {
+          win.document.write(`<!DOCTYPE html><html><head>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${fileName}</title></head>
+<body style="margin:0;background:#111;text-align:center;">
+<p style="color:#fff;font-family:sans-serif;padding:16px;">이미지를 길게 눌러 저장하세요</p>
+<img src="${url}" style="max-width:100%;">
+</body></html>`);
+          win.document.close();
+        }
       }
+    } else {
+      // 맥북·PC: 바로 다운로드
+      const link = document.createElement('a');
+      link.download = fileName;
+      link.href = dataUrl;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
-
-    setTimeout(() => URL.revokeObjectURL(url), 3000);
 
   } catch (e) {
     console.error(e);
-    alert('저장 중 문제가 발생했어요. 잠시 후 다시 시도해주세요.');
+    alert('저장 중 문제: ' + (e && e.message ? e.message : e));
   }
 
   btn.disabled = false;
@@ -891,6 +971,13 @@ document.getElementById('downloadBtn').addEventListener('click', async ()=>{
 buildTabs();
 buildAllPanels();
 renderCard();
+applyDevice();
+const firstBtn = document.querySelector('.device-btn[data-device="iphone"]');
+if (firstBtn) {
+  firstBtn.style.background = 'var(--accent-ui)';
+  firstBtn.style.borderColor = 'var(--accent-ui)';
+  firstBtn.style.color = '#fff';
+}
 </script>
 </body>
 </html>
