@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>뉴스레터 헤더 · Newsletter Header Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;900&family=Noto+Serif+KR:wght@400;600;700;900&family=IBM+Plex+Sans+KR:wght@400;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  :root, [data-editor-theme="dark"]{
+    --chrome-bg:#161221;
+    --chrome-panel:#1d1830;
+    --chrome-line:#2c2540;
+    --chrome-text:#eae6f5;
+    --chrome-sub:#8d84ab;
+    --chrome-input:#100c1c;
+    --chrome-btn:#2a2440;
+    --chrome-btn-hover:#352c54;
+    --chrome-stage-spot:#241c3a;
+    --accent:#7c5cff;
+    --accent-soft:#7c5cff22;
+    --danger:#ff5c7a;
+  }
+  [data-editor-theme="light"]{
+    --chrome-bg:#eceaf2;
+    --chrome-panel:#ffffff;
+    --chrome-line:#ddd8e8;
+    --chrome-text:#1a1528;
+    --chrome-sub:#6b6580;
+    --chrome-input:#f4f2f8;
+    --chrome-btn:#ebe6f5;
+    --chrome-btn-hover:#ddd5f0;
+    --chrome-stage-spot:#ddd6f0;
+    --accent:#6c4aff;
+    --accent-soft:#6c4aff22;
+    --danger:#e03d5c;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%; font-family:'Pretendard Variable','Apple SD Gothic Neo','Noto Sans KR',sans-serif;
+    background:var(--chrome-bg); color:var(--chrome-text);}
+  #app{display:flex; flex-direction:column; height:100vh;}
+
+  #topbar{display:flex; align-items:center; justify-content:space-between; padding:0 20px; height:56px;
+    background:var(--chrome-panel); border-bottom:1px solid var(--chrome-line); flex:none; z-index:300;}
+  #topbar .brand{font-weight:700; font-size:15px; letter-spacing:.02em; display:flex; align-items:center; gap:10px;}
+  #topbar .brand .dot{width:9px; height:9px; border-radius:50%; background:var(--accent); box-shadow:0 0 10px var(--accent);}
+  #topbar .brand .sub{font-size:11px; font-weight:500; color:var(--chrome-sub); margin-left:4px;}
+  #topbar .actions{display:flex; gap:8px; align-items:center;}
+  button{font-family:inherit; cursor:pointer; border:none;}
+  .btn{padding:9px 16px; border-radius:8px; font-size:13px; font-weight:600; background:var(--chrome-btn); color:var(--chrome-text); transition:.15s;}
+  .btn:hover{background:var(--chrome-btn-hover);}
+  .btn.primary{background:var(--accent); color:#fff;}
+  .btn.primary:hover{filter:brightness(1.08);}
+  .btn.ghost{background:transparent; color:var(--chrome-sub); border:1px solid var(--chrome-line);}
+  .btn.ghost:hover{color:var(--chrome-text); border-color:var(--accent);}
+  .btn.small{padding:6px 10px; font-size:12px;}
+  .btn.full{width:100%;}
+
+  #body{flex:1; display:flex; min-height:0;}
+  #left{width:300px; flex:none; background:var(--chrome-panel); border-right:1px solid var(--chrome-line);
+    display:flex; flex-direction:column; overflow:hidden;}
+  #leftTabs{display:flex; border-bottom:1px solid var(--chrome-line); flex:none;}
+  #leftTabs button{flex:1; padding:12px 8px; background:transparent; color:var(--chrome-sub); font-size:12px; font-weight:600;
+    border-bottom:2px solid transparent; transition:.15s;}
+  #leftTabs button.active{color:var(--chrome-text); border-bottom-color:var(--accent);}
+  #leftTabs button:hover{color:var(--chrome-text);}
+  #leftBody{flex:1; overflow-y:auto; padding:16px;}
+  .panel{display:none;}
+  .panel.active{display:block;}
+  .section{margin-bottom:18px; padding-bottom:16px; border-bottom:1px solid var(--chrome-line);}
+  .section:last-child{border-bottom:none;}
+  .section-title{font-size:11px; font-weight:700; color:var(--chrome-sub); letter-spacing:.06em; text-transform:uppercase; margin-bottom:12px;}
+  .field{margin-bottom:12px;}
+  .field:last-child{margin-bottom:0;}
+  .field-label{font-size:11px; color:var(--chrome-sub); margin-bottom:6px; display:flex; justify-content:space-between; align-items:center;}
+  .field-label .val{color:var(--accent); font-weight:600;}
+  textarea, input[type="text"], select{
+    width:100%; background:var(--chrome-input); border:1px solid var(--chrome-line); border-radius:8px;
+    color:var(--chrome-text); font-size:13px; padding:10px 12px; font-family:inherit; line-height:1.45;
+  }
+  textarea{resize:vertical; min-height:40px;}
+  textarea:focus, input[type="text"]:focus, select:focus{outline:none; border-color:var(--accent);}
+  input[type="range"]{width:100%; -webkit-appearance:none; appearance:none; height:4px; border-radius:4px; background:var(--chrome-line); outline:none;}
+  input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none; width:16px; height:16px; border-radius:50%; background:var(--accent); cursor:pointer; border:2px solid #fff;}
+  input[type="color"]{-webkit-appearance:none; appearance:none; width:100%; height:36px; padding:3px; border:1px solid var(--chrome-line); border-radius:8px; background:var(--chrome-input); cursor:pointer;}
+  input[type="color"]::-webkit-color-swatch-wrapper{padding:2px;}
+  input[type="color"]::-webkit-color-swatch{border:none; border-radius:5px;}
+  .row2{display:grid; grid-template-columns:1fr 1fr; gap:8px;}
+  .seg{display:flex; gap:6px; flex-wrap:wrap;}
+  .seg-btn{flex:1; min-width:0; padding:9px 8px; border-radius:8px; text-align:center; background:var(--chrome-input);
+    border:1px solid var(--chrome-line); color:var(--chrome-sub); font-size:11.5px; font-weight:600; cursor:pointer; transition:.15s;}
+  .seg-btn:hover{color:var(--chrome-text); border-color:var(--accent);}
+  .seg-btn.active{background:var(--accent); color:#fff; border-color:var(--accent);}
+  .swatches{display:grid; grid-template-columns:repeat(6,1fr); gap:8px;}
+  .swatch{aspect-ratio:1; border-radius:50%; border:2px solid transparent; cursor:pointer; box-shadow:inset 0 0 0 1px rgba(255,255,255,.12);}
+  .swatch.active{border-color:#fff; transform:scale(1.1);}
+  .upload-btn{display:flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:12px; border-radius:8px;
+    background:var(--chrome-btn); border:1px dashed var(--chrome-line); color:var(--chrome-text); font-size:12.5px; font-weight:600; cursor:pointer;}
+  .upload-btn:hover{border-color:var(--accent); background:var(--chrome-btn-hover);}
+  .hint{font-size:11px; color:var(--chrome-sub); margin-top:6px; line-height:1.5;}
+
+  #stage{flex:1; display:flex; align-items:center; justify-content:center; overflow:auto;
+    background:radial-gradient(circle at 30% 20%, var(--chrome-stage-spot) 0%, var(--chrome-bg) 60%);
+    padding:40px 32px; position:relative;}
+  #canvasWrap{box-shadow:0 24px 50px -16px #000a; border-radius:4px; position:relative;}
+  .zoombar{position:absolute; top:16px; right:16px; z-index:30; display:flex; align-items:center; gap:8px;
+    background:rgba(29,24,48,.75); border:1px solid rgba(255,255,255,.08); border-radius:24px; padding:7px 12px;
+    font-size:12px; color:#c8c8d0; backdrop-filter:blur(8px); box-shadow:0 8px 24px #0005;}
+  .zoombar button{width:28px; height:28px; border-radius:50%; background:rgba(255,255,255,.08); color:#fff; font-size:14px;
+    display:flex; align-items:center; justify-content:center;}
+  .zoombar button:hover{background:var(--accent);}
+  .zoombar .fit{width:auto; padding:0 10px; border-radius:14px; font-size:11px; font-weight:600;}
+
+  /* ========== PREMIUM EDITORIAL NEWSLETTER HEADER ========== */
+  #card{
+    width:1200px; height:320px;
+    position:relative; overflow:hidden;
+    background:var(--c-bg, #f6f3ed);
+    color:var(--c-text, #16140f);
+    font-family:'Noto Serif KR', Georgia, serif;
+  }
+  /* size presets via data-size */
+  #card[data-size="compact"]{ width:600px; height:160px; }
+  #card[data-size="standard"]{ width:1200px; height:320px; }
+  #card[data-size="wide"]{ width:1200px; height:400px; }
+  #card[data-size="tall"]{ width:1200px; height:480px; }
+
+  /* Layout A — Classic editorial split */
+  .nh-inner{position:absolute; inset:0; display:flex; align-items:stretch;}
+
+  .nh-content{
+    flex:1; min-width:0;
+    display:flex; flex-direction:column; justify-content:center;
+    padding:36px 48px;
+    position:relative; z-index:3;
+  }
+  #card[data-size="compact"] .nh-content{ padding:18px 24px; }
+  #card[data-size="wide"] .nh-content,
+  #card[data-size="tall"] .nh-content{ padding:44px 56px; }
+
+  .nh-kicker{
+    font-family:'Pretendard Variable','Noto Sans KR',sans-serif;
+    font-size:13px; font-weight:700; letter-spacing:.18em; text-transform:uppercase;
+    color:var(--c-accent, #8b3a3a);
+    margin-bottom:14px;
+    display:flex; align-items:center; gap:12px;
+  }
+  #card[data-size="compact"] .nh-kicker{ font-size:10px; margin-bottom:8px; gap:8px; }
+  .nh-kicker-line{width:28px; height:1.5px; background:var(--c-accent, #8b3a3a); flex-shrink:0;}
+
+  .nh-title{
+    font-family:'Noto Serif KR','Playfair Display',Georgia,serif;
+    font-size:42px; font-weight:700; line-height:1.2;
+    letter-spacing:-.025em; word-break:keep-all; white-space:pre-wrap;
+    color:var(--c-text, #16140f);
+    margin-bottom:12px;
+  }
+  #card[data-size="compact"] .nh-title{ font-size:22px; margin-bottom:6px; }
+  #card[data-size="wide"] .nh-title{ font-size:48px; }
+  #card[data-size="tall"] .nh-title{ font-size:52px; }
+
+  .nh-sub{
+    font-family:'Pretendard Variable','Noto Sans KR',sans-serif;
+    font-size:17px; font-weight:400; line-height:1.55;
+    color:var(--c-muted, #5c574f); word-break:keep-all; white-space:pre-wrap;
+    max-width:92%;
+  }
+  #card[data-size="compact"] .nh-sub{ font-size:12px; }
+
+  .nh-meta{
+    margin-top:20px;
+    display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+    font-family:'Pretendard Variable',sans-serif;
+    font-size:13px; font-weight:500;
+    color:var(--c-muted, #6b6560);
+  }
+  #card[data-size="compact"] .nh-meta{ margin-top:10px; font-size:10px; gap:10px; }
+  .nh-meta .sep{opacity:.35;}
+  .nh-brand-mark{
+    font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--c-text, #16140f);
+  }
+
+  /* Optional right image panel */
+  .nh-media{
+    width:38%; flex-shrink:0;
+    position:relative; overflow:hidden;
+    background:var(--c-media-bg, #e8e2d8);
+  }
+  #card[data-layout="full"] .nh-media{ display:none; }
+  #card[data-layout="split"] .nh-media{ display:block; }
+  #card[data-layout="full"] .nh-content{ padding-right:56px; }
+
+  .nh-media-wrap{position:absolute; inset:0; overflow:hidden; cursor:grab;}
+  .nh-media-wrap:active{cursor:grabbing;}
+  .nh-media-wrap img{
+    position:absolute; top:50%; left:50%;
+    width:100%; height:100%;
+    object-fit:cover; object-position:center;
+    transform:translate(-50%,-50%) scale(var(--izoom,1)) translate(var(--ioffx,0%), var(--ioffy,0%));
+    user-select:none; pointer-events:none;
+  }
+  .nh-media-ph{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    color:#9a948a; font-family:'Pretendard Variable',sans-serif; font-size:14px; text-align:center;
+    background:linear-gradient(160deg, #ebe5db, #ddd6cb);
+  }
+
+  /* Subtle vignette / edge for full layout */
+  .nh-scrim{
+    display:none;
+    position:absolute; inset:0; z-index:2; pointer-events:none;
+  }
+  #card[data-layout="full"][data-bg-mode="image"] .nh-scrim{
+    display:block;
+    background:linear-gradient(90deg, var(--c-bg, #f6f3ed) 0%, rgba(246,243,237,.92) 42%, rgba(246,243,237,.55) 70%, rgba(246,243,237,.15) 100%);
+  }
+  #card[data-tone="dark"][data-layout="full"][data-bg-mode="image"] .nh-scrim{
+    background:linear-gradient(90deg, #12110f 0%, rgba(18,17,15,.92) 42%, rgba(18,17,15,.5) 70%, rgba(18,17,15,.12) 100%);
+  }
+
+  /* Full-bleed background image layer */
+  .nh-bg-img{
+    display:none;
+    position:absolute; inset:0; z-index:0; overflow:hidden;
+  }
+  #card[data-layout="full"][data-bg-mode="image"] .nh-bg-img{ display:block; }
+  .nh-bg-img img{
+    position:absolute; top:50%; left:50%;
+    width:100%; height:100%;
+    object-fit:cover;
+    transform:translate(-50%,-50%) scale(var(--izoom,1)) translate(var(--ioffx,0%), var(--ioffy,0%));
+    user-select:none; pointer-events:none;
+  }
+
+  /* Decorative thin rule at bottom */
+  .nh-rule{
+    position:absolute; left:0; right:0; bottom:0; height:3px; z-index:4;
+    background:var(--c-accent, #8b3a3a);
+  }
+  #card[data-rule="off"] .nh-rule{ display:none; }
+
+  /* Tones */
+  #card[data-tone="dark"]{
+    --c-bg:#12110f;
+    --c-text:#f3efe8;
+    --c-muted:#a39e94;
+    --c-media-bg:#1c1b18;
+  }
+  #card[data-tone="ink"]{
+    --c-bg:#faf8f4;
+    --c-text:#0c0b09;
+    --c-muted:#5a564e;
+    --c-accent:#1a3a5c;
+    --c-media-bg:#e4dfd6;
+  }
+  #card[data-tone="midnight"]{
+    --c-bg:#0f1419;
+    --c-text:#eef2f6;
+    --c-muted:#8b95a1;
+    --c-accent:#c4a574;
+    --c-media-bg:#1a222c;
+  }
+
+  .modal-overlay{position:fixed; inset:0; background:rgba(0,0,0,.72); display:none; align-items:center; justify-content:center; z-index:500; padding:24px;}
+  .modal-overlay.show{display:flex;}
+  .modal{background:var(--chrome-panel); border:1px solid var(--chrome-line); border-radius:16px; padding:22px; max-width:480px; width:100%; text-align:center;}
+  .modal h3{font-size:15px; margin-bottom:8px;}
+  .modal p{font-size:12.5px; color:var(--chrome-sub); line-height:1.6; margin-bottom:14px;}
+  .modal img{width:100%; border-radius:10px; margin-bottom:14px; border:1px solid var(--chrome-line);}
+  .spinner{width:32px; height:32px; border-radius:50%; border:3px solid var(--chrome-line); border-top-color:var(--accent);
+    animation:spin .8s linear infinite; margin:18px auto;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  @media (max-width:900px){
+    #body{flex-direction:column;}
+    #left{width:100%; height:44vh; border-right:none; border-top:1px solid var(--chrome-line); order:2;}
+    #stage{order:1; height:56vh; padding:16px;}
+  }
+</style>
+</head>
+<body data-editor-theme="dark">
+<div id="app">
+  <div id="topbar">
+    <div class="brand">
+      <span class="dot"></span>
+      뉴스레터 헤더
+      <span class="sub">NEWSLETTER HEADER</span>
+    </div>
+    <div class="actions">
+      <button class="btn ghost small" id="themeBtn">테마</button>
+      <button class="btn ghost small" id="resetBtn">초기화</button>
+      <button class="btn primary" id="exportBtn">⬇ PNG 저장</button>
+    </div>
+  </div>
+
+  <div id="body">
+    <div id="left">
+      <div id="leftTabs">
+        <button class="active" data-tab="write">텍스트</button>
+        <button data-tab="image">이미지</button>
+        <button data-tab="style">스타일</button>
+      </div>
+      <div id="leftBody">
+
+        <div class="panel active" data-panel="write">
+          <div class="section">
+            <div class="section-title">헤더 텍스트</div>
+            <div class="field">
+              <div class="field-label">키커 (상단 작은 라벨)</div>
+              <input type="text" id="kickerText" value="WEEKLY BRIEFING">
+            </div>
+            <div class="field">
+              <div class="field-label">메인 타이틀</div>
+              <textarea id="titleText" rows="2">한 주의 시선을 모은 이야기</textarea>
+            </div>
+            <div class="field">
+              <div class="field-label">서브 카피</div>
+              <textarea id="subText" rows="2">에디터가 고른 이슈와 장면, 오늘 아침에 도착합니다.</textarea>
+            </div>
+          </div>
+          <div class="section">
+            <div class="section-title">메타</div>
+            <div class="field">
+              <div class="field-label">브랜드</div>
+              <input type="text" id="brandText" value="WEST150DAILY">
+            </div>
+            <div class="field">
+              <div class="field-label">호수 · 날짜</div>
+              <input type="text" id="issueText" value="Vol. 48  ·  2026.08.24">
+            </div>
+          </div>
+          <div class="section">
+            <div class="section-title">날짜 도우미</div>
+            <div class="seg" style="margin-bottom:10px;">
+              <div class="seg-btn active" data-locale="ko">한국</div>
+              <div class="seg-btn" data-locale="en">미국</div>
+            </div>
+            <button class="btn full" id="fillDateBtn">📅 호수·날짜에 오늘 반영</button>
+            <div class="hint">브랜드명은 유지하고 날짜 부분만 갱신합니다.</div>
+          </div>
+        </div>
+
+        <div class="panel" data-panel="image">
+          <div class="section">
+            <div class="section-title">레이아웃</div>
+            <div class="seg">
+              <div class="seg-btn active" data-layout="split">텍스트 + 이미지</div>
+              <div class="seg-btn" data-layout="full">풀 배경</div>
+            </div>
+            <div class="hint" style="margin-top:8px;">풀 배경은 사진 위에 텍스트가 올라갑니다.</div>
+          </div>
+          <div class="section">
+            <div class="section-title">이미지</div>
+            <label class="upload-btn" for="imgInput">🖼 이미지 업로드</label>
+            <input type="file" id="imgInput" accept="image/*" style="display:none;">
+            <button class="btn full" id="clearImgBtn" style="margin-top:10px;">이미지 제거</button>
+          </div>
+          <div class="section">
+            <div class="section-title">확대 · 위치</div>
+            <div class="field">
+              <div class="field-label">확대 <span class="val" id="iZoomVal">1.00x</span></div>
+              <input type="range" id="iZoom" min="1" max="2.5" step="0.01" value="1">
+            </div>
+            <div class="row2">
+              <div class="field"><div class="field-label">가로</div><input type="range" id="iOffX" min="-50" max="50" step="1" value="0"></div>
+              <div class="field"><div class="field-label">세로</div><input type="range" id="iOffY" min="-50" max="50" step="1" value="0"></div>
+            </div>
+            <button class="btn full" id="imgResetBtn" style="margin-top:8px;">줌 · 위치 초기화</button>
+          </div>
+        </div>
+
+        <div class="panel" data-panel="style">
+          <div class="section">
+            <div class="section-title">메일용 크기</div>
+            <div class="seg">
+              <div class="seg-btn" data-size="compact">컴팩트<br>600×160</div>
+              <div class="seg-btn active" data-size="standard">스탠다드<br>1200×320</div>
+              <div class="seg-btn" data-size="wide">와이드<br>1200×400</div>
+              <div class="seg-btn" data-size="tall">톨<br>1200×480</div>
+            </div>
+            <div class="hint" style="margin-top:8px;">일반 뉴스레터는 600px 폭도 많이 씁니다. 고해상도용으로 1200 제작 후 축소 권장.</div>
+          </div>
+          <div class="section">
+            <div class="section-title">톤</div>
+            <div class="seg">
+              <div class="seg-btn active" data-tone="light">아이보리</div>
+              <div class="seg-btn" data-tone="ink">잉크</div>
+              <div class="seg-btn" data-tone="dark">다크</div>
+              <div class="seg-btn" data-tone="midnight">미드나이트</div>
+            </div>
+          </div>
+          <div class="section">
+            <div class="section-title">포인트 컬러</div>
+            <div class="swatches" id="accentSwatches"></div>
+            <div class="field" style="margin-top:10px;">
+              <input type="color" id="accentColor" value="#8b3a3a">
+            </div>
+          </div>
+          <div class="section">
+            <div class="section-title">배경색</div>
+            <input type="color" id="bgColor" value="#f6f3ed">
+          </div>
+          <div class="section">
+            <div class="section-title">하단 포인트 라인</div>
+            <div class="seg">
+              <div class="seg-btn active" data-rule="on">표시</div>
+              <div class="seg-btn" data-rule="off">숨김</div>
+            </div>
+          </div>
+          <div class="section">
+            <div class="section-title">타이틀 크기</div>
+            <div class="field">
+              <div class="field-label"><span class="val" id="titleSizeVal">42px</span></div>
+              <input type="range" id="titleSize" min="18" max="64" value="42">
+            </div>
+          </div>
+          <div class="section">
+            <div class="section-title">서브 크기</div>
+            <div class="field">
+              <div class="field-label"><span class="val" id="subSizeVal">17px</span></div>
+              <input type="range" id="subSize" min="11" max="28" value="17">
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div id="stage">
+      <div class="zoombar">
+        <button id="zoomOut">−</button>
+        <span id="zoomLabel">배율 70%</span>
+        <button id="zoomIn">+</button>
+        <button class="fit" id="zoomFit">맞춤</button>
+      </div>
+      <div id="canvasWrap">
+        <div id="card" data-size="standard" data-tone="light" data-layout="split" data-rule="on" data-bg-mode="none">
+          <div class="nh-bg-img" id="bgImgLayer"></div>
+          <div class="nh-scrim"></div>
+          <div class="nh-inner">
+            <div class="nh-content">
+              <div class="nh-kicker">
+                <span class="nh-kicker-line"></span>
+                <span id="kickerOut">WEEKLY BRIEFING</span>
+              </div>
+              <div class="nh-title" id="titleOut">한 주의 시선을 모은 이야기</div>
+              <div class="nh-sub" id="subOut">에디터가 고른 이슈와 장면, 오늘 아침에 도착합니다.</div>
+              <div class="nh-meta">
+                <span class="nh-brand-mark" id="brandOut">WEST150DAILY</span>
+                <span class="sep">·</span>
+                <span id="issueOut">Vol. 48  ·  2026.08.24</span>
+              </div>
+            </div>
+            <div class="nh-media" id="mediaPanel">
+              <div class="nh-media-wrap" id="mediaWrap">
+                <div class="nh-media-ph" id="mediaPh">이미지를 올려주세요</div>
+              </div>
+            </div>
+          </div>
+          <div class="nh-rule"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div id="modalLoading"><div class="spinner"></div><p>이미지를 만들고 있어요…</p></div>
+    <div id="modalResult" style="display:none;">
+      <h3>저장 준비 완료</h3>
+      <p>메일에는 폭 600px로 넣는 경우가 많습니다. 필요하면 리사이즈해 사용하세요.</p>
+      <img id="resultImg" alt="export">
+      <button class="btn primary full" id="downloadBtn">📥 다운로드</button>
+      <button class="btn ghost full" id="closeModal" style="margin-top:8px;">닫기</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  const card = $('card');
+  const canvasWrap = $('canvasWrap');
+
+  document.querySelectorAll('#leftTabs button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#leftTabs button').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      const p = document.querySelector('.panel[data-panel="'+btn.dataset.tab+'"]');
+      if(p) p.classList.add('active');
+    });
+  });
+
+  $('themeBtn').addEventListener('click', () => {
+    const cur = document.body.getAttribute('data-editor-theme') || 'dark';
+    document.body.setAttribute('data-editor-theme', cur === 'dark' ? 'light' : 'dark');
+  });
+
+  function bind(id, outId){
+    const el = $(id), out = $(outId);
+    if(!el || !out) return;
+    const go = () => { out.textContent = el.value; };
+    el.addEventListener('input', go);
+    el.addEventListener('change', go);
+    go();
+  }
+  bind('kickerText','kickerOut');
+  bind('titleText','titleOut');
+  bind('subText','subOut');
+  bind('brandText','brandOut');
+  bind('issueText','issueOut');
+
+  let locale = 'ko';
+  document.querySelectorAll('[data-locale]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-locale]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      locale = btn.dataset.locale;
+    });
+  });
+  function todayStr(loc){
+    const n = new Date();
+    if(loc === 'ko') return `${n.getFullYear()}.${String(n.getMonth()+1).padStart(2,'0')}.${String(n.getDate()).padStart(2,'0')}`;
+    return n.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+  }
+  $('fillDateBtn').addEventListener('click', () => {
+    const brand = $('brandText').value.trim() || 'WEST150DAILY';
+    // keep Vol if present
+    const cur = $('issueText').value;
+    const volMatch = cur.match(/Vol\.\s*\d+/i);
+    const vol = volMatch ? volMatch[0] : 'Vol. 1';
+    $('issueText').value = `${vol}  ·  ${todayStr(locale)}`;
+    $('issueText').dispatchEvent(new Event('input'));
+  });
+
+  /* Image */
+  let imgEl = null, iZoom = 1, iOffX = 0, iOffY = 0;
+  const mediaWrap = $('mediaWrap');
+  const mediaPh = $('mediaPh');
+  const bgImgLayer = $('bgImgLayer');
+
+  function applyImgTransform(){
+    card.style.setProperty('--izoom', iZoom);
+    card.style.setProperty('--ioffx', iOffX + '%');
+    card.style.setProperty('--ioffy', iOffY + '%');
+    $('iZoomVal').textContent = iZoom.toFixed(2) + 'x';
+  }
+  applyImgTransform();
+
+  $('iZoom').addEventListener('input', e => { iZoom = parseFloat(e.target.value); applyImgTransform(); });
+  $('iOffX').addEventListener('input', e => { iOffX = parseFloat(e.target.value); applyImgTransform(); });
+  $('iOffY').addEventListener('input', e => { iOffY = parseFloat(e.target.value); applyImgTransform(); });
+  $('imgResetBtn').addEventListener('click', () => {
+    iZoom = 1; iOffX = 0; iOffY = 0;
+    $('iZoom').value = 1; $('iOffX').value = 0; $('iOffY').value = 0;
+    applyImgTransform();
+  });
+
+  function placeImage(src){
+    // media panel
+    if(imgEl) imgEl.remove();
+    imgEl = document.createElement('img');
+    imgEl.crossOrigin = 'anonymous';
+    imgEl.src = src;
+    mediaWrap.appendChild(imgEl);
+    mediaPh.style.display = 'none';
+
+    // full bg layer
+    bgImgLayer.innerHTML = '';
+    const bg = document.createElement('img');
+    bg.crossOrigin = 'anonymous';
+    bg.src = src;
+    bgImgLayer.appendChild(bg);
+
+    card.dataset.bgMode = 'image';
+    applyImgTransform();
+  }
+
+  $('imgInput').addEventListener('change', e => {
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => placeImage(ev.target.result);
+    reader.readAsDataURL(file);
+  });
+  $('clearImgBtn').addEventListener('click', () => {
+    if(imgEl){ imgEl.remove(); imgEl = null; }
+    mediaPh.style.display = '';
+    bgImgLayer.innerHTML = '';
+    card.dataset.bgMode = 'none';
+    $('imgInput').value = '';
+  });
+
+  let dragging = false, dragStart = {x:0,y:0}, startOff = {x:0,y:0};
+  function bindDrag(wrap){
+    wrap.addEventListener('pointerdown', e => {
+      if(!imgEl) return;
+      dragging = true;
+      dragStart = {x:e.clientX, y:e.clientY};
+      startOff = {x:iOffX, y:iOffY};
+      wrap.setPointerCapture(e.pointerId);
+    });
+    wrap.addEventListener('pointermove', e => {
+      if(!dragging) return;
+      const rect = wrap.getBoundingClientRect();
+      const dx = (e.clientX - dragStart.x) / rect.width * 100;
+      const dy = (e.clientY - dragStart.y) / rect.height * 100;
+      iOffX = Math.max(-50, Math.min(50, startOff.x + dx));
+      iOffY = Math.max(-50, Math.min(50, startOff.y + dy));
+      $('iOffX').value = iOffX; $('iOffY').value = iOffY;
+      applyImgTransform();
+    });
+    ['pointerup','pointercancel','pointerleave'].forEach(ev => wrap.addEventListener(ev, () => { dragging = false; }));
+  }
+  bindDrag(mediaWrap);
+
+  /* Layout */
+  document.querySelectorAll('[data-layout]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-layout]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      card.dataset.layout = btn.dataset.layout;
+    });
+  });
+
+  /* Size */
+  document.querySelectorAll('[data-size]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-size]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      card.dataset.size = btn.dataset.size;
+      fitScale();
+    });
+  });
+
+  /* Tone */
+  const toneBg = { light:'#f6f3ed', ink:'#faf8f4', dark:'#12110f', midnight:'#0f1419' };
+  document.querySelectorAll('[data-tone]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-tone]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      card.dataset.tone = btn.dataset.tone;
+      if(toneBg[btn.dataset.tone]) $('bgColor').value = toneBg[btn.dataset.tone];
+      card.style.setProperty('--c-bg', $('bgColor').value);
+    });
+  });
+
+  /* Accent */
+  const ACCENTS = ['#8b3a3a','#1a3a5c','#2c5f4a','#8b5a2b','#5c4a7a','#c4a574'];
+  const swRow = $('accentSwatches');
+  ACCENTS.forEach((c,i) => {
+    const d = document.createElement('div');
+    d.className = 'swatch' + (i===0?' active':'');
+    d.style.background = c;
+    d.addEventListener('click', () => {
+      document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+      d.classList.add('active');
+      $('accentColor').value = c;
+      card.style.setProperty('--c-accent', c);
+    });
+    swRow.appendChild(d);
+  });
+  card.style.setProperty('--c-accent', ACCENTS[0]);
+  $('accentColor').addEventListener('input', e => {
+    document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+    card.style.setProperty('--c-accent', e.target.value);
+  });
+  $('bgColor').addEventListener('input', e => card.style.setProperty('--c-bg', e.target.value));
+
+  document.querySelectorAll('[data-rule]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-rule]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      card.dataset.rule = btn.dataset.rule;
+    });
+  });
+
+  $('titleSize').addEventListener('input', e => {
+    $('titleOut').style.fontSize = e.target.value + 'px';
+    $('titleSizeVal').textContent = e.target.value + 'px';
+  });
+  $('subSize').addEventListener('input', e => {
+    $('subOut').style.fontSize = e.target.value + 'px';
+    $('subSizeVal').textContent = e.target.value + 'px';
+  });
+
+  /* Scale */
+  let previewScale = 0.7;
+  function getDims(){
+    const s = card.dataset.size;
+    if(s === 'compact') return {w:600, h:160};
+    if(s === 'wide') return {w:1200, h:400};
+    if(s === 'tall') return {w:1200, h:480};
+    return {w:1200, h:320};
+  }
+  function applyScale(){
+    const {w,h} = getDims();
+    canvasWrap.style.width = Math.round(w * previewScale) + 'px';
+    canvasWrap.style.height = Math.round(h * previewScale) + 'px';
+    card.style.width = w + 'px';
+    card.style.height = h + 'px';
+    card.style.transform = `scale(${previewScale})`;
+    card.style.transformOrigin = 'top left';
+    card.style.position = 'absolute';
+    card.style.left = '0';
+    card.style.top = '0';
+    canvasWrap.style.position = 'relative';
+    $('zoomLabel').textContent = `배율 ${Math.round(previewScale*100)}%`;
+  }
+  function fitScale(){
+    const stage = $('stage');
+    const {w,h} = getDims();
+    const availW = stage.clientWidth - 64;
+    const availH = stage.clientHeight - 64;
+    previewScale = Math.min(availW / w, availH / h, 0.95);
+    applyScale();
+  }
+  $('zoomIn').addEventListener('click', () => { previewScale = Math.min(1.2, previewScale + 0.05); applyScale(); });
+  $('zoomOut').addEventListener('click', () => { previewScale = Math.max(0.2, previewScale - 0.05); applyScale(); });
+  $('zoomFit').addEventListener('click', fitScale);
+  window.addEventListener('resize', fitScale);
+  fitScale();
+
+  /* Export */
+  const modal = $('modal');
+  $('exportBtn').addEventListener('click', async () => {
+    modal.classList.add('show');
+    $('modalLoading').style.display = 'block';
+    $('modalResult').style.display = 'none';
+    try {
+      await document.fonts.ready;
+      const prev = card.style.transform;
+      const prevW = canvasWrap.style.width;
+      const prevH = canvasWrap.style.height;
+      card.style.transform = 'none';
+      const {w,h} = getDims();
+      card.style.width = w + 'px';
+      card.style.height = h + 'px';
+      canvasWrap.style.width = w + 'px';
+      canvasWrap.style.height = h + 'px';
+      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+      const canvas = await html2canvas(card, {
+        backgroundColor: null,
+        useCORS: true,
+        scale: 2,
+        width: w,
+        height: h,
+        windowWidth: w,
+        windowHeight: h,
+        logging: false
+      });
+      card.style.transform = prev;
+      canvasWrap.style.width = prevW;
+      canvasWrap.style.height = prevH;
+      applyScale();
+
+      const dataUrl = canvas.toDataURL('image/png', 1.0);
+      $('resultImg').src = dataUrl;
+      $('modalLoading').style.display = 'none';
+      $('modalResult').style.display = 'block';
+      $('downloadBtn').onclick = () => {
+        const a = document.createElement('a');
+        a.href = dataUrl;
+        a.download = 'newsletter-header-' + Date.now() + '.png';
+        a.click();
+      };
+    } catch(err){
+      console.error(err);
+      $('modalLoading').innerHTML = '<p style="color:var(--danger)">오류: '+(err.message||'실패')+'</p>';
+    }
+  });
+  $('closeModal').addEventListener('click', () => modal.classList.remove('show'));
+  modal.addEventListener('click', e => { if(e.target === modal) modal.classList.remove('show'); });
+  $('resetBtn').addEventListener('click', () => { if(confirm('초기화할까요?')) location.reload(); });
+})();
+</script>
+</body>
+</html>
