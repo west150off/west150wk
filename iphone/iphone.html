@@ -418,56 +418,399 @@ input[type="range"]::-moz-range-thumb{
 
 /* 기존 모바일 구조 보정 */
 
-@media (max-width:900px){
+/* =========================================================
+   MOBILE / IPHONE EDITOR
+   ========================================================= */
+
+@media (max-width: 900px){
+
+  html,
+  body{
+    height:100%;
+    overflow:hidden;
+  }
 
   .app{
+    display:flex;
     flex-direction:column;
+    height:100dvh;
   }
+
+
+  /* ================= TOP BAR ================= */
 
   .topbar{
-    height:auto;
+
+    height:58px;
     min-height:58px;
 
-    flex-wrap:wrap;
+    padding:0 10px;
 
-    padding:8px 12px;
+    display:flex;
+    align-items:center;
+
+    flex-wrap:nowrap;
+
+    overflow:hidden;
+
   }
+
 
   .topbar-brand{
+
     width:auto;
-    min-width:170px;
+    min-width:auto;
+
+    flex-shrink:0;
+
   }
+
+
+  .topbar-brand-text{
+    display:none;
+  }
+
+
+  .topbar .brand-mark{
+
+    width:34px;
+    height:34px;
+
+    border-radius:9px;
+
+    font-size:14px;
+
+  }
+
+
+  /* ================= MOBILE MENU ================= */
 
   .top-menu{
-    width:100%;
-    overflow-x:auto;
 
-    height:44px;
+    flex:1;
+
+    min-width:0;
+
+    height:58px;
+
+    display:flex;
+
+    align-items:stretch;
+
+    overflow-x:auto;
+    overflow-y:hidden;
+
+    scrollbar-width:none;
+
+    margin-left:8px;
+
   }
+
+
+  .top-menu::-webkit-scrollbar{
+    display:none;
+  }
+
 
   .top-menu-item{
-    flex-shrink:0;
-    padding:0 13px;
+
+    flex:0 0 auto;
+
+    min-width:62px;
+
+    padding:0 12px;
+
+    font-size:11px;
+
+    white-space:nowrap;
+
   }
+
+
+  .top-menu-item.active::after{
+
+    left:10px;
+    right:10px;
+
+    height:2px;
+
+  }
+
+
+  .top-menu-item.menu-save{
+
+    margin-left:0;
+
+  }
+
+
+  /* ================= WORKSPACE ================= */
 
   .workspace{
+
+    flex:1;
+
+    min-height:0;
+
+    display:flex;
+
     flex-direction:column;
+
   }
 
+
+  /* ================= PREVIEW ================= */
+
+  .preview-wrap{
+
+    order:1;
+
+    width:100%;
+
+    height:54dvh;
+
+    min-height:0;
+
+    flex:1;
+
+    overflow:auto;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+  }
+
+
+  .stage{
+
+    position:relative;
+
+  }
+
+
+  .card-shell{
+
+    border-radius:16px;
+
+  }
+
+
+  /* ================= TOOL PANEL ================= */
+
   .sidebar{
+
+    order:2;
 
     width:100%;
     min-width:0;
 
-    height:46vh;
+    height:46dvh;
+
+    min-height:0;
+
+    flex:none;
+
+    overflow-y:auto;
+
+    overflow-x:hidden;
 
     border-right:none;
-    border-bottom:1px solid #26262e;
+
+    border-top:1px solid #292930;
+
+    border-bottom:none;
+
+    padding:14px 14px 80px;
+
+    background:#17171c;
 
   }
 
-  .preview-wrap{
-    height:54vh;
+
+  .sidebar::-webkit-scrollbar{
+    width:5px;
+  }
+
+
+  .sidebar::-webkit-scrollbar-thumb{
+
+    background:#36363f;
+
+    border-radius:8px;
+
+  }
+
+
+  /* 패널 제목 */
+
+  .panel-heading{
+
+    padding:2px 2px 14px;
+
+  }
+
+
+  .panel-title{
+
+    font-size:16px;
+
+  }
+
+
+  .panel-subtitle{
+
+    font-size:10px;
+
+  }
+
+
+  /* ================= SECTIONS ================= */
+
+  .section{
+
+    padding:14px 13px 15px;
+
+    border-radius:12px;
+
+    margin-bottom:10px;
+
+  }
+
+
+  .section-title{
+
+    font-size:12px;
+
+    margin-bottom:10px;
+
+  }
+
+
+  .field{
+
+    margin-bottom:10px;
+
+  }
+
+
+  .field-label{
+
+    font-size:10.5px;
+
+    margin-bottom:5px;
+
+  }
+
+
+  textarea,
+  input[type="text"],
+  select{
+
+    font-size:12px;
+
+    border-radius:8px;
+
+  }
+
+
+  textarea{
+
+    min-height:38px;
+
+  }
+
+
+  .row2{
+
+    gap:7px;
+
+  }
+
+
+  .row3{
+
+    gap:7px;
+
+  }
+
+
+  .upload-btn{
+
+    padding:10px;
+
+    font-size:12px;
+
+  }
+
+
+  .chip{
+
+    padding:5px 9px;
+
+    font-size:10.5px;
+
+  }
+
+
+  .swatches{
+
+    gap:7px;
+
+  }
+
+
+  .tone-grid{
+
+    gap:7px;
+
+  }
+
+
+  .color-input{
+
+    height:32px;
+
+  }
+
+
+  /* ================= SAVE BUTTON ================= */
+
+  .btn{
+
+    padding:12px;
+
+    border-radius:9px;
+
+    font-size:12.5px;
+
+  }
+
+
+  /* ================= PREVIEW ZOOM BAR ================= */
+
+  .zoombar{
+
+    bottom:12px;
+
+    padding:7px 12px;
+
+    gap:8px;
+
+    border-radius:24px;
+
+    font-size:11px;
+
+  }
+
+
+  .zoombar button{
+
+    width:28px;
+    height:28px;
+
   }
 
 }
@@ -2013,12 +2356,38 @@ document.getElementById('imageMode').addEventListener('change', () => {
     document.getElementById('previewScaleLabel').textContent = `화면 배율 ${Math.round(previewScale*100)}%`;
   }
   function fitScale(){
-    const wrap = document.querySelector('.preview-wrap');
+
+  const wrap = document.querySelector('.preview-wrap');
+
+  const isMobile = window.innerWidth <= 900;
+
+  if(isMobile){
+
+    const availW = wrap.clientWidth - 28;
+    const availH = wrap.clientHeight - 50;
+
+    previewScale = Math.min(
+      availW / 1080,
+      availH / 1920,
+      0.62
+    );
+
+  }else{
+
     const availW = wrap.clientWidth - 80;
     const availH = wrap.clientHeight - 90;
-    previewScale = Math.min(availW/1080, availH/1920, 0.7);
-    applyPreviewScale();
+
+    previewScale = Math.min(
+      availW / 1080,
+      availH / 1920,
+      0.7
+    );
+
   }
+
+  applyPreviewScale();
+
+}
   document.getElementById('zoomInBtn').addEventListener('click', ()=>{ previewScale = Math.min(1, previewScale+0.05); applyPreviewScale(); });
   document.getElementById('zoomOutBtn').addEventListener('click', ()=>{ previewScale = Math.max(0.15, previewScale-0.05); applyPreviewScale(); });
   window.addEventListener('resize', fitScale);
