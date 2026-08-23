@@ -659,6 +659,469 @@ input[type="range"]::-moz-range-thumb{
   .sidebar{ width:100%; height:46vh; min-width:0; border-right:none; border-bottom:1px solid #26262e; }
   .preview-wrap{ height:54vh; }
 }
+
+/* =========================================================
+   DESIGN SELECTOR
+   ========================================================= */
+
+.design-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+
+.design-option{
+  appearance:none;
+  border:1px solid #2c2c35;
+  background:#111116;
+  border-radius:12px;
+  padding:10px;
+  cursor:pointer;
+  text-align:left;
+  color:#eceef1;
+  transition:
+    border-color .18s ease,
+    background .18s ease,
+    transform .18s ease;
+}
+
+
+.design-option:hover{
+  background:#18181e;
+  border-color:#44444f;
+}
+
+
+.design-option.active{
+  border-color:#e0334c;
+  background:#1b1518;
+  box-shadow:
+    0 0 0 1px rgba(224,51,76,.15);
+}
+
+
+.design-option:active{
+  transform:scale(.98);
+}
+
+
+.design-option strong{
+  display:block;
+  margin-top:8px;
+  font-size:11.5px;
+  font-weight:700;
+}
+
+
+.design-option small{
+  display:block;
+  margin-top:3px;
+  color:#73737d;
+  font-size:9.5px;
+}
+
+
+/* ---------------------------------------------------------
+   디자인 미리보기 아이콘
+   --------------------------------------------------------- */
+
+.design-preview{
+
+  position:relative;
+
+  display:block;
+
+  width:100%;
+  aspect-ratio:9 / 16;
+
+  overflow:hidden;
+
+  border-radius:7px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #303039,
+      #111115
+    );
+
+}
+
+
+/* 사진 영역 */
+
+.design-preview > span{
+
+  position:absolute;
+
+  left:7px;
+  right:7px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #555562,
+      #25252c
+    );
+
+  border-radius:3px;
+
+}
+
+
+/* 제목 */
+
+.design-preview > i{
+
+  position:absolute;
+
+  display:block;
+
+  left:9px;
+  right:20px;
+
+  height:4px;
+
+  background:#eee;
+
+  border-radius:2px;
+
+}
+
+
+/* 하단 정보 */
+
+.design-preview > b{
+
+  position:absolute;
+
+  display:block;
+
+  left:9px;
+  width:32px;
+
+  height:2px;
+
+  background:#767680;
+
+  border-radius:2px;
+
+}
+
+
+/* ================= EDITORIAL ================= */
+
+.preview-editorial > span{
+
+  top:7px;
+
+  height:58%;
+
+}
+
+
+.preview-editorial > i{
+
+  bottom:27px;
+
+}
+
+
+.preview-editorial > b{
+
+  bottom:17px;
+
+}
+
+
+/* ================= IMMERSIVE ================= */
+
+.preview-immersive > span{
+
+  inset:0;
+
+  height:100%;
+
+  border-radius:0;
+
+}
+
+
+.preview-immersive::after{
+
+  content:"";
+
+  position:absolute;
+
+  inset:35% 0 0;
+
+  background:
+    linear-gradient(
+      to top,
+      rgba(0,0,0,.9),
+      rgba(0,0,0,0)
+    );
+
+}
+
+
+.preview-immersive > i{
+
+  z-index:2;
+
+  bottom:25px;
+
+}
+
+
+.preview-immersive > b{
+
+  z-index:2;
+
+  bottom:15px;
+
+}
+
+
+/* ================= SPLIT ================= */
+
+.preview-split > span{
+
+  top:7px;
+
+  height:54%;
+
+  left:0;
+  right:0;
+
+  border-radius:0;
+
+}
+
+
+.preview-split::after{
+
+  content:"";
+
+  position:absolute;
+
+  left:0;
+  right:0;
+  bottom:0;
+
+  height:39%;
+
+  background:#ededed;
+
+}
+
+
+.preview-split > i{
+
+  bottom:27px;
+
+  background:#19191d;
+
+}
+
+
+.preview-split > b{
+
+  bottom:17px;
+
+  background:#777;
+
+}
+
+
+/* ================= MINIMAL ================= */
+
+.preview-minimal{
+
+  background:#08080a;
+
+}
+
+
+.preview-minimal > span{
+
+  top:12px;
+
+  left:12px;
+  right:12px;
+
+  height:52%;
+
+  background:#25252b;
+
+}
+
+
+.preview-minimal > i{
+
+  left:12px;
+  right:25px;
+
+  bottom:29px;
+
+  height:5px;
+
+}
+
+
+.preview-minimal > b{
+
+  left:12px;
+
+  bottom:17px;
+
+}
+
+/* =========================================================
+   CARD DESIGN - FINAL
+   ========================================================= */
+
+
+/* ================= EDITORIAL ================= */
+
+.card.design-editorial{
+  background:#050506;
+}
+
+.card.design-editorial .card-top{
+  padding:76px 72px 0;
+}
+
+.card.design-editorial .card-bottom{
+  padding:0 72px 64px;
+}
+
+.card.design-editorial .headline{
+  font-size:92px !important;
+  line-height:1.16 !important;
+  letter-spacing:0 !important;
+}
+
+.card.design-editorial .accent-bar{
+  width:7px !important;
+}
+
+
+/* ================= IMMERSIVE ================= */
+
+.card.design-immersive{
+  background:#050506;
+}
+
+.card.design-immersive .card-top{
+  padding:58px 64px 0;
+}
+
+.card.design-immersive .card-bottom{
+  padding:0 64px 82px;
+}
+
+.card.design-immersive .card-scrim{
+  background:
+    linear-gradient(
+      to top,
+      rgba(0,0,0,.92) 0%,
+      rgba(0,0,0,.62) 28%,
+      rgba(0,0,0,.12) 58%,
+      rgba(0,0,0,0) 75%
+    ) !important;
+}
+
+.card.design-immersive .headline{
+  font-size:108px !important;
+  line-height:1.02 !important;
+  letter-spacing:-3px !important;
+}
+
+.card.design-immersive .accent-bar{
+  width:4px !important;
+}
+
+.card.design-immersive .text-group{
+  gap:20px !important;
+}
+
+
+/* ================= SPLIT ================= */
+
+.card.design-split{
+  background:#08080a;
+}
+
+.card.design-split .card-top{
+  padding:66px 72px 0;
+}
+
+.card.design-split .card-bottom{
+  padding:58px 72px 62px !important;
+  background:#08080a !important;
+}
+
+.card.design-split .card-scrim{
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(0,0,0,0) 35%,
+      rgba(0,0,0,.18) 52%,
+      rgba(0,0,0,.8) 100%
+    ) !important;
+}
+
+.card.design-split .headline{
+  font-size:86px !important;
+  line-height:1.12 !important;
+  letter-spacing:-1px !important;
+}
+
+.card.design-split .accent-bar{
+  width:6px !important;
+}
+
+.card.design-split .text-group{
+  gap:22px !important;
+  margin-bottom:28px !important;
+}
+
+
+/* ================= MINIMAL ================= */
+
+.card.design-minimal{
+  background:#060608;
+}
+
+.card.design-minimal .card-top{
+  padding:54px 58px 0 !important;
+}
+
+.card.design-minimal .card-bottom{
+  padding:0 58px 54px !important;
+  background:transparent !important;
+}
+
+.card.design-minimal .headline{
+  font-size:98px !important;
+  line-height:1.08 !important;
+  letter-spacing:-2.5px !important;
+}
+
+.card.design-minimal .accent-bar{
+  width:3px !important;
+}
+
+.card.design-minimal .text-group{
+  gap:20px !important;
+  margin-bottom:30px !important;
+}
+
+.card.design-minimal .divider{
+  background:rgba(255,255,255,.3) !important;
+}
 </style>
 </head>
 <body>
@@ -705,6 +1168,10 @@ input[type="range"]::-moz-range-thumb{
 
       <button class="top-menu-item" data-panel="template">
         템플릿
+      </button>
+
+      <button class="top-menu-item" data-panel="design">
+        디자인
       </button>
 
       <button class="top-menu-item" data-panel="etc">
@@ -1439,6 +1906,118 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea>
 
       </div>
 
+      <!-- ================================================= -->
+<!-- 디자인 -->
+<!-- ================================================= -->
+
+<div class="tool-panel" data-tool-panel="design">
+
+  <div class="panel-heading">
+
+    <div>
+      <div class="panel-title">디자인</div>
+      <div class="panel-subtitle">
+        같은 콘텐츠로 카드 레이아웃만 변경합니다
+      </div>
+    </div>
+
+  </div>
+
+
+  <div class="section">
+
+    <div class="section-title">
+      <span class="dot"></span>카드 스타일
+    </div>
+
+
+    <div class="design-grid" id="designGrid">
+
+      <button
+        type="button"
+        class="design-option active"
+        data-design="editorial"
+      >
+      <button
+        type="button"
+        class="design-option"
+        data-design="immersive"
+      >
+      <button
+        type="button"
+        class="design-option"
+        data-design="split"
+      >
+      <button
+        type="button"
+        class="design-option"
+        data-design="minimal"
+      >
+      
+        <span class="design-preview preview-editorial">
+          <span></span>
+          <i></i>
+          <b></b>
+        </span>
+
+        <strong>Editorial</strong>
+        <small>기본 에디토리얼</small>
+      </button>
+
+
+      <button
+        type="button"
+        class="design-option"
+        data-design="immersive"
+      >
+        <span class="design-preview preview-immersive">
+          <span></span>
+          <i></i>
+          <b></b>
+        </span>
+
+        <strong>Immersive</strong>
+        <small>사진 중심</small>
+      </button>
+
+
+      <button
+        type="button"
+        class="design-option"
+        data-design="split"
+      >
+        <span class="design-preview preview-split">
+          <span></span>
+          <i></i>
+          <b></b>
+        </span>
+
+        <strong>Split</strong>
+        <small>사진 / 정보 분할</small>
+      </button>
+
+
+      <button
+        type="button"
+        class="design-option"
+        data-design="minimal"
+      >
+        <span class="design-preview preview-minimal">
+          <span></span>
+          <i></i>
+          <b></b>
+        </span>
+
+        <strong>Minimal</strong>
+        <small>절제된 타이포</small>
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
 
 
       <!-- ================================================= -->
@@ -1730,6 +2309,65 @@ topMenuItems.forEach(item => {
   });
 
 });
+/* =========================================================
+   CARD DESIGN
+   ========================================================= */
+
+const designOptions =
+  document.querySelectorAll('.design-option');
+
+const cardElement =
+  document.getElementById('card');
+
+
+function applyCardDesign(design){
+
+  if(!cardElement) return;
+
+  /* 카드에 현재 디자인을 직접 기록 */
+  cardElement.setAttribute(
+    'data-design',
+    design
+  );
+
+
+  /* 선택 버튼 표시 */
+
+  designOptions.forEach(option => {
+
+    option.classList.toggle(
+      'active',
+      option.dataset.design === design
+    );
+
+  });
+
+}
+
+
+designOptions.forEach(option => {
+
+  option.addEventListener('click', function(e){
+
+    e.preventDefault();
+
+    const design =
+      this.dataset.design;
+
+    if(!design) return;
+
+    applyCardDesign(design);
+
+  });
+
+});
+
+
+/* 기본값 */
+
+applyCardDesign('editorial');
+
+
   /* ---------------- 폰트 목록 ---------------- */
   const FONTS = [
     { label:'프리텐다드 (기본 고딕)', value:"'Pretendard', sans-serif" },
