@@ -875,7 +875,7 @@ label.check-row input{ width:16px;height:16px; accent-color:#3654ff; }
           </div>
         </div>
 
-        <div class="section">
+        <div class="section" id="commonTextSection">
           <div class="section-title"><span class="dot"></span>텍스트 내용</div>
 
           <div class="field">
@@ -1468,6 +1468,7 @@ document.querySelectorAll('.seg-btn[data-ratio]').forEach(btn=>{
 /* ---------------- 카드 레이아웃 전환 (6종) ---------------- */
 const ratioSection = document.getElementById('ratioSection');
 const brandSection = document.getElementById('brandSection');
+const commonTextSection = document.getElementById('commonTextSection');
 const labelSection = document.getElementById('labelSection');
 const worldSection = document.getElementById('worldSection');
 const envSection = document.getElementById('envSection');
@@ -1495,6 +1496,9 @@ document.querySelectorAll('.seg-btn[data-layout]').forEach(btn=>{
     // 비율 선택은 phone/horizontal 외 나머지 레이아웃에서도 사용 가능하게 유지 (horizontal만 예외)
     ratioSection.style.display = layout === 'horizontal' ? 'none' : '';
     brandSection.style.display = layout === 'phone' ? '' : 'none';
+    // 공용 텍스트(헤드라인/날짜/본문/링크)는 phone·horizontal 카드에만 실제로 반영되므로
+    // world/env/sports/breaking 디자인에서는 숨겨서 "글이 안 써진다"는 혼동을 막음
+    commonTextSection.style.display = (layout === 'phone' || layout === 'horizontal') ? '' : 'none';
 
     // 텍스트 섹션 전환
     [labelSection, worldSection, envSection, sportsSection, brkSection].forEach(s=>{ if(s) s.style.display = 'none'; });
@@ -1541,13 +1545,19 @@ document.querySelectorAll('.seg-btn[data-labelstyle]').forEach(btn=>{
 });
 
 /* ---------------- 패널/카드 배경색 ---------------- */
+/* "하단 패널 색"은 폰 목업형(--panel-bg)뿐 아니라 가로형(--h-bg)·Environment형(--env-panel-bg)·
+   Breaking형(--brk-bg)의 텍스트 배경에도 동일하게 반영되어야 함 (이전에는 --panel-bg만 설정되어
+   나머지 3개 디자인에서는 색을 바꿔도 카드에 반영되지 않던 버그) */
+function setPanelBg(v){
+  ['--panel-bg','--h-bg','--env-panel-bg','--brk-bg'].forEach(k=>card.style.setProperty(k, v));
+}
 document.getElementById('panelBgColor').addEventListener('input', e=>{
-  card.style.setProperty('--panel-bg', e.target.value);
+  setPanelBg(e.target.value);
 });
 document.getElementById('cardBgColor').addEventListener('input', e=>{
   card.style.setProperty('--card-bg', e.target.value);
 });
-card.style.setProperty('--panel-bg', '#2c2a4a');
+setPanelBg('#2c2a4a');
 card.style.setProperty('--card-bg', '#f7f6f3');
 
 /* ---------------- 폰 화면 이미지 업/다운/줌 ---------------- */
