@@ -125,7 +125,7 @@
 
   /* ============ Template base helpers ============ */
   .card > div{ width:100%; height:100%; }
-  .img-fit{ position:relative; overflow:hidden; background-color:#111; width:100%; height:100%; }
+  .img-fit{ position:relative; overflow:hidden; background-color:#111; width:100%; height:100%; isolation:isolate; }
   .img-fit .img-el{ position:absolute; inset:0; width:100%; height:100%; display:block; }
   .img-fit .img-overlay{ position:absolute; inset:0; pointer-events:none; }
   .tpl-broadcast{ position:relative; }
@@ -151,16 +151,16 @@
   .tpl-breaking .arrow{ flex-shrink:0; width:38px; height:38px; background:var(--accent); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:16px; color:#fff; }
 
   /* ===== 03 Broadcast Screen ===== */
-  .tpl-broadcast{ background:#04060c; color:#fff; }
-  .tpl-broadcast .bgimg{ position:absolute; inset:0; z-index:0; }
-  .tpl-broadcast .veil{ position:absolute; inset:0; z-index:1; background:linear-gradient(180deg, rgba(2,4,10,.45) 0%, rgba(2,4,10,.15) 30%, rgba(2,4,10,.55) 62%, rgba(2,4,10,.97) 100%); }
-  .tpl-broadcast .inner{ position:relative; z-index:2; display:flex; flex-direction:column; height:100%; }
+  .tpl-broadcast{ background:#04060c; color:#fff; position:relative; overflow:hidden; }
+  .tpl-broadcast .bgimg{ position:absolute; left:0; right:0; top:0; height:44%; z-index:0; overflow:hidden; }
+  .tpl-broadcast .veil{ position:absolute; left:0; right:0; top:0; height:44%; z-index:1; background:linear-gradient(180deg, rgba(2,4,10,.25) 0%, rgba(2,4,10,.08) 48%, rgba(2,4,10,.72) 100%); pointer-events:none; }
+  .tpl-broadcast .inner{ position:absolute; inset:0; z-index:2; display:flex; flex-direction:column; height:100%; }
   .tpl-broadcast .top{ padding:44px 20px 0; display:flex; justify-content:space-between; align-items:center; }
   .tpl-broadcast .logo{ font-size:12px; font-weight:800; letter-spacing:.04em; }
   .tpl-broadcast .live{ display:flex; align-items:center; gap:6px; font-size:11px; font-weight:700; }
   .tpl-broadcast .live .dot{ width:7px; height:7px; border-radius:50%; background:var(--accent); }
   .tpl-broadcast .spacer{ flex:1; }
-  .tpl-broadcast .bottom-group{ padding:0 0 26px; }
+  .tpl-broadcast .bottom-group{ padding:16px 0 26px; background:#04060c; }
   .tpl-broadcast .headline{ padding:0 20px; margin-bottom:14px; text-transform:uppercase; }
   .tpl-broadcast .headline div{ line-height:1.1; letter-spacing:-0.01em; }
   .tpl-broadcast .badge-row{ padding:0 20px; display:flex; align-items:center; gap:10px; margin-bottom:10px; }
