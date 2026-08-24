@@ -1,0 +1,1481 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Card News Editor — Templates</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0D0D0D;
+    --surface: #141414;
+    --surface-2: #1A1A1A;
+    --border: #2A2A2A;
+    --text: #F5F5F5;
+    --text-dim: rgba(255,255,255,0.55);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    height: 100%; width: 100%; overflow: hidden;
+    background: var(--bg); color: var(--text);
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    user-select: none; -webkit-user-select: none; touch-action: manipulation;
+  }
+  #app {
+    display: flex; flex-direction: column; height: 100%;
+    max-width: 430px; margin: 0 auto; position: relative; background: var(--bg);
+  }
+
+  /* Top Nav */
+  .top-nav {
+    height: 52px; display: flex; align-items: center; justify-content: space-between;
+    padding: 0 10px; background: var(--bg); border-bottom: 1px solid var(--border);
+    flex-shrink: 0; z-index: 50;
+  }
+  .top-nav .left, .top-nav .right { display: flex; align-items: center; gap: 2px; min-width: 88px; }
+  .top-nav .right { justify-content: flex-end; }
+  .top-nav .center {
+    display: flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 500; cursor: pointer;
+  }
+  .top-nav .center .chevron { font-size: 9px; opacity: 0.55; }
+  .icon-btn {
+    width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;
+    border: none; background: transparent; color: var(--text); border-radius: 8px;
+    cursor: pointer; opacity: 0.85;
+  }
+  .icon-btn:active { opacity: 1; background: rgba(255,255,255,0.08); }
+  .icon-btn svg { width: 19px; height: 19px; stroke: currentColor; fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  .icon-btn.disabled { opacity: 0.28; pointer-events: none; }
+
+  /* Canvas */
+  .canvas-area {
+    flex: 1; position: relative; overflow: hidden;
+    display: flex; align-items: center; justify-content: center; background: #080808;
+  }
+  .canvas-wrapper { position: relative; transform-origin: center center; }
+  .card-canvas {
+    width: 270px; height: 480px; position: relative; overflow: hidden;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.05), 0 16px 48px rgba(0,0,0,0.55);
+    border-radius: 3px;
+  }
+  .zoom-indicator {
+    position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+    background: rgba(0,0,0,0.65); color: rgba(255,255,255,0.8); font-size: 11px;
+    padding: 3px 10px; border-radius: 12px; pointer-events: none; opacity: 0; transition: opacity 0.3s;
+  }
+  .zoom-indicator.show { opacity: 1; }
+
+  /* Page Strip */
+  .page-strip {
+    height: 68px; background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; padding: 0 10px; gap: 8px; overflow-x: auto; flex-shrink: 0; scrollbar-width: none;
+  }
+  .page-strip::-webkit-scrollbar { display: none; }
+  .page-thumb {
+    width: 38px; height: 52px; flex-shrink: 0; border-radius: 3px; background: #1E1E1E;
+    border: 1.5px solid transparent; position: relative; overflow: hidden; cursor: pointer;
+    transition: transform 0.15s, border-color 0.15s;
+  }
+  .page-thumb.active { border-color: #fff; transform: scale(1.05); }
+  .page-thumb .thumb-preview { width: 100%; height: 100%; background-size: cover; background-position: center; }
+  .page-thumb .thumb-num {
+    position: absolute; bottom: 1px; left: 0; right: 0; text-align: center;
+    font-size: 8px; font-weight: 600; color: rgba(255,255,255,0.75); text-shadow: 0 1px 2px #000;
+  }
+  .page-add {
+    width: 34px; height: 34px; border-radius: 7px; border: 1px dashed rgba(255,255,255,0.22);
+    display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.45);
+    font-size: 18px; cursor: pointer; flex-shrink: 0;
+  }
+
+  /* Bottom */
+  .bottom-bar { background: var(--surface); border-top: 1px solid var(--border); flex-shrink: 0; padding-bottom: var(--safe-bottom); }
+  .tool-row { display: flex; overflow-x: auto; padding: 8px 6px 5px; gap: 1px; scrollbar-width: none; }
+  .tool-row::-webkit-scrollbar { display: none; }
+  .tool-item {
+    display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 52px;
+    padding: 4px 2px; cursor: pointer; color: var(--text-dim);
+  }
+  .tool-item:active, .tool-item.active { color: var(--text); }
+  .tool-item .icon { width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; }
+  .tool-item .icon svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .tool-item .label { font-size: 9.5px; font-weight: 500; }
+
+  .ctx-panel { display: none; padding: 8px 10px 10px; border-top: 1px solid var(--border); background: var(--surface-2); }
+  .ctx-panel.active { display: block; }
+  .ctx-header { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
+  .ctx-header select {
+    background: #222; border: 1px solid #333; color: #fff; font-size: 12px; padding: 5px 8px; border-radius: 6px; outline: none;
+  }
+  .size-ctrl { display: flex; align-items: center; gap: 5px; margin-left: auto; }
+  .size-ctrl button {
+    width: 26px; height: 26px; border: 1px solid #333; background: #222; color: #fff; border-radius: 6px; font-size: 15px; cursor: pointer;
+  }
+  .size-ctrl span { font-size: 12px; min-width: 26px; text-align: center; }
+  .ctx-tools { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
+  .ctx-tools::-webkit-scrollbar { display: none; }
+  .ctx-tool {
+    display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 48px;
+    padding: 5px 3px; color: var(--text-dim); font-size: 9.5px; cursor: pointer; border-radius: 6px;
+  }
+  .ctx-tool:active { background: rgba(255,255,255,0.06); color: #fff; }
+  .ctx-tool svg { width: 17px; height: 17px; stroke: currentColor; fill: none; stroke-width: 1.5; }
+
+  /* Sheets */
+  .sheet-overlay {
+    position: absolute; inset: 0; background: rgba(0,0,0,0.55); z-index: 100;
+    display: none; align-items: flex-end;
+  }
+  .sheet-overlay.show { display: flex; }
+  .sheet {
+    width: 100%; background: #1A1A1A; border-radius: 14px 14px 0 0;
+    padding: 14px 14px calc(18px + var(--safe-bottom)); max-height: 78%; overflow-y: auto;
+    animation: slideUp 0.22s ease;
+  }
+  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .sheet-handle { width: 34px; height: 4px; background: #444; border-radius: 2px; margin: 0 auto 12px; }
+  .sheet-title { font-size: 15px; font-weight: 600; margin-bottom: 12px; text-align: center; }
+  .sheet-list { display: flex; flex-direction: column; gap: 2px; }
+  .sheet-item {
+    display: flex; align-items: center; gap: 10px; padding: 12px 10px; border-radius: 9px; cursor: pointer; font-size: 14px;
+  }
+  .sheet-item:active { background: rgba(255,255,255,0.06); }
+  .sheet-item .sub { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+
+  .template-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  }
+  .template-card {
+    background: #222; border-radius: 10px; border: 1.5px solid #333; overflow: hidden; cursor: pointer;
+    transition: border-color 0.15s;
+  }
+  .template-card:active, .template-card.active { border-color: #fff; }
+  .template-card .preview {
+    aspect-ratio: 9/16; background: #1a1a1a; position: relative; overflow: hidden;
+  }
+  .template-card .meta {
+    padding: 8px 8px 10px; font-size: 11px; font-weight: 600; text-align: center;
+  }
+  .template-card .meta span { display: block; font-size: 9px; font-weight: 400; color: var(--text-dim); margin-top: 2px; }
+
+  .color-row { display: flex; gap: 8px; padding: 6px 0; flex-wrap: wrap; }
+  .color-swatch { width: 28px; height: 28px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; }
+  .color-swatch.active { border-color: #fff; }
+
+  .text-edit-overlay {
+    position: absolute; inset: 0; background: rgba(0,0,0,0.75); z-index: 80;
+    display: none; flex-direction: column; padding: 56px 16px 16px;
+  }
+  .text-edit-overlay.show { display: flex; }
+  .text-edit-area {
+    flex: 1; background: transparent; border: none; color: #fff; font-size: 17px;
+    font-family: 'Pretendard', sans-serif; resize: none; outline: none; line-height: 1.4;
+  }
+  .text-edit-done {
+    align-self: flex-end; background: #fff; color: #000; border: none;
+    padding: 9px 18px; border-radius: 18px; font-weight: 600; font-size: 13px; margin-top: 10px;
+  }
+
+  .context-menu {
+    position: absolute; background: #2A2A2A; border-radius: 11px; padding: 5px; z-index: 90;
+    display: none; box-shadow: 0 8px 28px rgba(0,0,0,0.5); min-width: 130px;
+  }
+  .context-menu.show { display: block; }
+  .context-menu button {
+    display: block; width: 100%; text-align: left; background: none; border: none;
+    color: #fff; padding: 9px 12px; font-size: 13px; border-radius: 7px; cursor: pointer;
+  }
+  .context-menu button:active { background: rgba(255,255,255,0.1); }
+  .context-menu button.danger { color: #FF6B6B; }
+
+  /* Hidden file input */
+  #file-input { display: none; }
+
+  /* Toast */
+  .toast {
+    position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%);
+    background: rgba(255,255,255,0.92); color: #111; font-size: 13px; font-weight: 600;
+    padding: 10px 18px; border-radius: 20px; z-index: 200; opacity: 0; transition: opacity 0.25s;
+    pointer-events: none; white-space: nowrap;
+  }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="top-nav">
+    <div class="left">
+      <button class="icon-btn" id="btn-back" title="뒤로"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <button class="icon-btn disabled" id="btn-undo" title="실행 취소"><svg viewBox="0 0 24 24"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 00-9-9 9 9 0 00-6.7 2.9L3 13"/></svg></button>
+      <button class="icon-btn disabled" id="btn-redo" title="다시 실행"><svg viewBox="0 0 24 24"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 019-9 9 9 0 016.7 2.9L21 13"/></svg></button>
+    </div>
+    <div class="center" id="page-indicator">
+      <span id="page-label">카드 01 / 01</span><span class="chevron">▼</span>
+    </div>
+    <div class="right">
+      <button class="icon-btn" id="btn-preview" title="미리보기"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/></svg></button>
+      <button class="icon-btn" id="btn-share" title="저장 / 공유"><svg viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg></button>
+    </div>
+  </div>
+
+  <div class="canvas-area" id="canvas-area">
+    <div class="canvas-wrapper" id="canvas-wrapper">
+      <div class="card-canvas" id="card-canvas"></div>
+    </div>
+    <div class="zoom-indicator" id="zoom-indicator">100%</div>
+  </div>
+
+  <div class="page-strip" id="page-strip"></div>
+
+  <div class="bottom-bar">
+    <div class="tool-row" id="main-tools">
+      <div class="tool-item" data-tool="text">
+        <div class="icon"><svg viewBox="0 0 24 24"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg></div>
+        <div class="label">텍스트</div>
+      </div>
+      <div class="tool-item" data-tool="image">
+        <div class="icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div>
+        <div class="label">이미지</div>
+      </div>
+      <div class="tool-item" data-tool="shape">
+        <div class="icon"><svg viewBox="0 0 24 24"><path d="M12 2l10 18H2z"/></svg></div>
+        <div class="label">도형</div>
+      </div>
+      <div class="tool-item" data-tool="bg">
+        <div class="icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg></div>
+        <div class="label">배경</div>
+      </div>
+      <div class="tool-item" data-tool="template">
+        <div class="icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
+        <div class="label">템플릿</div>
+      </div>
+      <div class="tool-item" data-tool="style">
+        <div class="icon"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+        <div class="label">스타일</div>
+      </div>
+      <div class="tool-item" data-tool="adjust">
+        <div class="icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></svg></div>
+        <div class="label">보정</div>
+      </div>
+    </div>
+
+    <div class="ctx-panel" id="ctx-text">
+      <div class="ctx-header">
+        <select id="font-family">
+          <option value="Pretendard">Pretendard</option>
+          <option value="Inter">Inter</option>
+          <option value="'Libre Baskerville', serif">Libre Baskerville</option>
+          <option value="'Playfair Display', serif">Playfair</option>
+          <option value="system-ui">System</option>
+        </select>
+        <select id="font-weight">
+          <option value="400">Regular</option>
+          <option value="500">Medium</option>
+          <option value="600">SemiBold</option>
+          <option value="700" selected>Bold</option>
+          <option value="800">ExtraBold</option>
+          <option value="900">Black</option>
+        </select>
+        <div class="size-ctrl">
+          <button id="size-minus">−</button>
+          <span id="size-val">48</span>
+          <button id="size-plus">+</button>
+        </div>
+      </div>
+      <div class="ctx-tools">
+        <div class="ctx-tool" data-action="color"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 010 20"/></svg>색상</div>
+        <div class="ctx-tool" data-action="align"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h14"/></svg>정렬</div>
+        <div class="ctx-tool" data-action="letter"><svg viewBox="0 0 24 24"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg>자간</div>
+        <div class="ctx-tool" data-action="line"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>행간</div>
+        <div class="ctx-tool" data-action="more"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>더보기</div>
+      </div>
+    </div>
+
+    <div class="ctx-panel" id="ctx-image">
+      <div class="ctx-tools" style="justify-content:space-around;">
+        <div class="ctx-tool" data-action="replace"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>교체</div>
+        <div class="ctx-tool" data-action="crop"><svg viewBox="0 0 24 24"><path d="M6 2v14a2 2 0 002 2h14"/><path d="M18 22V8a2 2 0 00-2-2H2"/></svg>자르기</div>
+        <div class="ctx-tool" data-action="pos"><svg viewBox="0 0 24 24"><path d="M5 9l-3 3 3 3M9 5l3-3 3 3M15 19l-3 3-3-3M19 9l3 3-3 3"/></svg>위치</div>
+        <div class="ctx-tool" data-action="filter"><svg viewBox="0 0 24 24"><path d="M22 3H2l8 9.5V19l4 2v-8.5L22 3z"/></svg>필터</div>
+        <div class="ctx-tool" data-action="opacity"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 000 20"/></svg>불투명</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Template Sheet -->
+  <div class="sheet-overlay" id="sheet-template">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">뉴스 템플릿</div>
+      <div class="template-grid" id="template-grid"></div>
+    </div>
+  </div>
+
+  <!-- Export Sheet -->
+  <div class="sheet-overlay" id="sheet-export">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">저장 / 내보내기</div>
+      <div class="sheet-list">
+        <div class="sheet-item" data-export="png-save">
+          <div>
+            <div>이미지로 저장 (PNG)</div>
+            <div class="sub">iPhone 사진 앱에 저장 · 1080×1920</div>
+          </div>
+        </div>
+        <div class="sheet-item" data-export="jpg-save">
+          <div>
+            <div>이미지로 저장 (JPG)</div>
+            <div class="sub">고품질 JPEG</div>
+          </div>
+        </div>
+        <div class="sheet-item" data-export="story">
+          <div>
+            <div>Instagram Story 비율</div>
+            <div class="sub">1080 × 1920</div>
+          </div>
+        </div>
+        <div class="sheet-item" data-export="all">
+          <div style="font-weight:600;">모든 카드 저장</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Color Sheet -->
+  <div class="sheet-overlay" id="sheet-color">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">텍스트 색상</div>
+      <div class="color-row" id="color-row">
+        <div class="color-swatch active" style="background:#FFFFFF" data-color="#FFFFFF"></div>
+        <div class="color-swatch" style="background:#F5F5F5" data-color="#F5F5F5"></div>
+        <div class="color-swatch" style="background:#111111" data-color="#111111"></div>
+        <div class="color-swatch" style="background:#D71920" data-color="#D71920"></div>
+        <div class="color-swatch" style="background:#E31B23" data-color="#E31B23"></div>
+        <div class="color-swatch" style="background:#FF3B30" data-color="#FF3B30"></div>
+        <div class="color-swatch" style="background:#FF9500" data-color="#FF9500"></div>
+        <div class="color-swatch" style="background:#34C759" data-color="#34C759"></div>
+        <div class="color-swatch" style="background:#007AFF" data-color="#007AFF"></div>
+        <div class="color-swatch" style="background:#5856D6" data-color="#5856D6"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="text-edit-overlay" id="text-edit">
+    <textarea class="text-edit-area" id="text-edit-area"></textarea>
+    <button class="text-edit-done" id="text-edit-done">완료</button>
+  </div>
+
+  <div class="context-menu" id="context-menu">
+    <button data-act="duplicate">복제</button>
+    <button data-act="bring-front">맨 앞으로</button>
+    <button data-act="send-back">맨 뒤로</button>
+    <button data-act="delete" class="danger">삭제</button>
+  </div>
+
+  <input type="file" id="file-input" accept="image/*" capture="environment">
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+(function () {
+  // ========== CONSTANTS ==========
+  const DESIGN_W = 1080;
+  const DESIGN_H = 1920;
+  const DISPLAY_W = 270;
+  const SCALE = DISPLAY_W / DESIGN_W;
+
+  // Public domain / official White House portrait (2025)
+  const DEFAULT_HERO = 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Official_Presidential_Portrait_of_President_Donald_J._Trump_%282025%29.jpg/800px-Official_Presidential_Portrait_of_President_Donald_J._Trump_%282025%29.jpg';
+
+  // ========== CONTENT (immutable across templates) ==========
+  const CONTENT = {
+    heroImage: DEFAULT_HERO,
+    category: 'GLOBAL POLITICS',
+    brand: '@rpick',
+    headline: '트럼프,\nEU에 “큰 대가”\n경고',
+    subheadline: 'EU 빅테크 과징금 보복 예고, 한국 디지털 규제도 영향권 주목',
+    englishSummary: 'TRUMP WARNS EU OVER GOOGLE FINE, SOUTH KOREA WATCHES TRADE FALLOUT',
+    source: '조선일보',
+    reporter: '김은중 기자',
+    date: '2026.07.25 오전 5:14'
+  };
+
+  // ========== TEMPLATES (design only) ==========
+  const TEMPLATES = {
+    global: {
+      id: 'global',
+      name: 'GLOBAL POLITICS',
+      desc: '기존 다크 뉴스카드',
+      bg: '#0D0D0D',
+      image: { top: 0, height: 0.55, overlay: true, filter: 'none' },
+      category: { top: 0.58, size: 22, weight: 500, color: 'rgba(255,255,255,0.7)', family: 'Pretendard', tracking: 2, transform: 'uppercase' },
+      headline: { top: 0.62, size: 52, weight: 800, color: '#FFFFFF', family: 'Pretendard', lineHeight: 1.18 },
+      subheadline: { top: 0.78, size: 26, weight: 400, color: 'rgba(255,255,255,0.75)', family: 'Pretendard', lineHeight: 1.4 },
+      english: { top: 0.88, size: 18, weight: 500, color: 'rgba(255,255,255,0.45)', family: 'Inter', tracking: 0.5, transform: 'uppercase' },
+      footer: { top: 0.94, size: 20, weight: 500, color: 'rgba(255,255,255,0.5)', family: 'Pretendard' },
+      accent: null,
+      headerBar: null,
+      footerBar: null,
+      leftBar: null,
+      paper: false
+    },
+    classic: {
+      id: 'classic',
+      name: 'CLASSIC NEWSPAPER',
+      desc: '전통 신문 Editorial',
+      bg: '#F5F3EE',
+      image: { top: 0, height: 0.42, overlay: false, filter: 'none' },
+      category: { top: 0.445, size: 20, weight: 600, color: '#111', family: 'Inter', tracking: 3, transform: 'uppercase', divider: true },
+      headline: { top: 0.48, size: 58, weight: 700, color: '#111', family: "'Playfair Display', serif", lineHeight: 1.12 },
+      subheadline: { top: 0.72, size: 26, weight: 400, color: '#555', family: "'Libre Baskerville', serif", lineHeight: 1.45 },
+      english: { top: 0.84, size: 16, weight: 400, color: '#777', family: 'Inter', tracking: 0.3, transform: 'uppercase' },
+      footer: { top: 0.92, size: 18, weight: 500, color: '#333', family: 'Inter', dividerTop: true },
+      accent: null,
+      headerBar: null,
+      footerBar: null,
+      leftBar: null,
+      paper: true
+    },
+    business: {
+      id: 'business',
+      name: 'MODERN BUSINESS',
+      desc: 'Bloomberg / FT 스타일',
+      bg: '#FFFFFF',
+      image: { top: 0.08, height: 0.42, overlay: false, filter: 'none' },
+      category: { top: 0.015, size: 18, weight: 600, color: '#111', family: 'Inter', tracking: 1.5, transform: 'uppercase', header: true },
+      headline: { top: 0.53, size: 48, weight: 800, color: '#111', family: 'Inter', lineHeight: 1.15, accentWords: true },
+      subheadline: { top: 0.72, size: 24, weight: 400, color: '#444', family: 'Inter', lineHeight: 1.4 },
+      english: { top: 0.82, size: 15, weight: 500, color: '#888', family: 'Inter', tracking: 0.8, transform: 'uppercase' },
+      footer: { top: 0.92, size: 17, weight: 500, color: '#555', family: 'Inter', align: 'right' },
+      accent: '#D71920',
+      headerBar: { height: 0.055, color: '#111' },
+      footerBar: null,
+      leftBar: { width: 4, color: '#D71920', top: 0.53, height: 0.16 },
+      paper: false
+    },
+    breaking: {
+      id: 'breaking',
+      name: 'BREAKING NEWS',
+      desc: '방송 속보 그래픽',
+      bg: '#111111',
+      image: { top: 0, height: 1, overlay: true, filter: 'none', fullBleed: true },
+      category: { top: 0.04, size: 18, weight: 600, color: '#fff', family: 'Inter', tracking: 1.5, transform: 'uppercase', header: true },
+      headline: { top: 0.62, size: 52, weight: 800, color: '#FFFFFF', family: 'Inter', lineHeight: 1.15, panel: true },
+      subheadline: { top: 0.78, size: 24, weight: 400, color: 'rgba(255,255,255,0.85)', family: 'Inter', lineHeight: 1.4 },
+      english: { top: 0.88, size: 15, weight: 500, color: 'rgba(255,255,255,0.5)', family: 'Inter', tracking: 0.5, transform: 'uppercase' },
+      footer: { top: 0.94, size: 18, weight: 500, color: 'rgba(255,255,255,0.6)', family: 'Inter' },
+      accent: '#E31B23',
+      headerBar: null,
+      footerBar: { height: 0.05, color: '#000' },
+      leftBar: null,
+      breakingLabel: true,
+      paper: false
+    },
+    magazine: {
+      id: 'magazine',
+      name: 'PREMIUM MAGAZINE',
+      desc: 'TIME / Economist 잡지',
+      bg: '#EAE7DF',
+      image: { top: 0.18, height: 0.38, overlay: false, filter: 'none', framed: true },
+      category: { top: 0.06, size: 16, weight: 500, color: '#333', family: 'Inter', tracking: 4, transform: 'uppercase' },
+      headline: { top: 0.60, size: 46, weight: 700, color: '#111', family: "'Playfair Display', serif", lineHeight: 1.18, mixed: true },
+      subheadline: { top: 0.78, size: 22, weight: 400, color: '#555', family: 'Inter', lineHeight: 1.4 },
+      english: { top: 0.86, size: 14, weight: 400, color: '#777', family: 'Inter', tracking: 0.4, transform: 'uppercase' },
+      footer: { top: 0.93, size: 16, weight: 500, color: '#444', family: 'Inter' },
+      accent: '#C41E3A',
+      headerBar: null,
+      footerBar: null,
+      leftBar: null,
+      redSquare: true,
+      paper: true
+    },
+    digital: {
+      id: 'digital',
+      name: 'DIGITAL EDITORIAL',
+      desc: 'Instagram 뉴스 계정',
+      bg: '#050505',
+      image: { top: 0, height: 0.48, overlay: true, filter: 'grayscale(30%) contrast(1.05)', gradientBottom: true },
+      category: { top: 0.52, size: 18, weight: 600, color: 'rgba(255,255,255,0.7)', family: 'Inter', tracking: 2, transform: 'uppercase', header: true },
+      headline: { top: 0.58, size: 56, weight: 800, color: '#FFFFFF', family: 'Inter', lineHeight: 1.12, accentWords: true },
+      subheadline: { top: 0.76, size: 24, weight: 400, color: 'rgba(255,255,255,0.7)', family: 'Inter', lineHeight: 1.4 },
+      english: { top: 0.86, size: 14, weight: 500, color: 'rgba(255,255,255,0.4)', family: 'Inter', tracking: 0.6, transform: 'uppercase' },
+      footer: { top: 0.93, size: 17, weight: 500, color: 'rgba(255,255,255,0.5)', family: 'Inter', columns: true },
+      accent: '#E31B23',
+      headerBar: null,
+      footerBar: null,
+      leftBar: null,
+      bigNumber: true,
+      paper: false
+    }
+  };
+
+  // ========== STATE ==========
+  let pages = [];
+  let currentPage = 0;
+  let selectedId = null;
+  let zoom = 1;
+  let history = [];
+  let historyIdx = -1;
+  let isDragging = false;
+  let dragStart = null;
+  let longPressTimer = null;
+  let currentTemplateId = 'global';
+  let heroImageData = DEFAULT_HERO; // can be dataURL after upload
+
+  // ========== DOM ==========
+  const cardCanvas = document.getElementById('card-canvas');
+  const canvasWrapper = document.getElementById('canvas-wrapper');
+  const canvasArea = document.getElementById('canvas-area');
+  const pageStrip = document.getElementById('page-strip');
+  const pageLabel = document.getElementById('page-label');
+  const zoomInd = document.getElementById('zoom-indicator');
+  const mainTools = document.getElementById('main-tools');
+  const ctxText = document.getElementById('ctx-text');
+  const ctxImage = document.getElementById('ctx-image');
+  const fileInput = document.getElementById('file-input');
+  const toastEl = document.getElementById('toast');
+
+  function showToast(msg) {
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    setTimeout(() => toastEl.classList.remove('show'), 2200);
+  }
+
+  // ========== PAGE MODEL ==========
+  function createPageFromTemplate(tplId) {
+    const tpl = TEMPLATES[tplId] || TEMPLATES.global;
+    // We store free-form objects for editing, but also keep content + templateId
+    return {
+      id: 'p' + Date.now() + Math.random().toString(36).slice(2, 6),
+      templateId: tplId,
+      content: JSON.parse(JSON.stringify(CONTENT)),
+      content: { ...CONTENT, heroImage: heroImageData },
+      objects: buildObjectsFromTemplate(tpl, { ...CONTENT, heroImage: heroImageData })
+    };
+  }
+
+  function buildObjectsFromTemplate(tpl, content) {
+    const objs = [];
+    const pad = 56;
+    const textW = DESIGN_W - pad * 2;
+
+    // Background is handled separately; hero image as object if not full-bleed design
+    if (tpl.image && !tpl.image.fullBleed) {
+      const imgH = Math.round(DESIGN_H * tpl.image.height);
+      const imgTop = Math.round(DESIGN_H * tpl.image.top);
+      objs.push({
+        id: 'hero',
+        type: 'image',
+        x: tpl.image.framed ? 80 : 0,
+        y: imgTop,
+        w: tpl.image.framed ? DESIGN_W - 160 : DESIGN_W,
+        h: imgH,
+        src: content.heroImage,
+        filter: tpl.image.filter || 'none',
+        locked: false
+      });
+    }
+
+    // Category
+    if (tpl.category) {
+      objs.push({
+        id: 'cat',
+        type: 'text',
+        role: 'category',
+        x: pad,
+        y: Math.round(DESIGN_H * tpl.category.top),
+        w: textW,
+        h: 40,
+        text: content.category,
+        fontSize: tpl.category.size,
+        fontWeight: tpl.category.weight,
+        color: tpl.category.color,
+        fontFamily: tpl.category.family,
+        letterSpacing: tpl.category.tracking || 0,
+        align: 'left',
+        transform: tpl.category.transform || 'none'
+      });
+    }
+
+    // Headline
+    if (tpl.headline) {
+      objs.push({
+        id: 'hl',
+        type: 'text',
+        role: 'headline',
+        x: pad + (tpl.leftBar ? 24 : 0),
+        y: Math.round(DESIGN_H * tpl.headline.top),
+        w: textW - (tpl.leftBar ? 24 : 0),
+        h: 220,
+        text: content.headline,
+        fontSize: tpl.headline.size,
+        fontWeight: tpl.headline.weight,
+        color: tpl.headline.color,
+        fontFamily: tpl.headline.family,
+        lineHeight: tpl.headline.lineHeight || 1.2,
+        align: 'left',
+        accentWords: !!tpl.headline.accentWords,
+        accentColor: tpl.accent
+      });
+    }
+
+    // Subheadline
+    if (tpl.subheadline) {
+      objs.push({
+        id: 'sub',
+        type: 'text',
+        role: 'subheadline',
+        x: pad,
+        y: Math.round(DESIGN_H * tpl.subheadline.top),
+        w: textW,
+        h: 100,
+        text: content.subheadline,
+        fontSize: tpl.subheadline.size,
+        fontWeight: tpl.subheadline.weight,
+        color: tpl.subheadline.color,
+        fontFamily: tpl.subheadline.family,
+        lineHeight: tpl.subheadline.lineHeight || 1.4,
+        align: 'left'
+      });
+    }
+
+    // English
+    if (tpl.english) {
+      objs.push({
+        id: 'en',
+        type: 'text',
+        role: 'english',
+        x: pad,
+        y: Math.round(DESIGN_H * tpl.english.top),
+        w: textW,
+        h: 50,
+        text: content.englishSummary,
+        fontSize: tpl.english.size,
+        fontWeight: tpl.english.weight,
+        color: tpl.english.color,
+        fontFamily: tpl.english.family,
+        letterSpacing: tpl.english.tracking || 0,
+        align: 'left',
+        transform: tpl.english.transform || 'none'
+      });
+    }
+
+    // Footer
+    if (tpl.footer) {
+      let footerText = `${content.source}  ·  ${content.reporter}  ·  ${content.date}`;
+      if (tpl.footer.columns) {
+        footerText = `${content.source}          ${content.reporter}          ${content.date}`;
+      }
+      objs.push({
+        id: 'ft',
+        type: 'text',
+        role: 'footer',
+        x: pad,
+        y: Math.round(DESIGN_H * tpl.footer.top),
+        w: textW,
+        h: 40,
+        text: footerText,
+        fontSize: tpl.footer.size,
+        fontWeight: tpl.footer.weight,
+        color: tpl.footer.color,
+        fontFamily: tpl.footer.family,
+        align: tpl.footer.align || 'left'
+      });
+    }
+
+    // Brand (top right for some)
+    if (tpl.category && tpl.category.header) {
+      objs.push({
+        id: 'brand',
+        type: 'text',
+        role: 'brand',
+        x: DESIGN_W - pad - 200,
+        y: Math.round(DESIGN_H * (tpl.category.top || 0.02)),
+        w: 200,
+        h: 36,
+        text: content.brand,
+        fontSize: (tpl.category.size || 18) - 1,
+        fontWeight: 500,
+        color: tpl.category.color,
+        fontFamily: tpl.category.family,
+        align: 'right'
+      });
+    }
+
+    return objs;
+  }
+
+  // ========== RENDER ==========
+  function renderPage() {
+    const page = pages[currentPage];
+    if (!page) return;
+    const tpl = TEMPLATES[page.templateId] || TEMPLATES.global;
+    cardCanvas.innerHTML = '';
+    cardCanvas.style.background = tpl.bg;
+
+    // Full-bleed background image (breaking)
+    if (tpl.image && tpl.image.fullBleed) {
+      const bgImg = document.createElement('div');
+      bgImg.style.cssText = `position:absolute;inset:0;background-image:url(${page.content.heroImage});background-size:cover;background-position:center;filter:${tpl.image.filter || 'none'};`;
+      cardCanvas.appendChild(bgImg);
+      if (tpl.image.overlay) {
+        const ov = document.createElement('div');
+        ov.style.cssText = 'position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.25) 0%,rgba(0,0,0,0.55) 40%,rgba(0,0,0,0.85) 100%);';
+        cardCanvas.appendChild(ov);
+      }
+    }
+
+    // Header bar
+    if (tpl.headerBar) {
+      const bar = document.createElement('div');
+      bar.style.cssText = `position:absolute;top:0;left:0;right:0;height:${tpl.headerBar.height * DESIGN_H * SCALE}px;background:${tpl.headerBar.color};`;
+      cardCanvas.appendChild(bar);
+    }
+
+    // Bottom panel for breaking
+    if (tpl.headline && tpl.headline.panel) {
+      const panel = document.createElement('div');
+      panel.style.cssText = `position:absolute;left:0;right:0;bottom:0;height:${0.42 * DESIGN_H * SCALE}px;background:rgba(0,0,0,0.72);`;
+      cardCanvas.appendChild(panel);
+    }
+
+    // Left accent bar
+    if (tpl.leftBar) {
+      const lb = document.createElement('div');
+      lb.style.cssText = `position:absolute;left:${56 * SCALE}px;top:${tpl.leftBar.top * DESIGN_H * SCALE}px;width:${tpl.leftBar.width * SCALE}px;height:${tpl.leftBar.height * DESIGN_H * SCALE}px;background:${tpl.leftBar.color};`;
+      cardCanvas.appendChild(lb);
+    }
+
+    // Breaking label
+    if (tpl.breakingLabel) {
+      const lab = document.createElement('div');
+      lab.style.cssText = `position:absolute;left:${56 * SCALE}px;top:${0.56 * DESIGN_H * SCALE}px;background:#E31B23;color:#fff;font-size:${14 * SCALE}px;font-weight:700;padding:${4 * SCALE}px ${10 * SCALE}px;letter-spacing:1px;font-family:Inter,sans-serif;`;
+      lab.textContent = 'WORLD NEWS';
+      cardCanvas.appendChild(lab);
+    }
+
+    // Big number for digital
+    if (tpl.bigNumber) {
+      const num = document.createElement('div');
+      num.style.cssText = `position:absolute;left:${56 * SCALE}px;top:${0.50 * DESIGN_H * SCALE}px;font-size:${28 * SCALE}px;font-weight:300;color:rgba(255,255,255,0.25);font-family:Inter,sans-serif;`;
+      num.textContent = '01';
+      cardCanvas.appendChild(num);
+    }
+
+    // Red square for magazine
+    if (tpl.redSquare) {
+      const sq = document.createElement('div');
+      sq.style.cssText = `position:absolute;left:${56 * SCALE}px;top:${0.585 * DESIGN_H * SCALE}px;width:${12 * SCALE}px;height:${12 * SCALE}px;background:${tpl.accent};`;
+      cardCanvas.appendChild(sq);
+    }
+
+    // Category divider (classic)
+    if (tpl.category && tpl.category.divider) {
+      const div = document.createElement('div');
+      div.style.cssText = `position:absolute;left:${56 * SCALE}px;top:${(tpl.category.top + 0.025) * DESIGN_H * SCALE}px;width:${(DESIGN_W - 112) * SCALE}px;height:1px;background:#111;opacity:0.35;`;
+      cardCanvas.appendChild(div);
+    }
+
+    // Objects
+    page.objects.forEach(obj => {
+      const el = document.createElement('div');
+      el.className = 'canvas-object';
+      el.dataset.id = obj.id;
+      el.style.left = (obj.x * SCALE) + 'px';
+      el.style.top = (obj.y * SCALE) + 'px';
+      el.style.width = (obj.w * SCALE) + 'px';
+      el.style.height = (obj.h * SCALE) + 'px';
+
+      if (obj.type === 'text') {
+        el.classList.add('text-obj');
+        const content = document.createElement('div');
+        content.className = 'content';
+        content.style.fontSize = (obj.fontSize * SCALE) + 'px';
+        content.style.fontWeight = obj.fontWeight || 700;
+        content.style.color = obj.color || '#fff';
+        content.style.fontFamily = obj.fontFamily || 'Pretendard';
+        content.style.textAlign = obj.align || 'left';
+        content.style.letterSpacing = ((obj.letterSpacing || 0) * SCALE) + 'px';
+        content.style.lineHeight = obj.lineHeight || 1.25;
+        content.style.textTransform = obj.transform || 'none';
+        content.style.whiteSpace = 'pre-wrap';
+        content.style.wordBreak = 'keep-all';
+
+        // Accent words handling for headline
+        if (obj.accentWords && obj.accentColor && obj.text.includes('“큰 대가”')) {
+          const parts = obj.text.split('“큰 대가”');
+          content.innerHTML = '';
+          if (parts[0]) content.appendChild(document.createTextNode(parts[0]));
+          const span = document.createElement('span');
+          span.style.color = obj.accentColor;
+          span.textContent = '“큰 대가”';
+          content.appendChild(span);
+          if (parts[1]) content.appendChild(document.createTextNode(parts[1]));
+        } else {
+          content.textContent = obj.text;
+        }
+        el.appendChild(content);
+      } else if (obj.type === 'image') {
+        const img = document.createElement('div');
+        img.className = 'content';
+        img.style.backgroundImage = `url(${obj.src})`;
+        img.style.backgroundSize = 'cover';
+        img.style.backgroundPosition = 'center top';
+        if (obj.filter && obj.filter !== 'none') img.style.filter = obj.filter;
+        el.appendChild(img);
+      } else if (obj.type === 'shape') {
+        const sh = document.createElement('div');
+        sh.className = 'content';
+        sh.style.background = obj.color || 'rgba(255,255,255,0.15)';
+        sh.style.borderRadius = ((obj.radius || 0) * SCALE) + 'px';
+        el.appendChild(sh);
+      }
+
+      el.addEventListener('pointerdown', onObjectPointerDown);
+      el.addEventListener('dblclick', e => {
+        e.stopPropagation();
+        if (obj.type === 'text') startTextEdit(obj);
+      });
+      cardCanvas.appendChild(el);
+    });
+
+    if (selectedId) showSelection(selectedId);
+    updatePageIndicator();
+    renderThumbs();
+  }
+
+  function showSelection(id) {
+    cardCanvas.querySelectorAll('.selection-box, .handle').forEach(n => n.remove());
+    const obj = getObj(id);
+    if (!obj) return;
+    const box = document.createElement('div');
+    box.className = 'selection-box';
+    box.style.cssText = `position:absolute;border:1px solid rgba(255,255,255,0.9);left:${obj.x * SCALE - 1}px;top:${obj.y * SCALE - 1}px;width:${obj.w * SCALE + 2}px;height:${obj.h * SCALE + 2}px;pointer-events:none;box-sizing:border-box;`;
+    cardCanvas.appendChild(box);
+    ['tl', 'tr', 'bl', 'br'].forEach(pos => {
+      const h = document.createElement('div');
+      h.className = 'handle ' + pos;
+      h.dataset.handle = pos;
+      h.style.cssText = `position:absolute;width:10px;height:10px;background:#fff;border:1.5px solid #111;border-radius:2px;pointer-events:auto;z-index:20;`;
+      if (pos === 'tl') { h.style.top = '-5px'; h.style.left = '-5px'; }
+      if (pos === 'tr') { h.style.top = '-5px'; h.style.right = '-5px'; }
+      if (pos === 'bl') { h.style.bottom = '-5px'; h.style.left = '-5px'; }
+      if (pos === 'br') { h.style.bottom = '-5px'; h.style.right = '-5px'; }
+      h.addEventListener('pointerdown', onHandleDown);
+      box.appendChild(h);
+    });
+
+    mainTools.style.display = 'none';
+    ctxText.classList.remove('active');
+    ctxImage.classList.remove('active');
+    if (obj.type === 'text') {
+      ctxText.classList.add('active');
+      document.getElementById('size-val').textContent = obj.fontSize;
+      document.getElementById('font-weight').value = obj.fontWeight || 700;
+    } else if (obj.type === 'image') {
+      ctxImage.classList.add('active');
+    }
+  }
+
+  function hideSelection() {
+    selectedId = null;
+    cardCanvas.querySelectorAll('.selection-box, .handle').forEach(n => n.remove());
+    mainTools.style.display = 'flex';
+    ctxText.classList.remove('active');
+    ctxImage.classList.remove('active');
+  }
+
+  function getObj(id) {
+    return pages[currentPage].objects.find(o => o.id === id);
+  }
+
+  function updatePageIndicator() {
+    pageLabel.textContent = `카드 ${String(currentPage + 1).padStart(2, '0')} / ${String(pages.length).padStart(2, '0')}`;
+  }
+
+  function renderThumbs() {
+    pageStrip.innerHTML = '';
+    pages.forEach((p, i) => {
+      const th = document.createElement('div');
+      th.className = 'page-thumb' + (i === currentPage ? ' active' : '');
+      const tpl = TEMPLATES[p.templateId] || TEMPLATES.global;
+      th.innerHTML = `<div class="thumb-preview" style="background:${tpl.bg};background-image:url(${p.content.heroImage});background-size:cover;background-position:center;"></div><div class="thumb-num">${String(i + 1).padStart(2, '0')}</div>`;
+      th.addEventListener('click', () => {
+        currentPage = i;
+        currentTemplateId = pages[i].templateId;
+        hideSelection();
+        renderPage();
+      });
+      let t;
+      th.addEventListener('pointerdown', () => { t = setTimeout(() => showPageMenu(i), 500); });
+      th.addEventListener('pointerup', () => clearTimeout(t));
+      th.addEventListener('pointerleave', () => clearTimeout(t));
+      pageStrip.appendChild(th);
+    });
+    const add = document.createElement('div');
+    add.className = 'page-add';
+    add.textContent = '+';
+    add.addEventListener('click', () => {
+      pages.push(createPageFromTemplate(currentTemplateId));
+      currentPage = pages.length - 1;
+      pushHistory();
+      renderPage();
+    });
+    pageStrip.appendChild(add);
+  }
+
+  // ========== INTERACTION ==========
+  function onObjectPointerDown(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    const id = e.currentTarget.dataset.id;
+    selectedId = id;
+    showSelection(id);
+    isDragging = true;
+    const obj = getObj(id);
+    dragStart = { x: e.clientX, y: e.clientY, ox: obj.x, oy: obj.y };
+    e.currentTarget.setPointerCapture(e.pointerId);
+    longPressTimer = setTimeout(() => showContextMenu(e.clientX, e.clientY), 550);
+  }
+
+  function onHandleDown(e) {
+    e.stopPropagation();
+    const handle = e.target.dataset.handle;
+    isDragging = true;
+    const obj = getObj(selectedId);
+    dragStart = { x: e.clientX, y: e.clientY, ox: obj.x, oy: obj.y, ow: obj.w, oh: obj.h, handle };
+    e.target.setPointerCapture(e.pointerId);
+  }
+
+  document.addEventListener('pointermove', e => {
+    if (!isDragging || !dragStart) return;
+    clearTimeout(longPressTimer);
+    const dx = (e.clientX - dragStart.x) / (SCALE * zoom);
+    const dy = (e.clientY - dragStart.y) / (SCALE * zoom);
+    const obj = getObj(selectedId);
+    if (!obj) return;
+    if (dragStart.handle) {
+      if (dragStart.handle === 'br') {
+        obj.w = Math.max(40, dragStart.ow + dx);
+        obj.h = Math.max(20, dragStart.oh + dy);
+      } else if (dragStart.handle === 'tl') {
+        obj.x = dragStart.ox + dx;
+        obj.y = dragStart.oy + dy;
+        obj.w = Math.max(40, dragStart.ow - dx);
+        obj.h = Math.max(20, dragStart.oh - dy);
+      }
+    } else {
+      obj.x = dragStart.ox + dx;
+      obj.y = dragStart.oy + dy;
+    }
+    renderPage();
+    showSelection(selectedId);
+  });
+
+  document.addEventListener('pointerup', () => {
+    if (isDragging) {
+      isDragging = false;
+      dragStart = null;
+      clearTimeout(longPressTimer);
+      pushHistory();
+    }
+  });
+
+  cardCanvas.addEventListener('pointerdown', e => {
+    if (e.target === cardCanvas || e.target.classList.contains('content') === false && !e.target.closest('.canvas-object')) {
+      // only hide if clicking empty
+    }
+  });
+  // simpler: click outside objects
+  canvasArea.addEventListener('pointerdown', e => {
+    if (e.target === canvasArea || e.target === canvasWrapper) hideSelection();
+  });
+
+  // Pinch zoom
+  let lastDist = 0;
+  canvasArea.addEventListener('touchstart', e => {
+    if (e.touches.length === 2) lastDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+  }, { passive: true });
+  canvasArea.addEventListener('touchmove', e => {
+    if (e.touches.length === 2) {
+      const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+      if (lastDist) {
+        zoom = Math.min(2.5, Math.max(0.4, zoom * (dist / lastDist)));
+        canvasWrapper.style.transform = `scale(${zoom})`;
+        zoomInd.textContent = Math.round(zoom * 100) + '%';
+        zoomInd.classList.add('show');
+        clearTimeout(zoomInd._t);
+        zoomInd._t = setTimeout(() => zoomInd.classList.remove('show'), 800);
+      }
+      lastDist = dist;
+    }
+  }, { passive: true });
+  canvasArea.addEventListener('dblclick', () => {
+    zoom = 1;
+    canvasWrapper.style.transform = 'scale(1)';
+    zoomInd.textContent = '100%';
+    zoomInd.classList.add('show');
+    setTimeout(() => zoomInd.classList.remove('show'), 800);
+  });
+
+  // ========== TOOLS ==========
+  mainTools.querySelectorAll('.tool-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const tool = item.dataset.tool;
+      if (tool === 'text') addText();
+      else if (tool === 'image') triggerImageUpload();
+      else if (tool === 'shape') addShape();
+      else if (tool === 'template') openSheet('sheet-template');
+      else if (tool === 'style') openSheet('sheet-template');
+      else if (tool === 'bg') triggerImageUpload(true);
+      else if (tool === 'adjust') showToast('보정 기능은 프로토타입입니다');
+    });
+  });
+
+  function addText() {
+    const id = 'o' + Date.now();
+    pages[currentPage].objects.push({
+      id, type: 'text', x: 80, y: 900, w: 920, h: 80,
+      text: '새 텍스트', fontSize: 42, fontWeight: 700, color: '#FFFFFF',
+      fontFamily: 'Pretendard', align: 'left'
+    });
+    selectedId = id;
+    pushHistory();
+    renderPage();
+  }
+
+  function addShape() {
+    const id = 'o' + Date.now();
+    pages[currentPage].objects.push({
+      id, type: 'shape', x: 200, y: 700, w: 680, h: 180,
+      color: 'rgba(255,255,255,0.12)', radius: 8
+    });
+    selectedId = id;
+    pushHistory();
+    renderPage();
+  }
+
+  // Image upload (device only)
+  let uploadTarget = null; // 'hero' | 'object' | null
+  function triggerImageUpload(asBg) {
+    uploadTarget = asBg ? 'hero' : (selectedId && getObj(selectedId)?.type === 'image' ? selectedId : 'new');
+    fileInput.click();
+  }
+
+  fileInput.addEventListener('change', e => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const dataUrl = ev.target.result;
+      if (uploadTarget === 'hero' || uploadTarget === 'new' && !selectedId) {
+        // Update content hero for all templates on this page
+        pages[currentPage].content.heroImage = dataUrl;
+        heroImageData = dataUrl;
+        // Also update hero object if exists
+        const heroObj = pages[currentPage].objects.find(o => o.id === 'hero' || o.role === 'hero');
+        if (heroObj) heroObj.src = dataUrl;
+        else {
+          // force rebuild objects for current template
+          applyTemplate(pages[currentPage].templateId, true);
+        }
+        showToast('사진이 적용되었습니다');
+      } else if (uploadTarget && uploadTarget !== 'new') {
+        const obj = getObj(uploadTarget);
+        if (obj && obj.type === 'image') {
+          obj.src = dataUrl;
+          showToast('이미지 교체됨');
+        }
+      } else {
+        // add new image object
+        const id = 'o' + Date.now();
+        pages[currentPage].objects.push({
+          id, type: 'image', x: 80, y: 500, w: 920, h: 520, src: dataUrl
+        });
+        selectedId = id;
+        showToast('이미지 추가됨');
+      }
+      pushHistory();
+      renderPage();
+      fileInput.value = '';
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // Text controls
+  document.getElementById('size-plus').addEventListener('click', () => {
+    const obj = getObj(selectedId);
+    if (obj) { obj.fontSize = Math.min(200, obj.fontSize + 4); document.getElementById('size-val').textContent = obj.fontSize; renderPage(); showSelection(selectedId); pushHistory(); }
+  });
+  document.getElementById('size-minus').addEventListener('click', () => {
+    const obj = getObj(selectedId);
+    if (obj) { obj.fontSize = Math.max(12, obj.fontSize - 4); document.getElementById('size-val').textContent = obj.fontSize; renderPage(); showSelection(selectedId); pushHistory(); }
+  });
+  document.getElementById('font-weight').addEventListener('change', e => {
+    const obj = getObj(selectedId);
+    if (obj) { obj.fontWeight = +e.target.value; renderPage(); showSelection(selectedId); pushHistory(); }
+  });
+  document.getElementById('font-family').addEventListener('change', e => {
+    const obj = getObj(selectedId);
+    if (obj) { obj.fontFamily = e.target.value; renderPage(); showSelection(selectedId); pushHistory(); }
+  });
+
+  ctxText.querySelectorAll('.ctx-tool').forEach(t => {
+    t.addEventListener('click', () => {
+      const act = t.dataset.action;
+      if (act === 'color') openSheet('sheet-color');
+      else if (act === 'align') {
+        const obj = getObj(selectedId);
+        if (obj) {
+          const aligns = ['left', 'center', 'right'];
+          obj.align = aligns[(aligns.indexOf(obj.align || 'left') + 1) % 3];
+          renderPage(); showSelection(selectedId); pushHistory();
+        }
+      } else showToast(act + ' (프로토타입)');
+    });
+  });
+
+  ctxImage.querySelectorAll('.ctx-tool').forEach(t => {
+    t.addEventListener('click', () => {
+      if (t.dataset.action === 'replace') triggerImageUpload();
+      else showToast(t.dataset.action + ' (프로토타입)');
+    });
+  });
+
+  document.querySelectorAll('#color-row .color-swatch').forEach(s => {
+    s.addEventListener('click', () => {
+      document.querySelectorAll('#color-row .color-swatch').forEach(x => x.classList.remove('active'));
+      s.classList.add('active');
+      const obj = getObj(selectedId);
+      if (obj) { obj.color = s.dataset.color; renderPage(); showSelection(selectedId); pushHistory(); }
+      closeSheets();
+    });
+  });
+
+  function startTextEdit(obj) {
+    const overlay = document.getElementById('text-edit');
+    const area = document.getElementById('text-edit-area');
+    area.value = obj.text;
+    area.style.fontSize = Math.max(16, obj.fontSize * SCALE * 0.85) + 'px';
+    area.style.fontWeight = obj.fontWeight;
+    area.style.color = obj.color;
+    overlay.classList.add('show');
+    area.focus();
+    document.getElementById('text-edit-done').onclick = () => {
+      obj.text = area.value;
+      // sync back to content if role matches
+      const page = pages[currentPage];
+      if (obj.role === 'headline') page.content.headline = obj.text;
+      if (obj.role === 'subheadline') page.content.subheadline = obj.text;
+      if (obj.role === 'category') page.content.category = obj.text;
+      overlay.classList.remove('show');
+      renderPage();
+      showSelection(obj.id);
+      pushHistory();
+    };
+  }
+
+  // ========== TEMPLATE SYSTEM ==========
+  function applyTemplate(tplId, keepContent) {
+    const page = pages[currentPage];
+    const content = keepContent ? page.content : { ...CONTENT, heroImage: heroImageData };
+    page.templateId = tplId;
+    page.content = content;
+    page.objects = buildObjectsFromTemplate(TEMPLATES[tplId], content);
+    currentTemplateId = tplId;
+    hideSelection();
+    pushHistory();
+    renderPage();
+    showToast(TEMPLATES[tplId].name + ' 적용');
+  }
+
+  function buildTemplateSheet() {
+    const grid = document.getElementById('template-grid');
+    grid.innerHTML = '';
+    Object.values(TEMPLATES).forEach(tpl => {
+      const card = document.createElement('div');
+      card.className = 'template-card' + (tpl.id === currentTemplateId ? ' active' : '');
+      card.innerHTML = `
+        <div class="preview" style="background:${tpl.bg};">
+          <div style="position:absolute;inset:0;background-image:url(${pages[currentPage]?.content?.heroImage || DEFAULT_HERO});background-size:cover;background-position:center top;opacity:${tpl.image.fullBleed ? 0.7 : 0.9};${tpl.image.height < 1 ? `height:${tpl.image.height * 100}%;top:${tpl.image.top * 100}%;` : ''}"></div>
+          <div style="position:absolute;bottom:8%;left:8%;right:8%;color:${tpl.paper || tpl.bg === '#FFFFFF' || tpl.bg === '#F5F3EE' || tpl.bg === '#EAE7DF' ? '#111' : '#fff'};font-size:9px;font-weight:700;line-height:1.2;font-family:${tpl.headline.family};">${CONTENT.headline.split('\\n')[0]}</div>
+        </div>
+        <div class="meta">${tpl.name}<span>${tpl.desc}</span></div>
+      `;
+      card.addEventListener('click', () => {
+        applyTemplate(tpl.id, true);
+        closeSheets();
+      });
+      grid.appendChild(card);
+    });
+  }
+
+  // ========== EXPORT / SAVE (iPhone friendly) ==========
+  function exportCanvas(format) {
+    // Render at full resolution into offscreen canvas
+    const page = pages[currentPage];
+    const tpl = TEMPLATES[page.templateId] || TEMPLATES.global;
+    const off = document.createElement('canvas');
+    off.width = DESIGN_W;
+    off.height = DESIGN_H;
+    const ctx = off.getContext('2d');
+
+    // bg
+    ctx.fillStyle = tpl.bg;
+    ctx.fillRect(0, 0, DESIGN_W, DESIGN_H);
+
+    // helper to draw image
+    function drawImageCover(src, x, y, w, h, filter) {
+      return new Promise(resolve => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+          ctx.save();
+          if (filter && filter !== 'none') {
+            // limited filter support
+            if (filter.includes('grayscale')) ctx.filter = 'grayscale(0.3)';
+          }
+          // cover
+          const ir = img.width / img.height;
+          const tr = w / h;
+          let sx, sy, sw, sh;
+          if (ir > tr) {
+            sh = img.height; sw = img.height * tr; sx = (img.width - sw) / 2; sy = 0;
+          } else {
+            sw = img.width; sh = img.width / tr; sx = 0; sy = (img.height - sh) / 2;
+          }
+          ctx.drawImage(img, sx, sy, sw, sh, x, y, w, h);
+          ctx.restore();
+          resolve();
+        };
+        img.onerror = () => resolve();
+        img.src = src;
+      });
+    }
+
+    async function paint() {
+      if (tpl.image && tpl.image.fullBleed) {
+        await drawImageCover(page.content.heroImage, 0, 0, DESIGN_W, DESIGN_H, tpl.image.filter);
+        // overlay
+        const g = ctx.createLinearGradient(0, 0, 0, DESIGN_H);
+        g.addColorStop(0, 'rgba(0,0,0,0.25)');
+        g.addColorStop(0.4, 'rgba(0,0,0,0.55)');
+        g.addColorStop(1, 'rgba(0,0,0,0.85)');
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, DESIGN_W, DESIGN_H);
+      }
+
+      if (tpl.headerBar) {
+        ctx.fillStyle = tpl.headerBar.color;
+        ctx.fillRect(0, 0, DESIGN_W, tpl.headerBar.height * DESIGN_H);
+      }
+      if (tpl.headline && tpl.headline.panel) {
+        ctx.fillStyle = 'rgba(0,0,0,0.72)';
+        ctx.fillRect(0, DESIGN_H * 0.58, DESIGN_W, DESIGN_H * 0.42);
+      }
+      if (tpl.leftBar) {
+        ctx.fillStyle = tpl.leftBar.color;
+        ctx.fillRect(56, tpl.leftBar.top * DESIGN_H, tpl.leftBar.width, tpl.leftBar.height * DESIGN_H);
+      }
+      if (tpl.breakingLabel) {
+        ctx.fillStyle = '#E31B23';
+        ctx.fillRect(56, DESIGN_H * 0.56, 140, 32);
+        ctx.fillStyle = '#fff';
+        ctx.font = '700 14px Inter,sans-serif';
+        ctx.fillText('WORLD NEWS', 66, DESIGN_H * 0.56 + 22);
+      }
+      if (tpl.bigNumber) {
+        ctx.fillStyle = 'rgba(255,255,255,0.25)';
+        ctx.font = '300 28px Inter,sans-serif';
+        ctx.fillText('01', 56, DESIGN_H * 0.52);
+      }
+      if (tpl.redSquare) {
+        ctx.fillStyle = tpl.accent;
+        ctx.fillRect(56, DESIGN_H * 0.585, 12, 12);
+      }
+      if (tpl.category && tpl.category.divider) {
+        ctx.strokeStyle = 'rgba(0,0,0,0.35)';
+        ctx.beginPath();
+        ctx.moveTo(56, (tpl.category.top + 0.025) * DESIGN_H);
+        ctx.lineTo(DESIGN_W - 56, (tpl.category.top + 0.025) * DESIGN_H);
+        ctx.stroke();
+      }
+
+      // objects
+      for (const obj of page.objects) {
+        if (obj.type === 'image') {
+          await drawImageCover(obj.src, obj.x, obj.y, obj.w, obj.h, obj.filter);
+        } else if (obj.type === 'text') {
+          ctx.fillStyle = obj.color || '#fff';
+          ctx.font = `${obj.fontWeight || 700} ${obj.fontSize}px ${obj.fontFamily || 'Pretendard'},sans-serif`;
+          ctx.textAlign = obj.align === 'center' ? 'center' : obj.align === 'right' ? 'right' : 'left';
+          ctx.textBaseline = 'top';
+          if (obj.letterSpacing) ctx.letterSpacing = obj.letterSpacing + 'px';
+          const lines = String(obj.text).split('\n');
+          const lh = (obj.lineHeight || 1.25) * obj.fontSize;
+          let tx = obj.x;
+          if (obj.align === 'center') tx = obj.x + obj.w / 2;
+          if (obj.align === 'right') tx = obj.x + obj.w;
+          lines.forEach((line, i) => {
+            // simple accent
+            if (obj.accentWords && obj.accentColor && line.includes('“큰 대가”')) {
+              const parts = line.split('“큰 대가”');
+              let cx = tx;
+              if (obj.align === 'left') {
+                ctx.fillStyle = obj.color;
+                ctx.fillText(parts[0], cx, obj.y + i * lh);
+                cx += ctx.measureText(parts[0]).width;
+                ctx.fillStyle = obj.accentColor;
+                ctx.fillText('“큰 대가”', cx, obj.y + i * lh);
+                cx += ctx.measureText('“큰 대가”').width;
+                ctx.fillStyle = obj.color;
+                ctx.fillText(parts[1] || '', cx, obj.y + i * lh);
+              } else {
+                ctx.fillText(line, tx, obj.y + i * lh);
+              }
+            } else {
+              ctx.fillStyle = obj.color;
+              ctx.fillText(line, tx, obj.y + i * lh);
+            }
+          });
+        } else if (obj.type === 'shape') {
+          ctx.fillStyle = obj.color || 'rgba(255,255,255,0.15)';
+          ctx.fillRect(obj.x, obj.y, obj.w, obj.h);
+        }
+      }
+
+      // download
+      const mime = format === 'jpg' ? 'image/jpeg' : 'image/png';
+      const quality = format === 'jpg' ? 0.92 : undefined;
+      off.toBlob(blob => {
+        if (!blob) {
+          showToast('저장 실패');
+          return;
+        }
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `card-news-${page.templateId}-${Date.now()}.${format === 'jpg' ? 'jpg' : 'png'}`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast('이미지가 저장되었습니다');
+      }, mime, quality);
+    }
+
+    paint().catch(() => showToast('저장 중 오류'));
+  }
+
+  // ========== SHEETS ==========
+  function openSheet(id) {
+    if (id === 'sheet-template') buildTemplateSheet();
+    document.getElementById(id).classList.add('show');
+  }
+  function closeSheets() {
+    document.querySelectorAll('.sheet-overlay').forEach(s => s.classList.remove('show'));
+  }
+  document.querySelectorAll('.sheet-overlay').forEach(ov => {
+    ov.addEventListener('click', e => { if (e.target === ov) closeSheets(); });
+  });
+
+  document.getElementById('btn-share').addEventListener('click', () => openSheet('sheet-export'));
+  document.querySelectorAll('[data-export]').forEach(el => {
+    el.addEventListener('click', () => {
+      const type = el.dataset.export;
+      if (type === 'png-save' || type === 'story') exportCanvas('png');
+      else if (type === 'jpg-save') exportCanvas('jpg');
+      else if (type === 'all') {
+        showToast('현재 카드 저장 (다중 저장은 순차 지원)');
+        exportCanvas('png');
+      }
+      closeSheets();
+    });
+  });
+
+  // Context menu
+  function showContextMenu(x, y) {
+    const menu = document.getElementById('context-menu');
+    menu.style.left = Math.min(x, window.innerWidth - 150) + 'px';
+    menu.style.top = Math.min(y, window.innerHeight - 170) + 'px';
+    menu.classList.add('show');
+  }
+  document.getElementById('context-menu').querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const act = btn.dataset.act;
+      const page = pages[currentPage];
+      if (act === 'delete' && selectedId) {
+        page.objects = page.objects.filter(o => o.id !== selectedId);
+        hideSelection(); pushHistory(); renderPage();
+      } else if (act === 'duplicate' && selectedId) {
+        const obj = getObj(selectedId);
+        const clone = JSON.parse(JSON.stringify(obj));
+        clone.id = 'o' + Date.now();
+        clone.x += 24; clone.y += 24;
+        page.objects.push(clone);
+        selectedId = clone.id; pushHistory(); renderPage();
+      } else if (act === 'bring-front' && selectedId) {
+        const idx = page.objects.findIndex(o => o.id === selectedId);
+        if (idx > -1) { const [o] = page.objects.splice(idx, 1); page.objects.push(o); pushHistory(); renderPage(); }
+      } else if (act === 'send-back' && selectedId) {
+        const idx = page.objects.findIndex(o => o.id === selectedId);
+        if (idx > -1) { const [o] = page.objects.splice(idx, 1); page.objects.unshift(o); pushHistory(); renderPage(); }
+      }
+      document.getElementById('context-menu').classList.remove('show');
+    });
+  });
+  document.addEventListener('pointerdown', e => {
+    if (!e.target.closest('#context-menu')) document.getElementById('context-menu').classList.remove('show');
+  });
+
+  function showPageMenu(idx) {
+    if (confirm(`페이지 ${idx + 1} 삭제할까요?`) && pages.length > 1) {
+      pages.splice(idx, 1);
+      if (currentPage >= pages.length) currentPage = pages.length - 1;
+      hideSelection(); pushHistory(); renderPage();
+    }
+  }
+
+  // Undo / Redo
+  function pushHistory() {
+    const snap = JSON.stringify(pages);
+    history = history.slice(0, historyIdx + 1);
+    history.push(snap);
+    historyIdx = history.length - 1;
+    if (history.length > 30) { history.shift(); historyIdx--; }
+    updateUndoButtons();
+  }
+  function updateUndoButtons() {
+    document.getElementById('btn-undo').classList.toggle('disabled', historyIdx <= 0);
+    document.getElementById('btn-redo').classList.toggle('disabled', historyIdx >= history.length - 1);
+  }
+  document.getElementById('btn-undo').addEventListener('click', () => {
+    if (historyIdx > 0) {
+      historyIdx--;
+      pages = JSON.parse(history[historyIdx]);
+      hideSelection(); renderPage(); updateUndoButtons();
+    }
+  });
+  document.getElementById('btn-redo').addEventListener('click', () => {
+    if (historyIdx < history.length - 1) {
+      historyIdx++;
+      pages = JSON.parse(history[historyIdx]);
+      hideSelection(); renderPage(); updateUndoButtons();
+    }
+  });
+
+  document.addEventListener('gesturestart', e => e.preventDefault());
+  document.addEventListener('gesturechange', e => e.preventDefault());
+
+  // Init
+  pages.push(createPageFromTemplate('global'));
+  pushHistory();
+  renderPage();
+})();
+</script>
+</body>
+</html>
