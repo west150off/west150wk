@@ -53,12 +53,12 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
   flex:1;min-height:0;position:relative;overflow:hidden;
   display:flex;align-items:center;justify-content:center;
   background:#080808;
-  padding:12px 16px;
+  padding:26px 16px;
 }
 .stage{position:relative;display:flex;align-items:center;justify-content:center;}
 .card-shell{
   border-radius:6px;overflow:hidden;
-  box-shadow:0 0 0 1px rgba(255,255,255,.14),0 16px 48px rgba(0,0,0,.55);
+  box-shadow:0 0 0 1px rgba(255,255,255,.14),0 10px 28px rgba(0,0,0,.5);
   transform-origin:center center;
 }
 .card{
@@ -110,6 +110,74 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
 .subtitle-en{line-height:1.5;white-space:pre-wrap;letter-spacing:1px;text-shadow:0 2px 10px rgba(0,0,0,.4);}
 .divider{height:1px;background:rgba(255,255,255,.18);margin-bottom:26px;}
 .byline{white-space:pre-wrap;opacity:.75;}
+
+/* Brand template decor */
+.tpl-badge .kicker{
+  display:inline-block;background:var(--accent);color:#fff!important;
+  padding:7px 18px;border-radius:3px;text-shadow:none;
+}
+.tpl-badge .kicker-bar{display:none;}
+.tpl-masthead .kicker-wrap{
+  padding-top:20px;border-top:2px double var(--accent);
+  position:relative;
+}
+.tpl-masthead .kicker-wrap::after{
+  content:'';display:block;height:1px;background:rgba(255,255,255,.35);
+  margin-top:14px;width:100%;
+}
+.brand-mark{
+  position:absolute;right:72px;bottom:64px;font-weight:800;letter-spacing:1px;
+  opacity:.9;display:none;text-shadow:0 2px 8px rgba(0,0,0,.4);
+}
+
+/* ===== Structural layouts (真 new templates, not just recoloring) ===== */
+/* 매거진 커버형: centered giant headline over full photo */
+#card.layout-cover .card-top,
+#card.layout-quote .card-top{padding:70px 70px 0;justify-content:center;}
+#card.layout-cover .kicker-wrap,
+#card.layout-quote .kicker-wrap{align-items:center;}
+#card.layout-quote .handle{display:none;}
+#card.layout-cover .card-bottom,
+#card.layout-quote .card-bottom{
+  top:0;bottom:0;display:flex;flex-direction:column;justify-content:center;align-items:center;
+  text-align:center;padding:0 90px;
+}
+#card.layout-cover .text-group,
+#card.layout-quote .text-group{
+  flex-direction:column;align-items:center;gap:26px;margin-bottom:30px;
+}
+#card.layout-cover .accent-bar,
+#card.layout-quote .accent-bar{width:70px;height:6px;}
+#card.layout-cover .text-col,
+#card.layout-quote .text-col{align-items:center;justify-content:center;}
+#card.layout-cover .headline,#card.layout-cover .subtitle-kr,#card.layout-cover .subtitle-en,#card.layout-cover .byline,
+#card.layout-quote .headline,#card.layout-quote .subtitle-kr,#card.layout-quote .subtitle-en,#card.layout-quote .byline{text-align:center;}
+#card.layout-cover .divider,
+#card.layout-quote .divider{width:120px;margin:0 auto 26px;}
+#card.layout-cover .brand-mark{left:50%;right:auto;transform:translateX(-50%);bottom:70px;text-align:center;}
+
+/* 쿼트카드형: no photo, solid tone background, centered pull-quote */
+#card.layout-quote .card-bg-wrap,
+#card.layout-quote .card-duotone,
+#card.layout-quote .card-scrim{display:none;}
+#card.layout-quote{background:var(--tone-solid,#0b0b10);}
+#card.layout-quote .headline{position:relative;}
+#card.layout-quote .headline::before{
+  content:'\201C';position:absolute;top:-92px;left:50%;transform:translateX(-50%);
+  font-size:200px;font-family:Georgia,serif;color:var(--accent);opacity:.2;line-height:1;
+}
+#card.layout-quote .brand-mark{display:none!important;}
+
+/* 좌우 스플릿형: photo confined to top ~55%, solid text panel below */
+#card.layout-split .card-bg-wrap{height:55%;inset:auto;top:0;left:0;right:0;bottom:auto;}
+#card.layout-split .card-duotone,
+#card.layout-split .card-scrim{height:55%;top:0;bottom:auto;}
+#card.layout-split .card-top{padding:56px 60px 0;}
+#card.layout-split .card-bottom{
+  top:55%;bottom:0;background:var(--tone-solid,#0b0b10);
+  display:flex;flex-direction:column;justify-content:center;padding:52px 64px;
+}
+#card.layout-split .brand-mark{bottom:24px;right:64px;font-size:18px;}
 
 .zoom-pill{
   position:absolute;bottom:10px;left:50%;transform:translateX(-50%);
@@ -320,6 +388,7 @@ input[type="range"]::-webkit-slider-thumb{
             </div>
             <div class="divider" id="dividerOut"></div>
             <div class="byline" id="bylineOut"></div>
+            <div class="brand-mark" id="brandMarkOut"></div>
           </div>
         </div>
       </div>
@@ -460,7 +529,11 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
 
     <!-- 스타일 -->
     <div class="ctx-panel" id="panel-template">
-      <div class="section-label">포인트 컬러</div>
+      <div class="section-label">구도 (레이아웃)</div>
+      <div class="field"><div class="field-label">카드 구조</div><div class="chip-row" id="layoutRow"></div></div>
+      <div class="section-label" style="margin-top:18px;">뉴스 브랜드 템플릿</div>
+      <div class="field"><div class="field-label">한번에 적용 (구도+색상+폰트)</div><div class="chip-row" id="templateRow"></div></div>
+      <div class="section-label" style="margin-top:18px;">포인트 컬러</div>
       <div class="field"><div class="field-label">프리셋</div><div class="swatches" id="swatchRow"></div></div>
       <div class="field"><div class="field-label">직접 선택</div><input type="color" class="color-input" id="accentCustom" value="#e0334c"></div>
       <div class="field"><div class="field-label">배경 톤</div><div class="tone-grid" id="toneRow"></div></div>
@@ -663,6 +736,7 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
     const tone=currentTone.c2.replace(/[\d.]+\)$/,op.toFixed(2)+')');
     const css=currentScrim.css.split('{t2}').join(tone).split('{o2}').join(op.toFixed(2));
     document.getElementById('scrimLayer').style.background=css;
+    card.style.setProperty('--tone-solid',currentTone.c2);
   }
   document.getElementById('scrimRange').addEventListener('input',e=>{
     document.getElementById('scrimVal').textContent=e.target.value+'%';
@@ -674,6 +748,119 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
     document.getElementById('duotoneLayer').style.setProperty('--duotone-op',currentFilter.duo);
   }
   applyImageFilter();
+
+  /* ========== Structural layouts (구도) ========== */
+  const LAYOUTS=[
+    {id:'default',name:'기본형'},
+    {id:'cover',name:'매거진 커버형'},
+    {id:'quote',name:'쿼트카드형'},
+    {id:'split',name:'좌우 스플릿형'},
+  ];
+  const layoutRow=document.getElementById('layoutRow');
+  let currentLayoutId='default';
+  function applyLayout(id){
+    currentLayoutId=id;
+    card.classList.remove('layout-cover','layout-quote','layout-split');
+    if(id!=='default') card.classList.add('layout-'+id);
+    layoutRow.querySelectorAll('.chip').forEach(c=>c.classList.toggle('active',c.dataset.layout===id));
+    setTimeout(fitScale,50);
+  }
+  LAYOUTS.forEach(l=>{
+    const c=document.createElement('div');
+    c.className='chip'+(l.id==='default'?' active':'');
+    c.textContent=l.name;
+    c.dataset.layout=l.id;
+    c.addEventListener('click',()=>applyLayout(l.id));
+    layoutRow.appendChild(c);
+  });
+
+  /* ========== News-brand templates ========== */
+  const TEMPLATES=[
+    {id:'ap',name:'AP 스타일',accent:'#E4002B',toneIndex:0,scrimIndex:0,scrimAmount:65,divider:false,badge:true,masthead:false,brandMark:'',layout:'split',
+      kicker:{font:"'Pretendard', sans-serif",weight:'800',color:'#ffffff'},
+      handle:{font:"'Pretendard', sans-serif",weight:'600',color:'#e6e6e6'},
+      headline:{font:"'Black Han Sans', sans-serif",weight:'400',color:'#ffffff'},
+      subKr:{font:"'Pretendard', sans-serif",weight:'600',color:'#f0f0f0'},
+      subEn:{font:"'Pretendard', sans-serif",weight:'700',color:'#ffb3bd'},
+      byline:{font:"'Pretendard', sans-serif",weight:'600',color:'#c9c9c9'}},
+    {id:'bloomberg',name:'블룸버그 스타일',accent:'#FF8200',toneIndex:0,scrimIndex:3,scrimAmount:70,divider:true,badge:false,masthead:false,brandMark:'BLOOMBERG',layout:'cover',
+      kicker:{font:"'Pretendard', sans-serif",weight:'700',color:'#FF8200'},
+      handle:{font:"'Pretendard', sans-serif",weight:'500',color:'#c9c9c9'},
+      headline:{font:"'Pretendard', sans-serif",weight:'900',color:'#ffffff'},
+      subKr:{font:"'Pretendard', sans-serif",weight:'500',color:'#d8d8d8'},
+      subEn:{font:"'IBM Plex Sans KR', sans-serif",weight:'700',color:'#FF8200'},
+      byline:{font:"'Pretendard', sans-serif",weight:'500',color:'#9a9a9a'}},
+    {id:'watimes',name:'워싱턴타임즈 스타일',accent:'#C9A227',toneIndex:1,scrimIndex:0,scrimAmount:60,divider:true,badge:false,masthead:true,brandMark:'',layout:'quote',
+      kicker:{font:"'Nanum Myeongjo', serif",weight:'700',color:'#C9A227'},
+      handle:{font:"'Nanum Myeongjo', serif",weight:'400',color:'#cfcfcf'},
+      headline:{font:"'Nanum Myeongjo', serif",weight:'800',color:'#ffffff'},
+      subKr:{font:"'Nanum Myeongjo', serif",weight:'400',color:'#dcdcdc'},
+      subEn:{font:"'Nanum Myeongjo', serif",weight:'400',color:'#C9A227'},
+      byline:{font:"'Nanum Myeongjo', serif",weight:'400',color:'#b0b0b0'}},
+    {id:'reuters',name:'로이터 스타일',accent:'#FF8000',toneIndex:0,scrimIndex:0,scrimAmount:60,divider:false,badge:false,masthead:false,brandMark:'REUTERS',layout:'split',
+      kicker:{font:"'Pretendard', sans-serif",weight:'700',color:'#FF8000'},
+      handle:{font:"'Pretendard', sans-serif",weight:'500',color:'#d0d0d0'},
+      headline:{font:"'Pretendard', sans-serif",weight:'800',color:'#ffffff'},
+      subKr:{font:"'Pretendard', sans-serif",weight:'500',color:'#dedede'},
+      subEn:{font:"'Pretendard', sans-serif",weight:'600',color:'#ffb066'},
+      byline:{font:"'Pretendard', sans-serif",weight:'500',color:'#a3a3a3'}},
+    {id:'nyt',name:'NYT 스타일',accent:'#A81817',toneIndex:0,scrimIndex:0,scrimAmount:70,divider:true,badge:false,masthead:true,brandMark:'',layout:'cover',
+      kicker:{font:"'Nanum Myeongjo', serif",weight:'700',color:'#f0f0f0'},
+      handle:{font:"'Pretendard', sans-serif",weight:'500',color:'#c0c0c0'},
+      headline:{font:"'Nanum Myeongjo', serif",weight:'900',color:'#ffffff'},
+      subKr:{font:"'Nanum Myeongjo', serif",weight:'400',color:'#dcdcdc'},
+      subEn:{font:"'Pretendard', sans-serif",weight:'500',color:'#bbbbbb'},
+      byline:{font:"'Nanum Myeongjo', serif",weight:'400',color:'#a3a3a3'}},
+  ];
+  const templateRow=document.getElementById('templateRow');
+  const brandMarkOut=document.getElementById('brandMarkOut');
+  let currentTemplateId=null;
+
+  function applyTemplate(tpl){
+    currentTemplateId=tpl.id;
+    applyLayout(tpl.layout);
+    setAccent(tpl.accent);
+    document.getElementById('accentCustom').value=tpl.accent;
+    swatchRow.querySelectorAll('.swatch').forEach(s=>s.classList.toggle('active',s.dataset.color===tpl.accent));
+
+    currentTone=TONES[tpl.toneIndex];
+    toneRow.querySelectorAll('.tone-item').forEach((t,i)=>t.classList.toggle('active',i===tpl.toneIndex));
+
+    currentScrim=SCRIMS[tpl.scrimIndex];
+    scrimChips.querySelectorAll('.chip').forEach((c,i)=>c.classList.toggle('active',i===tpl.scrimIndex));
+    document.getElementById('scrimRange').value=tpl.scrimAmount;
+    document.getElementById('scrimVal').textContent=tpl.scrimAmount+'%';
+    updateScrim();
+
+    document.getElementById('dividerToggle').checked=tpl.divider;
+    document.getElementById('dividerOut').style.display=tpl.divider?'block':'none';
+
+    fontTargets.forEach(t=>{
+      const spec=tpl[t];
+      document.getElementById(t+'Font').value=spec.font;
+      document.getElementById(t+'Weight').value=spec.weight;
+      document.getElementById(t+'Color').value=spec.color;
+    });
+    Object.keys(textRenderers).forEach(k=>textRenderers[k]());
+
+    card.classList.toggle('tpl-badge',!!tpl.badge);
+    card.classList.toggle('tpl-masthead',!!tpl.masthead);
+    brandMarkOut.textContent=tpl.brandMark||'';
+    brandMarkOut.style.display=tpl.brandMark?'block':'none';
+    brandMarkOut.style.color=tpl.accent;
+    brandMarkOut.style.fontFamily="'Pretendard', sans-serif";
+    brandMarkOut.style.fontSize='24px';
+
+    templateRow.querySelectorAll('.chip').forEach(c=>c.classList.toggle('active',c.dataset.tpl===tpl.id));
+  }
+  TEMPLATES.forEach(tpl=>{
+    const c=document.createElement('div');
+    c.className='chip';
+    c.textContent=tpl.name;
+    c.dataset.tpl=tpl.id;
+    c.addEventListener('click',()=>applyTemplate(tpl));
+    templateRow.appendChild(c);
+  });
 
   /* ========== Image upload (file only) ========== */
   const bgWrap=document.getElementById('bgWrap');
@@ -808,6 +995,11 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
       toneIndex:TONES.indexOf(currentTone),
       accent:currentAccent,
       divider:document.getElementById('dividerToggle').checked,
+      templateId:currentTemplateId,
+      layoutId:currentLayoutId,
+      badge:card.classList.contains('tpl-badge'),
+      masthead:card.classList.contains('tpl-masthead'),
+      brandMark:brandMarkOut.textContent,
     };
   }
 
@@ -865,6 +1057,19 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
 
     document.getElementById('dividerToggle').checked=data.divider;
     document.getElementById('dividerOut').style.display=data.divider?'block':'none';
+
+    currentTemplateId=data.templateId||null;
+    applyLayout(data.layoutId||'default');
+    card.classList.toggle('tpl-badge',!!data.badge);
+    card.classList.toggle('tpl-masthead',!!data.masthead);
+    brandMarkOut.textContent=data.brandMark||'';
+    brandMarkOut.style.display=data.brandMark?'block':'none';
+    if(data.brandMark){
+      brandMarkOut.style.color=data.accent;
+      brandMarkOut.style.fontFamily="'Pretendard', sans-serif";
+      brandMarkOut.style.fontSize='24px';
+    }
+    templateRow.querySelectorAll('.chip').forEach(c=>c.classList.toggle('active',c.dataset.tpl===currentTemplateId));
   }
 
   function renderPageStrip(){
@@ -933,7 +1138,7 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
   }
   function fitScale(){
     const availW=canvasArea.clientWidth-32;
-    const availH=canvasArea.clientHeight-24;
+    const availH=canvasArea.clientHeight-52;
     // NOTE: never force a minimum scale bigger than what actually fits —
     // doing so pushed the card past the visible area and cut off the
     // top/bottom edges whenever a tall panel (e.g. 글자 스타일) was open.
