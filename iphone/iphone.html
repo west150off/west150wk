@@ -2,2428 +2,791 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>WEST150 COVER NEWS · 카드 편집기</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Card News Editor</title>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Noto+Serif+KR:wght@400;600;900&family=Black+Han+Sans&family=IBM+Plex+Sans+KR:wght@400;600;700&family=Nanum+Myeongjo:wght@400;700;800&display=swap" rel="stylesheet">
-
 <style>
-@font-face{
-  font-family:'RIDIBatang';
-  src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_twelve@1.0/RIDIBatang.woff') format('woff');
-  font-weight:400; font-style:normal; font-display:swap;
-}
-@font-face{
-  font-family:'GmarketSans';
-  src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansBold.woff') format('woff');
-  font-weight:700; font-style:normal; font-display:swap;
-}
-@font-face{
-  font-family:'GmarketSans';
-  src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');
-  font-weight:500; font-style:normal; font-display:swap;
-}
-
-*{box-sizing:border-box; margin:0; padding:0;}
-html,body{height:100%;}
-body{
-  font-family:'Pretendard','Noto Sans KR',sans-serif;
-  background:#101014;
-  color:#eceef1;
-  overflow:hidden;
-}
-
-.app{ display:flex; height:100vh; }
-
-/* ---------- Sidebar ---------- */
-.sidebar{
-  width:392px; min-width:392px;
-  height:100%;
-  overflow-y:auto;
-  background:#17171c;
-  border-right:1px solid #26262e;
-  padding:22px 20px 120px;
-}
-.sidebar::-webkit-scrollbar{width:8px;}
-.sidebar::-webkit-scrollbar-thumb{background:#33333c; border-radius:8px;}
-
-.brand{
-  display:flex; align-items:center; gap:10px;
-  margin-bottom:22px;
-}
-.brand-mark{
-  width:30px;height:30px;border-radius:8px;
-  background:linear-gradient(135deg,#e0334c,#8b1225);
-  display:flex;align-items:center;justify-content:center;
-  font-weight:900;font-size:14px;color:#fff;
-}
-.brand-name{font-size:15px;font-weight:700;letter-spacing:.2px;}
-.brand-sub{font-size:11px;color:#8a8a94;}
-
-.section{
-  border:1px solid #26262e;
-  border-radius:14px;
-  padding:16px 16px 18px;
-  margin-bottom:14px;
-  background:#1b1b21;
-}
-.section-title{
-  font-size:12.5px; font-weight:700; letter-spacing:.4px;
-  color:#f3f3f5; margin-bottom:12px;
-  display:flex; align-items:center; gap:7px;
-}
-.section-title .dot{width:6px;height:6px;border-radius:50%;background:#e0334c;}
-
-.field{margin-bottom:12px;}
-.field:last-child{margin-bottom:0;}
-.field-label{
-  font-size:11px; color:#9a9aa4; margin-bottom:6px;
-  display:flex; justify-content:space-between; align-items:center;
-}
-.field-label span.val{color:#e0334c; font-weight:600;}
-
-textarea, input[type="text"]{
-  width:100%; resize:vertical; min-height:38px;
-  background:#0f0f13; border:1px solid #2c2c35; border-radius:9px;
-  color:#eceef1; font-size:12.5px; padding:9px 10px;
-  font-family:'Pretendard',sans-serif;
-  line-height:1.4;
-}
-textarea:focus, input[type="text"]:focus{ outline:none; border-color:#e0334c; }
-
-select{
-  width:100%; background:#0f0f13; border:1px solid #2c2c35;
-  border-radius:9px; color:#eceef1; font-size:12.5px; padding:9px 10px;
-  font-family:'Pretendard',sans-serif;
-}
-
-input[type="range"]{
-  width:100%; -webkit-appearance:none; appearance:none;
-  height:4px; border-radius:4px; background:#2c2c35; outline:none;
-}
-input[type="range"]::-webkit-slider-thumb{
-  -webkit-appearance:none; width:16px; height:16px; border-radius:50%;
-  background:#e0334c; cursor:pointer; border:2px solid #fff;
-}
-input[type="range"]::-moz-range-thumb{
-  width:16px; height:16px; border-radius:50%;
-  background:#e0334c; cursor:pointer; border:2px solid #fff;
-}
-
-.row2{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-
-.acc-group{ padding:8px; }
-.acc-item{
-  border-bottom:1px solid #24242c;
-}
-.acc-item:last-child{ border-bottom:none; }
-.acc-header{
-  width:100%;
-  display:flex; align-items:center; justify-content:space-between;
-  background:none; border:none; cursor:pointer;
-  padding:13px 4px;
-  font-size:13px; font-weight:700; color:#eceef1;
-  letter-spacing:-.2px;
-}
-.acc-caret{
-  color:#75757f; font-size:14px;
-  transition:transform .15s ease;
-}
-.acc-item.open .acc-caret{ transform:rotate(180deg); color:#e0334c; }
-.acc-body{
-  display:none;
-  padding:2px 4px 16px;
-}
-.acc-item.open .acc-body{ display:block; }
-.row3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
-
-.color-input{
-  -webkit-appearance:none; appearance:none;
-  width:100%; height:34px; padding:0; border:1px solid #2c2c35;
-  border-radius:9px; background:#0f0f13; cursor:pointer;
-}
-.color-input::-webkit-color-swatch-wrapper{padding:3px;}
-.color-input::-webkit-color-swatch{border:none; border-radius:6px;}
-
-.swatches{ display:grid; grid-template-columns:repeat(8,1fr); gap:8px; }
-.swatch{
-  width:100%; aspect-ratio:1; border-radius:50%;
-  border:2px solid transparent; cursor:pointer;
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.15);
-}
-.swatch.active{ border-color:#fff; transform:scale(1.08); }
-
-.tone-grid{ display:grid; grid-template-columns:repeat(5,1fr); gap:8px; }
-.tone-item{
-  height:34px; border-radius:8px; cursor:pointer; border:2px solid transparent;
-}
-.tone-item.active{ border-color:#e0334c; }
-
-.upload-btn{
-  display:flex; align-items:center; justify-content:center; gap:8px;
-  width:100%; padding:11px; border-radius:9px;
-  background:#232329; border:1px dashed #3a3a44; color:#d8d8de;
-  font-size:12.5px; cursor:pointer; font-weight:600;
-}
-.upload-btn:hover{ background:#282830; border-color:#e0334c; }
-.upload-hint{ font-size:10.5px; color:#75757f; margin-top:6px; text-align:center; }
-
-.btn{
-  width:100%; padding:13px; border-radius:11px; border:none;
-  font-size:13.5px; font-weight:700; cursor:pointer;
-  display:flex; align-items:center; justify-content:center; gap:8px;
-}
-.btn-primary{ background:linear-gradient(135deg,#e0334c,#a3172e); color:#fff; }
-.btn-primary:hover{ filter:brightness(1.08); }
-.btn-secondary{ background:#232329; color:#eceef1; border:1px solid #34343d; margin-top:8px; }
-.btn-secondary:hover{ background:#282830; }
-
-.chip-row{ display:flex; gap:6px; flex-wrap:wrap; }
-.chip{
-  padding:6px 10px; border-radius:20px; font-size:11px;
-  background:#0f0f13; border:1px solid #2c2c35; color:#b6b6c0; cursor:pointer;
-}
-.chip.active{ background:#e0334c; border-color:#e0334c; color:#fff; }
-/* =========================================================
-   TOP MENU EDITOR LAYOUT
-   ========================================================= */
-
-.app{
-  display:flex;
-  flex-direction:column;
-  height:100vh;
-}
-
-
-/* ---------- Topbar ---------- */
-
-.topbar{
-
-  height:64px;
-  min-height:64px;
-
-  display:flex;
-  align-items:center;
-
-  background:#151519;
-
-  border-bottom:1px solid #292930;
-
-  padding:0 20px;
-
-  z-index:20;
-
-}
-
-
-.topbar-brand{
-
-  width:230px;
-  min-width:230px;
-
-  display:flex;
-  align-items:center;
-
-  gap:10px;
-
-}
-
-
-.topbar-brand .brand-mark{
-
-  width:32px;
-  height:32px;
-
-  border-radius:8px;
-
-}
-
-
-.topbar-brand-text .brand-name{
-
-  font-size:13px;
-  font-weight:800;
-
-  letter-spacing:.3px;
-
-}
-
-
-.topbar-brand-text .brand-sub{
-
-  font-size:9px;
-  color:#777780;
-
-  margin-top:2px;
-
-}
-
-
-.top-menu{
-
-  height:100%;
-
-  display:flex;
-  align-items:stretch;
-
-  gap:2px;
-
-}
-
-
-.top-menu-item{
-
-  position:relative;
-
-  border:0;
-  background:transparent;
-
-  color:#898991;
-
-  padding:0 17px;
-
-  font-family:'Pretendard',sans-serif;
-
-  font-size:12.5px;
-  font-weight:600;
-
-  cursor:pointer;
-
-  transition:
-    color .18s ease,
-    background .18s ease;
-
-}
-
-
-.top-menu-item:hover{
-
-  color:#f1f1f3;
-  background:#1c1c21;
-
-}
-
-
-.top-menu-item.active{
-
-  color:#fff;
-
-}
-
-
-.top-menu-item.active::after{
-
-  content:"";
-
-  position:absolute;
-
-  left:14px;
-  right:14px;
-  bottom:0;
-
-  height:2px;
-
-  background:#e0334c;
-
-  border-radius:2px 2px 0 0;
-
-}
-
-
-.top-menu-item.menu-save{
-
-  margin-left:8px;
-
-  color:#f2f2f4;
-
-}
-
-
-/* ---------- Workspace ---------- */
-
-.workspace{
-
-  flex:1;
-
-  min-height:0;
-
-  display:flex;
-
-}
-
-
-/* ---------- Sidebar ---------- */
-
-.sidebar{
-
-  width:392px;
-  min-width:392px;
-
-  height:100%;
-
-  overflow-y:auto;
-
-  background:#17171c;
-
-  border-right:1px solid #26262e;
-
-  padding:20px 20px 120px;
-
-}
-
-
-.sidebar::-webkit-scrollbar{
-  width:8px;
-}
-
-
-.sidebar::-webkit-scrollbar-thumb{
-
-  background:#33333c;
-  border-radius:8px;
-
-}
-
-
-/* ---------- Tool panels ---------- */
-
-.tool-panel{
-
-  display:none;
-
-}
-
-
-.tool-panel.active{
-
-  display:block;
-
-}
-
-
-.panel-heading{
-
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-
-  padding:3px 2px 18px;
-
-}
-
-
-.panel-title{
-
-  font-size:18px;
-  font-weight:800;
-
-  letter-spacing:-.4px;
-
-  color:#f4f4f6;
-
-}
-
-
-.panel-subtitle{
-
-  margin-top:5px;
-
-  font-size:10.5px;
-
-  color:#75757f;
-
-  letter-spacing:-.1px;
-
-}
-
-
-/* 기존 모바일 구조 보정 */
-
-/* =========================================================
-   MOBILE / IPHONE EDITOR
-   ========================================================= */
-
-@media (max-width: 900px){
-
-  html,
-  body{
-    height:100%;
-    overflow:hidden;
+  :root {
+    --bg: #0D0D0D;
+    --surface: #141414;
+    --surface-2: #1A1A1A;
+    --border: #2A2A2A;
+    --text: #F5F5F5;
+    --text-dim: rgba(255,255,255,0.55);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    height: 100%; width: 100%; overflow: hidden;
+    background: var(--bg); color: var(--text);
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    user-select: none; -webkit-user-select: none; touch-action: manipulation;
+  }
+  #app {
+    display: flex; flex-direction: column; height: 100%;
+    max-width: 430px; margin: 0 auto; position: relative; background: var(--bg);
+  }
+  .top-nav {
+    height: 56px; display: flex; align-items: center; justify-content: space-between;
+    padding: 0 12px; background: var(--bg); border-bottom: 1px solid var(--border);
+    flex-shrink: 0; z-index: 50;
+  }
+  .top-nav .left, .top-nav .right { display: flex; align-items: center; gap: 4px; min-width: 90px; }
+  .top-nav .right { justify-content: flex-end; }
+  .top-nav .center {
+    display: flex; align-items: center; gap: 4px; font-size: 14px; font-weight: 500; cursor: pointer;
+  }
+  .top-nav .center .chevron { font-size: 10px; opacity: 0.6; }
+  .icon-btn {
+    width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+    border: none; background: transparent; color: var(--text); border-radius: 8px;
+    cursor: pointer; opacity: 0.85;
+  }
+  .icon-btn:active { opacity: 1; background: rgba(255,255,255,0.08); }
+  .icon-btn svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  .icon-btn.disabled { opacity: 0.3; pointer-events: none; }
+
+  .canvas-area {
+    flex: 1; position: relative; overflow: hidden;
+    display: flex; align-items: center; justify-content: center; background: #080808;
+  }
+  .canvas-wrapper { position: relative; transform-origin: center center; }
+  .card-canvas {
+    width: 270px; height: 480px; background: #111; position: relative; overflow: hidden;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.06), 0 20px 60px rgba(0,0,0,0.6); border-radius: 4px;
+  }
+  .card-bg { position: absolute; inset: 0; background-size: cover; background-position: center; }
+  .card-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.75) 55%, rgba(0,0,0,0.92) 100%);
+  }
+  .canvas-object { position: absolute; cursor: move; }
+  .text-obj { color: white; white-space: pre-wrap; word-break: keep-all; line-height: 1.25; }
+  .canvas-object .content { width: 100%; height: 100%; pointer-events: none; }
+  .selection-box {
+    position: absolute; border: 1px solid rgba(255,255,255,0.9); pointer-events: none; box-sizing: border-box;
+  }
+  .handle {
+    position: absolute; width: 10px; height: 10px; background: #fff; border: 1.5px solid #111;
+    border-radius: 2px; pointer-events: auto; z-index: 20;
+  }
+  .handle.tl { top: -5px; left: -5px; cursor: nwse-resize; }
+  .handle.tr { top: -5px; right: -5px; cursor: nesw-resize; }
+  .handle.bl { bottom: -5px; left: -5px; cursor: nesw-resize; }
+  .handle.br { bottom: -5px; right: -5px; cursor: nwse-resize; }
+  .handle.rot {
+    top: -28px; left: 50%; transform: translateX(-50%); width: 14px; height: 14px;
+    border-radius: 50%; cursor: grab;
+  }
+  .guide-line { position: absolute; background: #4A9EFF; pointer-events: none; z-index: 30; opacity: 0.85; }
+  .guide-line.h { height: 1px; left: 0; right: 0; }
+  .guide-line.v { width: 1px; top: 0; bottom: 0; }
+  .zoom-indicator {
+    position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
+    background: rgba(0,0,0,0.65); color: rgba(255,255,255,0.8); font-size: 11px;
+    padding: 3px 10px; border-radius: 12px; pointer-events: none; opacity: 0; transition: opacity 0.3s;
+  }
+  .zoom-indicator.show { opacity: 1; }
+
+  .page-strip {
+    height: 72px; background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; padding: 0 12px; gap: 10px; overflow-x: auto; flex-shrink: 0; scrollbar-width: none;
+  }
+  .page-strip::-webkit-scrollbar { display: none; }
+  .page-thumb {
+    width: 40px; height: 56px; flex-shrink: 0; border-radius: 4px; background: #1E1E1E;
+    border: 1.5px solid transparent; position: relative; overflow: hidden; cursor: pointer;
+    transition: transform 0.15s, border-color 0.15s;
+  }
+  .page-thumb.active { border-color: #fff; transform: scale(1.06); }
+  .page-thumb .thumb-num {
+    position: absolute; bottom: 2px; left: 0; right: 0; text-align: center;
+    font-size: 9px; font-weight: 600; color: rgba(255,255,255,0.7); text-shadow: 0 1px 2px #000;
+  }
+  .page-thumb .thumb-preview { width: 100%; height: 100%; background-size: cover; background-position: center; }
+  .page-add {
+    width: 36px; height: 36px; border-radius: 8px; border: 1px dashed rgba(255,255,255,0.25);
+    display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.5);
+    font-size: 20px; cursor: pointer; flex-shrink: 0;
   }
 
-  .app{
-    display:flex;
-    flex-direction:column;
-    height:100dvh;
+  .bottom-bar { background: var(--surface); border-top: 1px solid var(--border); flex-shrink: 0; padding-bottom: var(--safe-bottom); }
+  .tool-row { display: flex; overflow-x: auto; padding: 10px 8px 6px; gap: 2px; scrollbar-width: none; }
+  .tool-row::-webkit-scrollbar { display: none; }
+  .tool-item {
+    display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 56px;
+    padding: 4px 2px; cursor: pointer; color: var(--text-dim);
   }
+  .tool-item:active, .tool-item.active { color: var(--text); }
+  .tool-item .icon { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; }
+  .tool-item .icon svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .tool-item .label { font-size: 10px; font-weight: 500; }
 
-
-  /* ================= TOP BAR ================= */
-
-  .topbar{
-
-    height:58px;
-    min-height:58px;
-
-    padding:0 10px;
-
-    display:flex;
-    align-items:center;
-
-    flex-wrap:nowrap;
-
-    overflow:hidden;
-
+  .ctx-panel { display: none; padding: 8px 12px 12px; border-top: 1px solid var(--border); background: var(--surface-2); }
+  .ctx-panel.active { display: block; }
+  .ctx-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .ctx-header select {
+    background: #222; border: 1px solid #333; color: #fff; font-size: 13px; padding: 6px 10px; border-radius: 6px; outline: none;
   }
-
-
-  .topbar-brand{
-
-    width:auto;
-    min-width:auto;
-
-    flex-shrink:0;
-
+  .size-ctrl { display: flex; align-items: center; gap: 6px; margin-left: auto; }
+  .size-ctrl button {
+    width: 28px; height: 28px; border: 1px solid #333; background: #222; color: #fff; border-radius: 6px; font-size: 16px; cursor: pointer;
   }
-
-
-  .topbar-brand-text{
-    display:none;
+  .size-ctrl span { font-size: 13px; min-width: 28px; text-align: center; }
+  .ctx-tools { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+  .ctx-tools::-webkit-scrollbar { display: none; }
+  .ctx-tool {
+    display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 52px;
+    padding: 6px 4px; color: var(--text-dim); font-size: 10px; cursor: pointer; border-radius: 6px;
   }
+  .ctx-tool:active { background: rgba(255,255,255,0.06); color: #fff; }
+  .ctx-tool svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.5; }
 
-
-  .topbar .brand-mark{
-
-    width:34px;
-    height:34px;
-
-    border-radius:9px;
-
-    font-size:14px;
-
+  .sheet-overlay {
+    position: absolute; inset: 0; background: rgba(0,0,0,0.5); z-index: 100;
+    display: none; align-items: flex-end;
   }
-
-
-  /* ================= MOBILE MENU ================= */
-
-  .top-menu{
-
-    flex:1;
-
-    min-width:0;
-
-    height:58px;
-
-    display:flex;
-
-    align-items:stretch;
-
-    overflow-x:auto;
-    overflow-y:hidden;
-
-    scrollbar-width:none;
-
-    margin-left:8px;
-
+  .sheet-overlay.show { display: flex; }
+  .sheet {
+    width: 100%; background: #1A1A1A; border-radius: 16px 16px 0 0;
+    padding: 16px 16px calc(20px + var(--safe-bottom)); max-height: 70%; overflow-y: auto;
+    animation: slideUp 0.25s ease;
   }
-
-
-  .top-menu::-webkit-scrollbar{
-    display:none;
+  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .sheet-handle { width: 36px; height: 4px; background: #444; border-radius: 2px; margin: 0 auto 14px; }
+  .sheet-title { font-size: 16px; font-weight: 600; margin-bottom: 14px; text-align: center; }
+  .sheet-list { display: flex; flex-direction: column; gap: 2px; }
+  .sheet-item {
+    display: flex; align-items: center; gap: 12px; padding: 14px 12px; border-radius: 10px; cursor: pointer; font-size: 15px;
   }
-
-
-  .top-menu-item{
-
-    flex:0 0 auto;
-
-    min-width:62px;
-
-    padding:0 12px;
-
-    font-size:11px;
-
-    white-space:nowrap;
-
+  .sheet-item:active { background: rgba(255,255,255,0.06); }
+  .sheet-item .sub { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+  .layout-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .layout-item {
+    aspect-ratio: 9/12; background: #222; border-radius: 8px; border: 1px solid #333;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+    font-size: 11px; color: var(--text-dim); cursor: pointer; padding: 8px;
   }
+  .layout-item:active { border-color: #fff; color: #fff; }
+  .layout-item .preview { width: 70%; height: 55%; background: #333; border-radius: 3px; position: relative; overflow: hidden; }
+  .style-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .style-item { background: #222; border-radius: 10px; border: 1px solid #333; padding: 14px; cursor: pointer; }
+  .style-item:active { border-color: #fff; }
+  .style-item h4 { font-size: 13px; margin-bottom: 4px; }
+  .style-item p { font-size: 11px; color: var(--text-dim); line-height: 1.4; }
+  .color-row { display: flex; gap: 8px; padding: 8px 0; flex-wrap: wrap; }
+  .color-swatch { width: 28px; height: 28px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; }
+  .color-swatch.active { border-color: #fff; }
 
-
-  .top-menu-item.active::after{
-
-    left:10px;
-    right:10px;
-
-    height:2px;
-
+  .text-edit-overlay {
+    position: absolute; inset: 0; background: rgba(0,0,0,0.7); z-index: 80;
+    display: none; flex-direction: column; padding: 60px 20px 20px;
   }
-
-
-  .top-menu-item.menu-save{
-
-    margin-left:0;
-
+  .text-edit-overlay.show { display: flex; }
+  .text-edit-area {
+    flex: 1; background: transparent; border: none; color: #fff; font-size: 18px;
+    font-family: 'Pretendard', sans-serif; resize: none; outline: none; line-height: 1.4;
   }
-
-
-  /* ================= WORKSPACE ================= */
-
-  .workspace{
-
-    flex:1;
-
-    min-height:0;
-
-    display:flex;
-
-    flex-direction:column;
-
+  .text-edit-done {
+    align-self: flex-end; background: #fff; color: #000; border: none;
+    padding: 10px 20px; border-radius: 20px; font-weight: 600; font-size: 14px; margin-top: 12px;
   }
-
-
-  /* ================= PREVIEW ================= */
-
-  .preview-wrap{
-
-    order:1;
-
-    width:100%;
-
-    height:54dvh;
-
-    min-height:0;
-
-    flex:1;
-
-    overflow:auto;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
+  .context-menu {
+    position: absolute; background: #2A2A2A; border-radius: 12px; padding: 6px; z-index: 90;
+    display: none; box-shadow: 0 8px 30px rgba(0,0,0,0.5); min-width: 140px;
   }
-
-
-  .stage{
-
-    position:relative;
-
+  .context-menu.show { display: block; }
+  .context-menu button {
+    display: block; width: 100%; text-align: left; background: none; border: none;
+    color: #fff; padding: 10px 14px; font-size: 14px; border-radius: 8px; cursor: pointer;
   }
-
-
-  .card-shell{
-
-    border-radius:16px;
-
-  }
-
-
-  /* ================= TOOL PANEL ================= */
-
-  .sidebar{
-
-    order:2;
-
-    width:100%;
-    min-width:0;
-
-    height:46dvh;
-
-    min-height:0;
-
-    flex:none;
-
-    overflow-y:auto;
-
-    overflow-x:hidden;
-
-    border-right:none;
-
-    border-top:1px solid #292930;
-
-    border-bottom:none;
-
-    padding:14px 14px 80px;
-
-    background:#17171c;
-
-  }
-
-
-  .sidebar::-webkit-scrollbar{
-    width:5px;
-  }
-
-
-  .sidebar::-webkit-scrollbar-thumb{
-
-    background:#36363f;
-
-    border-radius:8px;
-
-  }
-
-
-  /* 패널 제목 */
-
-  .panel-heading{
-
-    padding:2px 2px 14px;
-
-  }
-
-
-  .panel-title{
-
-    font-size:16px;
-
-  }
-
-
-  .panel-subtitle{
-
-    font-size:10px;
-
-  }
-
-
-  /* ================= SECTIONS ================= */
-
-  .section{
-
-    padding:14px 13px 15px;
-
-    border-radius:12px;
-
-    margin-bottom:10px;
-
-  }
-
-
-  .section-title{
-
-    font-size:12px;
-
-    margin-bottom:10px;
-
-  }
-
-
-  .field{
-
-    margin-bottom:10px;
-
-  }
-
-
-  .field-label{
-
-    font-size:10.5px;
-
-    margin-bottom:5px;
-
-  }
-
-
-  textarea,
-  input[type="text"],
-  select{
-
-    font-size:12px;
-
-    border-radius:8px;
-
-  }
-
-
-  textarea{
-
-    min-height:38px;
-
-  }
-
-
-  .row2{
-
-    gap:7px;
-
-  }
-
-
-  .row3{
-
-    gap:7px;
-
-  }
-
-
-  .upload-btn{
-
-    padding:10px;
-
-    font-size:12px;
-
-  }
-
-
-  .chip{
-
-    padding:5px 9px;
-
-    font-size:10.5px;
-
-  }
-
-
-  .swatches{
-
-    gap:7px;
-
-  }
-
-
-  .tone-grid{
-
-    gap:7px;
-
-  }
-
-
-  .color-input{
-
-    height:32px;
-
-  }
-
-
-  /* ================= SAVE BUTTON ================= */
-
-  .btn{
-
-    padding:12px;
-
-    border-radius:9px;
-
-    font-size:12.5px;
-
-  }
-
-
-  /* ================= PREVIEW ZOOM BAR ================= */
-
-  .zoombar{
-
-    bottom:12px;
-
-    padding:7px 12px;
-
-    gap:8px;
-
-    border-radius:24px;
-
-    font-size:11px;
-
-  }
-
-
-  .zoombar button{
-
-    width:28px;
-    height:28px;
-
-  }
-
-}
-/* ---------- Preview ---------- */
-.preview-wrap{
-  flex:1; height:100%; display:flex; align-items:center; justify-content:center;
-  background:
-    radial-gradient(circle at 30% 20%, #1a1a22, #0b0b0e 70%);
-  position:relative;
-  overflow:auto;
-}
-.stage{
-  position:relative;
-}
-.card-shell{
-  border-radius:22px; overflow:hidden;
-  box-shadow:0 30px 80px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.06);
-}
-
-/* the actual export target — fixed native resolution */
-.card{
-  width:1080px; height:1920px;
-  position:relative;
-  background:#050506;
-  font-family:'Pretendard',sans-serif;
-}
-.card-bg-wrap{
-  position:absolute; inset:0; overflow:hidden; cursor:grab;
-}
-.card-bg-wrap:active{ cursor:grabbing; }
-.card-bg-wrap img{
-  position:absolute;
-  top:50%;
-  left:50%;
-  width:auto;
-  height:auto;
-  max-width:none;
-  max-height:none;
-  transform:translate(-50%,-50%)
-    scale(var(--zoom,1.15))
-    translate(var(--offx,0%), var(--offy,0%));
-  filter:var(--imgfilter, none);
-  user-select:none;
-  pointer-events:none;
-}
-.card-bg-wrap img.mode-top{
-  top:0;
-  left:50%;
-
-  width:100%;
-  height:auto;
-
-  transform:
-    translateX(-50%)
-    scale(var(--zoom,1.15))
-    translate(var(--offx,0%), var(--offy,0%));
-
-  transform-origin:center top;
-}
-
-
-.card-bg-wrap img.mode-original{
-  top:50%;
-  left:50%;
-
-  width:auto;
-  height:auto;
-
-  transform:
-    translate(-50%,-50%)
-    scale(var(--zoom,1.15))
-    translate(var(--offx,0%), var(--offy,0%));
-
-  transform-origin:center center;
-}
-
-
-.card-bg-wrap img.mode-cover{
-  top:50%;
-  left:50%;
-
-  width:100%;
-  height:100%;
-
-  object-fit:cover;
-  object-position:center center;
-
-  transform:
-    translate(-50%,-50%)
-    scale(var(--zoom,1.15))
-    translate(var(--offx,0%), var(--offy,0%));
-
-  transform-origin:center center;
-}
-.card-bg-wrap .noimg{
-  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
-  color:#4a4a55; font-size:22px; text-align:center; padding:60px;
-  background:#1a1a20;
-}
-.card-duotone{
-  position:absolute; inset:0; mix-blend-mode:color;
-  background:linear-gradient(160deg, var(--accent) 0%, transparent 70%);
-  opacity:var(--duotone-op,0);
-}
-.card-scrim{
-  position:absolute; inset:0;
-  background:var(--scrim-gradient);
-}
-
-.card-top{
-  position:absolute; top:0; left:0; right:0;
-  padding:76px 72px 0;
-  display:flex; align-items:flex-start; justify-content:space-between;
-  z-index:5;
-}
-.kicker-wrap{ display:flex; flex-direction:column; gap:14px; }
-.kicker{
-  text-transform:uppercase;
-  letter-spacing:3px;
-  white-space:pre-wrap;
-  text-shadow:0 2px 10px rgba(0,0,0,.5);
-}
-.kicker-bar{ width:64px; height:5px; background:var(--accent); border-radius:3px; }
-.handle{
-  text-shadow:0 2px 10px rgba(0,0,0,.5);
-  opacity:.85;
-}
-
-.card-bottom{
-  position:absolute; left:0; right:0; bottom:0;
-  padding:0 72px 64px;
-  z-index:5;
-}
-.text-group{ display:flex; align-items:stretch; gap:30px; margin-bottom:36px; }
-.accent-bar{ width:7px; background:var(--accent); border-radius:4px; flex-shrink:0; }
-.text-col{ display:flex; flex-direction:column; justify-content:flex-end; gap:22px; min-width:0; }
-.headline{
-  font-weight:800; line-height:1.16; white-space:pre-wrap;
-  text-shadow:0 4px 18px rgba(0,0,0,.45);
-  word-break:keep-all;
-}
-.subtitle-kr{ line-height:1.45; white-space:pre-wrap; word-break:keep-all; text-shadow:0 2px 10px rgba(0,0,0,.4); }
-.subtitle-en{ line-height:1.5; white-space:pre-wrap; letter-spacing:1px; text-shadow:0 2px 10px rgba(0,0,0,.4); }
-
-.divider{ height:1px; background:rgba(255,255,255,.18); margin-bottom:26px; }
-.byline{ white-space:pre-wrap; opacity:.75; }
-
-/* ---------- zoom controls ---------- */
-.zoombar{
-  position:absolute; bottom:20px; left:50%; transform:translateX(-50%);
-  display:flex; align-items:center; gap:10px;
-  background:#1b1b21ee; border:1px solid #2c2c35; border-radius:30px;
-  padding:8px 16px; font-size:12px; color:#c8c8d0;
-  backdrop-filter:blur(6px);
-}
-.zoombar button{
-  width:26px;height:26px;border-radius:50%; border:none; background:#2c2c35; color:#fff;
-  cursor:pointer; font-size:14px; line-height:1;
-}
-
-/* ---------- export modal ---------- */
-.modal-overlay{
-  position:fixed; inset:0; background:rgba(0,0,0,.75);
-  display:none; align-items:center; justify-content:center; z-index:100;
-  padding:24px;
-}
-.modal-overlay.show{ display:flex; }
-.modal{
-  background:#17171c; border:1px solid #2c2c35; border-radius:18px;
-  padding:22px; max-width:420px; width:100%;
-  max-height:88vh; overflow-y:auto;
-  text-align:center;
-}
-.modal h3{ font-size:15px; margin-bottom:6px; }
-.modal p{ font-size:12.5px; color:#9a9aa4; line-height:1.6; margin-bottom:16px; }
-.modal img{ width:100%; border-radius:12px; margin-bottom:16px; border:1px solid #2c2c35; }
-.modal .close-btn{
-  margin-top:10px; background:none; border:none; color:#75757f; font-size:12px; cursor:pointer;
-}
-.spinner{
-  width:34px;height:34px;border-radius:50%;
-  border:3px solid #2c2c35; border-top-color:#e0334c;
-  animation:spin .8s linear infinite; margin:20px auto;
-}
-@keyframes spin{ to{ transform:rotate(360deg); } }
-
-@media (max-width: 900px){
-  .app{ flex-direction:column; }
-  .sidebar{ width:100%; height:46vh; min-width:0; border-right:none; border-bottom:1px solid #26262e; }
-  .preview-wrap{ height:54vh; }
-}
+  .context-menu button:active { background: rgba(255,255,255,0.1); }
+  .context-menu button.danger { color: #FF6B6B; }
 </style>
 </head>
 <body>
-
-<div class="app">
-
-  <!-- ================= TOP MENU ================= -->
-  <div class="topbar">
-
-    <div class="topbar-brand">
-      <div class="brand-mark">W</div>
-
-      <div class="topbar-brand-text">
-        <div class="brand-name">COVER NEWS</div>
-        <div class="brand-sub">WEST150 EDITOR</div>
-      </div>
+<div id="app">
+  <div class="top-nav">
+    <div class="left">
+      <button class="icon-btn" id="btn-back"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <button class="icon-btn disabled" id="btn-undo"><svg viewBox="0 0 24 24"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 00-9-9 9 9 0 00-6.7 2.9L3 13"/></svg></button>
+      <button class="icon-btn disabled" id="btn-redo"><svg viewBox="0 0 24 24"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 019-9 9 9 0 016.7 2.9L21 13"/></svg></button>
     </div>
-
-    <div class="top-menu" id="topMenu">
-
-      <button class="top-menu-item active" data-panel="writing">
-        글쓰기
-      </button>
-
-      <button class="top-menu-item" data-panel="image">
-        이미지
-      </button>
-
-      <button class="top-menu-item" data-panel="textstyle">
-        글자 스타일
-      </button>
-
-      <button class="top-menu-item" data-panel="template">
-        템플릿 · 기타
-      </button>
-
-      <button class="top-menu-item menu-save" data-panel="save">
-        저장
-      </button>
-
+    <div class="center" id="page-indicator">
+      <span id="page-label">카드 01 / 01</span><span class="chevron">▼</span>
     </div>
-
+    <div class="right">
+      <button class="icon-btn" id="btn-preview"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/></svg></button>
+      <button class="icon-btn" id="btn-share"><svg viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg></button>
+    </div>
   </div>
 
-
-  <!-- ================= WORKSPACE ================= -->
-  <div class="workspace">
-
-    <!-- ================= LEFT TOOL PANEL ================= -->
-    <div class="sidebar" id="sidebar">
-
-
-      <!-- ================================================= -->
-      <!-- 글쓰기 -->
-      <!-- ================================================= -->
-
-      <div class="tool-panel active" data-tool-panel="writing">
-
-        <div class="panel-heading">
-          <div>
-            <div class="panel-title">글쓰기</div>
-            <div class="panel-subtitle">뉴스 카드의 텍스트를 편집합니다</div>
-          </div>
-        </div>
-
-
-        <div class="section">
-
-          <div class="section-title">
-            <span class="dot"></span>텍스트 내용
-          </div>
-
-
-          <div class="field">
-
-            <div class="field-label">킥커</div>
-
-            <textarea
-              id="kickerText"
-              rows="1"
-            >GLOBAL POLITICS</textarea>
-
-          </div>
-
-
-          <div class="field">
-
-            <div class="field-label">핸들 / 계정</div>
-
-            <textarea
-              id="handleText"
-              rows="1"
-            >@west150daily</textarea>
-
-          </div>
-
-
-          <div class="field">
-
-            <div class="field-label">헤드라인</div>
-
-            <textarea
-              id="headlineText"
-              rows="3"
-            >트럼프,
-EU에 "큰 대가"
-경고</textarea>
-
-          </div>
-
-
-          <div class="field">
-
-            <div class="field-label">
-              서브타이틀 · 국문
-            </div>
-
-            <textarea
-              id="subKrText"
-              rows="2"
-            >EU 빅테크 과징금 보복 예고,
-한국 디지털 규제도 영향권 주목</textarea>
-
-          </div>
-
-
-          <div class="field">
-
-            <div class="field-label">
-              서브타이틀 · 영문
-            </div>
-
-            <textarea
-              id="subEnText"
-              rows="2"
-            >TRUMP WARNS EU OVER GOOGLE FINE,
-SOUTH KOREA WATCHES TRADE FALLOUT</textarea>
-
-          </div>
-
-
-          <div class="field">
-
-            <div class="field-label">
-              매체 / 바이라인
-            </div>
-
-            <textarea
-              id="bylineText"
-              rows="1"
-            >조선일보  |  김은중 기자  |  2026.07.25 오전 5:14</textarea>
-
-          </div>
-
-        </div>
-
-      </div>
-
-
-
-      <!-- ================================================= -->
-      <!-- 이미지 -->
-      <!-- ================================================= -->
-
-      <div class="tool-panel" data-tool-panel="image">
-
-        <div class="panel-heading">
-
-          <div>
-            <div class="panel-title">이미지</div>
-            <div class="panel-subtitle">배경 이미지와 음영을 설정합니다</div>
-          </div>
-
-        </div>
-
-
-        <div class="section">
-
-          <div class="section-title">
-            <span class="dot"></span>배경 이미지
-          </div>
-
-
-          <div class="field">
-
-            <label
-              class="upload-btn"
-              for="imgInput"
-            >
-              📷 이미지 업로드
-            </label>
-
-            <input
-              type="file"
-              id="imgInput"
-              accept="image/*"
-              style="display:none;"
-            >
-
-            <div class="upload-hint">
-              미리보기에서 드래그로 위치 이동 가능
-            </div>
-
-          </div>
-
-
-          <div class="field">
-
-            <div class="field-label">
-              이미지 표시 방식
-            </div>
-
-            <select id="imageMode">
-
-              <option value="top">
-                상단
-              </option>
-
-              <option value="original">
-                원본
-              </option>
-
-              <option value="cover" selected>
-                꽉채우기
-              </option>
-
-            </select>
-
-          </div>
-
-
-          <div class="field">
-
-            <div class="field-label">
-
-              확대/축소
-
-              <span
-                class="val"
-                id="zoomVal"
-              >
-                1.15x
-              </span>
-
-            </div>
-
-            <input
-              type="range"
-              id="zoomRange"
-              min="1"
-              max="2.5"
-              step="0.01"
-              value="1.15"
-            >
-
-          </div>
-
-
-          <div class="row2">
-
-            <div class="field">
-
-              <div class="field-label">
-                가로 위치
-              </div>
-
-              <input
-                type="range"
-                id="offXRange"
-                min="-50"
-                max="50"
-                step="1"
-                value="0"
-              >
-
-            </div>
-
-
-            <div class="field">
-
-              <div class="field-label">
-                세로 위치
-              </div>
-
-              <input
-                type="range"
-                id="offYRange"
-                min="-50"
-                max="50"
-                step="1"
-                value="0"
-              >
-
-            </div>
-
-          </div>
-
-
-          <div class="field">
-
-            <div class="field-label">
-              이미지 효과
-            </div>
-
-            <div
-              class="chip-row"
-              id="filterChips"
-            ></div>
-
-          </div>
-
-
-          <div class="field">
-
-            <div class="field-label">
-              스크림 방향
-            </div>
-
-            <div
-              class="chip-row"
-              id="scrimChips"
-            ></div>
-
-          </div>
-
-
-          <div class="field">
-
-            <div class="field-label">
-
-              스크림 강도
-
-              <span
-                class="val"
-                id="scrimVal"
-              >
-                55%
-              </span>
-
-            </div>
-
-            <input
-              type="range"
-              id="scrimRange"
-              min="0"
-              max="90"
-              step="1"
-              value="55"
-            >
-
-          </div>
-
-        </div>
-
-      </div>
-
-
-
-      <!-- ================================================= -->
-      <!-- 글자 스타일 (요소별 아코디언) -->
-      <!-- ================================================= -->
-
-      <div class="tool-panel" data-tool-panel="textstyle">
-
-        <div class="panel-heading">
-          <div>
-            <div class="panel-title">글자 스타일</div>
-            <div class="panel-subtitle">요소를 눌러 폰트 · 굵기 · 크기 · 색상을 한 번에 설정합니다</div>
-          </div>
-        </div>
-
-        <div class="section acc-group" id="textStyleAccordion">
-
-          <div class="acc-item open" data-acc-item>
-            <button type="button" class="acc-header" data-acc-toggle>
-              <span>킥커</span>
-              <span class="acc-caret">⌄</span>
-            </button>
-            <div class="acc-body">
-
-              <div class="row2">
-                <div class="field">
-                  <div class="field-label">폰트</div>
-                  <select id="kickerFont"></select>
-                </div>
-                <div class="field">
-                  <div class="field-label">굵기</div>
-                  <select id="kickerWeight"></select>
-                </div>
-              </div>
-
-              <div class="field">
-                <div class="field-label">
-                  크기
-                  <span class="val" id="kickerSizeVal">30px</span>
-                </div>
-                <input type="range" id="kickerSize" min="14" max="60" value="30">
-              </div>
-
-              <div class="field">
-                <div class="field-label">색상</div>
-                <input type="color" class="color-input" id="kickerColor" value="#f2f2f4">
-              </div>
-
-            </div>
-          </div>
-
-          <div class="acc-item" data-acc-item>
-            <button type="button" class="acc-header" data-acc-toggle>
-              <span>핸들 / 계정</span>
-              <span class="acc-caret">⌄</span>
-            </button>
-            <div class="acc-body">
-
-              <div class="row2">
-                <div class="field">
-                  <div class="field-label">폰트</div>
-                  <select id="handleFont"></select>
-                </div>
-                <div class="field">
-                  <div class="field-label">굵기</div>
-                  <select id="handleWeight"></select>
-                </div>
-              </div>
-
-              <div class="field">
-                <div class="field-label">
-                  크기
-                  <span class="val" id="handleSizeVal">26px</span>
-                </div>
-                <input type="range" id="handleSize" min="12" max="48" value="26">
-              </div>
-
-              <div class="field">
-                <div class="field-label">색상</div>
-                <input type="color" class="color-input" id="handleColor" value="#d8d8de">
-              </div>
-
-            </div>
-          </div>
-
-          <div class="acc-item" data-acc-item>
-            <button type="button" class="acc-header" data-acc-toggle>
-              <span>헤드라인</span>
-              <span class="acc-caret">⌄</span>
-            </button>
-            <div class="acc-body">
-
-              <div class="row2">
-                <div class="field">
-                  <div class="field-label">폰트</div>
-                  <select id="headlineFont"></select>
-                </div>
-                <div class="field">
-                  <div class="field-label">굵기</div>
-                  <select id="headlineWeight"></select>
-                </div>
-              </div>
-
-              <div class="field">
-                <div class="field-label">
-                  크기
-                  <span class="val" id="headlineSizeVal">92px</span>
-                </div>
-                <input type="range" id="headlineSize" min="30" max="220" value="92">
-              </div>
-
-              <div class="field">
-                <div class="field-label">색상</div>
-                <input type="color" class="color-input" id="headlineColor" value="#ffffff">
-              </div>
-
-            </div>
-          </div>
-
-          <div class="acc-item" data-acc-item>
-            <button type="button" class="acc-header" data-acc-toggle>
-              <span>서브타이틀 · 국문</span>
-              <span class="acc-caret">⌄</span>
-            </button>
-            <div class="acc-body">
-
-              <div class="row2">
-                <div class="field">
-                  <div class="field-label">폰트</div>
-                  <select id="subKrFont"></select>
-                </div>
-                <div class="field">
-                  <div class="field-label">굵기</div>
-                  <select id="subKrWeight"></select>
-                </div>
-              </div>
-
-              <div class="field">
-                <div class="field-label">
-                  크기
-                  <span class="val" id="subKrSizeVal">34px</span>
-                </div>
-                <input type="range" id="subKrSize" min="14" max="80" value="34">
-              </div>
-
-              <div class="field">
-                <div class="field-label">색상</div>
-                <input type="color" class="color-input" id="subKrColor" value="#d4d4da">
-              </div>
-
-            </div>
-          </div>
-
-          <div class="acc-item" data-acc-item>
-            <button type="button" class="acc-header" data-acc-toggle>
-              <span>서브타이틀 · 영문</span>
-              <span class="acc-caret">⌄</span>
-            </button>
-            <div class="acc-body">
-
-              <div class="row2">
-                <div class="field">
-                  <div class="field-label">폰트</div>
-                  <select id="subEnFont"></select>
-                </div>
-                <div class="field">
-                  <div class="field-label">굵기</div>
-                  <select id="subEnWeight"></select>
-                </div>
-              </div>
-
-              <div class="field">
-                <div class="field-label">
-                  크기
-                  <span class="val" id="subEnSizeVal">24px</span>
-                </div>
-                <input type="range" id="subEnSize" min="10" max="60" value="24">
-              </div>
-
-              <div class="field">
-                <div class="field-label">색상</div>
-                <input type="color" class="color-input" id="subEnColor" value="#8f8f9a">
-              </div>
-
-            </div>
-          </div>
-
-          <div class="acc-item" data-acc-item>
-            <button type="button" class="acc-header" data-acc-toggle>
-              <span>매체 / 바이라인</span>
-              <span class="acc-caret">⌄</span>
-            </button>
-            <div class="acc-body">
-
-              <div class="row2">
-                <div class="field">
-                  <div class="field-label">폰트</div>
-                  <select id="bylineFont"></select>
-                </div>
-                <div class="field">
-                  <div class="field-label">굵기</div>
-                  <select id="bylineWeight"></select>
-                </div>
-              </div>
-
-              <div class="field">
-                <div class="field-label">
-                  크기
-                  <span class="val" id="bylineSizeVal">26px</span>
-                </div>
-                <input type="range" id="bylineSize" min="12" max="46" value="26">
-              </div>
-
-              <div class="field">
-                <div class="field-label">색상</div>
-                <input type="color" class="color-input" id="bylineColor" value="#b6b6c0">
-              </div>
-
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-
-
-      <!-- ================================================= -->
-      <!-- 템플릿 -->
-      <!-- ================================================= -->
-
-      <div class="tool-panel" data-tool-panel="template">
-
-        <div class="panel-heading">
-          <div>
-            <div class="panel-title">템플릿 · 기타</div>
-            <div class="panel-subtitle">카드 전체 분위기와 보조 옵션을 설정합니다</div>
-          </div>
-        </div>
-
-
-        <div class="section">
-
-          <div class="section-title">
-            <span class="dot"></span>포인트 컬러
-          </div>
-
-          <div class="field">
-
-            <div class="field-label">
-              프리셋
-            </div>
-
-            <div
-              class="swatches"
-              id="swatchRow"
-            ></div>
-
-          </div>
-
-
-          <div class="field">
-
-            <div class="field-label">
-              직접 선택
-            </div>
-
-            <input
-              type="color"
-              class="color-input"
-              id="accentCustom"
-              value="#e0334c"
-            >
-
-          </div>
-
-
-          <div class="field">
-
-            <div class="field-label">
-              배경 톤
-            </div>
-
-            <div
-              class="tone-grid"
-              id="toneRow"
-            ></div>
-
-          </div>
-
-        </div>
-
-
-        <div class="section">
-
-          <div class="section-title">
-            <span class="dot"></span>표시
-          </div>
-
-
-          <label style="
-            display:flex;
-            align-items:center;
-            gap:8px;
-            font-size:12px;
-            color:#c8c8d0;
-          ">
-
-            <input
-              type="checkbox"
-              id="dividerToggle"
-              checked
-              style="width:16px;height:16px;"
-            >
-
-            구분선 표시
-
-          </label>
-
-        </div>
-
-      </div>
-
-
-
-      <!-- ================================================= -->
-      <!-- 저장 -->
-      <!-- ================================================= -->
-
-      <div class="tool-panel" data-tool-panel="save">
-
-        <div class="panel-heading">
-          <div>
-            <div class="panel-title">저장</div>
-            <div class="panel-subtitle">완성된 카드를 이미지로 저장합니다</div>
-          </div>
-        </div>
-
-
-        <div class="section">
-
-          <button
-            class="btn btn-primary"
-            id="exportBtn"
-          >
-            ⬇ 이미지로 저장 (PNG)
-          </button>
-
-
-          <button
-            class="btn btn-secondary"
-            id="resetBtn"
-          >
-            기본값으로 초기화
-          </button>
-
-
-          <div
-            class="upload-hint"
-            style="margin-top:10px;line-height:1.6;"
-          >
-            아이폰 · 안드로이드에서는 저장 버튼을 누르면<br>
-            바로 공유 시트가 열려요 — 거기서 "이미지 저장"을 누르면 끝!<br>
-            맥북 · PC에서는 이미지 확인창에서 다운로드할 수 있어요.
-          </div>
-
-        </div>
-
-      </div>
-
+  <div class="canvas-area" id="canvas-area">
+    <div class="canvas-wrapper" id="canvas-wrapper">
+      <div class="card-canvas" id="card-canvas"></div>
     </div>
-
-
-
-    <!-- ================= PREVIEW ================= -->
-
-    <div class="preview-wrap">
-
-      <div class="stage" id="stage">
-
-        <div class="card-shell" id="cardShell">
-
-          <div class="card" id="card">
-
-            <div class="card-bg-wrap" id="bgWrap">
-
-              <div
-                class="noimg"
-                id="noImgMsg"
-              >
-                여기에 배경 사진을 올려보세요
-                <br>
-                <span style="font-size:15px;">
-                  (사이드바 &gt; 이미지 &gt; 업로드)
-                </span>
-              </div>
-
-            </div>
-
-
-            <div
-              class="card-duotone"
-              id="duotoneLayer"
-            ></div>
-
-
-            <div
-              class="card-scrim"
-              id="scrimLayer"
-            ></div>
-
-
-            <div class="card-top">
-
-              <div class="kicker-wrap">
-
-                <div
-                  class="kicker"
-                  id="kickerOut"
-                >
-                  GLOBAL POLITICS
-                </div>
-
-                <div class="kicker-bar"></div>
-
-              </div>
-
-
-              <div
-                class="handle"
-                id="handleOut"
-              >
-                @rpick
-              </div>
-
-            </div>
-
-
-            <div class="card-bottom">
-
-              <div class="text-group">
-
-                <div class="accent-bar"></div>
-
-                <div class="text-col">
-
-                  <div
-                    class="headline"
-                    id="headlineOut"
-                  ></div>
-
-                  <div
-                    class="subtitle-kr"
-                    id="subKrOut"
-                  ></div>
-
-                  <div
-                    class="subtitle-en"
-                    id="subEnOut"
-                  ></div>
-
-                </div>
-
-              </div>
-
-
-              <div
-                class="divider"
-                id="dividerOut"
-              ></div>
-
-
-              <div
-                class="byline"
-                id="bylineOut"
-              ></div>
-
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <div class="zoombar">
-
-          <button id="zoomOutBtn">
-            −
-          </button>
-
-          <span id="previewScaleLabel">
-            화면 배율 45%
-          </span>
-
-          <button id="zoomInBtn">
-            +
-          </button>
-
-        </div>
-
-      </div>
-
-    </div>
-
+    <div class="zoom-indicator" id="zoom-indicator">100%</div>
   </div>
 
-</div>
+  <div class="page-strip" id="page-strip"></div>
 
-<!-- ================= EXPORT MODAL ================= -->
-<div class="modal-overlay" id="modalOverlay">
-  <div class="modal">
-    <div id="modalLoading">
-      <div class="spinner"></div>
-      <p>이미지를 만들고 있어요…</p>
+  <div class="bottom-bar">
+    <div class="tool-row" id="main-tools">
+      <div class="tool-item" data-tool="text"><div class="icon"><svg viewBox="0 0 24 24"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg></div><div class="label">텍스트</div></div>
+      <div class="tool-item" data-tool="image"><div class="icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div><div class="label">이미지</div></div>
+      <div class="tool-item" data-tool="shape"><div class="icon"><svg viewBox="0 0 24 24"><path d="M12 2l10 18H2z"/></svg></div><div class="label">도형</div></div>
+      <div class="tool-item" data-tool="bg"><div class="icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg></div><div class="label">배경</div></div>
+      <div class="tool-item" data-tool="layout"><div class="icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div><div class="label">레이아웃</div></div>
+      <div class="tool-item" data-tool="style"><div class="icon"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div><div class="label">스타일</div></div>
+      <div class="tool-item" data-tool="adjust"><div class="icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></svg></div><div class="label">보정</div></div>
     </div>
-    <div id="modalResult" style="display:none;">
-      <h3 id="modalResultTitle">저장 준비 완료</h3>
-      <p id="modalResultHint">
-        <b>아이폰</b>: 아래 이미지를 길게 눌러 "사진에 저장"을 선택하세요.<br>
-        <b>맥북 / PC</b>: 이미지를 우클릭해서 "이미지를 다른 이름으로 저장"을 선택하거나, 아래 버튼을 눌러 바로 다운로드하세요.
-      </p>
-      <img id="resultImg" alt="완성된 카드">
-      <button class="btn btn-primary" id="shareBtn" style="display:none;">📤 공유 / 사진에 저장</button>
-      <button class="btn btn-secondary" id="downloadBtn">📥 바로 다운로드</button>
-      <button class="close-btn" id="closeModalBtn">닫기</button>
+
+    <div class="ctx-panel" id="ctx-text">
+      <div class="ctx-header">
+        <select id="font-family"><option value="Pretendard">Pretendard</option><option value="system-ui">System</option><option value="Georgia">Serif</option></select>
+        <select id="font-weight"><option value="400">Regular</option><option value="500">Medium</option><option value="600">SemiBold</option><option value="700" selected>Bold</option><option value="800">ExtraBold</option><option value="900">Black</option></select>
+        <div class="size-ctrl"><button id="size-minus">−</button><span id="size-val">64</span><button id="size-plus">+</button></div>
+      </div>
+      <div class="ctx-tools">
+        <div class="ctx-tool" data-action="color"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 010 20"/></svg>색상</div>
+        <div class="ctx-tool" data-action="align"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h14"/></svg>정렬</div>
+        <div class="ctx-tool" data-action="letter"><svg viewBox="0 0 24 24"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg>자간</div>
+        <div class="ctx-tool" data-action="line"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>행간</div>
+        <div class="ctx-tool" data-action="more"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>더보기</div>
+      </div>
     </div>
+
+    <div class="ctx-panel" id="ctx-image">
+      <div class="ctx-tools" style="justify-content:space-around;">
+        <div class="ctx-tool" data-action="crop"><svg viewBox="0 0 24 24"><path d="M6 2v14a2 2 0 002 2h14"/><path d="M18 22V8a2 2 0 00-2-2H2"/></svg>자르기</div>
+        <div class="ctx-tool" data-action="pos"><svg viewBox="0 0 24 24"><path d="M5 9l-3 3 3 3M9 5l3-3 3 3M15 19l-3 3-3-3M19 9l3 3-3 3"/></svg>위치</div>
+        <div class="ctx-tool" data-action="zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35M11 8v6M8 11h6"/></svg>확대</div>
+        <div class="ctx-tool" data-action="bright"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2"/></svg>밝기</div>
+        <div class="ctx-tool" data-action="contrast"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2v20"/></svg>대비</div>
+        <div class="ctx-tool" data-action="filter"><svg viewBox="0 0 24 24"><path d="M22 3H2l8 9.5V19l4 2v-8.5L22 3z"/></svg>필터</div>
+        <div class="ctx-tool" data-action="opacity"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 000 20"/></svg>불투명</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sheet-overlay" id="sheet-export">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">내보내기</div>
+      <div class="sheet-list">
+        <div class="sheet-item" data-export="png"><div><div>PNG</div><div class="sub">고품질 투명 배경</div></div></div>
+        <div class="sheet-item" data-export="jpg"><div><div>JPG</div><div class="sub">1080 × 1920</div></div></div>
+        <div class="sheet-item" data-export="pdf"><div><div>PDF</div><div class="sub">여러 페이지</div></div></div>
+        <div class="sheet-item" data-export="story"><div><div>Instagram Story</div><div class="sub">1080 × 1920</div></div></div>
+        <div class="sheet-item" data-export="portrait"><div><div>Instagram Portrait</div><div class="sub">1080 × 1350</div></div></div>
+        <div class="sheet-item" data-export="all" style="margin-top:8px;background:rgba(255,255,255,0.06);justify-content:center;font-weight:600;">모든 카드 저장</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sheet-overlay" id="sheet-layout">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">레이아웃</div>
+      <div class="layout-grid" id="layout-grid">
+        <div class="layout-item" data-layout="headline"><div class="preview" style="display:flex;flex-direction:column;justify-content:flex-end;padding:4px;"><div style="height:8px;background:#fff;margin-bottom:2px;width:90%"></div><div style="height:4px;background:#aaa;width:60%"></div></div>큰 제목</div>
+        <div class="layout-item" data-layout="photo"><div class="preview"><div style="position:absolute;inset:10% 10% 30%;background:#555"></div></div>사진 중심</div>
+        <div class="layout-item" data-layout="split-h"><div class="preview" style="display:flex"><div style="flex:1;background:#444"></div><div style="flex:1;background:#666"></div></div>좌우 분할</div>
+        <div class="layout-item" data-layout="split-v"><div class="preview" style="display:flex;flex-direction:column"><div style="flex:1;background:#444"></div><div style="flex:1;background:#666"></div></div>상하 분할</div>
+        <div class="layout-item" data-layout="number"><div class="preview" style="display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;color:#fff">01</div>숫자 강조</div>
+        <div class="layout-item" data-layout="quote"><div class="preview" style="padding:8px;font-size:20px;color:#fff;opacity:0.7">“</div>인용문</div>
+        <div class="layout-item" data-layout="timeline"><div class="preview" style="padding:6px"><div style="height:3px;background:#fff;margin:4px 0"></div><div style="height:3px;background:#aaa;margin:4px 0;width:70%"></div></div>타임라인</div>
+        <div class="layout-item" data-layout="compare"><div class="preview" style="display:flex;gap:2px;padding:4px"><div style="flex:1;background:#444"></div><div style="flex:1;background:#666"></div></div>비교</div>
+        <div class="layout-item" data-layout="source"><div class="preview" style="display:flex;align-items:flex-end;justify-content:flex-end;padding:4px;font-size:8px;color:#aaa">출처</div>출처</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sheet-overlay" id="sheet-style">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">스타일</div>
+      <div class="style-grid">
+        <div class="style-item" data-style="west150"><h4>WEST150 DAILY</h4><p>검정 · 강한 굵은 제목 · 넓은 여백 · 작은 출처</p></div>
+        <div class="style-item" data-style="minimal"><h4>MINIMAL</h4><p>흰색 배경 · 검정 텍스트 · 얇은 선 · 작은 typography</p></div>
+        <div class="style-item" data-style="breaking"><h4>BREAKING</h4><p>강한 제목 · 큰 숫자 · 높은 대비</p></div>
+        <div class="style-item" data-style="editorial"><h4>EDITORIAL</h4><p>잡지 스타일 · 큰 이미지 · serif typography</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sheet-overlay" id="sheet-color">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">텍스트 색상</div>
+      <div class="color-row" id="color-row">
+        <div class="color-swatch active" style="background:#FFFFFF" data-color="#FFFFFF"></div>
+        <div class="color-swatch" style="background:#F5F5F5" data-color="#F5F5F5"></div>
+        <div class="color-swatch" style="background:#FF3B30" data-color="#FF3B30"></div>
+        <div class="color-swatch" style="background:#FF9500" data-color="#FF9500"></div>
+        <div class="color-swatch" style="background:#FFCC00" data-color="#FFCC00"></div>
+        <div class="color-swatch" style="background:#34C759" data-color="#34C759"></div>
+        <div class="color-swatch" style="background:#007AFF" data-color="#007AFF"></div>
+        <div class="color-swatch" style="background:#5856D6" data-color="#5856D6"></div>
+        <div class="color-swatch" style="background:#AF52DE" data-color="#AF52DE"></div>
+        <div class="color-swatch" style="background:#000000;border:1px solid #444" data-color="#000000"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="text-edit-overlay" id="text-edit">
+    <textarea class="text-edit-area" id="text-edit-area"></textarea>
+    <button class="text-edit-done" id="text-edit-done">완료</button>
+  </div>
+
+  <div class="context-menu" id="context-menu">
+    <button data-act="duplicate">복제</button>
+    <button data-act="bring-front">맨 앞으로</button>
+    <button data-act="send-back">맨 뒤로</button>
+    <button data-act="delete" class="danger">삭제</button>
   </div>
 </div>
+
 <script>
-  document.fonts.ready.then(() => console.log('폰트 준비 완료'));
-</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script>
-(function(){
-/* =========================================================
-   TOP MENU / TOOL PANEL
-   ========================================================= */
+(function() {
+  const DESIGN_W = 1080, DESIGN_H = 1920, DISPLAY_W = 270, SCALE = DISPLAY_W / DESIGN_W;
+  let pages = [], currentPage = 0, selectedId = null, zoom = 1, history = [], historyIdx = -1;
+  let isDragging = false, dragStart = null, longPressTimer = null;
 
-const topMenuItems = document.querySelectorAll('.top-menu-item');
-const toolPanels = document.querySelectorAll('.tool-panel');
+  const BG_IMG = 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/United_States_Supreme_Court_Building_at_night.jpg/1280px-United_States_Supreme_Court_Building_at_night.jpg';
 
-topMenuItems.forEach(item => {
-
-  item.addEventListener('click', () => {
-
-    const target = item.dataset.panel;
-
-    topMenuItems.forEach(menu => {
-      menu.classList.remove('active');
-    });
-
-    toolPanels.forEach(panel => {
-      panel.classList.remove('active');
-    });
-
-    item.classList.add('active');
-
-    const targetPanel =
-      document.querySelector(
-        `.tool-panel[data-tool-panel="${target}"]`
-      );
-
-    if (targetPanel) {
-      targetPanel.classList.add('active');
-    }
-
-  });
-
-});
-
-/* ---------------- 글자 스타일 아코디언 ---------------- */
-document.querySelectorAll('#textStyleAccordion [data-acc-toggle]').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const item = btn.closest('[data-acc-item]');
-    const wasOpen = item.classList.contains('open');
-    document.querySelectorAll('#textStyleAccordion [data-acc-item]').forEach(el => {
-      el.classList.remove('open');
-    });
-    if (!wasOpen) item.classList.add('open');
-  });
-});
-
-  /* ---------------- 폰트 목록 ---------------- */
-  const FONTS = [
-    { label:'프리텐다드 (기본 고딕)', value:"'Pretendard', sans-serif" },
-    { label:'리디바탕 (명조/바탕체)', value:"'RIDIBatang', serif" },
-    { label:'노토 산스 KR', value:"'Noto Sans KR', sans-serif" },
-    { label:'노토 세리프 KR', value:"'Noto Serif KR', serif" },
-    { label:'지마켓 산스 (라운드 굵은체)', value:"'GmarketSans', sans-serif" },
-    { label:'블랙 한 산스 (헤드라인용 굵은체)', value:"'Black Han Sans', sans-serif" },
-    { label:'IBM 플렉스 산스 KR', value:"'IBM Plex Sans KR', sans-serif" },
-    { label:'나눔명조', value:"'Nanum Myeongjo', serif" },
-  ];
-  const WEIGHTS = [
-    {label:'가늘게 (400)', value:'400'},
-    {label:'보통 (500)', value:'500'},
-    {label:'약간 굵게 (600)', value:'600'},
-    {label:'굵게 (700)', value:'700'},
-    {label:'매우 굵게 (800)', value:'800'},
-    {label:'블랙 (900)', value:'900'},
-  ];
-
-  function fillSelect(sel, items, defaultValue){
-    items.forEach(it=>{
-      const o = document.createElement('option');
-      o.value = it.value; o.textContent = it.label;
-      if (it.value === defaultValue) o.selected = true;
-      sel.appendChild(o);
-    });
-  }
-
-  const fontTargets = ['kicker','handle','headline','subKr','subEn','byline'];
-  const defaultFontFor = { kicker:"'Pretendard', sans-serif", handle:"'Pretendard', sans-serif",
-    headline:"'Pretendard', sans-serif", subKr:"'Pretendard', sans-serif",
-    subEn:"'Pretendard', sans-serif", byline:"'Pretendard', sans-serif" };
-  const defaultWeightFor = { kicker:'700', handle:'500', headline:'800', subKr:'500', subEn:'600', byline:'500' };
-
-  fontTargets.forEach(t=>{
-    fillSelect(document.getElementById(t+'Font'), FONTS, defaultFontFor[t]);
-    fillSelect(document.getElementById(t+'Weight'), WEIGHTS, defaultWeightFor[t]);
-  });
-
-  /* ---------------- 컬러 프리셋 / 톤 ---------------- */
-  const ACCENTS = ['#e0334c','#f5a623','#12b76a','#2f9bf0','#8b5cf6','#ec4899','#d4af37','#f3f3f5'];
-  const swatchRow = document.getElementById('swatchRow');
-  ACCENTS.forEach((c,i)=>{
-    const d = document.createElement('div');
-    d.className = 'swatch' + (i===0?' active':'');
-    d.style.background = c;
-    d.dataset.color = c;
-    d.addEventListener('click', ()=>{
-      document.querySelectorAll('.swatch').forEach(s=>s.classList.remove('active'));
-      d.classList.add('active');
-      document.getElementById('accentCustom').value = c;
-      setAccent(c);
-    });
-    swatchRow.appendChild(d);
-  });
-
-  const TONES = [
-    {name:'딥블랙', c1:'rgba(0,0,0,0)', c2:'rgba(2,2,3,1)'},
-    {name:'네이비', c1:'rgba(6,10,22,0)', c2:'rgba(4,7,16,1)'},
-    {name:'차콜', c1:'rgba(10,10,12,0)', c2:'rgba(12,12,14,1)'},
-    {name:'다크브라운', c1:'rgba(16,10,6,0)', c2:'rgba(14,9,5,1)'},
-    {name:'다크그린', c1:'rgba(4,12,9,0)', c2:'rgba(3,10,7,1)'},
-  ];
-  const toneRow = document.getElementById('toneRow');
-  let currentTone = TONES[1];
-  TONES.forEach((t,i)=>{
-    const d = document.createElement('div');
-    d.className = 'tone-item' + (t.name==='네이비'?' active':'');
-    d.style.background = `linear-gradient(135deg, ${t.c2}, #2a2a30)`;
-    d.title = t.name;
-    d.addEventListener('click', ()=>{
-      document.querySelectorAll('.tone-item').forEach(s=>s.classList.remove('active'));
-      d.classList.add('active');
-      currentTone = t;
-      updateScrim();
-    });
-    toneRow.appendChild(d);
-  });
-
-  document.getElementById('accentCustom').addEventListener('input', e=>{
-    document.querySelectorAll('.swatch').forEach(s=>s.classList.remove('active'));
-    setAccent(e.target.value);
-  });
-
-  function setAccent(c){
-    document.getElementById('card').style.setProperty('--accent', c);
-  }
-  setAccent(ACCENTS[0]);
-
-  /* ---------------- 필터 칩 ---------------- */
-  const FILTERS = [
-    {name:'없음', css:'none', duo:0},
-    {name:'그레이스케일', css:'grayscale(1) contrast(1.05)', duo:0},
-    {name:'듀오톤', css:'grayscale(1) brightness(.92)', duo:.55},
-    {name:'세피아', css:'sepia(.45) contrast(1.05)', duo:0},
-    {name:'저채도', css:'saturate(.4) contrast(1.08) brightness(.95)', duo:0},
-    {name:'고대비', css:'contrast(1.25) brightness(.92)', duo:0},
-  ];
-  const filterChips = document.getElementById('filterChips');
-  let currentFilter = FILTERS[0];
-  FILTERS.forEach((f,i)=>{
-    const c = document.createElement('div');
-    c.className = 'chip' + (i===0?' active':'');
-    c.textContent = f.name;
-    c.addEventListener('click', ()=>{
-      filterChips.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));
-      c.classList.add('active');
-      currentFilter = f;
-      applyImageFilter();
-    });
-    filterChips.appendChild(c);
-  });
-
-  const SCRIMS = [
-    {name:'하단', css:'linear-gradient(to top, {t2} 0%, rgba(0,0,0,{o2}) 38%, rgba(0,0,0,0) 68%)'},
-    {name:'상단', css:'linear-gradient(to bottom, {t2} 0%, rgba(0,0,0,{o2}) 38%, rgba(0,0,0,0) 68%)'},
-    {name:'양쪽', css:'linear-gradient(to top, {t2} 0%, rgba(0,0,0,0) 45%), linear-gradient(to bottom, {t2} 0%, rgba(0,0,0,0) 30%)'},
-    {name:'전체', css:'linear-gradient({t2}, {t2})'},
-    {name:'방사형', css:'radial-gradient(circle at 50% 50%, rgba(0,0,0,0) 20%, {t2} 100%)'},
-  ];
-  const scrimChips = document.getElementById('scrimChips');
-  let currentScrim = SCRIMS[0];
-  SCRIMS.forEach((s,i)=>{
-    const c = document.createElement('div');
-    c.className = 'chip' + (i===0?' active':'');
-    c.textContent = s.name;
-    c.addEventListener('click', ()=>{
-      scrimChips.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));
-      c.classList.add('active');
-      currentScrim = s;
-      updateScrim();
-    });
-    scrimChips.appendChild(c);
-  });
-
-  function updateScrim(){
-    const op = document.getElementById('scrimRange').value / 100;
-    const tone = currentTone.c2.replace(/[\d.]+\)$/, op.toFixed(2)+')');
-    const css = currentScrim.css.split('{t2}').join(tone).split('{o2}').join(op.toFixed(2));
-    document.getElementById('scrimLayer').style.background = css;
-  }
-  document.getElementById('scrimRange').addEventListener('input', e=>{
-    document.getElementById('scrimVal').textContent = e.target.value + '%';
-    updateScrim();
-  });
-  updateScrim();
-
-  function applyImageFilter(){
-    document.getElementById('card').style.setProperty('--imgfilter', currentFilter.css);
-    document.getElementById('duotoneLayer').style.setProperty('--duotone-op', currentFilter.duo);
-  }
-  applyImageFilter();
-
-  /* ---------------- 이미지 업로드 / 팬·줌 ---------------- */
-  const bgWrap = document.getElementById('bgWrap');
-  const noImgMsg = document.getElementById('noImgMsg');
-  let bgImg = null;
-  let offX = 0, offY = 0, zoom = 1.15;
-  document.getElementById('zoomRange').addEventListener('input', e=>{
-  zoom = parseFloat(e.target.value);
-
-  document.getElementById('zoomVal').textContent =
-    zoom.toFixed(2) + 'x';
-
-  updateTransform();
-});
-
-document.getElementById('offXRange').addEventListener('input', e=>{
-  offX = parseFloat(e.target.value);
-  updateTransform();
-});
-
-document.getElementById('offYRange').addEventListener('input', e=>{
-  offY = parseFloat(e.target.value);
-  updateTransform();
-});
-
-  document.getElementById('imgInput').addEventListener('change', e=>{
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = ev=>{
-      if (bgImg) bgImg.remove();
-      bgImg = document.createElement('img');
-      bgImg.classList.add('mode-cover');
-      bgImg.crossOrigin = 'anonymous';
-      bgImg.src = ev.target.result;
-      bgWrap.appendChild(bgImg);
-      noImgMsg.style.display = 'none';
-      updateTransform();
+  function createSamplePage() {
+    return {
+      id: 'p' + Date.now(), bg: BG_IMG, overlay: true,
+      objects: [
+        { id: 'o1', type: 'text', x: 60, y: 180, w: 960, h: 40, text: '미국 연방항소법원', fontSize: 28, fontWeight: 500, color: 'rgba(255,255,255,0.75)', fontFamily: 'Pretendard', align: 'left', letterSpacing: 1 },
+        { id: 'o2', type: 'text', x: 60, y: 240, w: 960, h: 220, text: '식스스 서킷, 트럼프 행정부의\n유권자 명단 요구 기각 결정 유지', fontSize: 64, fontWeight: 800, color: '#FFFFFF', fontFamily: 'Pretendard', align: 'left', letterSpacing: -1.2, lineHeight: 1.15 },
+        { id: 'o3', type: 'text', x: 60, y: 520, w: 960, h: 120, text: '미시간주가 수정하지 않은 주 전체 유권자 명단을 제출하도록 강제할 수 없다는 기존 판결을 재확인했습니다.', fontSize: 32, fontWeight: 400, color: 'rgba(255,255,255,0.85)', fontFamily: 'Pretendard', align: 'left', lineHeight: 1.45 },
+        { id: 'o4', type: 'text', x: 60, y: 1780, w: 400, h: 40, text: '2026.08.16', fontSize: 24, fontWeight: 500, color: 'rgba(255,255,255,0.55)', fontFamily: 'Pretendard', align: 'left' },
+        { id: 'o5', type: 'text', x: 620, y: 1780, w: 400, h: 40, text: 'WEST150daily', fontSize: 24, fontWeight: 600, color: 'rgba(255,255,255,0.55)', fontFamily: 'Pretendard', align: 'right' }
+      ]
     };
-    reader.readAsDataURL(file);
-  });
+  }
+  pages.push(createSamplePage());
 
-  function updateTransform(){
-  const mode = document.getElementById('imageMode').value;
+  const cardCanvas = document.getElementById('card-canvas');
+  const canvasWrapper = document.getElementById('canvas-wrapper');
+  const canvasArea = document.getElementById('canvas-area');
+  const pageStrip = document.getElementById('page-strip');
+  const pageLabel = document.getElementById('page-label');
+  const zoomInd = document.getElementById('zoom-indicator');
+  const mainTools = document.getElementById('main-tools');
+  const ctxText = document.getElementById('ctx-text');
+  const ctxImage = document.getElementById('ctx-image');
 
-  document.getElementById('card').style.setProperty('--zoom', zoom);
-  document.getElementById('card').style.setProperty('--offx', offX + '%');
-  document.getElementById('card').style.setProperty('--offy', offY + '%');
-
-  if (bgImg) {
-  bgImg.classList.remove('mode-top', 'mode-original', 'mode-cover');
-  bgImg.classList.add('mode-' + mode);
-}
-}
-
-document.getElementById('imageMode').addEventListener('change', () => {
-  updateTransform();
-});
-
-  // 드래그로 위치 이동
-  let dragging = false, dragStart = {x:0,y:0}, startOff = {x:0,y:0};
-  bgWrap.addEventListener('pointerdown', e=>{
-    if (!bgImg) return;
-    dragging = true;
-    dragStart = {x:e.clientX, y:e.clientY};
-    startOff = {x:offX, y:offY};
-    bgWrap.setPointerCapture(e.pointerId);
-  });
-  bgWrap.addEventListener('pointermove', e=>{
-    if (!dragging) return;
-    const rect = bgWrap.getBoundingClientRect();
-    const dx = (e.clientX - dragStart.x) / rect.width * 100;
-    const dy = (e.clientY - dragStart.y) / rect.height * 100;
-    offX = Math.max(-50, Math.min(50, startOff.x + dx));
-    offY = Math.max(-50, Math.min(50, startOff.y + dy));
-    document.getElementById('offXRange').value = offX;
-    document.getElementById('offYRange').value = offY;
-    updateTransform();
-  });
-  ['pointerup','pointercancel','pointerleave'].forEach(ev=>{
-    bgWrap.addEventListener(ev, ()=>{ dragging=false; });
-  });
-
-  updateTransform();
-
-  /* ---------------- 텍스트 바인딩 ---------------- */
-  function bindText(prefix, outId){
-    const textEl = document.getElementById(prefix+'Text');
-    const fontEl = document.getElementById(prefix+'Font');
-    const weightEl = document.getElementById(prefix+'Weight');
-    const colorEl = document.getElementById(prefix+'Color');
-    const sizeEl = document.getElementById(prefix+'Size');
-    const sizeVal = document.getElementById(prefix+'SizeVal');
-    const out = document.getElementById(outId);
-
-    function render(){
-      out.textContent = textEl.value;
-      out.style.fontFamily = fontEl.value;
-      out.style.fontWeight = weightEl.value;
-      out.style.color = colorEl.value;
-      out.style.fontSize = sizeEl.value + 'px';
-      if (sizeVal) sizeVal.textContent = sizeEl.value + 'px';
+  function renderPage() {
+    const page = pages[currentPage];
+    if (!page) return;
+    cardCanvas.innerHTML = '';
+    const bg = document.createElement('div');
+    bg.className = 'card-bg';
+    bg.style.backgroundImage = page.bg ? `url(${page.bg})` : 'none';
+    if (!page.bg) bg.style.background = '#fff';
+    cardCanvas.appendChild(bg);
+    if (page.overlay) {
+      const ov = document.createElement('div');
+      ov.className = 'card-overlay';
+      cardCanvas.appendChild(ov);
     }
-    [textEl, fontEl, weightEl, colorEl, sizeEl].forEach(el=>{
-      el.addEventListener('input', render);
-      el.addEventListener('change', render);
-    });
-    render();
-  }
-
-  bindText('kicker','kickerOut');
-  bindText('handle','handleOut');
-  bindText('headline','headlineOut');
-  bindText('subKr','subKrOut');
-  bindText('subEn','subEnOut');
-  bindText('byline','bylineOut');
-
-  document.getElementById('dividerToggle').addEventListener('change', e=>{
-    document.getElementById('dividerOut').style.display = e.target.checked ? 'block' : 'none';
-  });
-
-  /* ---------------- 미리보기 화면 배율 ---------------- */
-  const cardShell = document.getElementById('cardShell');
-  let previewScale = 0.45;
-  function applyPreviewScale(){
-    cardShell.style.transform = `scale(${previewScale})`;
-    cardShell.style.transformOrigin = 'center center';
-    document.getElementById('previewScaleLabel').textContent = `화면 배율 ${Math.round(previewScale*100)}%`;
-  }
-  function fitScale(){
-
-  const wrap = document.querySelector('.preview-wrap');
-
-  const isMobile = window.innerWidth <= 900;
-
-  if(isMobile){
-
-    const availW = wrap.clientWidth - 28;
-    const availH = wrap.clientHeight - 50;
-
-    previewScale = Math.min(
-      availW / 1080,
-      availH / 1920,
-      0.62
-    );
-
-  }else{
-
-    const availW = wrap.clientWidth - 80;
-    const availH = wrap.clientHeight - 90;
-
-    previewScale = Math.min(
-      availW / 1080,
-      availH / 1920,
-      0.7
-    );
-
-  }
-
-  applyPreviewScale();
-
-}
-  document.getElementById('zoomInBtn').addEventListener('click', ()=>{ previewScale = Math.min(1, previewScale+0.05); applyPreviewScale(); });
-  document.getElementById('zoomOutBtn').addEventListener('click', ()=>{ previewScale = Math.max(0.15, previewScale-0.05); applyPreviewScale(); });
-  window.addEventListener('resize', fitScale);
-  fitScale();
-
-  /* ---------------- 저장 (아이폰/맥북 안전 + 깨짐 수정) ---------------- */
-const modalOverlay = document.getElementById('modalOverlay');
-const modalLoading = document.getElementById('modalLoading');
-const modalResult = document.getElementById('modalResult');
-const modalResultTitle = document.getElementById('modalResultTitle');
-const modalResultHint = document.getElementById('modalResultHint');
-const resultImg = document.getElementById('resultImg');
-const shareBtn = document.getElementById('shareBtn');
-const downloadBtn = document.getElementById('downloadBtn');
-
-let lastBlob = null;
-let lastFileName = '';
-
-document.getElementById('exportBtn').addEventListener('click', async () => {
-  modalOverlay.classList.add('show');
-  modalLoading.style.display = 'block';
-  modalResult.style.display = 'none';
-  modalLoading.innerHTML = '<div class="spinner"></div><p>이미지를 만들고 있어요…</p>';
-
-  let originalTransform = '';
-
-  try {
-    // 1. 폰트 완전히 로드될 때까지 대기 (가장 중요!)
-    await document.fonts.ready;
-
-    // 2. 미리보기 scale 잠시 제거 (부모 transform 영향 제거)
-    const cardShell = document.getElementById('cardShell');
-    originalTransform = cardShell.style.transform;
-    cardShell.style.transform = 'none';
-
-    // 3. 렌더링이 한 프레임 완료되도록 대기
-    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
-
-    const cardEl = document.getElementById('card');
-
-    const canvas = await html2canvas(cardEl, {
-      backgroundColor: '#050506',
-      useCORS: true,
-      allowTaint: false,          // true → false로 변경 (안전)
-      scale: 2,                  // 고해상도
-      width: 1080,
-      height: 1920,
-      windowWidth: 1080,
-      windowHeight: 1920,
-      imageTimeout: 30000,
-      logging: false,
-      // 폰트 관련 추가 옵션
-      onclone: (clonedDoc) => {
-        // 클론된 문서에서도 폰트가 제대로 적용되도록
-        const clonedCard = clonedDoc.getElementById('card');
-        if (clonedCard) {
-          clonedCard.style.transform = 'none';
-          clonedCard.style.width = '1080px';
-          clonedCard.style.height = '1920px';
-        }
+    page.objects.forEach(obj => {
+      const el = document.createElement('div');
+      el.className = 'canvas-object';
+      el.dataset.id = obj.id;
+      el.style.left = (obj.x * SCALE) + 'px';
+      el.style.top = (obj.y * SCALE) + 'px';
+      el.style.width = (obj.w * SCALE) + 'px';
+      el.style.height = (obj.h * SCALE) + 'px';
+      if (obj.rotation) el.style.transform = `rotate(${obj.rotation}deg)`;
+      if (obj.type === 'text') {
+        el.classList.add('text-obj');
+        const content = document.createElement('div');
+        content.className = 'content';
+        content.style.fontSize = (obj.fontSize * SCALE) + 'px';
+        content.style.fontWeight = obj.fontWeight || 700;
+        content.style.color = obj.color || '#fff';
+        content.style.fontFamily = obj.fontFamily || 'Pretendard';
+        content.style.textAlign = obj.align || 'left';
+        content.style.letterSpacing = ((obj.letterSpacing || 0) * SCALE) + 'px';
+        content.style.lineHeight = obj.lineHeight || 1.25;
+        content.textContent = obj.text;
+        el.appendChild(content);
+      } else if (obj.type === 'image') {
+        const img = document.createElement('div');
+        img.className = 'content';
+        img.style.backgroundImage = `url(${obj.src})`;
+        img.style.backgroundSize = 'cover';
+        img.style.backgroundPosition = 'center';
+        el.appendChild(img);
+      } else if (obj.type === 'shape') {
+        const sh = document.createElement('div');
+        sh.className = 'content';
+        sh.style.background = obj.color || 'rgba(255,255,255,0.2)';
+        sh.style.borderRadius = ((obj.radius || 0) * SCALE) + 'px';
+        el.appendChild(sh);
       }
+      el.addEventListener('pointerdown', onObjectPointerDown);
+      el.addEventListener('dblclick', e => { e.stopPropagation(); if (obj.type === 'text') startTextEdit(obj); });
+      cardCanvas.appendChild(el);
     });
+    if (selectedId) showSelection(selectedId);
+    updatePageIndicator();
+    renderThumbs();
+  }
 
-    // 4. 원래 미리보기 scale 복원
-    cardShell.style.transform = originalTransform;
+  function showSelection(id) {
+    cardCanvas.querySelectorAll('.selection-box, .handle').forEach(n => n.remove());
+    const obj = getObj(id);
+    if (!obj) return;
+    const box = document.createElement('div');
+    box.className = 'selection-box';
+    box.style.left = (obj.x * SCALE - 1) + 'px';
+    box.style.top = (obj.y * SCALE - 1) + 'px';
+    box.style.width = (obj.w * SCALE + 2) + 'px';
+    box.style.height = (obj.h * SCALE + 2) + 'px';
+    cardCanvas.appendChild(box);
+    ['tl','tr','bl','br','rot'].forEach(pos => {
+      const h = document.createElement('div');
+      h.className = 'handle ' + pos;
+      h.dataset.handle = pos;
+      h.addEventListener('pointerdown', onHandleDown);
+      box.appendChild(h);
+    });
+    mainTools.style.display = 'none';
+    ctxText.classList.remove('active');
+    ctxImage.classList.remove('active');
+    if (obj.type === 'text') {
+      ctxText.classList.add('active');
+      document.getElementById('size-val').textContent = obj.fontSize;
+      document.getElementById('font-weight').value = obj.fontWeight || 700;
+    } else if (obj.type === 'image') ctxImage.classList.add('active');
+  }
 
-    lastFileName = 'west150-cover-news-' + Date.now() + '.png';
-    lastBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png', 1.0));
+  function hideSelection() {
+    selectedId = null;
+    cardCanvas.querySelectorAll('.selection-box, .handle, .guide-line').forEach(n => n.remove());
+    mainTools.style.display = 'flex';
+    ctxText.classList.remove('active');
+    ctxImage.classList.remove('active');
+  }
 
-    // 5. 결과 모달 표시. 공유는 여기서 버튼을 눌러야 iOS가 "진짜 사용자 클릭"으로
-    //    인식해서 공유 시트가 뜬다 (렌더링 대기 직후 자동 호출하면 iOS가 막아버림)
-    const dataUrl = lastBlob ? URL.createObjectURL(lastBlob) : canvas.toDataURL('image/png', 1.0);
-    resultImg.src = dataUrl;
+  function getObj(id) { return pages[currentPage].objects.find(o => o.id === id); }
 
-    let canShareFile = false;
-    if (lastBlob && navigator.canShare) {
-      try {
-        const testFile = new File([lastBlob], lastFileName, { type: 'image/png' });
-        canShareFile = navigator.canShare({ files: [testFile] });
-      } catch (e) {
-        canShareFile = false;
-      }
-    }
+  function updatePageIndicator() {
+    pageLabel.textContent = `카드 ${String(currentPage + 1).padStart(2, '0')} / ${String(pages.length).padStart(2, '0')}`;
+  }
 
-    if (canShareFile) {
-      modalResultTitle.textContent = '저장 준비 완료';
-      modalResultHint.innerHTML = '아래 <b>"공유 / 사진에 저장"</b> 버튼을 누르면 공유 시트가 열려요.<br>거기서 "이미지 저장"을 선택하면 사진 앱에 바로 저장돼요.';
-      shareBtn.style.display = 'block';
+  function renderThumbs() {
+    pageStrip.innerHTML = '';
+    pages.forEach((p, i) => {
+      const th = document.createElement('div');
+      th.className = 'page-thumb' + (i === currentPage ? ' active' : '');
+      th.innerHTML = `<div class="thumb-preview" style="background-image:url(${p.bg || ''});background-size:cover;${p.bg ? '' : 'background:#eee'}"></div><div class="thumb-num">${String(i+1).padStart(2,'0')}</div>`;
+      th.addEventListener('click', () => { currentPage = i; hideSelection(); renderPage(); });
+      let t;
+      th.addEventListener('pointerdown', () => { t = setTimeout(() => showPageMenu(i), 500); });
+      th.addEventListener('pointerup', () => clearTimeout(t));
+      th.addEventListener('pointerleave', () => clearTimeout(t));
+      pageStrip.appendChild(th);
+    });
+    const add = document.createElement('div');
+    add.className = 'page-add';
+    add.textContent = '+';
+    add.addEventListener('click', () => {
+      pages.push(createSamplePage());
+      currentPage = pages.length - 1;
+      pushHistory();
+      renderPage();
+    });
+    pageStrip.appendChild(add);
+  }
+
+  function onObjectPointerDown(e) {
+    e.stopPropagation(); e.preventDefault();
+    const id = e.currentTarget.dataset.id;
+    selectedId = id;
+    showSelection(id);
+    isDragging = true;
+    const obj = getObj(id);
+    dragStart = { x: e.clientX, y: e.clientY, ox: obj.x, oy: obj.y, pointerId: e.pointerId };
+    e.currentTarget.setPointerCapture(e.pointerId);
+    longPressTimer = setTimeout(() => showContextMenu(e.clientX, e.clientY), 550);
+  }
+
+  function onHandleDown(e) {
+    e.stopPropagation();
+    const handle = e.target.dataset.handle;
+    if (handle === 'rot') return;
+    isDragging = true;
+    const obj = getObj(selectedId);
+    dragStart = { x: e.clientX, y: e.clientY, ox: obj.x, oy: obj.y, ow: obj.w, oh: obj.h, handle, pointerId: e.pointerId };
+    e.target.setPointerCapture(e.pointerId);
+  }
+
+  document.addEventListener('pointermove', e => {
+    if (!isDragging || !dragStart) return;
+    clearTimeout(longPressTimer);
+    const dx = (e.clientX - dragStart.x) / (SCALE * zoom);
+    const dy = (e.clientY - dragStart.y) / (SCALE * zoom);
+    const obj = getObj(selectedId);
+    if (!obj) return;
+    if (dragStart.handle) {
+      if (dragStart.handle === 'br') { obj.w = Math.max(40, dragStart.ow + dx); obj.h = Math.max(20, dragStart.oh + dy); }
+      else if (dragStart.handle === 'tl') { obj.x = dragStart.ox + dx; obj.y = dragStart.oy + dy; obj.w = Math.max(40, dragStart.ow - dx); obj.h = Math.max(20, dragStart.oh - dy); }
     } else {
-      modalResultTitle.textContent = '저장 준비 완료';
-      modalResultHint.innerHTML = '<b>아이폰</b>: 아래 이미지를 길게 눌러 "사진에 저장"을 선택하세요.<br><b>맥북 / PC</b>: 이미지를 우클릭해서 저장하거나, 아래 버튼으로 다운로드하세요.';
-      shareBtn.style.display = 'none';
+      obj.x = dragStart.ox + dx;
+      obj.y = dragStart.oy + dy;
+      snapObject(obj);
     }
+    renderPage();
+    showSelection(selectedId);
+  });
 
-    modalLoading.style.display = 'none';
-    modalResult.style.display = 'block';
+  document.addEventListener('pointerup', () => {
+    if (isDragging) {
+      isDragging = false; dragStart = null; clearTimeout(longPressTimer);
+      pushHistory();
+      cardCanvas.querySelectorAll('.guide-line').forEach(n => n.remove());
+    }
+  });
 
-    downloadBtn.onclick = () => {
-      const a = document.createElement('a');
-      a.href = dataUrl;
-      a.download = lastFileName;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
+  function snapObject(obj) {
+    const page = pages[currentPage];
+    const guides = [];
+    const cx = obj.x + obj.w / 2, cy = obj.y + obj.h / 2, thresh = 12;
+    if (Math.abs(cx - DESIGN_W / 2) < thresh) { obj.x = DESIGN_W / 2 - obj.w / 2; guides.push({ type: 'v', pos: DESIGN_W / 2 }); }
+    if (Math.abs(cy - DESIGN_H / 2) < thresh) { obj.y = DESIGN_H / 2 - obj.h / 2; guides.push({ type: 'h', pos: DESIGN_H / 2 }); }
+    if (Math.abs(obj.x) < thresh) { obj.x = 0; guides.push({ type: 'v', pos: 0 }); }
+    if (Math.abs(obj.x + obj.w - DESIGN_W) < thresh) { obj.x = DESIGN_W - obj.w; guides.push({ type: 'v', pos: DESIGN_W }); }
+    if (Math.abs(obj.y) < thresh) { obj.y = 0; guides.push({ type: 'h', pos: 0 }); }
+    if (Math.abs(obj.y + obj.h - DESIGN_H) < thresh) { obj.y = DESIGN_H - obj.h; guides.push({ type: 'h', pos: DESIGN_H }); }
+    page.objects.forEach(o => {
+      if (o.id === obj.id) return;
+      const ocx = o.x + o.w / 2, ocy = o.y + o.h / 2;
+      if (Math.abs(cx - ocx) < thresh) { obj.x = ocx - obj.w / 2; guides.push({ type: 'v', pos: ocx }); }
+      if (Math.abs(cy - ocy) < thresh) { obj.y = ocy - obj.h / 2; guides.push({ type: 'h', pos: ocy }); }
+    });
+    cardCanvas.querySelectorAll('.guide-line').forEach(n => n.remove());
+    guides.forEach(g => {
+      const line = document.createElement('div');
+      line.className = 'guide-line ' + g.type;
+      if (g.type === 'v') line.style.left = (g.pos * SCALE) + 'px';
+      else line.style.top = (g.pos * SCALE) + 'px';
+      cardCanvas.appendChild(line);
+    });
+  }
+
+  cardCanvas.addEventListener('pointerdown', e => {
+    if (e.target === cardCanvas || e.target.classList.contains('card-bg') || e.target.classList.contains('card-overlay')) hideSelection();
+  });
+
+  let lastDist = 0;
+  canvasArea.addEventListener('touchstart', e => {
+    if (e.touches.length === 2) lastDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+  }, { passive: true });
+  canvasArea.addEventListener('touchmove', e => {
+    if (e.touches.length === 2) {
+      const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+      if (lastDist) {
+        zoom = Math.min(2.5, Math.max(0.4, zoom * (dist / lastDist)));
+        canvasWrapper.style.transform = `scale(${zoom})`;
+        zoomInd.textContent = Math.round(zoom * 100) + '%';
+        zoomInd.classList.add('show');
+        clearTimeout(zoomInd._t);
+        zoomInd._t = setTimeout(() => zoomInd.classList.remove('show'), 800);
+      }
+      lastDist = dist;
+    }
+  }, { passive: true });
+  canvasArea.addEventListener('dblclick', () => {
+    zoom = 1;
+    canvasWrapper.style.transform = 'scale(1)';
+    zoomInd.textContent = '100%';
+    zoomInd.classList.add('show');
+    setTimeout(() => zoomInd.classList.remove('show'), 800);
+  });
+
+  mainTools.querySelectorAll('.tool-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const tool = item.dataset.tool;
+      if (tool === 'text') addText();
+      else if (tool === 'image') addImage();
+      else if (tool === 'shape') addShape();
+      else if (tool === 'layout') openSheet('sheet-layout');
+      else if (tool === 'style') openSheet('sheet-style');
+      else if (tool === 'bg') changeBg();
+      else if (tool === 'adjust') alert('보정 패널 — 프로토타입');
+    });
+  });
+
+  function addText() {
+    const id = 'o' + Date.now();
+    pages[currentPage].objects.push({ id, type: 'text', x: 100, y: 800, w: 880, h: 80, text: '새 텍스트', fontSize: 48, fontWeight: 700, color: '#FFFFFF', fontFamily: 'Pretendard', align: 'left' });
+    selectedId = id; pushHistory(); renderPage();
+  }
+  function addImage() {
+    const id = 'o' + Date.now();
+    pages[currentPage].objects.push({ id, type: 'image', x: 100, y: 600, w: 880, h: 500, src: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=800' });
+    selectedId = id; pushHistory(); renderPage();
+  }
+  function addShape() {
+    const id = 'o' + Date.now();
+    pages[currentPage].objects.push({ id, type: 'shape', x: 200, y: 700, w: 680, h: 200, color: 'rgba(255,255,255,0.15)', radius: 12 });
+    selectedId = id; pushHistory(); renderPage();
+  }
+  function changeBg() {
+    const urls = [BG_IMG, 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1080', 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=1080'];
+    const page = pages[currentPage];
+    const idx = urls.indexOf(page.bg);
+    page.bg = urls[(idx + 1) % urls.length];
+    page.overlay = true;
+    pushHistory(); renderPage();
+  }
+
+  document.getElementById('size-plus').addEventListener('click', () => {
+    const obj = getObj(selectedId);
+    if (obj) { obj.fontSize = Math.min(200, obj.fontSize + 4); document.getElementById('size-val').textContent = obj.fontSize; renderPage(); showSelection(selectedId); pushHistory(); }
+  });
+  document.getElementById('size-minus').addEventListener('click', () => {
+    const obj = getObj(selectedId);
+    if (obj) { obj.fontSize = Math.max(12, obj.fontSize - 4); document.getElementById('size-val').textContent = obj.fontSize; renderPage(); showSelection(selectedId); pushHistory(); }
+  });
+  document.getElementById('font-weight').addEventListener('change', e => {
+    const obj = getObj(selectedId);
+    if (obj) { obj.fontWeight = +e.target.value; renderPage(); showSelection(selectedId); pushHistory(); }
+  });
+  document.getElementById('font-family').addEventListener('change', e => {
+    const obj = getObj(selectedId);
+    if (obj) { obj.fontFamily = e.target.value; renderPage(); showSelection(selectedId); pushHistory(); }
+  });
+
+  ctxText.querySelectorAll('.ctx-tool').forEach(t => {
+    t.addEventListener('click', () => {
+      const act = t.dataset.action;
+      if (act === 'color') openSheet('sheet-color');
+      else if (act === 'align') {
+        const obj = getObj(selectedId);
+        if (obj) {
+          const aligns = ['left','center','right'];
+          obj.align = aligns[(aligns.indexOf(obj.align || 'left') + 1) % 3];
+          renderPage(); showSelection(selectedId); pushHistory();
+        }
+      } else alert(act + ' 조절 (프로토타입)');
+    });
+  });
+
+  document.querySelectorAll('#color-row .color-swatch').forEach(s => {
+    s.addEventListener('click', () => {
+      document.querySelectorAll('#color-row .color-swatch').forEach(x => x.classList.remove('active'));
+      s.classList.add('active');
+      const obj = getObj(selectedId);
+      if (obj) { obj.color = s.dataset.color; renderPage(); showSelection(selectedId); pushHistory(); }
+      closeSheets();
+    });
+  });
+
+  function startTextEdit(obj) {
+    const overlay = document.getElementById('text-edit');
+    const area = document.getElementById('text-edit-area');
+    area.value = obj.text;
+    area.style.fontSize = Math.max(16, obj.fontSize * SCALE * 0.9) + 'px';
+    area.style.fontWeight = obj.fontWeight;
+    area.style.color = obj.color;
+    overlay.classList.add('show');
+    area.focus();
+    document.getElementById('text-edit-done').onclick = () => {
+      obj.text = area.value;
+      overlay.classList.remove('show');
+      renderPage(); showSelection(obj.id); pushHistory();
     };
-
-  } catch (err) {
-    console.error(err);
-    // 실패해도 scale은 복원
-    document.getElementById('cardShell').style.transform = originalTransform || '';
-    modalLoading.innerHTML = `
-      <p style="color:#ff8080; line-height:1.6;">
-        이미지 생성 중 문제가 발생했어요.<br>
-        ${err && err.message ? err.message : '알 수 없는 오류'}
-      </p>
-      <button class="btn btn-secondary" onclick="location.reload()" style="margin-top:16px;">새로고침 후 다시 시도</button>
-    `;
   }
-});
 
-shareBtn.addEventListener('click', async () => {
-  // 이 클릭 핸들러 안에서 곧바로 share()를 호출해야 iOS가 사용자 제스처로 인정한다
-  if (!lastBlob) return;
-  try {
-    const file = new File([lastBlob], lastFileName, { type: 'image/png' });
-    await navigator.share({ files: [file], title: 'WEST150 COVER NEWS' });
-    modalOverlay.classList.remove('show');
-  } catch (shareErr) {
-    // 사용자가 공유 시트를 취소한 경우는 조용히 무시
-    if (shareErr && shareErr.name === 'AbortError') return;
-    console.error(shareErr);
-    alert('공유 시트를 여는 데 실패했어요. 이미지를 길게 눌러 저장해 주세요.');
+  function openSheet(id) { document.getElementById(id).classList.add('show'); }
+  function closeSheets() { document.querySelectorAll('.sheet-overlay').forEach(s => s.classList.remove('show')); }
+  document.querySelectorAll('.sheet-overlay').forEach(ov => ov.addEventListener('click', e => { if (e.target === ov) closeSheets(); }));
+
+  document.getElementById('btn-share').addEventListener('click', () => openSheet('sheet-export'));
+  document.querySelectorAll('[data-export]').forEach(el => el.addEventListener('click', () => { alert('내보내기: ' + el.dataset.export); closeSheets(); }));
+  document.querySelectorAll('[data-layout]').forEach(el => el.addEventListener('click', () => { alert('레이아웃 적용: ' + el.dataset.layout); closeSheets(); }));
+  document.querySelectorAll('[data-style]').forEach(el => el.addEventListener('click', () => { applyStyle(el.dataset.style); closeSheets(); }));
+
+  function applyStyle(name) {
+    const page = pages[currentPage];
+    if (name === 'minimal') {
+      page.bg = ''; page.overlay = false;
+      page.objects.forEach(o => { if (o.type === 'text') o.color = o.fontWeight >= 700 ? '#111' : '#333'; });
+    } else if (name === 'west150') {
+      page.bg = BG_IMG; page.overlay = true;
+      page.objects.forEach(o => { if (o.type === 'text') o.color = o.fontWeight >= 700 ? '#fff' : 'rgba(255,255,255,0.75)'; });
+    } else if (name === 'breaking') {
+      page.objects.filter(o => o.type === 'text' && o.fontSize > 40).forEach(o => { o.fontSize = 80; o.fontWeight = 900; o.color = '#FF3B30'; });
+    }
+    pushHistory(); renderPage();
   }
-});
 
-  document.getElementById('closeModalBtn').addEventListener('click', ()=>{
-    modalOverlay.classList.remove('show');
+  function showContextMenu(x, y) {
+    const menu = document.getElementById('context-menu');
+    menu.style.left = Math.min(x, window.innerWidth - 160) + 'px';
+    menu.style.top = Math.min(y, window.innerHeight - 180) + 'px';
+    menu.classList.add('show');
+  }
+  document.getElementById('context-menu').querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const act = btn.dataset.act, page = pages[currentPage];
+      if (act === 'delete' && selectedId) { page.objects = page.objects.filter(o => o.id !== selectedId); hideSelection(); pushHistory(); renderPage(); }
+      else if (act === 'duplicate' && selectedId) {
+        const obj = getObj(selectedId);
+        const clone = JSON.parse(JSON.stringify(obj));
+        clone.id = 'o' + Date.now(); clone.x += 30; clone.y += 30;
+        page.objects.push(clone); selectedId = clone.id; pushHistory(); renderPage();
+      } else if (act === 'bring-front' && selectedId) {
+        const idx = page.objects.findIndex(o => o.id === selectedId);
+        if (idx > -1) { const [o] = page.objects.splice(idx, 1); page.objects.push(o); pushHistory(); renderPage(); }
+      } else if (act === 'send-back' && selectedId) {
+        const idx = page.objects.findIndex(o => o.id === selectedId);
+        if (idx > -1) { const [o] = page.objects.splice(idx, 1); page.objects.unshift(o); pushHistory(); renderPage(); }
+      }
+      document.getElementById('context-menu').classList.remove('show');
+    });
   });
-  modalOverlay.addEventListener('click', e=>{
-    if (e.target === modalOverlay) modalOverlay.classList.remove('show');
+  document.addEventListener('pointerdown', e => { if (!e.target.closest('#context-menu')) document.getElementById('context-menu').classList.remove('show'); });
+
+  function showPageMenu(idx) {
+    if (confirm(`페이지 ${idx+1}\n삭제할까요?`) && pages.length > 1) {
+      pages.splice(idx, 1);
+      if (currentPage >= pages.length) currentPage = pages.length - 1;
+      hideSelection(); pushHistory(); renderPage();
+    }
+  }
+
+  function pushHistory() {
+    const snap = JSON.stringify(pages);
+    history = history.slice(0, historyIdx + 1);
+    history.push(snap);
+    historyIdx = history.length - 1;
+    if (history.length > 40) { history.shift(); historyIdx--; }
+    updateUndoButtons();
+  }
+  function updateUndoButtons() {
+    document.getElementById('btn-undo').classList.toggle('disabled', historyIdx <= 0);
+    document.getElementById('btn-redo').classList.toggle('disabled', historyIdx >= history.length - 1);
+  }
+  document.getElementById('btn-undo').addEventListener('click', () => {
+    if (historyIdx > 0) { historyIdx--; pages = JSON.parse(history[historyIdx]); hideSelection(); renderPage(); updateUndoButtons(); }
+  });
+  document.getElementById('btn-redo').addEventListener('click', () => {
+    if (historyIdx < history.length - 1) { historyIdx++; pages = JSON.parse(history[historyIdx]); hideSelection(); renderPage(); updateUndoButtons(); }
   });
 
-  document.getElementById('resetBtn').addEventListener('click', ()=>{
-    if (confirm('모든 설정을 기본값으로 되돌릴까요?')) location.reload();
-  });
+  document.addEventListener('gesturestart', e => e.preventDefault());
+  document.addEventListener('gesturechange', e => e.preventDefault());
 
+  pushHistory();
+  renderPage();
 })();
 </script>
 </body>
