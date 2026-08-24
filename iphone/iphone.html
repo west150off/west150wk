@@ -58,7 +58,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
 .stage{position:relative;display:flex;align-items:center;justify-content:center;}
 .card-shell{
   border-radius:6px;overflow:hidden;
-  box-shadow:0 0 0 1px rgba(255,255,255,.06),0 16px 48px rgba(0,0,0,.55);
+  box-shadow:0 0 0 1px rgba(255,255,255,.14),0 16px 48px rgba(0,0,0,.55);
   transform-origin:center center;
 }
 .card{
@@ -117,6 +117,32 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
   padding:4px 12px;border-radius:14px;pointer-events:none;opacity:0;transition:opacity .25s;z-index:10;
 }
 .zoom-pill.show{opacity:1;}
+
+/* Page strip (multi-page) */
+.page-strip{
+  display:flex;align-items:center;gap:8px;padding:8px 10px;
+  overflow-x:auto;scrollbar-width:none;flex-shrink:0;
+  background:var(--surface);border-top:1px solid var(--border);
+}
+.page-strip::-webkit-scrollbar{display:none;}
+.page-chip{
+  position:relative;flex-shrink:0;width:30px;height:52px;border-radius:4px;
+  background:#1c1c22;border:1.5px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:var(--dim);cursor:pointer;
+}
+.page-chip.active{border-color:var(--accent);color:var(--text);background:#26161a;}
+.page-del{
+  position:absolute;top:-7px;right:-7px;width:18px;height:18px;border-radius:50%;
+  background:#2a2a30;border:1px solid var(--border);color:#ddd;font-size:11px;line-height:1;
+  display:flex;align-items:center;justify-content:center;
+}
+.page-add{
+  flex-shrink:0;width:30px;height:52px;border-radius:4px;
+  border:1.5px dashed var(--border);color:var(--dim);
+  display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;
+}
+.page-add:active{color:var(--text);border-color:var(--accent);}
 
 /* Bottom bar */
 .bottom-bar{
@@ -301,6 +327,11 @@ input[type="range"]::-webkit-slider-thumb{
     <div class="zoom-pill" id="zoomPill">100%</div>
   </div>
 
+  <!-- Page strip (multi-page) -->
+  <div class="page-strip" id="pageStrip">
+    <div class="page-add" id="btnAddPage" title="페이지 추가">+</div>
+  </div>
+
   <!-- Bottom -->
   <div class="bottom-bar">
     <div class="tool-row" id="mainTools">
@@ -444,7 +475,8 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
     <!-- 저장 -->
     <div class="ctx-panel" id="panel-save">
       <div class="section-label">내보내기</div>
-      <button class="btn btn-primary" id="exportBtn">⬇ 이미지로 저장 (PNG)</button>
+      <button class="btn btn-primary" id="exportBtn">⬇ 현재 페이지 저장 (PNG)</button>
+      <button class="btn btn-secondary" id="exportAllBtn">⬇ 전체 페이지 저장 (PNG)</button>
       <button class="btn btn-secondary" id="resetBtn">기본값으로 초기화</button>
       <div class="upload-hint" style="margin-top:12px;">
         iPhone: 저장 후 공유 시트 → 「이미지 저장」<br>
@@ -582,7 +614,8 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
     document.querySelectorAll('.swatch').forEach(s=>s.classList.remove('active'));
     setAccent(e.target.value);
   });
-  function setAccent(c){card.style.setProperty('--accent',c);}
+  let currentAccent=ACCENTS[0];
+  function setAccent(c){currentAccent=c;card.style.setProperty('--accent',c);}
   setAccent(ACCENTS[0]);
 
   /* ========== Filters / Scrim ========== */
@@ -709,6 +742,7 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
   updateTransform();
 
   /* ========== Text binding ========== */
+  const textRenderers={};
   function bindText(prefix,outId){
     const textEl=document.getElementById(prefix+'Text');
     const fontEl=document.getElementById(prefix+'Font');
@@ -730,6 +764,7 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
       el.addEventListener('change',render);
     });
     render();
+    textRenderers[prefix]=render;
   }
   bindText('kicker','kickerOut');
   bindText('handle','handleOut');
@@ -741,6 +776,150 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
   document.getElementById('dividerToggle').addEventListener('change',e=>{
     document.getElementById('dividerOut').style.display=e.target.checked?'block':'none';
   });
+
+  /* ========== Multi-page ========== */
+  const pageStrip=document.getElementById('pageStrip');
+  let pages=[];
+  let currentPageIndex=0;
+
+  function serializePage(){
+    return {
+      texts:{
+        kicker:document.getElementById('kickerText').value,
+        handle:document.getElementById('handleText').value,
+        headline:document.getElementById('headlineText').value,
+        subKr:document.getElementById('subKrText').value,
+        subEn:document.getElementById('subEnText').value,
+        byline:document.getElementById('bylineText').value,
+      },
+      styles:fontTargets.reduce((acc,t)=>{
+        acc[t]={
+          font:document.getElementById(t+'Font').value,
+          weight:document.getElementById(t+'Weight').value,
+          size:document.getElementById(t+'Size').value,
+          color:document.getElementById(t+'Color').value,
+        };
+        return acc;
+      },{}),
+      image:{src:bgImg?bgImg.src:null,mode:document.getElementById('imageMode').value,zoom,offX,offY},
+      filterIndex:FILTERS.indexOf(currentFilter),
+      scrimIndex:SCRIMS.indexOf(currentScrim),
+      scrimAmount:document.getElementById('scrimRange').value,
+      toneIndex:TONES.indexOf(currentTone),
+      accent:currentAccent,
+      divider:document.getElementById('dividerToggle').checked,
+    };
+  }
+
+  function applyPage(data){
+    document.getElementById('kickerText').value=data.texts.kicker;
+    document.getElementById('handleText').value=data.texts.handle;
+    document.getElementById('headlineText').value=data.texts.headline;
+    document.getElementById('subKrText').value=data.texts.subKr;
+    document.getElementById('subEnText').value=data.texts.subEn;
+    document.getElementById('bylineText').value=data.texts.byline;
+
+    fontTargets.forEach(t=>{
+      document.getElementById(t+'Font').value=data.styles[t].font;
+      document.getElementById(t+'Weight').value=data.styles[t].weight;
+      document.getElementById(t+'Size').value=data.styles[t].size;
+      document.getElementById(t+'SizeVal').textContent=data.styles[t].size+'px';
+      document.getElementById(t+'Color').value=data.styles[t].color;
+    });
+    Object.keys(textRenderers).forEach(k=>textRenderers[k]());
+
+    if(bgImg){bgImg.remove();bgImg=null;}
+    if(data.image.src){
+      bgImg=document.createElement('img');
+      bgImg.classList.add('mode-'+data.image.mode);
+      bgImg.src=data.image.src;
+      bgWrap.appendChild(bgImg);
+      noImgMsg.style.display='none';
+    }else{
+      noImgMsg.style.display='flex';
+    }
+    document.getElementById('imageMode').value=data.image.mode;
+    zoom=data.image.zoom;offX=data.image.offX;offY=data.image.offY;
+    document.getElementById('zoomRange').value=zoom;
+    document.getElementById('zoomVal').textContent=zoom.toFixed(2)+'x';
+    document.getElementById('offXRange').value=offX;
+    document.getElementById('offYRange').value=offY;
+    updateTransform();
+
+    currentFilter=FILTERS[data.filterIndex]||FILTERS[0];
+    filterChips.querySelectorAll('.chip').forEach((c,i)=>c.classList.toggle('active',i===data.filterIndex));
+    applyImageFilter();
+
+    currentScrim=SCRIMS[data.scrimIndex]||SCRIMS[0];
+    scrimChips.querySelectorAll('.chip').forEach((c,i)=>c.classList.toggle('active',i===data.scrimIndex));
+    document.getElementById('scrimRange').value=data.scrimAmount;
+    document.getElementById('scrimVal').textContent=data.scrimAmount+'%';
+
+    currentTone=TONES[data.toneIndex]||TONES[1];
+    toneRow.querySelectorAll('.tone-item').forEach((t,i)=>t.classList.toggle('active',i===data.toneIndex));
+    updateScrim();
+
+    setAccent(data.accent);
+    document.getElementById('accentCustom').value=data.accent;
+    swatchRow.querySelectorAll('.swatch').forEach(s=>s.classList.toggle('active',s.dataset.color===data.accent));
+
+    document.getElementById('dividerToggle').checked=data.divider;
+    document.getElementById('dividerOut').style.display=data.divider?'block':'none';
+  }
+
+  function renderPageStrip(){
+    pageStrip.querySelectorAll('.page-chip').forEach(c=>c.remove());
+    const addBtn=document.getElementById('btnAddPage');
+    pages.forEach((p,i)=>{
+      const chip=document.createElement('div');
+      chip.className='page-chip'+(i===currentPageIndex?' active':'');
+      chip.textContent=i+1;
+      chip.addEventListener('click',()=>switchPage(i));
+      if(i===currentPageIndex&&pages.length>1){
+        const del=document.createElement('span');
+        del.className='page-del';del.textContent='×';
+        del.addEventListener('click',ev=>{ev.stopPropagation();deletePage(i);});
+        chip.appendChild(del);
+      }
+      pageStrip.insertBefore(chip,addBtn);
+    });
+  }
+
+  function switchPage(idx){
+    if(idx===currentPageIndex) return;
+    pages[currentPageIndex]=serializePage();
+    currentPageIndex=idx;
+    applyPage(pages[currentPageIndex]);
+    renderPageStrip();
+    setTimeout(fitScale,50);
+  }
+
+  function addPage(){
+    pages[currentPageIndex]=serializePage();
+    const dup=JSON.parse(JSON.stringify(pages[currentPageIndex]));
+    pages.push(dup);
+    currentPageIndex=pages.length-1;
+    applyPage(pages[currentPageIndex]);
+    renderPageStrip();
+    setTimeout(fitScale,50);
+    showToast('페이지 추가됨 ('+pages.length+')');
+  }
+
+  function deletePage(idx){
+    if(pages.length<=1) return;
+    if(!confirm((idx+1)+'번 페이지를 삭제할까요?')) return;
+    pages.splice(idx,1);
+    currentPageIndex=Math.min(idx,pages.length-1);
+    applyPage(pages[currentPageIndex]);
+    renderPageStrip();
+    setTimeout(fitScale,50);
+  }
+
+  document.getElementById('btnAddPage').addEventListener('click',addPage);
+
+  // seed first page from the initial default state
+  pages=[serializePage()];
+  renderPageStrip();
 
   /* ========== Canvas fit (critical: full card visible) ========== */
   let previewScale=0.4;
@@ -755,9 +934,11 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
   function fitScale(){
     const availW=canvasArea.clientWidth-32;
     const availH=canvasArea.clientHeight-24;
-    previewScale=Math.min(availW/1080, availH/1920, 0.85);
-    // slightly smaller to ensure no crop
-    previewScale=Math.max(0.18, previewScale*0.98);
+    // NOTE: never force a minimum scale bigger than what actually fits —
+    // doing so pushed the card past the visible area and cut off the
+    // top/bottom edges whenever a tall panel (e.g. 글자 스타일) was open.
+    const rawScale=Math.min(availW/1080, availH/1920, 0.85);
+    previewScale=Math.max(0.08, rawScale*0.97);
     applyPreviewScale();
   }
   document.getElementById('btnFit').addEventListener('click',fitScale);
@@ -789,6 +970,23 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
   const downloadBtn=document.getElementById('downloadBtn');
   let lastBlob=null, lastFileName='';
 
+  async function captureCardCanvas(){
+    await document.fonts.ready;
+    const originalTransform=cardShell.style.transform;
+    cardShell.style.transform='none';
+    await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+    const canvas=await html2canvas(card,{
+      backgroundColor:'#050506',useCORS:true,allowTaint:false,scale:2,
+      width:1080,height:1920,windowWidth:1080,windowHeight:1920,imageTimeout:30000,logging:false,
+      onclone:(clonedDoc)=>{
+        const c=clonedDoc.getElementById('card');
+        if(c){c.style.transform='none';c.style.width='1080px';c.style.height='1920px';}
+      }
+    });
+    cardShell.style.transform=originalTransform;
+    return canvas;
+  }
+
   function openExport(){
     document.querySelectorAll('#mainTools .tool-item').forEach(t=>t.classList.remove('active'));
     document.querySelectorAll('.ctx-panel').forEach(p=>p.classList.remove('active'));
@@ -806,22 +1004,9 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
     modalLoading.style.display='block';
     modalResult.style.display='none';
     modalLoading.innerHTML='<div class="spinner"></div><p>이미지를 만들고 있어요…</p>';
-    let originalTransform='';
     try{
-      await document.fonts.ready;
-      originalTransform=cardShell.style.transform;
-      cardShell.style.transform='none';
-      await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
-      const canvas=await html2canvas(card,{
-        backgroundColor:'#050506',useCORS:true,allowTaint:false,scale:2,
-        width:1080,height:1920,windowWidth:1080,windowHeight:1920,imageTimeout:30000,logging:false,
-        onclone:(clonedDoc)=>{
-          const c=clonedDoc.getElementById('card');
-          if(c){c.style.transform='none';c.style.width='1080px';c.style.height='1920px';}
-        }
-      });
-      cardShell.style.transform=originalTransform;
-      lastFileName='west150-cover-'+Date.now()+'.png';
+      const canvas=await captureCardCanvas();
+      lastFileName='west150-cover-p'+(currentPageIndex+1)+'-'+Date.now()+'.png';
       lastBlob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png',1.0));
       const dataUrl=lastBlob?URL.createObjectURL(lastBlob):canvas.toDataURL('image/png',1.0);
       resultImg.src=dataUrl;
@@ -850,7 +1035,45 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
       };
     }catch(err){
       console.error(err);
-      cardShell.style.transform=originalTransform||'';
+      modalLoading.innerHTML=`<p style="color:#ff8080;line-height:1.6;">생성 실패<br>${err&&err.message?err.message:''}</p>
+        <button class="btn btn-secondary" onclick="location.reload()" style="margin-top:14px;">새로고침</button>`;
+    }
+  });
+
+  document.getElementById('exportAllBtn').addEventListener('click',async()=>{
+    if(pages.length<=1){
+      document.getElementById('exportBtn').click();
+      return;
+    }
+    if(!confirm('페이지 '+pages.length+'개를 순서대로 PNG로 저장할까요?')) return;
+    pages[currentPageIndex]=serializePage();
+    const savedIndex=currentPageIndex;
+    modalOverlay.classList.add('show');
+    modalLoading.style.display='block';
+    modalResult.style.display='none';
+    try{
+      for(let i=0;i<pages.length;i++){
+        modalLoading.innerHTML=`<div class="spinner"></div><p>이미지를 만들고 있어요… (${i+1}/${pages.length})</p>`;
+        applyPage(pages[i]);
+        await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+        const canvas=await captureCardCanvas();
+        const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png',1.0));
+        const url=URL.createObjectURL(blob);
+        const a=document.createElement('a');
+        a.href=url;a.download='west150-cover-p'+(i+1)+'-'+Date.now()+'.png';
+        document.body.appendChild(a);a.click();a.remove();
+        await new Promise(r=>setTimeout(r,400));
+      }
+      currentPageIndex=savedIndex;
+      applyPage(pages[currentPageIndex]);
+      renderPageStrip();
+      modalOverlay.classList.remove('show');
+      showToast('전체 페이지 저장 완료 ('+pages.length+'장)');
+    }catch(err){
+      console.error(err);
+      currentPageIndex=savedIndex;
+      applyPage(pages[currentPageIndex]);
+      renderPageStrip();
       modalLoading.innerHTML=`<p style="color:#ff8080;line-height:1.6;">생성 실패<br>${err&&err.message?err.message:''}</p>
         <button class="btn btn-secondary" onclick="location.reload()" style="margin-top:14px;">새로고침</button>`;
     }
