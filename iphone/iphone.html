@@ -30,7 +30,6 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
   user-select:none;-webkit-user-select:none;touch-action:manipulation;}
 #app{display:flex;flex-direction:column;height:100%;max-width:430px;margin:0 auto;position:relative;background:var(--bg);}
 
-/* Top Nav */
 .top-nav{
   height:52px;padding-top:var(--safe-t);min-height:calc(52px + var(--safe-t));
   display:flex;align-items:center;justify-content:space-between;
@@ -48,7 +47,6 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
 .icon-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
 .icon-btn.disabled{opacity:.3;pointer-events:none;}
 
-/* Canvas area — full remaining space, card fully visible */
 .canvas-area{
   flex:1;min-height:0;position:relative;overflow:hidden;
   display:flex;align-items:center;justify-content:center;
@@ -102,25 +100,19 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
 .kicker-bar{width:64px;height:5px;background:var(--accent);border-radius:3px;}
 .handle{text-shadow:0 2px 10px rgba(0,0,0,.5);opacity:.85;}
 
-/* Position classes for kicker / handle */
 .kicker-wrap.pos-left{ margin-right:auto; text-align:left; align-items:flex-start; }
 .kicker-wrap.pos-center{
   position:absolute; left:50%; transform:translateX(-50%);
   text-align:center; align-items:center;
 }
 .kicker-wrap.pos-right{ margin-left:auto; text-align:right; align-items:flex-end; }
-
 .handle.pos-left{ margin-right:auto; text-align:left; }
 .handle.pos-center{
   position:absolute; left:50%; transform:translateX(-50%);
   text-align:center;
 }
 .handle.pos-right{ margin-left:auto; text-align:right; }
-
-/* both center → push handle down a bit to avoid overlap */
-.handle.pos-center.both-center{
-  top: 56px;
-}
+.handle.pos-center.both-center{ top: 56px; }
 
 .card-bottom{position:absolute;left:0;right:0;bottom:0;padding:0 72px 64px;z-index:5;}
 .text-group{display:flex;align-items:stretch;gap:30px;margin-bottom:36px;}
@@ -132,7 +124,6 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
 .divider{height:1px;background:rgba(255,255,255,.18);margin-bottom:26px;}
 .byline{white-space:pre-wrap;opacity:.75;}
 
-/* Brand template decor */
 .tpl-badge .kicker{
   display:inline-block;background:var(--accent);color:#fff!important;
   padding:7px 18px;border-radius:3px;text-shadow:none;
@@ -151,7 +142,6 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
   opacity:.9;display:none;text-shadow:0 2px 8px rgba(0,0,0,.4);
 }
 
-/* ===== Structural layouts ===== */
 #card.layout-cover .card-top,
 #card.layout-quote .card-top{padding:70px 70px 0;justify-content:center;}
 #card.layout-cover .kicker-wrap,
@@ -204,7 +194,6 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
 }
 .zoom-pill.show{opacity:1;}
 
-/* Page strip (multi-page) — slightly compact */
 .page-strip{
   display:flex;align-items:center;gap:8px;padding:6px 10px;
   overflow-x:auto;scrollbar-width:none;flex-shrink:0;
@@ -230,7 +219,6 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
 }
 .page-add:active{color:var(--text);border-color:var(--accent);}
 
-/* Bottom bar */
 .bottom-bar{
   background:var(--surface);border-top:1px solid var(--border);
   flex-shrink:0;padding-bottom:var(--safe-b);z-index:50;
@@ -248,7 +236,6 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
 .tool-item .icon svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
 .tool-item .label{font-size:10px;font-weight:500;letter-spacing:-.2px;}
 
-/* Contextual panel — reduced max-height for larger canvas */
 .ctx-panel{
   display:none;max-height:28vh;overflow-y:auto;
   padding:8px 12px 10px;border-top:1px solid var(--border);background:var(--surface2);
@@ -308,7 +295,6 @@ input[type="range"]::-webkit-slider-thumb{
 .section-label{font-size:11px;font-weight:700;color:var(--text);margin-bottom:10px;letter-spacing:.3px;display:flex;align-items:center;gap:6px;}
 .section-label::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--accent);}
 
-/* Accordion for text style */
 .acc-item{border-bottom:1px solid #24242c;}
 .acc-item:last-child{border-bottom:none;}
 .acc-header{
@@ -321,7 +307,6 @@ input[type="range"]::-webkit-slider-thumb{
 .acc-body{display:none;padding:2px 2px 14px;}
 .acc-item.open .acc-body{display:block;}
 
-/* Modal */
 .modal-overlay{
   position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;
   align-items:flex-end;justify-content:center;z-index:100;padding:0;
@@ -354,7 +339,6 @@ input[type="range"]::-webkit-slider-thumb{
 </head>
 <body>
 <div id="app">
-  <!-- Top Nav -->
   <div class="top-nav">
     <div class="left">
       <button class="icon-btn" id="btnBack" title="뒤로">
@@ -378,7 +362,6 @@ input[type="range"]::-webkit-slider-thumb{
     </div>
   </div>
 
-  <!-- Canvas -->
   <div class="canvas-area" id="canvasArea">
     <div class="stage" id="stage">
       <div class="card-shell" id="cardShell">
@@ -414,12 +397,10 @@ input[type="range"]::-webkit-slider-thumb{
     <div class="zoom-pill" id="zoomPill">100%</div>
   </div>
 
-  <!-- Page strip (multi-page) -->
   <div class="page-strip" id="pageStrip">
     <div class="page-add" id="btnAddPage" title="페이지 추가">+</div>
   </div>
 
-  <!-- Bottom -->
   <div class="bottom-bar">
     <div class="tool-row" id="mainTools">
       <div class="tool-item active" data-panel="writing">
@@ -444,7 +425,6 @@ input[type="range"]::-webkit-slider-thumb{
       </div>
     </div>
 
-    <!-- 글쓰기 -->
     <div class="ctx-panel active" id="panel-writing">
       <div class="section-label">텍스트 내용</div>
       <div class="field"><div class="field-label">킥커</div><textarea id="kickerText" rows="1">GLOBAL POLITICS</textarea></div>
@@ -459,7 +439,6 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
       <div class="field"><div class="field-label">매체 / 바이라인</div><textarea id="bylineText" rows="1">조선일보  |  김은중 기자  |  2026.07.25 오전 5:14</textarea></div>
     </div>
 
-    <!-- 이미지 -->
     <div class="ctx-panel" id="panel-image">
       <div class="section-label">배경 이미지</div>
       <div class="field">
@@ -490,7 +469,6 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
       </div>
     </div>
 
-    <!-- 글자 스타일 -->
     <div class="ctx-panel" id="panel-textstyle">
       <div class="section-label">요소별 스타일</div>
       <div id="textStyleAccordion">
@@ -559,7 +537,6 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
       </div>
     </div>
 
-    <!-- 스타일 -->
     <div class="ctx-panel" id="panel-template">
       <div class="section-label">구도 (레이아웃)</div>
       <div class="field"><div class="field-label">카드 구조</div><div class="chip-row" id="layoutRow"></div></div>
@@ -577,7 +554,6 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
       </div>
     </div>
 
-    <!-- 저장 -->
     <div class="ctx-panel" id="panel-save">
       <div class="section-label">내보내기</div>
       <button class="btn btn-primary" id="exportBtn">⬇ 현재 페이지 저장 (PNG)</button>
@@ -594,7 +570,6 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
   <div class="toast" id="toast"></div>
 </div>
 
-<!-- Export Modal -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
     <div class="modal-handle"></div>
@@ -627,7 +602,6 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
     setTimeout(()=>toastEl.classList.remove('show'),2000);
   }
 
-  /* ========== Bottom tabs ========== */
   document.querySelectorAll('#mainTools .tool-item').forEach(item=>{
     item.addEventListener('click',()=>{
       document.querySelectorAll('#mainTools .tool-item').forEach(t=>t.classList.remove('active'));
@@ -639,7 +613,6 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
     });
   });
 
-  /* ========== Accordion ========== */
   document.querySelectorAll('#textStyleAccordion [data-acc-toggle]').forEach(btn=>{
     btn.addEventListener('click',()=>{
       const item = btn.closest('[data-acc-item]');
@@ -649,7 +622,6 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
     });
   });
 
-  /* ========== Fonts ========== */
   const FONTS = [
     {label:'프리텐다드',value:"'Pretendard', sans-serif"},
     {label:'리디바탕',value:"'RIDIBatang', serif"},
@@ -680,18 +652,13 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
     fillSelect(document.getElementById(t+'Weight'),WEIGHTS,defaultWeight[t]);
   });
 
-  /* ========== Position (kicker / handle) ========== */
   function applyPositions(){
     const kp = document.getElementById('kickerPos').value;
     const hp = document.getElementById('handlePos').value;
-
     kickerWrap.classList.remove('pos-left','pos-center','pos-right');
     kickerWrap.classList.add('pos-'+kp);
-
     handleEl.classList.remove('pos-left','pos-center','pos-right','both-center');
     handleEl.classList.add('pos-'+hp);
-
-    // both center → offset handle downward to reduce overlap
     if(kp === 'center' && hp === 'center'){
       handleEl.classList.add('both-center');
     }
@@ -700,7 +667,6 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
   document.getElementById('handlePos').addEventListener('change', applyPositions);
   applyPositions();
 
-  /* ========== Accent / Tone ========== */
   const ACCENTS=['#e0334c','#f5a623','#12b76a','#2f9bf0','#8b5cf6','#ec4899','#d4af37','#f3f3f5'];
   const swatchRow=document.getElementById('swatchRow');
   ACCENTS.forEach((c,i)=>{
@@ -744,7 +710,6 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
   function setAccent(c){currentAccent=c;card.style.setProperty('--accent',c);}
   setAccent(ACCENTS[0]);
 
-  /* ========== Filters / Scrim ========== */
   const FILTERS=[
     {name:'없음',css:'none',duo:0},
     {name:'그레이',css:'grayscale(1) contrast(1.05)',duo:0},
@@ -802,7 +767,6 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
   }
   applyImageFilter();
 
-  /* ========== Structural layouts ========== */
   const LAYOUTS=[
     {id:'default',name:'기본형'},
     {id:'cover',name:'매거진 커버형'},
@@ -827,7 +791,7 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
     layoutRow.appendChild(c);
   });
 
-  /* ========== News-brand templates ========== */
+  /* ===== Templates (기존 5 + 신규 5) ===== */
   const TEMPLATES=[
     {id:'ap',name:'AP 스타일',accent:'#E4002B',toneIndex:0,scrimIndex:0,scrimAmount:65,divider:false,badge:true,masthead:false,brandMark:'',layout:'split',
       kicker:{font:"'Pretendard', sans-serif",weight:'800',color:'#ffffff'},
@@ -863,6 +827,42 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
       headline:{font:"'Nanum Myeongjo', serif",weight:'900',color:'#ffffff'},
       subKr:{font:"'Nanum Myeongjo', serif",weight:'400',color:'#dcdcdc'},
       subEn:{font:"'Pretendard', sans-serif",weight:'500',color:'#bbbbbb'},
+      byline:{font:"'Nanum Myeongjo', serif",weight:'400',color:'#a3a3a3'}},
+    /* ===== 신규 5종 ===== */
+    {id:'guardian',name:'가디언 스타일',accent:'#052962',toneIndex:1,scrimIndex:0,scrimAmount:65,divider:true,badge:false,masthead:true,brandMark:'',layout:'cover',
+      kicker:{font:"'Nanum Myeongjo', serif",weight:'700',color:'#052962'},
+      handle:{font:"'Pretendard', sans-serif",weight:'500',color:'#c0c0c0'},
+      headline:{font:"'Nanum Myeongjo', serif",weight:'900',color:'#ffffff'},
+      subKr:{font:"'Nanum Myeongjo', serif",weight:'400',color:'#d8d8d8'},
+      subEn:{font:"'Pretendard', sans-serif",weight:'500',color:'#a8b4c8'},
+      byline:{font:"'Nanum Myeongjo', serif",weight:'400',color:'#9a9a9a'}},
+    {id:'ft',name:'파이낸셜타임스 스타일',accent:'#990F3D',toneIndex:3,scrimIndex:0,scrimAmount:60,divider:true,badge:false,masthead:false,brandMark:'FT',layout:'split',
+      kicker:{font:"'Pretendard', sans-serif",weight:'700',color:'#990F3D'},
+      handle:{font:"'Pretendard', sans-serif",weight:'500',color:'#d0d0d0'},
+      headline:{font:"'Nanum Myeongjo', serif",weight:'800',color:'#ffffff'},
+      subKr:{font:"'Pretendard', sans-serif",weight:'500',color:'#e0d8d0'},
+      subEn:{font:"'IBM Plex Sans KR', sans-serif",weight:'600',color:'#c9a08a'},
+      byline:{font:"'Pretendard', sans-serif",weight:'500',color:'#a3a3a3'}},
+    {id:'economist',name:'이코노미스트 스타일',accent:'#E3120B',toneIndex:0,scrimIndex:3,scrimAmount:70,divider:false,badge:true,masthead:false,brandMark:'',layout:'quote',
+      kicker:{font:"'Pretendard', sans-serif",weight:'800',color:'#ffffff'},
+      handle:{font:"'Pretendard', sans-serif",weight:'500',color:'#c9c9c9'},
+      headline:{font:"'Black Han Sans', sans-serif",weight:'400',color:'#ffffff'},
+      subKr:{font:"'Pretendard', sans-serif",weight:'500',color:'#e0e0e0'},
+      subEn:{font:"'Pretendard', sans-serif",weight:'600',color:'#ff8a80'},
+      byline:{font:"'Pretendard', sans-serif",weight:'500',color:'#9a9a9a'}},
+    {id:'politico',name:'폴리티코 스타일',accent:'#D73027',toneIndex:0,scrimIndex:0,scrimAmount:60,divider:false,badge:false,masthead:false,brandMark:'POLITICO',layout:'split',
+      kicker:{font:"'Pretendard', sans-serif",weight:'700',color:'#D73027'},
+      handle:{font:"'Pretendard', sans-serif",weight:'500',color:'#d0d0d0'},
+      headline:{font:"'Pretendard', sans-serif",weight:'800',color:'#ffffff'},
+      subKr:{font:"'Pretendard', sans-serif",weight:'500',color:'#dedede'},
+      subEn:{font:"'Pretendard', sans-serif",weight:'600',color:'#ff9a90'},
+      byline:{font:"'Pretendard', sans-serif",weight:'500',color:'#a3a3a3'}},
+    {id:'wsj',name:'WSJ 스타일',accent:'#0274B6',toneIndex:1,scrimIndex:0,scrimAmount:65,divider:true,badge:false,masthead:true,brandMark:'',layout:'cover',
+      kicker:{font:"'Nanum Myeongjo', serif",weight:'700',color:'#0274B6'},
+      handle:{font:"'Pretendard', sans-serif",weight:'500',color:'#c0c0c0'},
+      headline:{font:"'Nanum Myeongjo', serif",weight:'900',color:'#ffffff'},
+      subKr:{font:"'Nanum Myeongjo', serif",weight:'400',color:'#dcdcdc'},
+      subEn:{font:"'Pretendard', sans-serif",weight:'500',color:'#8eb4d0'},
       byline:{font:"'Nanum Myeongjo', serif",weight:'400',color:'#a3a3a3'}},
   ];
   const templateRow=document.getElementById('templateRow');
@@ -904,7 +904,6 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
     brandMarkOut.style.fontFamily="'Pretendard', sans-serif";
     brandMarkOut.style.fontSize='24px';
 
-    // reset positions to sensible defaults after template change (avoid overlap)
     document.getElementById('kickerPos').value = 'left';
     document.getElementById('handlePos').value = 'right';
     applyPositions();
@@ -920,7 +919,6 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
     templateRow.appendChild(c);
   });
 
-  /* ========== Image upload (file only) ========== */
   const bgWrap=document.getElementById('bgWrap');
   const noImgMsg=document.getElementById('noImgMsg');
   let bgImg=null, offX=0, offY=0, zoom=1.15;
@@ -963,7 +961,6 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
     }
   }
 
-  // Drag to pan image
   let dragging=false, dragStart={x:0,y:0}, startOff={x:0,y:0};
   bgWrap.addEventListener('pointerdown',e=>{
     if(!bgImg) return;
@@ -986,7 +983,6 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
   ['pointerup','pointercancel','pointerleave'].forEach(ev=>bgWrap.addEventListener(ev,()=>{dragging=false;}));
   updateTransform();
 
-  /* ========== Text binding ========== */
   const textRenderers={};
   function bindText(prefix,outId){
     const textEl=document.getElementById(prefix+'Text');
@@ -1022,7 +1018,6 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
     document.getElementById('dividerOut').style.display=e.target.checked?'block':'none';
   });
 
-  /* ========== Multi-page ========== */
   const pageStrip=document.getElementById('pageStrip');
   let pages=[];
   let currentPageIndex=0;
@@ -1082,7 +1077,6 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
     });
     Object.keys(textRenderers).forEach(k=>textRenderers[k]());
 
-    // positions
     document.getElementById('kickerPos').value = (data.pos && data.pos.kicker) || 'left';
     document.getElementById('handlePos').value = (data.pos && data.pos.handle) || 'right';
     applyPositions();
@@ -1188,12 +1182,9 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
   }
 
   document.getElementById('btnAddPage').addEventListener('click',addPage);
-
-  // seed first page from the initial default state
   pages=[serializePage()];
   renderPageStrip();
 
-  /* ========== Canvas fit ========== */
   let previewScale=0.4;
   function applyPreviewScale(){
     cardShell.style.transform=`scale(${previewScale})`;
@@ -1214,7 +1205,6 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
   window.addEventListener('resize',fitScale);
   requestAnimationFrame(()=>requestAnimationFrame(fitScale));
 
-  // Pinch zoom on canvas
   let lastDist=0;
   canvasArea.addEventListener('touchstart',e=>{
     if(e.touches.length===2) lastDist=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
@@ -1229,7 +1219,6 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
   },{passive:true});
   canvasArea.addEventListener('dblclick',fitScale);
 
-  /* ========== Export ========== */
   const modalOverlay=document.getElementById('modalOverlay');
   const modalLoading=document.getElementById('modalLoading');
   const modalResult=document.getElementById('modalResult');
