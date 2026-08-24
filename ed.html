@@ -2492,11 +2492,17 @@ document.getElementById('exportBtn').addEventListener('click', async () => {
       windowHeight: 1920,
       imageTimeout: 30000,
       logging: false,
-      // foreignObjectRendering lets html2canvas hand off to the
-      // browser's own SVG foreignObject rendering path, which
-      // handles object-fit, mix-blend-mode, and webfonts far more
-      // faithfully than its default DOM-walking renderer.
-      foreignObjectRendering: true,
+      // NOTE: foreignObjectRendering is intentionally NOT used here.
+      // It renders locally-uploaded (data URL) images inside an SVG
+      // <foreignObject>, and several browsers treat that SVG as a
+      // tainted resource once it contains embedded raster images,
+      // causing canvas.toDataURL() to throw or silently return a
+      // blank image. The classic DOM-walking renderer below is
+      // slower on effects like mix-blend-mode but reliably captures
+      // uploaded photos. Image stretching is instead fixed by
+      // computing pixel width/height ourselves in setCoverSize()
+      // rather than depending on CSS object-fit (which html2canvas
+      // does not reliably honor either way).
       onclone: (clonedDoc) => {
         const clonedCard = clonedDoc.getElementById('card');
         if (clonedCard) {
@@ -2527,57 +2533,13 @@ document.getElementById('exportBtn').addEventListener('click', async () => {
   } catch (err) {
     console.error(err);
     cardShell.style.transform = originalTransform || '';
-
-    // foreignObjectRendering can fail on some browsers/combos
-    // (notably older Safari) with a tainted-canvas or security
-    // error. If it does, retry once with the classic renderer so
-    // the user still gets an export rather than a dead end.
-    try {
-      modalLoading.innerHTML = '<div class="spinner"></div><p>다시 시도하고 있어요…</p>';
-      const cardEl = document.getElementById('card');
-      const canvas2 = await html2canvas(cardEl, {
-        backgroundColor: '#050506',
-        useCORS: true,
-        allowTaint: false,
-        scale: 2,
-        width: 1080,
-        height: 1920,
-        windowWidth: 1080,
-        windowHeight: 1920,
-        imageTimeout: 30000,
-        logging: false,
-        foreignObjectRendering: false,
-        onclone: (clonedDoc) => {
-          const clonedCard = clonedDoc.getElementById('card');
-          if (clonedCard) {
-            clonedCard.style.transform = 'none';
-            clonedCard.style.width = '1080px';
-            clonedCard.style.height = '1920px';
-          }
-        }
-      });
-      const dataUrl2 = canvas2.toDataURL('image/png', 1.0);
-      resultImg.src = dataUrl2;
-      modalLoading.style.display = 'none';
-      modalResult.style.display = 'block';
-      document.getElementById('downloadBtn').onclick = () => {
-        const a = document.createElement('a');
-        a.href = dataUrl2;
-        a.download = 'west150-cover-news-' + Date.now() + '.png';
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-      };
-    } catch (err2) {
-      console.error(err2);
-      modalLoading.innerHTML = `
-        <p style="color:#ff8080; line-height:1.6;">
-          이미지 생성 중 문제가 발생했어요.<br>
-          ${err2 && err2.message ? err2.message : '알 수 없는 오류'}
-        </p>
-        <button class="btn btn-secondary" onclick="location.reload()" style="margin-top:16px;">새로고침 후 다시 시도</button>
-      `;
-    }
+    modalLoading.innerHTML = `
+      <p style="color:#ff8080; line-height:1.6;">
+        이미지 생성 중 문제가 발생했어요.<br>
+        ${err && err.message ? err.message : '알 수 없는 오류'}
+      </p>
+      <button class="btn btn-secondary" onclick="location.reload()" style="margin-top:16px;">새로고침 후 다시 시도</button>
+    `;
   }
 });
 
