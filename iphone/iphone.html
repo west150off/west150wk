@@ -198,6 +198,77 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
 }
 #card.layout-split .brand-mark{bottom:24px;right:64px;font-size:18px;}
 
+.overlay-layer{
+  position:absolute;inset:0;z-index:6;pointer-events:none;
+}
+.ov-badge{
+  position:absolute;
+  display:none;
+  font-family:'Pretendard',sans-serif;
+  font-weight:800;
+  font-size:28px;
+  letter-spacing:1.5px;
+  padding:11px 24px;
+  border-radius:5px;
+  color:#fff;
+  text-shadow:0 2px 6px rgba(0,0,0,.35);
+  white-space:nowrap;
+  line-height:1.2;
+  box-shadow:0 4px 14px rgba(0,0,0,.25);
+}
+.ov-badge.show{display:inline-block;}
+.ov-badge.sokbo{background:#e0334c;}
+.ov-badge.dandok{background:#2f9bf0;}
+.ov-badge.gingeup{background:#f5a623;color:#1a1a1a;}
+.ov-badge.live{background:#12b76a;}
+.ov-badge.teukbo{background:#8b5cf6;}
+.ov-badge.update{background:#0274B6;}
+.ov-badge.simcheung{background:#6B4C9A;}
+.ov-icon{
+  position:absolute;
+  display:none;
+  width:58px;height:58px;
+  border-radius:50%;
+  background:rgba(0,0,0,.6);
+  border:2.5px solid rgba(255,255,255,.35);
+  align-items:center;justify-content:center;
+  font-size:30px;
+  line-height:1;
+  box-shadow:0 4px 12px rgba(0,0,0,.3);
+}
+.ov-icon.show{display:flex;}
+.ov-stamp{
+  position:absolute;
+  display:none;
+  font-family:'Pretendard',sans-serif;
+  font-weight:800;
+  font-size:22px;
+  letter-spacing:1px;
+  padding:14px 18px;
+  border-radius:10px;
+  color:#fff;
+  white-space:nowrap;
+  line-height:1.15;
+  text-align:center;
+  border:3.5px solid currentColor;
+  background:rgba(0,0,0,.45);
+  box-shadow:0 4px 16px rgba(0,0,0,.3);
+  text-shadow:0 1px 3px rgba(0,0,0,.4);
+}
+.ov-stamp.show{display:inline-block;}
+.ov-stamp.factcheck{color:#3DDC84;border-color:#3DDC84;background:rgba(61,220,132,.18);}
+.ov-stamp.verified{color:#4ADE80;border-color:#4ADE80;background:rgba(74,222,128,.16);}
+.ov-stamp.sasil{color:#38BDF8;border-color:#38BDF8;background:rgba(56,189,248,.16);}
+.ov-stamp.obo{color:#FB923C;border-color:#FB923C;background:rgba(251,146,60,.18);}
+.ov-stamp.michakin{color:#FBBF24;border-color:#FBBF24;background:rgba(251,191,36,.16);color:#FBBF24;}
+.ov-stamp.jeongjeong{color:#F87171;border-color:#F87171;background:rgba(248,113,113,.16);}
+.ov-stamp.circle{
+  width:110px;height:110px;border-radius:50%;
+  padding:0;display:none;align-items:center;justify-content:center;
+  font-size:20px;letter-spacing:0.5px;
+}
+.ov-stamp.circle.show{display:flex;}
+
 .zoom-pill{
   position:absolute;bottom:10px;left:50%;transform:translateX(-50%);
   background:rgba(0,0,0,.65);color:rgba(255,255,255,.8);font-size:11px;
@@ -382,6 +453,26 @@ input[type="range"]::-webkit-slider-thumb{
           </div>
           <div class="card-duotone" id="duotoneLayer"></div>
           <div class="card-scrim" id="scrimLayer"></div>
+          <div class="overlay-layer" id="overlayLayer">
+            <div class="ov-badge sokbo" id="ovSokbo">속보</div>
+            <div class="ov-badge dandok" id="ovDandok">단독</div>
+            <div class="ov-badge gingeup" id="ovGingeup">긴급</div>
+            <div class="ov-badge live" id="ovLive">LIVE</div>
+            <div class="ov-badge teukbo" id="ovTeukbo">특보</div>
+            <div class="ov-badge update" id="ovUpdate">업데이트</div>
+            <div class="ov-badge simcheung" id="ovSimcheung">심층</div>
+            <div class="ov-icon" id="ovIconFire">🔥</div>
+            <div class="ov-icon" id="ovIconBolt">⚡</div>
+            <div class="ov-icon" id="ovIconStar">★</div>
+            <div class="ov-stamp factcheck" id="ovFactcheck">팩트체크</div>
+            <div class="ov-stamp verified" id="ovVerified">검증됨</div>
+            <div class="ov-stamp sasil" id="ovSasil">사실확인</div>
+            <div class="ov-stamp obo" id="ovObo">오보주의</div>
+            <div class="ov-stamp michakin" id="ovMichakin">미확인</div>
+            <div class="ov-stamp jeongjeong" id="ovJeongjeong">정정</div>
+            <div class="ov-stamp circle factcheck" id="ovFactCircle">팩트<br>체크</div>
+            <div class="ov-stamp circle verified" id="ovVerifiedCircle">검증<br>완료</div>
+          </div>
           <div class="card-top">
             <div class="kicker-wrap pos-left" id="kickerWrap">
               <div class="kicker" id="kickerOut">GLOBAL POLITICS</div>
@@ -429,6 +520,10 @@ input[type="range"]::-webkit-slider-thumb{
       <div class="tool-item" data-panel="template">
         <div class="icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></svg></div>
         <div class="label">스타일</div>
+      </div>
+      <div class="tool-item" data-panel="overlay">
+        <div class="icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="6" rx="1.5"/><path d="M7 14h10M7 18h6"/></svg></div>
+        <div class="label">배지</div>
       </div>
       <div class="tool-item" data-panel="save">
         <div class="icon"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg></div>
@@ -568,6 +663,85 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
           <input type="checkbox" id="dividerToggle" checked style="width:18px;height:18px;accent-color:var(--accent);">
           구분선 표시
         </label>
+      </div>
+    </div>
+
+    <div class="ctx-panel" id="panel-overlay">
+      <div class="section-label">오버레이 배지 · 도장 · 아이콘</div>
+      <div class="field" style="margin-bottom:14px;">
+        <label style="display:flex;align-items:center;gap:10px;font-size:13px;color:#c8c8d0;">
+          <input type="checkbox" id="overlayMaster" style="width:18px;height:18px;accent-color:var(--accent);">
+          오버레이 전체 표시
+        </label>
+      </div>
+      <div class="field">
+        <div class="field-label">뉴스 배지</div>
+        <div class="chip-row" id="ovBadgeChips">
+          <div class="chip" data-ov="sokbo">속보</div>
+          <div class="chip" data-ov="dandok">단독</div>
+          <div class="chip" data-ov="gingeup">긴급</div>
+          <div class="chip" data-ov="live">LIVE</div>
+          <div class="chip" data-ov="teukbo">특보</div>
+          <div class="chip" data-ov="update">업데이트</div>
+          <div class="chip" data-ov="simcheung">심층</div>
+        </div>
+      </div>
+      <div class="field">
+        <div class="field-label">팩트체크 · 검증 도장</div>
+        <div class="chip-row" id="ovStampChips">
+          <div class="chip" data-ov="factcheck">팩트체크</div>
+          <div class="chip" data-ov="verified">검증됨</div>
+          <div class="chip" data-ov="sasil">사실확인</div>
+          <div class="chip" data-ov="obo">오보주의</div>
+          <div class="chip" data-ov="michakin">미확인</div>
+          <div class="chip" data-ov="jeongjeong">정정</div>
+          <div class="chip" data-ov="factcircle">⭕팩트체크</div>
+          <div class="chip" data-ov="verifiedcircle">⭕검증완료</div>
+        </div>
+      </div>
+      <div class="field">
+        <div class="field-label">아이콘</div>
+        <div class="chip-row" id="ovIconChips">
+          <div class="chip" data-ov="fire">🔥 불꽃</div>
+          <div class="chip" data-ov="bolt">⚡ 번개</div>
+          <div class="chip" data-ov="star">★ 별</div>
+        </div>
+      </div>
+      <div class="section-label" style="margin-top:16px;">위치 · 스타일 조절</div>
+      <div class="field">
+        <div class="field-label">기준 위치</div>
+        <div class="chip-row" id="ovPosChips">
+          <div class="chip active" data-pos="tl">좌상단</div>
+          <div class="chip" data-pos="tr">우상단</div>
+          <div class="chip" data-pos="bl">좌하단</div>
+          <div class="chip" data-pos="br">우하단</div>
+          <div class="chip" data-pos="tc">상단중앙</div>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <div class="field-label">가로 위치 <span class="val" id="ovOffXVal">4%</span></div>
+          <input type="range" id="ovOffX" min="0" max="90" step="1" value="4">
+        </div>
+        <div class="field">
+          <div class="field-label">세로 위치 <span class="val" id="ovOffYVal">4%</span></div>
+          <input type="range" id="ovOffY" min="0" max="90" step="1" value="4">
+        </div>
+      </div>
+      <div class="upload-hint" style="margin-top:0;margin-bottom:10px;">프리셋 = 빠른 점프 · 슬라이더로 카드 전체 자유 이동</div>
+      <div class="row2">
+        <div class="field">
+          <div class="field-label">크기 <span class="val" id="ovScaleVal">100%</span></div>
+          <input type="range" id="ovScale" min="60" max="160" step="5" value="100">
+        </div>
+        <div class="field">
+          <div class="field-label">회전 <span class="val" id="ovRotateVal">0°</span></div>
+          <input type="range" id="ovRotate" min="-25" max="25" step="1" value="0">
+        </div>
+      </div>
+      <div class="field">
+        <div class="field-label">간격 (여러 개일 때) <span class="val" id="ovGapVal">16px</span></div>
+        <input type="range" id="ovGap" min="4" max="40" step="2" value="16">
       </div>
     </div>
 
@@ -1127,6 +1301,192 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
     document.getElementById('dividerOut').style.display=e.target.checked?'block':'none';
   });
 
+  /* ===== Overlay badges, stamps & icons ===== */
+  const OV_DEFAULT_ACTIVE = {
+    sokbo:false,dandok:false,gingeup:false,live:false,teukbo:false,update:false,simcheung:false,
+    fire:false,bolt:false,star:false,
+    factcheck:false,verified:false,sasil:false,obo:false,michakin:false,jeongjeong:false,
+    factcircle:false,verifiedcircle:false
+  };
+  const OV_MAP = {
+    sokbo: document.getElementById('ovSokbo'),
+    dandok: document.getElementById('ovDandok'),
+    gingeup: document.getElementById('ovGingeup'),
+    live: document.getElementById('ovLive'),
+    teukbo: document.getElementById('ovTeukbo'),
+    update: document.getElementById('ovUpdate'),
+    simcheung: document.getElementById('ovSimcheung'),
+    fire: document.getElementById('ovIconFire'),
+    bolt: document.getElementById('ovIconBolt'),
+    star: document.getElementById('ovIconStar'),
+    factcheck: document.getElementById('ovFactcheck'),
+    verified: document.getElementById('ovVerified'),
+    sasil: document.getElementById('ovSasil'),
+    obo: document.getElementById('ovObo'),
+    michakin: document.getElementById('ovMichakin'),
+    jeongjeong: document.getElementById('ovJeongjeong'),
+    factcircle: document.getElementById('ovFactCircle'),
+    verifiedcircle: document.getElementById('ovVerifiedCircle'),
+  };
+  let ovActive = {...OV_DEFAULT_ACTIVE};
+  let ovPos = 'tl'; // preset id for UI highlight
+  let ovOffX = 4, ovOffY = 4, ovScale = 100, ovGap = 16, ovRotate = 0; // absolute %
+  let ovMaster = false;
+
+  const OV_PRESETS = {
+    tl: {x:4, y:4},
+    tr: {x:72, y:4},
+    bl: {x:4, y:78},
+    br: {x:72, y:78},
+    tc: {x:38, y:4},
+  };
+
+  function updateOverlay(){
+    const masterOn = ovMaster;
+    Object.keys(OV_MAP).forEach(k=>{
+      const el = OV_MAP[k];
+      if(!el) return;
+      el.classList.toggle('show', masterOn && ovActive[k]);
+    });
+    const visible = Object.keys(ovActive).filter(k=>masterOn && ovActive[k] && OV_MAP[k]);
+    const scale = ovScale / 100;
+    const rot = ovRotate;
+    visible.forEach((k,i)=>{
+      const el = OV_MAP[k];
+      const isIcon = el.classList.contains('ov-icon');
+      const isCircle = el.classList.contains('circle');
+      const step = (isCircle ? 120 : isIcon ? 68 : 54) + ovGap;
+      const offset = i * step * scale;
+      el.style.left = ovOffX + '%';
+      el.style.right = 'auto';
+      el.style.top = `calc(${ovOffY}% + ${offset}px)`;
+      el.style.bottom = 'auto';
+      el.style.transform = `scale(${scale}) rotate(${rot}deg)`;
+      el.style.transformOrigin = 'top left';
+    });
+  }
+
+  document.getElementById('overlayMaster').addEventListener('change',e=>{
+    ovMaster = e.target.checked;
+    updateOverlay();
+  });
+
+  document.querySelectorAll('#ovBadgeChips .chip, #ovIconChips .chip, #ovStampChips .chip').forEach(chip=>{
+    chip.addEventListener('click',()=>{
+      const key = chip.dataset.ov;
+      ovActive[key] = !ovActive[key];
+      chip.classList.toggle('active', ovActive[key]);
+      if(ovActive[key] && !ovMaster){
+        ovMaster = true;
+        document.getElementById('overlayMaster').checked = true;
+      }
+      updateOverlay();
+    });
+  });
+
+  document.querySelectorAll('#ovPosChips .chip').forEach(chip=>{
+    chip.addEventListener('click',()=>{
+      document.querySelectorAll('#ovPosChips .chip').forEach(c=>c.classList.remove('active'));
+      chip.classList.add('active');
+      ovPos = chip.dataset.pos;
+      const p = OV_PRESETS[ovPos] || {x:4,y:4};
+      ovOffX = p.x; ovOffY = p.y;
+      document.getElementById('ovOffX').value = ovOffX;
+      document.getElementById('ovOffXVal').textContent = ovOffX + '%';
+      document.getElementById('ovOffY').value = ovOffY;
+      document.getElementById('ovOffYVal').textContent = ovOffY + '%';
+      updateOverlay();
+    });
+  });
+
+  document.getElementById('ovOffX').addEventListener('input',e=>{
+    ovOffX = parseInt(e.target.value,10);
+    document.getElementById('ovOffXVal').textContent = ovOffX + '%';
+    // clear preset highlight when freely moved
+    document.querySelectorAll('#ovPosChips .chip').forEach(c=>c.classList.remove('active'));
+    ovPos = 'custom';
+    updateOverlay();
+  });
+  document.getElementById('ovOffY').addEventListener('input',e=>{
+    ovOffY = parseInt(e.target.value,10);
+    document.getElementById('ovOffYVal').textContent = ovOffY + '%';
+    document.querySelectorAll('#ovPosChips .chip').forEach(c=>c.classList.remove('active'));
+    ovPos = 'custom';
+    updateOverlay();
+  });
+  document.getElementById('ovScale').addEventListener('input',e=>{
+    ovScale = parseInt(e.target.value,10);
+    document.getElementById('ovScaleVal').textContent = ovScale + '%';
+    updateOverlay();
+  });
+  document.getElementById('ovRotate').addEventListener('input',e=>{
+    ovRotate = parseInt(e.target.value,10);
+    document.getElementById('ovRotateVal').textContent = ovRotate + '°';
+    updateOverlay();
+  });
+  document.getElementById('ovGap').addEventListener('input',e=>{
+    ovGap = parseInt(e.target.value,10);
+    document.getElementById('ovGapVal').textContent = ovGap + 'px';
+    updateOverlay();
+  });
+
+  function getOverlayState(){
+    return {
+      master: ovMaster,
+      active: {...ovActive},
+      pos: ovPos,
+      offX: ovOffX,
+      offY: ovOffY,
+      scale: ovScale,
+      gap: ovGap,
+      rotate: ovRotate,
+    };
+  }
+  function setOverlayState(s){
+    if(!s){
+      ovMaster = false;
+      document.getElementById('overlayMaster').checked = false;
+      ovActive = {...OV_DEFAULT_ACTIVE};
+      document.querySelectorAll('#ovBadgeChips .chip, #ovIconChips .chip, #ovStampChips .chip').forEach(chip=>chip.classList.remove('active'));
+      ovPos = 'tl'; ovOffX = 4; ovOffY = 4; ovScale = 100; ovGap = 16; ovRotate = 0;
+      document.getElementById('ovOffX').value = 4;
+      document.getElementById('ovOffXVal').textContent = '4%';
+      document.getElementById('ovOffY').value = 4;
+      document.getElementById('ovOffYVal').textContent = '4%';
+      document.getElementById('ovScale').value = 100;
+      document.getElementById('ovScaleVal').textContent = '100%';
+      document.getElementById('ovGap').value = 16;
+      document.getElementById('ovGapVal').textContent = '16px';
+      document.getElementById('ovRotate').value = 0;
+      document.getElementById('ovRotateVal').textContent = '0°';
+      document.querySelectorAll('#ovPosChips .chip').forEach(c=>c.classList.toggle('active', c.dataset.pos==='tl'));
+      updateOverlay();
+      return;
+    }
+    ovMaster = !!s.master;
+    document.getElementById('overlayMaster').checked = ovMaster;
+    ovActive = Object.assign({...OV_DEFAULT_ACTIVE}, s.active||{});
+    document.querySelectorAll('#ovBadgeChips .chip, #ovIconChips .chip, #ovStampChips .chip').forEach(chip=>{
+      chip.classList.toggle('active', !!ovActive[chip.dataset.ov]);
+    });
+    ovPos = s.pos || 'tl';
+    document.querySelectorAll('#ovPosChips .chip').forEach(c=>c.classList.toggle('active', c.dataset.pos===ovPos));
+    ovOffX = (s.offX!=null ? s.offX : 4);
+    ovOffY = (s.offY!=null ? s.offY : 4);
+    ovScale = s.scale||100; ovGap = s.gap||16; ovRotate = s.rotate||0;
+    document.getElementById('ovOffX').value = ovOffX;
+    document.getElementById('ovOffXVal').textContent = ovOffX + '%';
+    document.getElementById('ovOffY').value = ovOffY;
+    document.getElementById('ovOffYVal').textContent = ovOffY + '%';
+    document.getElementById('ovScale').value = ovScale;
+    document.getElementById('ovScaleVal').textContent = ovScale + '%';
+    document.getElementById('ovGap').value = ovGap;
+    document.getElementById('ovGapVal').textContent = ovGap + 'px';
+    document.getElementById('ovRotate').value = ovRotate;
+    document.getElementById('ovRotateVal').textContent = ovRotate + '°';
+    updateOverlay();
+  }
+
   const pageStrip=document.getElementById('pageStrip');
   let pages=[];
   let currentPageIndex=0;
@@ -1167,6 +1527,7 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
       badge:card.classList.contains('tpl-badge'),
       masthead:card.classList.contains('tpl-masthead'),
       brandMark:brandMarkOut.textContent,
+      overlay: getOverlayState(),
     };
   }
 
@@ -1243,6 +1604,8 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
     }
     templateRow.querySelectorAll('.chip').forEach(c=>c.classList.toggle('active',c.dataset.tpl===currentTemplateId));
     templateRowSocial.querySelectorAll('.chip').forEach(c=>c.classList.toggle('active',c.dataset.tpl===currentTemplateId));
+
+    setOverlayState(data.overlay || null);
   }
 
   function renderPageStrip(){
