@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>WEST150 · Banner Studio</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Noto+Serif+KR:wght@400;600;700;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root{--bg:#0D0D0D;--surface:#141414;--surface2:#1A1A1A;--border:#2A2A2A;--text:#F5F5F5;--dim:rgba(255,255,255,.55);--accent:#e0334c;--safe-b:env(safe-area-inset-bottom,0px);--safe-t:env(safe-area-inset-top,0px);}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Pretendard','Noto Sans KR',sans-serif;user-select:none;-webkit-user-select:none;touch-action:manipulation;}
+#app{display:flex;flex-direction:column;height:100%;max-width:430px;margin:0 auto;position:relative;background:var(--bg);}
+.top-nav{height:52px;padding-top:var(--safe-t);min-height:calc(52px + var(--safe-t));display:flex;align-items:center;justify-content:space-between;padding-left:8px;padding-right:8px;background:var(--bg);border-bottom:1px solid var(--border);flex-shrink:0;z-index:40;}
+.top-nav .left,.top-nav .right{display:flex;align-items:center;gap:2px;min-width:72px;}
+.top-nav .right{justify-content:flex-end;}
+.top-nav .center{font-size:13px;font-weight:600;opacity:.9;}
+.icon-btn{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border:none;background:transparent;color:var(--text);border-radius:8px;cursor:pointer;opacity:.88;}
+.icon-btn:active{background:rgba(255,255,255,.08);}
+.icon-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+.canvas-area{flex:1;min-height:0;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#080808;padding:14px 16px;}
+.card-shell{border-radius:6px;overflow:hidden;box-shadow:0 0 0 1px rgba(255,255,255,.14),0 10px 28px rgba(0,0,0,.5);transform-origin:center center;}
+.zoom-pill{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.65);color:rgba(255,255,255,.8);font-size:11px;padding:4px 12px;border-radius:14px;pointer-events:none;opacity:0;transition:opacity .25s;z-index:10;}
+.zoom-pill.show{opacity:1;}
+
+#card{position:relative;overflow:hidden;background:var(--c-bg,#f6f3ed);color:var(--c-text,#16140f);width:var(--cw,1200px);height:var(--ch,320px);}
+
+/* Newsletter */
+.nh{display:none;position:absolute;inset:0;align-items:stretch;}
+#card[data-mode="newsletter"] .nh{display:flex;}
+.nh-content{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;padding:36px 48px;position:relative;z-index:3;}
+.nh-kicker{font-family:'Pretendard',sans-serif;font-size:13px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--c-accent,#8b3a3a);margin-bottom:14px;display:flex;align-items:center;gap:12px;}
+.nh-kicker-line{width:28px;height:1.5px;background:var(--c-accent,#8b3a3a);flex-shrink:0;}
+.nh-title{font-family:'Noto Serif KR',Georgia,serif;font-size:42px;font-weight:700;line-height:1.2;letter-spacing:-.025em;word-break:keep-all;white-space:pre-wrap;margin-bottom:12px;}
+.nh-sub{font-family:'Pretendard',sans-serif;font-size:17px;line-height:1.55;color:var(--c-muted,#5c574f);word-break:keep-all;white-space:pre-wrap;max-width:92%;}
+.nh-meta{margin-top:20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;font-family:'Pretendard',sans-serif;font-size:13px;font-weight:500;color:var(--c-muted,#6b6560);}
+.nh-meta .sep{opacity:.35;}
+.nh-brand-mark{font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--c-text,#16140f);}
+.nh-media{width:38%;flex-shrink:0;position:relative;overflow:hidden;background:var(--c-media-bg,#e8e2d8);}
+#card[data-layout="full"] .nh-media{display:none;}
+.nh-media-wrap{position:absolute;inset:0;overflow:hidden;cursor:grab;}
+.nh-media-wrap img{position:absolute;top:50%;left:50%;width:100%;height:100%;object-fit:cover;transform:translate(-50%,-50%) scale(var(--izoom,1)) translate(var(--ioffx,0%),var(--ioffy,0%));pointer-events:none;}
+.nh-media-ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#9a948a;font-size:14px;background:linear-gradient(160deg,#ebe5db,#ddd6cb);}
+.nh-rule{position:absolute;left:0;right:0;bottom:0;height:3px;z-index:4;background:var(--c-accent,#8b3a3a);}
+#card[data-rule="off"] .nh-rule{display:none;}
+
+/* IG newsletter vertical */
+#card[data-size="ig-feed"] .nh,#card[data-size="ig-story"] .nh,#card[data-size="ig-portrait"] .nh{flex-direction:column;}
+#card[data-size="ig-feed"] .nh-media,#card[data-size="ig-story"] .nh-media,#card[data-size="ig-portrait"] .nh-media{width:100%;height:52%;flex:none;}
+#card[data-size="ig-story"] .nh-media{height:48%;}
+#card[data-size="ig-feed"] .nh-content,#card[data-size="ig-story"] .nh-content,#card[data-size="ig-portrait"] .nh-content{flex:none;justify-content:flex-end;padding:48px 56px 56px;}
+#card[data-size="ig-story"] .nh-content{padding:56px 64px 72px;flex:1;justify-content:flex-end;}
+#card[data-size="ig-feed"] .nh-title{font-size:48px;}
+#card[data-size="ig-portrait"] .nh-title{font-size:52px;}
+#card[data-size="ig-story"] .nh-title{font-size:58px;}
+#card[data-size="ig-feed"] .nh-sub,#card[data-size="ig-portrait"] .nh-sub{font-size:22px;}
+#card[data-size="ig-story"] .nh-sub{font-size:24px;}
+#card[data-size="compact"] .nh-content{padding:18px 24px;}
+#card[data-size="compact"] .nh-title{font-size:22px;}
+#card[data-size="compact"] .nh-sub{font-size:12px;}
+#card[data-size="compact"] .nh-kicker{font-size:10px;}
+
+/* Banner */
+.nb{display:none;position:absolute;inset:0;align-items:center;}
+#card[data-mode="banner"] .nb{display:flex;}
+.nb-breaking{width:100%;height:100%;display:flex;align-items:center;background:var(--c-bg,#0e0e10);}
+.nb-label{flex-shrink:0;height:100%;padding:0 28px;display:flex;align-items:center;justify-content:center;background:var(--c-accent,#c23b52);color:#fff;font-family:'Pretendard',sans-serif;font-size:18px;font-weight:800;letter-spacing:.08em;}
+.nb-body{flex:1;min-width:0;display:flex;align-items:center;gap:16px;padding:0 28px;}
+.nb-live-dot{width:10px;height:10px;border-radius:50%;background:#ff3b3b;flex-shrink:0;animation:blink 1.2s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
+.nb-headline{font-family:'Pretendard',sans-serif;font-size:22px;font-weight:700;color:var(--c-text,#f5f5f5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0;}
+.nb-meta{font-family:'Pretendard',sans-serif;font-size:14px;color:var(--c-muted,#999);flex-shrink:0;}
+.nb-editorial{display:none;width:100%;height:100%;align-items:center;padding:0 36px;gap:24px;border-bottom:3px solid var(--c-accent,#8b3a3a);background:var(--c-bg,#f6f3ed);}
+#card[data-bstyle="editorial"] .nb-breaking{display:none;}
+#card[data-bstyle="editorial"] .nb-editorial{display:flex;}
+.nb-ed-kicker{font-family:'Pretendard',sans-serif;font-size:13px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--c-accent,#8b3a3a);flex-shrink:0;}
+.nb-ed-title{font-family:'Noto Serif KR',serif;font-size:24px;font-weight:700;color:var(--c-text,#16140f);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;}
+.nb-ed-brand{font-family:'Pretendard',sans-serif;font-size:12px;font-weight:700;letter-spacing:.1em;color:var(--c-muted,#6b6560);flex-shrink:0;}
+
+#card[data-bsize="ig-story"] .nb,#card[data-bsize="ig-feed"] .nb{align-items:stretch;}
+#card[data-bsize="ig-story"] .nb-breaking,#card[data-bsize="ig-feed"] .nb-breaking,
+#card[data-bsize="ig-story"] .nb-editorial,#card[data-bsize="ig-feed"] .nb-editorial{flex-direction:column;justify-content:flex-end;padding:0;}
+#card[data-bsize="ig-story"] .nb-label,#card[data-bsize="ig-feed"] .nb-label{width:100%;height:auto;padding:28px 48px;font-size:22px;justify-content:flex-start;}
+#card[data-bsize="ig-story"] .nb-body,#card[data-bsize="ig-feed"] .nb-body{flex-direction:column;align-items:flex-start;padding:48px 56px 72px;gap:24px;}
+#card[data-bsize="ig-story"] .nb-headline,#card[data-bsize="ig-feed"] .nb-headline{font-size:48px;white-space:pre-wrap;overflow:visible;text-overflow:unset;line-height:1.25;}
+#card[data-bsize="ig-story"] .nb-headline{font-size:56px;}
+#card[data-bsize="ig-story"] .nb-editorial,#card[data-bsize="ig-feed"] .nb-editorial{padding:56px 56px 72px;gap:20px;border-bottom:none;border-top:4px solid var(--c-accent,#8b3a3a);}
+#card[data-bsize="ig-story"] .nb-ed-title,#card[data-bsize="ig-feed"] .nb-ed-title{font-size:48px;white-space:pre-wrap;overflow:visible;line-height:1.25;}
+#card[data-bsize="ig-story"] .nb-ed-title{font-size:56px;}
+
+#card[data-tone="dark"]{--c-bg:#12110f;--c-text:#f2efe8;--c-muted:#a39e94;}
+#card[data-tone="midnight"]{--c-bg:#0f1419;--c-text:#eef2f6;--c-muted:#8a9aab;}
+#card[data-tone="ink"]{--c-bg:#faf8f4;--c-text:#0e0d0b;--c-muted:#5a564e;}
+
+.bottom-bar{background:var(--surface);border-top:1px solid var(--border);flex-shrink:0;padding-bottom:var(--safe-b);z-index:50;}
+.tool-row{display:flex;overflow-x:auto;padding:8px 6px 4px;gap:2px;scrollbar-width:none;}
+.tool-row::-webkit-scrollbar{display:none;}
+.tool-item{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:58px;padding:4px;cursor:pointer;color:var(--dim);}
+.tool-item.active,.tool-item:active{color:var(--text);}
+.tool-item .icon{width:26px;height:26px;display:flex;align-items:center;justify-content:center;}
+.tool-item .icon svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
+.tool-item .label{font-size:10px;font-weight:500;}
+.ctx-panel{display:none;max-height:34vh;overflow-y:auto;padding:8px 12px 10px;border-top:1px solid var(--border);background:var(--surface2);-webkit-overflow-scrolling:touch;}
+.ctx-panel.active{display:block;}
+.section-label{font-size:11px;font-weight:700;color:var(--text);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.section-label::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--accent);}
+.field{margin-bottom:12px;}
+.field-label{font-size:11px;color:var(--dim);margin-bottom:6px;display:flex;justify-content:space-between;}
+.field-label .val{color:var(--accent);font-weight:600;}
+textarea,input[type="text"]{width:100%;resize:vertical;min-height:38px;background:#0f0f13;border:1px solid #2c2c35;border-radius:9px;color:var(--text);font-size:13px;padding:10px 12px;font-family:'Pretendard',sans-serif;line-height:1.4;-webkit-user-select:text;user-select:text;}
+textarea:focus,input[type="text"]:focus{outline:none;border-color:var(--accent);}
+input[type="range"]{width:100%;-webkit-appearance:none;height:4px;border-radius:4px;background:#2c2c35;}
+input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);border:2px solid #fff;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.color-input{-webkit-appearance:none;width:100%;height:36px;padding:0;border:1px solid #2c2c35;border-radius:9px;background:#0f0f13;cursor:pointer;}
+.color-input::-webkit-color-swatch-wrapper{padding:3px;}
+.color-input::-webkit-color-swatch{border:none;border-radius:6px;}
+.chip-row{display:flex;gap:6px;flex-wrap:wrap;}
+.chip{padding:7px 12px;border-radius:20px;font-size:11px;background:#0f0f13;border:1px solid #2c2c35;color:#b6b6c0;cursor:pointer;}
+.chip.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+.swatches{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;}
+.swatch{aspect-ratio:1;border-radius:50%;border:2px solid transparent;cursor:pointer;box-shadow:inset 0 0 0 1px rgba(255,255,255,.15);}
+.swatch.active{border-color:#fff;transform:scale(1.08);}
+.upload-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px;border-radius:10px;background:#232329;border:1px dashed #3a3a44;color:#d8d8de;font-size:13px;cursor:pointer;font-weight:600;}
+.upload-hint{font-size:11px;color:#75757f;margin-top:8px;text-align:center;line-height:1.5;}
+.btn{width:100%;padding:14px;border-radius:12px;border:none;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;}
+.btn-primary{background:linear-gradient(135deg,#e0334c,#a3172e);color:#fff;}
+.btn-secondary{background:#232329;color:var(--text);border:1px solid #34343d;margin-top:8px;}
+#fileInput{display:none;}
+.toast{position:absolute;bottom:110px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,.92);color:#111;font-size:13px;font-weight:600;padding:10px 18px;border-radius:20px;z-index:200;opacity:0;transition:opacity .25s;pointer-events:none;white-space:nowrap;}
+.toast.show{opacity:1;}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:flex-end;justify-content:center;z-index:100;}
+.modal-overlay.show{display:flex;}
+.modal{background:#17171c;border:1px solid #2c2c35;border-radius:16px 16px 0 0;padding:18px 18px calc(20px + var(--safe-b));width:100%;max-width:430px;max-height:85vh;overflow-y:auto;text-align:center;}
+.modal-handle{width:36px;height:4px;background:#444;border-radius:2px;margin:0 auto 14px;}
+.modal h3{font-size:15px;margin-bottom:6px;}
+.modal p{font-size:12.5px;color:#9a9aa4;line-height:1.6;margin-bottom:14px;}
+.modal img{width:100%;max-height:40vh;object-fit:contain;border-radius:10px;margin-bottom:14px;border:1px solid #2c2c35;background:#0a0a0a;}
+.modal .close-btn{margin-top:8px;background:none;border:none;color:#75757f;font-size:13px;cursor:pointer;padding:8px;}
+.spinner{width:32px;height:32px;border-radius:50%;border:3px solid #2c2c35;border-top-color:var(--accent);animation:spin .8s linear infinite;margin:18px auto;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.mode-only-nl{display:none;}
+.mode-only-bn{display:none;}
+body[data-app-mode="newsletter"] .mode-only-nl{display:block;}
+body[data-app-mode="banner"] .mode-only-bn{display:block;}
+</style>
+</head>
+<body data-app-mode="newsletter">
+<div id="app">
+  <div class="top-nav">
+    <div class="left"><button class="icon-btn" id="btnBack"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button></div>
+    <div class="center">배너 스튜디오</div>
+    <div class="right">
+      <button class="icon-btn" id="btnFit"><svg viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg></button>
+      <button class="icon-btn" id="btnShare"><svg viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg></button>
+    </div>
+  </div>
+
+  <div class="canvas-area" id="canvasArea">
+    <div class="card-shell" id="cardShell">
+      <div id="card" data-mode="newsletter" data-size="standard" data-tone="light" data-layout="split" data-rule="on" data-bstyle="breaking" data-bsize="standard">
+        <div class="nh">
+          <div class="nh-content">
+            <div class="nh-kicker"><span class="nh-kicker-line"></span><span id="kickerOut">WEEKLY BRIEFING</span></div>
+            <div class="nh-title" id="titleOut">한 주의 시선을 모은 이야기</div>
+            <div class="nh-sub" id="subOut">에디터가 고른 이슈와 장면, 오늘 아침에 도착합니다.</div>
+            <div class="nh-meta">
+              <span class="nh-brand-mark" id="brandOut">WEST150DAILY</span>
+              <span class="sep">·</span>
+              <span id="issueOut">Vol. 48  ·  2026.08.24</span>
+            </div>
+          </div>
+          <div class="nh-media">
+            <div class="nh-media-wrap" id="mediaWrap">
+              <div class="nh-media-ph" id="mediaPh">이미지를 올려주세요</div>
+            </div>
+          </div>
+        </div>
+        <div class="nh-rule"></div>
+        <div class="nb">
+          <div class="nb-breaking">
+            <div class="nb-label" id="bnLabelOut">속보</div>
+            <div class="nb-body">
+              <div class="nb-live-dot" id="bnLiveDot" style="display:none;"></div>
+              <div class="nb-headline" id="bnHeadlineOut">도심 한복판 화재 발생, 인근 일대 교통 통제</div>
+              <div class="nb-meta" id="bnMetaOut">방금 전</div>
+            </div>
+          </div>
+          <div class="nb-editorial">
+            <div class="nb-ed-kicker" id="bnEdKickerOut">속보</div>
+            <div class="nb-ed-title" id="bnEdTitleOut">도심 한복판 화재 발생, 인근 일대 교통 통제</div>
+            <div class="nb-ed-brand" id="bnEdBrandOut">WEST150DAILY</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="zoom-pill" id="zoomPill">100%</div>
+  </div>
+
+  <div class="bottom-bar">
+    <div class="tool-row" id="mainTools">
+      <div class="tool-item active" data-panel="mode"><div class="icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg></div><div class="label">모드</div></div>
+      <div class="tool-item" data-panel="write"><div class="icon"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div><div class="label">글쓰기</div></div>
+      <div class="tool-item" data-panel="image"><div class="icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div><div class="label">이미지</div></div>
+      <div class="tool-item" data-panel="style"><div class="icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></svg></div><div class="label">스타일</div></div>
+      <div class="tool-item" data-panel="save"><div class="icon"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg></div><div class="label">저장</div></div>
+    </div>
+
+    <div class="ctx-panel active" id="panel-mode">
+      <div class="section-label">콘텐츠 유형</div>
+      <div class="chip-row" id="modeRow">
+        <div class="chip active" data-mode="newsletter">뉴스레터 헤더</div>
+        <div class="chip" data-mode="banner">뉴스 띠 배너</div>
+      </div>
+      <div class="mode-only-nl">
+        <div class="section-label" style="margin-top:14px;">뉴스레터 규격</div>
+        <div class="chip-row" id="nlSizeRow">
+          <div class="chip active" data-size="standard">1200×320</div>
+          <div class="chip" data-size="compact">600×160</div>
+          <div class="chip" data-size="wide">1200×400</div>
+          <div class="chip" data-size="ig-feed">IG 정사각</div>
+          <div class="chip" data-size="ig-portrait">IG 4:5</div>
+          <div class="chip" data-size="ig-story">IG 스토리</div>
+        </div>
+        <div class="section-label" style="margin-top:14px;">레이아웃</div>
+        <div class="chip-row" id="layoutRow">
+          <div class="chip active" data-layout="split">텍스트+이미지</div>
+          <div class="chip" data-layout="full">텍스트만</div>
+        </div>
+      </div>
+      <div class="mode-only-bn">
+        <div class="section-label" style="margin-top:14px;">배너 스타일</div>
+        <div class="chip-row" id="bstyleRow">
+          <div class="chip active" data-bstyle="breaking">속보 띠</div>
+          <div class="chip" data-bstyle="editorial">에디토리얼</div>
+        </div>
+        <div class="section-label" style="margin-top:14px;">배너 규격</div>
+        <div class="chip-row" id="bnSizeRow">
+          <div class="chip active" data-bsize="standard">1200×72</div>
+          <div class="chip" data-bsize="thin">1200×56</div>
+          <div class="chip" data-bsize="comfort">1200×96</div>
+          <div class="chip" data-bsize="hero">1600×120</div>
+          <div class="chip" data-bsize="ig-feed">IG 정사각</div>
+          <div class="chip" data-bsize="ig-story">IG 스토리</div>
+        </div>
+        <div class="section-label" style="margin-top:14px;">LIVE 점</div>
+        <div class="chip-row" id="liveRow">
+          <div class="chip" data-live="on">표시</div>
+          <div class="chip active" data-live="off">숨김</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ctx-panel" id="panel-write">
+      <div class="mode-only-nl">
+        <div class="section-label">뉴스레터 텍스트</div>
+        <div class="field"><div class="field-label">키커</div><textarea id="kickerText" rows="1">WEEKLY BRIEFING</textarea></div>
+        <div class="field"><div class="field-label">타이틀</div><textarea id="titleText" rows="2">한 주의 시선을 모은 이야기</textarea></div>
+        <div class="field"><div class="field-label">서브</div><textarea id="subText" rows="2">에디터가 고른 이슈와 장면, 오늘 아침에 도착합니다.</textarea></div>
+        <div class="field"><div class="field-label">브랜드</div><input type="text" id="brandText" value="WEST150DAILY"></div>
+        <div class="field"><div class="field-label">이슈 · 날짜</div><input type="text" id="issueText" value="Vol. 48  ·  2026.08.24"></div>
+      </div>
+      <div class="mode-only-bn">
+        <div class="section-label">배너 텍스트</div>
+        <div class="field"><div class="field-label">라벨</div><input type="text" id="bnLabelText" value="속보"></div>
+        <div class="field"><div class="field-label">헤드라인</div><textarea id="bnHeadlineText" rows="2">도심 한복판 화재 발생, 인근 일대 교통 통제</textarea></div>
+        <div class="field"><div class="field-label">메타</div><input type="text" id="bnMetaText" value="방금 전"></div>
+        <div class="field"><div class="field-label">브랜드</div><input type="text" id="bnBrandText" value="WEST150DAILY"></div>
+      </div>
+      <button class="btn btn-secondary" id="fillDateBtn" style="margin-top:4px;">📅 오늘 날짜 / 방금 전</button>
+    </div>
+
+    <div class="ctx-panel" id="panel-image">
+      <div class="section-label">이미지 (뉴스레터)</div>
+      <div class="field"><label class="upload-btn" for="fileInput">📷 사진 업로드</label></div>
+      <button class="btn btn-secondary" id="clearImgBtn" style="margin-top:0;">이미지 제거</button>
+      <div class="field" style="margin-top:12px;"><div class="field-label">확대 <span class="val" id="iZoomVal">1.00x</span></div><input type="range" id="iZoom" min="1" max="2.5" step="0.01" value="1"></div>
+      <div class="row2">
+        <div class="field"><div class="field-label">가로</div><input type="range" id="iOffX" min="-50" max="50" value="0"></div>
+        <div class="field"><div class="field-label">세로</div><input type="range" id="iOffY" min="-50" max="50" value="0"></div>
+      </div>
+      <div class="upload-hint">배너 모드에서는 이미지가 사용되지 않습니다</div>
+    </div>
+
+    <div class="ctx-panel" id="panel-style">
+      <div class="section-label">톤</div>
+      <div class="chip-row" id="toneRow">
+        <div class="chip active" data-tone="light">라이트</div>
+        <div class="chip" data-tone="ink">잉크</div>
+        <div class="chip" data-tone="dark">다크</div>
+        <div class="chip" data-tone="midnight">미드나잇</div>
+      </div>
+      <div class="section-label" style="margin-top:14px;">포인트 컬러</div>
+      <div class="swatches" id="swatchRow"></div>
+      <div class="field" style="margin-top:10px;"><div class="field-label">직접</div><input type="color" class="color-input" id="accentColor" value="#8b3a3a"></div>
+      <div class="field"><div class="field-label">배경</div><input type="color" class="color-input" id="bgColor" value="#f6f3ed"></div>
+      <div class="mode-only-nl">
+        <div class="section-label" style="margin-top:10px;">하단 라인</div>
+        <div class="chip-row" id="ruleRow">
+          <div class="chip active" data-rule="on">표시</div>
+          <div class="chip" data-rule="off">숨김</div>
+        </div>
+        <div class="field" style="margin-top:10px;"><div class="field-label">타이틀 크기 <span class="val" id="titleSizeVal">42px</span></div><input type="range" id="titleSize" min="18" max="64" value="42"></div>
+      </div>
+    </div>
+
+    <div class="ctx-panel" id="panel-save">
+      <div class="section-label">내보내기</div>
+      <button class="btn btn-primary" id="exportBtn">⬇ PNG 저장</button>
+      <button class="btn btn-secondary" id="resetBtn">기본값으로 초기화</button>
+      <div class="upload-hint" style="margin-top:12px;">iPhone: 공유 시트 → 「이미지 저장」</div>
+    </div>
+  </div>
+
+  <input type="file" id="fileInput" accept="image/*">
+  <div class="toast" id="toast"></div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div id="modalLoading"><div class="spinner"></div><p>이미지를 만들고 있어요…</p></div>
+    <div id="modalResult" style="display:none;">
+      <h3 id="modalResultTitle">저장 준비 완료</h3>
+      <p id="modalResultHint"></p>
+      <img id="resultImg" alt="export">
+      <button class="btn btn-primary" id="shareBtn" style="display:none;">📤 공유 / 사진에 저장</button>
+      <button class="btn btn-secondary" id="downloadBtn">📥 바로 다운로드</button>
+      <button class="close-btn" id="closeModalBtn">닫기</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var card = document.getElementById('card');
+  var cardShell = document.getElementById('cardShell');
+  var canvasArea = document.getElementById('canvasArea');
+  var zoomPill = document.getElementById('zoomPill');
+  var toastEl = document.getElementById('toast');
+
+  function showToast(msg){
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    setTimeout(function(){ toastEl.classList.remove('show'); }, 2000);
+  }
+
+  document.querySelectorAll('#mainTools .tool-item').forEach(function(item){
+    item.addEventListener('click', function(){
+      document.querySelectorAll('#mainTools .tool-item').forEach(function(t){ t.classList.remove('active'); });
+      document.querySelectorAll('.ctx-panel').forEach(function(p){ p.classList.remove('active'); });
+      item.classList.add('active');
+      var panel = document.getElementById('panel-' + item.dataset.panel);
+      if(panel) panel.classList.add('active');
+      setTimeout(fitScale, 50);
+    });
+  });
+
+  function bind(id, outs){
+    var el = document.getElementById(id);
+    if(!el) return;
+    var list = (Array.isArray(outs) ? outs : [outs]).map(function(i){ return document.getElementById(i); }).filter(Boolean);
+    function go(){ list.forEach(function(o){ o.textContent = el.value; }); }
+    el.addEventListener('input', go); el.addEventListener('change', go); go();
+  }
+  bind('kickerText', 'kickerOut');
+  bind('titleText', 'titleOut');
+  bind('subText', 'subOut');
+  bind('brandText', 'brandOut');
+  bind('issueText', 'issueOut');
+  bind('bnLabelText', ['bnLabelOut', 'bnEdKickerOut']);
+  bind('bnHeadlineText', ['bnHeadlineOut', 'bnEdTitleOut']);
+  bind('bnMetaText', 'bnMetaOut');
+  bind('bnBrandText', 'bnEdBrandOut');
+
+  function setMode(mode){
+    document.body.setAttribute('data-app-mode', mode);
+    card.dataset.mode = mode;
+    document.querySelectorAll('#modeRow .chip').forEach(function(b){ b.classList.toggle('active', b.dataset.mode === mode); });
+    if(mode === 'banner' && card.dataset.bstyle === 'breaking'){
+      document.getElementById('bgColor').value = '#0e0e10';
+      card.style.setProperty('--c-bg', '#0e0e10');
+      card.style.setProperty('--c-text', '#f5f5f5');
+    }
+    fitScale();
+  }
+  document.querySelectorAll('#modeRow .chip').forEach(function(btn){
+    btn.addEventListener('click', function(){ setMode(btn.dataset.mode); });
+  });
+
+  document.querySelectorAll('#nlSizeRow .chip').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('#nlSizeRow .chip').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      card.dataset.size = btn.dataset.size;
+      fitScale();
+    });
+  });
+  document.querySelectorAll('#bnSizeRow .chip').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('#bnSizeRow .chip').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      card.dataset.bsize = btn.dataset.bsize;
+      fitScale();
+    });
+  });
+  document.querySelectorAll('#layoutRow .chip').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('#layoutRow .chip').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      card.dataset.layout = btn.dataset.layout;
+    });
+  });
+  document.querySelectorAll('#bstyleRow .chip').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('#bstyleRow .chip').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      card.dataset.bstyle = btn.dataset.bstyle;
+      if(btn.dataset.bstyle === 'breaking'){
+        document.getElementById('bgColor').value = '#0e0e10';
+        card.style.setProperty('--c-bg', '#0e0e10');
+        card.style.setProperty('--c-text', '#f5f5f5');
+        document.getElementById('accentColor').value = '#c23b52';
+        card.style.setProperty('--c-accent', '#c23b52');
+      } else {
+        document.getElementById('bgColor').value = '#f6f3ed';
+        card.style.setProperty('--c-bg', '#f6f3ed');
+        card.style.setProperty('--c-text', '#16140f');
+        document.getElementById('accentColor').value = '#8b3a3a';
+        card.style.setProperty('--c-accent', '#8b3a3a');
+      }
+    });
+  });
+  document.querySelectorAll('#liveRow .chip').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('#liveRow .chip').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      document.getElementById('bnLiveDot').style.display = btn.dataset.live === 'on' ? '' : 'none';
+    });
+  });
+  document.querySelectorAll('#ruleRow .chip').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('#ruleRow .chip').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      card.dataset.rule = btn.dataset.rule;
+    });
+  });
+
+  document.getElementById('fillDateBtn').addEventListener('click', function(){
+    var n = new Date();
+    if(card.dataset.mode === 'banner'){
+      document.getElementById('bnMetaText').value = '방금 전';
+      document.getElementById('bnMetaText').dispatchEvent(new Event('input'));
+    } else {
+      var cur = document.getElementById('issueText').value;
+      var vol = (cur.match(/Vol\.\s*\d+/i) || ['Vol. 1'])[0];
+      var d = n.getFullYear() + '.' + String(n.getMonth()+1).padStart(2,'0') + '.' + String(n.getDate()).padStart(2,'0');
+      document.getElementById('issueText').value = vol + '  ·  ' + d;
+      document.getElementById('issueText').dispatchEvent(new Event('input'));
+    }
+  });
+
+  var imgEl = null, iZoom = 1, iOffX = 0, iOffY = 0;
+  var mediaWrap = document.getElementById('mediaWrap');
+  function applyImg(){
+    card.style.setProperty('--izoom', iZoom);
+    card.style.setProperty('--ioffx', iOffX + '%');
+    card.style.setProperty('--ioffy', iOffY + '%');
+    document.getElementById('iZoomVal').textContent = iZoom.toFixed(2) + 'x';
+  }
+  applyImg();
+  document.getElementById('iZoom').addEventListener('input', function(e){ iZoom = +e.target.value; applyImg(); });
+  document.getElementById('iOffX').addEventListener('input', function(e){ iOffX = +e.target.value; applyImg(); });
+  document.getElementById('iOffY').addEventListener('input', function(e){ iOffY = +e.target.value; applyImg(); });
+  document.getElementById('fileInput').addEventListener('change', function(e){
+    var f = e.target.files && e.target.files[0];
+    if(!f) return;
+    var r = new FileReader();
+    r.onload = function(ev){
+      if(imgEl) imgEl.remove();
+      imgEl = document.createElement('img');
+      imgEl.crossOrigin = 'anonymous';
+      imgEl.src = ev.target.result;
+      mediaWrap.appendChild(imgEl);
+      document.getElementById('mediaPh').style.display = 'none';
+      applyImg();
+      showToast('이미지 적용됨');
+    };
+    r.readAsDataURL(f);
+    e.target.value = '';
+  });
+  document.getElementById('clearImgBtn').addEventListener('click', function(){
+    if(imgEl){ imgEl.remove(); imgEl = null; }
+    document.getElementById('mediaPh').style.display = '';
+    showToast('이미지 제거됨');
+  });
+  var dragging = false, dragStart = {x:0,y:0}, startOff = {x:0,y:0};
+  mediaWrap.addEventListener('pointerdown', function(e){
+    if(!imgEl) return;
+    dragging = true; dragStart = {x:e.clientX,y:e.clientY}; startOff = {x:iOffX,y:iOffY};
+    mediaWrap.setPointerCapture(e.pointerId);
+  });
+  mediaWrap.addEventListener('pointermove', function(e){
+    if(!dragging) return;
+    var rect = mediaWrap.getBoundingClientRect();
+    iOffX = Math.max(-50, Math.min(50, startOff.x + (e.clientX-dragStart.x)/rect.width*100));
+    iOffY = Math.max(-50, Math.min(50, startOff.y + (e.clientY-dragStart.y)/rect.height*100));
+    document.getElementById('iOffX').value = iOffX;
+    document.getElementById('iOffY').value = iOffY;
+    applyImg();
+  });
+  ['pointerup','pointercancel','pointerleave'].forEach(function(ev){
+    mediaWrap.addEventListener(ev, function(){ dragging = false; });
+  });
+
+  var toneBg = { light:'#f6f3ed', ink:'#faf8f4', dark:'#12110f', midnight:'#0f1419' };
+  document.querySelectorAll('#toneRow .chip').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('#toneRow .chip').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      card.dataset.tone = btn.dataset.tone;
+      if(toneBg[btn.dataset.tone]){
+        document.getElementById('bgColor').value = toneBg[btn.dataset.tone];
+        card.style.setProperty('--c-bg', toneBg[btn.dataset.tone]);
+      }
+    });
+  });
+  var ACCENTS = ['#8b3a3a','#c23b52','#1a3a5c','#2c5f4a','#8b5a2b','#c4a574'];
+  ACCENTS.forEach(function(c, i){
+    var d = document.createElement('div');
+    d.className = 'swatch' + (i===0 ? ' active' : '');
+    d.style.background = c;
+    d.addEventListener('click', function(){
+      document.querySelectorAll('.swatch').forEach(function(s){ s.classList.remove('active'); });
+      d.classList.add('active');
+      document.getElementById('accentColor').value = c;
+      card.style.setProperty('--c-accent', c);
+    });
+    document.getElementById('swatchRow').appendChild(d);
+  });
+  card.style.setProperty('--c-accent', ACCENTS[0]);
+  document.getElementById('accentColor').addEventListener('input', function(e){
+    document.querySelectorAll('.swatch').forEach(function(s){ s.classList.remove('active'); });
+    card.style.setProperty('--c-accent', e.target.value);
+  });
+  document.getElementById('bgColor').addEventListener('input', function(e){
+    card.style.setProperty('--c-bg', e.target.value);
+  });
+  document.getElementById('titleSize').addEventListener('input', function(e){
+    document.getElementById('titleOut').style.fontSize = e.target.value + 'px';
+    document.getElementById('titleSizeVal').textContent = e.target.value + 'px';
+  });
+
+  function getDims(){
+    if(card.dataset.mode === 'banner'){
+      var m = {thin:{w:1200,h:56},standard:{w:1200,h:72},comfort:{w:1200,h:96},hero:{w:1600,h:120},'ig-feed':{w:1080,h:1080},'ig-story':{w:1080,h:1920}};
+      return m[card.dataset.bsize] || m.standard;
+    }
+    var m2 = {compact:{w:600,h:160},standard:{w:1200,h:320},wide:{w:1200,h:400},tall:{w:1200,h:480},'ig-feed':{w:1080,h:1080},'ig-portrait':{w:1080,h:1350},'ig-story':{w:1080,h:1920}};
+    return m2[card.dataset.size] || m2.standard;
+  }
+
+  var previewScale = 0.5;
+  function applyPreviewScale(){
+    cardShell.style.transform = 'scale(' + previewScale + ')';
+    cardShell.style.transformOrigin = 'center center';
+    zoomPill.textContent = Math.round(previewScale * 100) + '%';
+    zoomPill.classList.add('show');
+    clearTimeout(zoomPill._t);
+    zoomPill._t = setTimeout(function(){ zoomPill.classList.remove('show'); }, 900);
+  }
+  function fitScale(){
+    var d = getDims();
+    card.style.setProperty('--cw', d.w + 'px');
+    card.style.setProperty('--ch', d.h + 'px');
+    card.style.width = d.w + 'px';
+    card.style.height = d.h + 'px';
+    var availW = canvasArea.clientWidth - 28;
+    var availH = canvasArea.clientHeight - 28;
+    previewScale = Math.max(0.08, Math.min(availW / d.w, availH / d.h, 0.95) * 0.98);
+    applyPreviewScale();
+  }
+  document.getElementById('btnFit').addEventListener('click', fitScale);
+  window.addEventListener('resize', fitScale);
+  requestAnimationFrame(function(){ requestAnimationFrame(fitScale); });
+
+  var lastDist = 0;
+  canvasArea.addEventListener('touchstart', function(e){
+    if(e.touches.length === 2) lastDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+  }, {passive:true});
+  canvasArea.addEventListener('touchmove', function(e){
+    if(e.touches.length === 2 && lastDist){
+      var dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+      previewScale = Math.min(1.2, Math.max(0.12, previewScale * (dist / lastDist)));
+      applyPreviewScale();
+      lastDist = dist;
+    }
+  }, {passive:true});
+  canvasArea.addEventListener('dblclick', fitScale);
+
+  var modalOverlay = document.getElementById('modalOverlay');
+  var modalLoading = document.getElementById('modalLoading');
+  var modalResult = document.getElementById('modalResult');
+  var resultImg = document.getElementById('resultImg');
+  var shareBtn = document.getElementById('shareBtn');
+  var downloadBtn = document.getElementById('downloadBtn');
+  var lastBlob = null, lastFileName = '';
+
+  async function captureCard(){
+    await document.fonts.ready;
+    var d = getDims();
+    var originalTransform = cardShell.style.transform;
+    cardShell.style.transform = 'none';
+    await new Promise(function(r){ requestAnimationFrame(function(){ requestAnimationFrame(r); }); });
+    var canvas = await html2canvas(card, {
+      backgroundColor: null, useCORS: true, allowTaint: false, scale: 2,
+      width: d.w, height: d.h, windowWidth: d.w, windowHeight: d.h, imageTimeout: 30000, logging: false,
+      onclone: function(clonedDoc){
+        var c = clonedDoc.getElementById('card');
+        if(c){ c.style.transform = 'none'; c.style.width = d.w + 'px'; c.style.height = d.h + 'px'; }
+      }
+    });
+    cardShell.style.transform = originalTransform;
+    return canvas;
+  }
+
+  function openExport(){
+    document.querySelectorAll('#mainTools .tool-item').forEach(function(t){ t.classList.remove('active'); });
+    document.querySelectorAll('.ctx-panel').forEach(function(p){ p.classList.remove('active'); });
+    document.querySelector('[data-panel="save"]').classList.add('active');
+    document.getElementById('panel-save').classList.add('active');
+  }
+  document.getElementById('btnShare').addEventListener('click', function(){
+    openExport();
+    document.getElementById('exportBtn').click();
+  });
+
+  document.getElementById('exportBtn').addEventListener('click', async function(){
+    modalOverlay.classList.add('show');
+    modalLoading.style.display = 'block';
+    modalResult.style.display = 'none';
+    modalLoading.innerHTML = '<div class="spinner"></div><p>이미지를 만들고 있어요…</p>';
+    try {
+      var canvas = await captureCard();
+      var prefix = card.dataset.mode === 'banner' ? 'news-banner-' : 'newsletter-';
+      lastFileName = prefix + Date.now() + '.png';
+      lastBlob = await new Promise(function(resolve){ canvas.toBlob(resolve, 'image/png', 1.0); });
+      var dataUrl = lastBlob ? URL.createObjectURL(lastBlob) : canvas.toDataURL('image/png', 1.0);
+      resultImg.src = dataUrl;
+      var canShare = false;
+      if(lastBlob && navigator.canShare){
+        try {
+          var f = new File([lastBlob], lastFileName, {type:'image/png'});
+          canShare = navigator.canShare({files:[f]});
+        } catch(e){ canShare = false; }
+      }
+      if(canShare){
+        document.getElementById('modalResultTitle').textContent = '저장 준비 완료';
+        document.getElementById('modalResultHint').innerHTML = '아래 <b>「공유 / 사진에 저장」</b>을 누르면 공유 시트가 열려요.<br>「이미지 저장」을 선택하세요.';
+        shareBtn.style.display = 'block';
+      } else {
+        document.getElementById('modalResultTitle').textContent = '저장 준비 완료';
+        document.getElementById('modalResultHint').innerHTML = '<b>iPhone</b>: 이미지를 길게 눌러 「사진에 저장」<br><b>PC</b>: 다운로드 또는 우클릭 저장';
+        shareBtn.style.display = 'none';
+      }
+      modalLoading.style.display = 'none';
+      modalResult.style.display = 'block';
+      downloadBtn.onclick = function(){
+        var a = document.createElement('a');
+        a.href = dataUrl; a.download = lastFileName;
+        document.body.appendChild(a); a.click(); a.remove();
+      };
+    } catch(err){
+      console.error(err);
+      modalLoading.innerHTML = '<p style="color:#ff8080;line-height:1.6;">생성 실패<br>' + (err && err.message ? err.message : '') + '</p><button class="btn btn-secondary" onclick="location.reload()" style="margin-top:14px;">새로고침</button>';
+    }
+  });
+
+  shareBtn.addEventListener('click', async function(){
+    if(!lastBlob) return;
+    try {
+      var file = new File([lastBlob], lastFileName, {type:'image/png'});
+      await navigator.share({files:[file], title:'WEST150 BANNER'});
+      modalOverlay.classList.remove('show');
+    } catch(shareErr){
+      if(shareErr && shareErr.name === 'AbortError') return;
+      alert('공유 실패. 이미지를 길게 눌러 저장해 주세요.');
+    }
+  });
+  document.getElementById('closeModalBtn').addEventListener('click', function(){ modalOverlay.classList.remove('show'); });
+  modalOverlay.addEventListener('click', function(e){ if(e.target === modalOverlay) modalOverlay.classList.remove('show'); });
+  document.getElementById('resetBtn').addEventListener('click', function(){
+    if(confirm('모든 설정을 기본값으로 되돌릴까요?')) location.reload();
+  });
+  document.getElementById('btnBack').addEventListener('click', function(){
+    if(confirm('편집을 종료할까요?')) history.back();
+  });
+  document.addEventListener('gesturestart', function(e){ e.preventDefault(); });
+  document.addEventListener('gesturechange', function(e){ e.preventDefault(); });
+})();
+</script>
+</body>
+</html>

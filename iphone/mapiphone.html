@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>WEST150 · Map Location Studio</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Noto+Serif+KR:wght@400;600;700;900&family=IBM+Plex+Sans+KR:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root{--bg:#0D0D0D;--surface:#141414;--surface2:#1A1A1A;--border:#2A2A2A;--text:#F5F5F5;--dim:rgba(255,255,255,.55);--accent:#e0334c;--safe-b:env(safe-area-inset-bottom,0px);--safe-t:env(safe-area-inset-top,0px);}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Pretendard','Noto Sans KR',-apple-system,sans-serif;user-select:none;-webkit-user-select:none;touch-action:manipulation;}
+#app{display:flex;flex-direction:column;height:100%;max-width:430px;margin:0 auto;position:relative;background:var(--bg);}
+.top-nav{height:52px;padding-top:var(--safe-t);min-height:calc(52px + var(--safe-t));display:flex;align-items:center;justify-content:space-between;padding-left:8px;padding-right:8px;background:var(--bg);border-bottom:1px solid var(--border);flex-shrink:0;z-index:40;}
+.top-nav .left,.top-nav .right{display:flex;align-items:center;gap:2px;min-width:72px;}
+.top-nav .right{justify-content:flex-end;}
+.top-nav .center{font-size:13px;font-weight:600;opacity:.9;}
+.icon-btn{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border:none;background:transparent;color:var(--text);border-radius:8px;cursor:pointer;opacity:.88;}
+.icon-btn:active{background:rgba(255,255,255,.08);}
+.icon-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+.canvas-area{flex:1;min-height:0;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#080808;padding:14px 16px;}
+.stage{position:relative;display:flex;align-items:center;justify-content:center;}
+.card-shell{border-radius:6px;overflow:hidden;box-shadow:0 0 0 1px rgba(255,255,255,.14),0 10px 28px rgba(0,0,0,.5);transform-origin:center center;}
+.zoom-pill{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.65);color:rgba(255,255,255,.8);font-size:11px;padding:4px 12px;border-radius:14px;pointer-events:none;opacity:0;transition:opacity .25s;z-index:10;}
+.zoom-pill.show{opacity:1;}
+#card{width:var(--card-w,1080px);height:var(--card-h,1920px);position:relative;overflow:hidden;background:var(--c-bg,#f7f4ef);color:var(--c-text,#1a1814);font-family:'Noto Serif KR',Georgia,serif;}
+#card[data-ratio="square"]{--card-w:1080px;--card-h:1080px;}
+#card[data-ratio="landscape"]{--card-w:1600px;--card-h:900px;}
+#card[data-ratio="story"]{--card-w:1080px;--card-h:1920px;}
+.c-top{position:absolute;top:0;left:0;right:0;padding:56px 64px 0;display:flex;align-items:center;justify-content:space-between;z-index:5;}
+.c-brand{font-family:'Pretendard',sans-serif;font-size:22px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--c-brand,#1a1814);}
+.c-date{font-family:'Pretendard',sans-serif;font-size:18px;font-weight:500;letter-spacing:.04em;color:var(--c-muted,#6b6560);opacity:.85;}
+.c-map-stage{position:absolute;left:64px;right:64px;top:140px;height:52%;border-radius:4px;overflow:hidden;background:#e8e4dc;box-shadow:0 20px 50px rgba(0,0,0,.08);}
+#card[data-ratio="square"] .c-map-stage{top:110px;height:46%;}
+#card[data-ratio="landscape"] .c-map-stage{left:48%;right:48px;top:48px;bottom:48px;height:auto;border-radius:3px;}
+.c-map-wrap{position:absolute;inset:0;overflow:hidden;cursor:grab;background:#d9d4cb;}
+.c-map-wrap:active{cursor:grabbing;}
+.c-map-wrap img{position:absolute;top:50%;left:50%;width:100%;height:100%;object-fit:cover;object-position:center;transform:translate(-50%,-50%) scale(var(--mzoom,1)) translate(var(--moffx,0%),var(--moffy,0%));user-select:none;pointer-events:none;}
+.c-map-placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#9a958c;font-family:'Pretendard',sans-serif;font-size:22px;text-align:center;gap:12px;background:linear-gradient(135deg,#e5e0d6,#d4cfc4);}
+.c-map-placeholder span{font-size:16px;letter-spacing:.04em;}
+.c-map-frame{position:absolute;inset:12px;border:1px solid rgba(255,255,255,.35);pointer-events:none;z-index:3;}
+.c-pin{position:absolute;left:var(--pin-x,50%);top:var(--pin-y,48%);transform:translate(-50%,-100%);z-index:4;pointer-events:none;filter:drop-shadow(0 8px 16px rgba(0,0,0,.25));}
+.c-pin-body{width:36px;height:36px;border-radius:50% 50% 50% 0;background:var(--c-accent,#b33a3a);transform:rotate(-45deg);position:relative;}
+.c-pin-body::after{content:"";position:absolute;top:50%;left:50%;width:14px;height:14px;border-radius:50%;background:#fff;transform:translate(-50%,-50%);}
+.c-pin-pulse{position:absolute;left:50%;top:50%;width:64px;height:64px;border-radius:50%;border:2px solid var(--c-accent,#b33a3a);transform:translate(-50%,-50%);opacity:.35;animation:pulse 2.4s ease-out infinite;}
+@keyframes pulse{0%{transform:translate(-50%,-50%) scale(.4);opacity:.5;}100%{transform:translate(-50%,-50%) scale(1.4);opacity:0;}}
+.c-bottom{position:absolute;left:0;right:0;bottom:0;padding:0 64px 64px;z-index:5;}
+#card[data-ratio="landscape"] .c-bottom{left:0;right:52%;top:0;bottom:0;padding:56px 48px 48px 56px;display:flex;flex-direction:column;justify-content:center;}
+.c-location-row{display:flex;align-items:center;gap:14px;margin-bottom:22px;}
+.c-location-dot{width:10px;height:10px;border-radius:50%;background:var(--c-accent,#b33a3a);flex-shrink:0;}
+.c-location{font-family:'Pretendard',sans-serif;font-size:18px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--c-accent,#b33a3a);}
+.c-rule{width:48px;height:2px;background:var(--c-accent,#b33a3a);margin-bottom:28px;opacity:.9;}
+.c-headline{font-family:'Noto Serif KR',Georgia,serif;font-size:56px;font-weight:700;line-height:1.22;letter-spacing:-.02em;word-break:keep-all;white-space:pre-wrap;color:var(--c-text,#1a1814);margin-bottom:24px;}
+#card[data-ratio="square"] .c-headline{font-size:44px;}
+#card[data-ratio="landscape"] .c-headline{font-size:42px;}
+.c-body{font-family:'Pretendard',sans-serif;font-size:24px;font-weight:400;line-height:1.65;color:var(--c-muted,#5c574f);word-break:keep-all;white-space:pre-wrap;margin-bottom:36px;max-width:92%;}
+#card[data-ratio="square"] .c-body{font-size:20px;}
+.c-footer{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:20px;border-top:1px solid rgba(0,0,0,.08);}
+.c-source{font-family:'Pretendard',sans-serif;font-size:16px;font-weight:500;color:var(--c-muted,#6b6560);opacity:.75;}
+.c-coords{font-family:'IBM Plex Sans KR',monospace,sans-serif;font-size:14px;font-weight:500;letter-spacing:.04em;color:var(--c-muted,#6b6560);opacity:.55;}
+#card[data-tone="dark"]{--c-bg:#12110f;--c-text:#f2efe8;--c-muted:#a39e94;--c-brand:#f2efe8;}
+#card[data-tone="dark"] .c-map-stage{box-shadow:0 20px 50px rgba(0,0,0,.4);}
+#card[data-tone="dark"] .c-footer{border-top-color:rgba(255,255,255,.1);}
+#card[data-tone="dark"] .c-map-placeholder{background:linear-gradient(135deg,#2a2824,#1c1b18);color:#6a6560;}
+#card[data-tone="ink"]{--c-bg:#faf8f4;--c-text:#0e0d0b;--c-muted:#5a564e;--c-brand:#0e0d0b;--c-accent:#1a3a5c;}
+.bottom-bar{background:var(--surface);border-top:1px solid var(--border);flex-shrink:0;padding-bottom:var(--safe-b);z-index:50;}
+.tool-row{display:flex;overflow-x:auto;padding:8px 6px 4px;gap:2px;scrollbar-width:none;}
+.tool-row::-webkit-scrollbar{display:none;}
+.tool-item{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:58px;padding:4px 4px;cursor:pointer;color:var(--dim);}
+.tool-item.active,.tool-item:active{color:var(--text);}
+.tool-item .icon{width:26px;height:26px;display:flex;align-items:center;justify-content:center;}
+.tool-item .icon svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
+.tool-item .label{font-size:10px;font-weight:500;}
+.ctx-panel{display:none;max-height:32vh;overflow-y:auto;padding:8px 12px 10px;border-top:1px solid var(--border);background:var(--surface2);-webkit-overflow-scrolling:touch;}
+.ctx-panel.active{display:block;}
+.section-label{font-size:11px;font-weight:700;color:var(--text);margin-bottom:10px;letter-spacing:.3px;display:flex;align-items:center;gap:6px;}
+.section-label::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--accent);}
+.field{margin-bottom:12px;}
+.field-label{font-size:11px;color:var(--dim);margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;}
+.field-label .val{color:var(--accent);font-weight:600;}
+textarea,input[type="text"]{width:100%;resize:vertical;min-height:38px;background:#0f0f13;border:1px solid #2c2c35;border-radius:9px;color:var(--text);font-size:13px;padding:10px 12px;font-family:'Pretendard',sans-serif;line-height:1.4;-webkit-user-select:text;user-select:text;}
+textarea:focus,input[type="text"]:focus{outline:none;border-color:var(--accent);}
+input[type="range"]{width:100%;-webkit-appearance:none;appearance:none;height:4px;border-radius:4px;background:#2c2c35;outline:none;}
+input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid #fff;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.color-input{-webkit-appearance:none;appearance:none;width:100%;height:36px;padding:0;border:1px solid #2c2c35;border-radius:9px;background:#0f0f13;cursor:pointer;}
+.color-input::-webkit-color-swatch-wrapper{padding:3px;}
+.color-input::-webkit-color-swatch{border:none;border-radius:6px;}
+.chip-row{display:flex;gap:6px;flex-wrap:wrap;}
+.chip{padding:7px 12px;border-radius:20px;font-size:11px;background:#0f0f13;border:1px solid #2c2c35;color:#b6b6c0;cursor:pointer;}
+.chip.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+.swatches{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;}
+.swatch{width:100%;aspect-ratio:1;border-radius:50%;border:2px solid transparent;cursor:pointer;box-shadow:inset 0 0 0 1px rgba(255,255,255,.15);}
+.swatch.active{border-color:#fff;transform:scale(1.08);}
+.upload-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px;border-radius:10px;background:#232329;border:1px dashed #3a3a44;color:#d8d8de;font-size:13px;cursor:pointer;font-weight:600;}
+.upload-btn:active{background:#2a2a32;border-color:var(--accent);}
+.upload-hint{font-size:11px;color:#75757f;margin-top:8px;text-align:center;line-height:1.5;}
+.btn{width:100%;padding:14px;border-radius:12px;border:none;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;}
+.btn-primary{background:linear-gradient(135deg,#e0334c,#a3172e);color:#fff;}
+.btn-secondary{background:#232329;color:var(--text);border:1px solid #34343d;margin-top:8px;}
+#fileInput{display:none;}
+.toast{position:absolute;bottom:110px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,.92);color:#111;font-size:13px;font-weight:600;padding:10px 18px;border-radius:20px;z-index:200;opacity:0;transition:opacity .25s;pointer-events:none;white-space:nowrap;}
+.toast.show{opacity:1;}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:flex-end;justify-content:center;z-index:100;padding:0;}
+.modal-overlay.show{display:flex;}
+.modal{background:#17171c;border:1px solid #2c2c35;border-radius:16px 16px 0 0;padding:18px 18px calc(20px + var(--safe-b));width:100%;max-width:430px;max-height:85vh;overflow-y:auto;text-align:center;animation:slideUp .25s ease;}
+@keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
+.modal-handle{width:36px;height:4px;background:#444;border-radius:2px;margin:0 auto 14px;}
+.modal h3{font-size:15px;margin-bottom:6px;}
+.modal p{font-size:12.5px;color:#9a9aa4;line-height:1.6;margin-bottom:14px;}
+.modal img{width:100%;max-height:40vh;object-fit:contain;border-radius:10px;margin-bottom:14px;border:1px solid #2c2c35;background:#0a0a0a;}
+.modal .close-btn{margin-top:8px;background:none;border:none;color:#75757f;font-size:13px;cursor:pointer;padding:8px;}
+.spinner{width:32px;height:32px;border-radius:50%;border:3px solid #2c2c35;border-top-color:var(--accent);animation:spin .8s linear infinite;margin:18px auto;}
+@keyframes spin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="top-nav">
+    <div class="left"><button class="icon-btn" id="btnBack" title="뒤로"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button></div>
+    <div class="center">지도 · 위치 뉴스</div>
+    <div class="right">
+      <button class="icon-btn" id="btnFit" title="맞춤"><svg viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg></button>
+      <button class="icon-btn" id="btnShare" title="저장"><svg viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg></button>
+    </div>
+  </div>
+  <div class="canvas-area" id="canvasArea">
+    <div class="stage"><div class="card-shell" id="cardShell">
+      <div id="card" data-ratio="story" data-tone="light">
+        <div class="c-top"><div class="c-brand" id="brandOut">WEST150DAILY</div><div class="c-date" id="dateOut"></div></div>
+        <div class="c-map-stage">
+          <div class="c-map-wrap" id="mapWrap">
+            <div class="c-map-placeholder" id="mapPlaceholder">
+              <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M12 21s-7-5.2-7-11a7 7 0 1114 0c0 5.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+              <span>지도 · 현장 사진 업로드</span>
+            </div>
+          </div>
+          <div class="c-map-frame"></div>
+          <div class="c-pin" id="pinEl"><div class="c-pin-pulse"></div><div class="c-pin-body"></div></div>
+        </div>
+        <div class="c-bottom">
+          <div class="c-location-row"><div class="c-location-dot"></div><div class="c-location" id="locationOut">서울 · 종로구</div></div>
+          <div class="c-rule"></div>
+          <div class="c-headline" id="headlineOut">도심 한복판에서 발생한 화재, 인근 일대 통제</div>
+          <div class="c-body" id="bodyOut">오늘 오전 종로 일대에서 화재가 발생해 소방 당국이 긴급 진화에 나섰습니다. 현재 인근 도로가 부분 통제되고 있습니다.</div>
+          <div class="c-footer"><div class="c-source" id="sourceOut">Photo · Map data</div><div class="c-coords" id="coordsOut">37.5729° N  126.9794° E</div></div>
+        </div>
+      </div>
+    </div></div>
+    <div class="zoom-pill" id="zoomPill">100%</div>
+  </div>
+  <div class="bottom-bar">
+    <div class="tool-row" id="mainTools">
+      <div class="tool-item active" data-panel="write"><div class="icon"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div><div class="label">글·위치</div></div>
+      <div class="tool-item" data-panel="map"><div class="icon"><svg viewBox="0 0 24 24"><path d="M12 21s-7-5.2-7-11a7 7 0 1114 0c0 5.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div><div class="label">지도</div></div>
+      <div class="tool-item" data-panel="style"><div class="icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></svg></div><div class="label">스타일</div></div>
+      <div class="tool-item" data-panel="save"><div class="icon"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg></div><div class="label">저장</div></div>
+    </div>
+    <div class="ctx-panel active" id="panel-write">
+      <div class="section-label">위치 · 기사</div>
+      <div class="field"><div class="field-label">브랜드</div><input type="text" id="brandText" value="WEST150DAILY"></div>
+      <div class="field"><div class="field-label">지역 · 장소</div><textarea id="locationText" rows="1">서울 · 종로구</textarea></div>
+      <div class="field"><div class="field-label">좌표 (선택)</div><input type="text" id="coordsText" value="37.5729° N  126.9794° E"></div>
+      <div class="field"><div class="field-label">헤드라인</div><textarea id="headlineText" rows="3">도심 한복판에서 발생한 화재, 인근 일대 통제</textarea></div>
+      <div class="field"><div class="field-label">본문</div><textarea id="bodyText" rows="3">오늘 오전 종로 일대에서 화재가 발생해 소방 당국이 긴급 진화에 나섰습니다. 현재 인근 도로가 부분 통제되고 있습니다.</textarea></div>
+      <div class="field"><div class="field-label">출처</div><input type="text" id="sourceText" value="Photo · Map data"></div>
+      <div class="field"><div class="field-label">날짜</div><input type="text" id="dateText" value=""></div>
+      <button class="btn btn-secondary" id="fillDateBtn" style="margin-top:0;">📅 오늘 날짜 넣기</button>
+    </div>
+    <div class="ctx-panel" id="panel-map">
+      <div class="section-label">지도 · 현장 사진</div>
+      <div class="field"><label class="upload-btn" for="fileInput">📷 사진 업로드</label><div class="upload-hint">드래그로 위치 이동 · 핀은 아래에서 조절</div></div>
+      <button class="btn btn-secondary" id="clearMapBtn" style="margin-top:0;">이미지 제거</button>
+      <div class="field" style="margin-top:12px;"><div class="field-label">확대 <span class="val" id="mZoomVal">1.00x</span></div><input type="range" id="mZoom" min="1" max="3" step="0.01" value="1"></div>
+      <div class="row2"><div class="field"><div class="field-label">가로 위치</div><input type="range" id="mOffX" min="-50" max="50" step="1" value="0"></div><div class="field"><div class="field-label">세로 위치</div><input type="range" id="mOffY" min="-50" max="50" step="1" value="0"></div></div>
+      <div class="section-label" style="margin-top:8px;">핀 위치</div>
+      <div class="row2"><div class="field"><div class="field-label">가로 % <span class="val" id="pinXVal">50</span></div><input type="range" id="pinX" min="5" max="95" step="1" value="50"></div><div class="field"><div class="field-label">세로 % <span class="val" id="pinYVal">48</span></div><input type="range" id="pinY" min="5" max="95" step="1" value="48"></div></div>
+      <div class="field"><div class="field-label">핀 표시</div><div class="chip-row" id="pinToggle"><div class="chip active" data-pin="on">표시</div><div class="chip" data-pin="off">숨김</div></div></div>
+    </div>
+    <div class="ctx-panel" id="panel-style">
+      <div class="section-label">카드 비율</div>
+      <div class="chip-row" id="ratioRow"><div class="chip active" data-ratio="story">스토리 9:16</div><div class="chip" data-ratio="square">정사각 1:1</div><div class="chip" data-ratio="landscape">가로 16:9</div></div>
+      <div class="section-label" style="margin-top:14px;">톤</div>
+      <div class="chip-row" id="toneRow"><div class="chip active" data-tone="light">아이보리</div><div class="chip" data-tone="ink">잉크</div><div class="chip" data-tone="dark">다크</div></div>
+      <div class="section-label" style="margin-top:14px;">포인트 컬러</div>
+      <div class="swatches" id="swatchRow"></div>
+      <div class="field" style="margin-top:10px;"><div class="field-label">직접 선택</div><input type="color" class="color-input" id="accentColor" value="#b33a3a"></div>
+      <div class="field"><div class="field-label">배경색</div><input type="color" class="color-input" id="bgColor" value="#f7f4ef"></div>
+      <div class="field"><div class="field-label">헤드라인 크기 <span class="val" id="hlSizeVal">56px</span></div><input type="range" id="hlSize" min="32" max="72" value="56"></div>
+      <div class="field"><div class="field-label">본문 크기 <span class="val" id="bodySizeVal">24px</span></div><input type="range" id="bodySize" min="16" max="36" value="24"></div>
+    </div>
+    <div class="ctx-panel" id="panel-save">
+      <div class="section-label">내보내기</div>
+      <button class="btn btn-primary" id="exportBtn">⬇ PNG 저장</button>
+      <button class="btn btn-secondary" id="resetBtn">기본값으로 초기화</button>
+      <div class="upload-hint" style="margin-top:12px;">iPhone: 공유 시트 → 「이미지 저장」<br>또는 결과 이미지를 길게 눌러 저장</div>
+    </div>
+  </div>
+  <input type="file" id="fileInput" accept="image/*">
+  <div class="toast" id="toast"></div>
+</div>
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div id="modalLoading"><div class="spinner"></div><p>이미지를 만들고 있어요…</p></div>
+    <div id="modalResult" style="display:none;">
+      <h3 id="modalResultTitle">저장 준비 완료</h3>
+      <p id="modalResultHint"></p>
+      <img id="resultImg" alt="완성된 카드">
+      <button class="btn btn-primary" id="shareBtn" style="display:none;">📤 공유 / 사진에 저장</button>
+      <button class="btn btn-secondary" id="downloadBtn">📥 바로 다운로드</button>
+      <button class="close-btn" id="closeModalBtn">닫기</button>
+    </div>
+  </div>
+</div>
+<script>
+
+(function(){
+  const card = document.getElementById('card');
+  const cardShell = document.getElementById('cardShell');
+  const canvasArea = document.getElementById('canvasArea');
+  const zoomPill = document.getElementById('zoomPill');
+  const toastEl = document.getElementById('toast');
+
+  function showToast(msg){
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    setTimeout(function(){ toastEl.classList.remove('show'); }, 2000);
+  }
+
+  document.querySelectorAll('#mainTools .tool-item').forEach(function(item){
+    item.addEventListener('click', function(){
+      document.querySelectorAll('#mainTools .tool-item').forEach(function(t){ t.classList.remove('active'); });
+      document.querySelectorAll('.ctx-panel').forEach(function(p){ p.classList.remove('active'); });
+      item.classList.add('active');
+      var panel = document.getElementById('panel-' + item.dataset.panel);
+      if(panel) panel.classList.add('active');
+      setTimeout(fitScale, 50);
+    });
+  });
+
+  function bind(id, outId){
+    var el = document.getElementById(id), out = document.getElementById(outId);
+    if(!el || !out) return;
+    function go(){
+      out.textContent = el.value;
+      if(outId === 'coordsOut' || outId === 'sourceOut' || outId === 'dateOut'){
+        out.style.display = el.value.trim() ? '' : 'none';
+      }
+    }
+    el.addEventListener('input', go);
+    el.addEventListener('change', go);
+    go();
+  }
+  bind('brandText','brandOut');
+  bind('dateText','dateOut');
+  bind('locationText','locationOut');
+  bind('headlineText','headlineOut');
+  bind('bodyText','bodyOut');
+  bind('sourceText','sourceOut');
+  bind('coordsText','coordsOut');
+
+  function formatDate(){
+    var now = new Date();
+    var w = ['일','월','화','수','목','금','토'][now.getDay()];
+    return now.getFullYear() + '년 ' + (now.getMonth()+1) + '월 ' + now.getDate() + '일 (' + w + ')';
+  }
+  document.getElementById('fillDateBtn').addEventListener('click', function(){
+    document.getElementById('dateText').value = formatDate();
+    document.getElementById('dateText').dispatchEvent(new Event('input'));
+  });
+  document.getElementById('dateText').value = formatDate();
+  document.getElementById('dateText').dispatchEvent(new Event('input'));
+
+  var mapImg = null, mZoom = 1, mOffX = 0, mOffY = 0;
+  var mapWrap = document.getElementById('mapWrap');
+  var mapPlaceholder = document.getElementById('mapPlaceholder');
+
+  function applyMapTransform(){
+    card.style.setProperty('--mzoom', mZoom);
+    card.style.setProperty('--moffx', mOffX + '%');
+    card.style.setProperty('--moffy', mOffY + '%');
+    document.getElementById('mZoomVal').textContent = mZoom.toFixed(2) + 'x';
+  }
+  applyMapTransform();
+
+  document.getElementById('mZoom').addEventListener('input', function(e){ mZoom = parseFloat(e.target.value); applyMapTransform(); });
+  document.getElementById('mOffX').addEventListener('input', function(e){ mOffX = parseFloat(e.target.value); applyMapTransform(); });
+  document.getElementById('mOffY').addEventListener('input', function(e){ mOffY = parseFloat(e.target.value); applyMapTransform(); });
+
+  document.getElementById('fileInput').addEventListener('change', function(e){
+    var file = e.target.files && e.target.files[0];
+    if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(ev){
+      if(mapImg) mapImg.remove();
+      mapImg = document.createElement('img');
+      mapImg.crossOrigin = 'anonymous';
+      mapImg.src = ev.target.result;
+      mapWrap.appendChild(mapImg);
+      mapPlaceholder.style.display = 'none';
+      applyMapTransform();
+      showToast('지도 적용됨');
+    };
+    reader.readAsDataURL(file);
+    e.target.value = '';
+  });
+  document.getElementById('clearMapBtn').addEventListener('click', function(){
+    if(mapImg){ mapImg.remove(); mapImg = null; }
+    mapPlaceholder.style.display = '';
+    showToast('이미지 제거됨');
+  });
+
+  var dragging = false, dragStart = {x:0,y:0}, startOff = {x:0,y:0};
+  mapWrap.addEventListener('pointerdown', function(e){
+    if(!mapImg) return;
+    dragging = true;
+    dragStart = {x:e.clientX, y:e.clientY};
+    startOff = {x:mOffX, y:mOffY};
+    mapWrap.setPointerCapture(e.pointerId);
+  });
+  mapWrap.addEventListener('pointermove', function(e){
+    if(!dragging) return;
+    var rect = mapWrap.getBoundingClientRect();
+    mOffX = Math.max(-50, Math.min(50, startOff.x + (e.clientX - dragStart.x) / rect.width * 100));
+    mOffY = Math.max(-50, Math.min(50, startOff.y + (e.clientY - dragStart.y) / rect.height * 100));
+    document.getElementById('mOffX').value = mOffX;
+    document.getElementById('mOffY').value = mOffY;
+    applyMapTransform();
+  });
+  ['pointerup','pointercancel','pointerleave'].forEach(function(ev){
+    mapWrap.addEventListener(ev, function(){ dragging = false; });
+  });
+
+  function applyPin(){
+    var x = parseFloat(document.getElementById('pinX').value);
+    var y = parseFloat(document.getElementById('pinY').value);
+    card.style.setProperty('--pin-x', x + '%');
+    card.style.setProperty('--pin-y', y + '%');
+    document.getElementById('pinXVal').textContent = x;
+    document.getElementById('pinYVal').textContent = y;
+  }
+  document.getElementById('pinX').addEventListener('input', applyPin);
+  document.getElementById('pinY').addEventListener('input', applyPin);
+  applyPin();
+
+  document.querySelectorAll('#pinToggle .chip').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('#pinToggle .chip').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      document.getElementById('pinEl').style.display = btn.dataset.pin === 'on' ? '' : 'none';
+    });
+  });
+
+  var currentRatio = 'story';
+  document.querySelectorAll('#ratioRow .chip').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('#ratioRow .chip').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      currentRatio = btn.dataset.ratio;
+      card.dataset.ratio = currentRatio;
+      setTimeout(fitScale, 50);
+    });
+  });
+
+  var toneDefaults = {light:'#f7f4ef', ink:'#faf8f4', dark:'#12110f'};
+  document.querySelectorAll('#toneRow .chip').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('#toneRow .chip').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      card.dataset.tone = btn.dataset.tone;
+      if(toneDefaults[btn.dataset.tone]){
+        document.getElementById('bgColor').value = toneDefaults[btn.dataset.tone];
+        card.style.setProperty('--c-bg', toneDefaults[btn.dataset.tone]);
+      }
+    });
+  });
+
+  var ACCENTS = ['#b33a3a','#1a3a5c','#2c5f4a','#8b5a2b','#5c4a7a','#1a1a1a'];
+  var swatchRow = document.getElementById('swatchRow');
+  ACCENTS.forEach(function(c, i){
+    var d = document.createElement('div');
+    d.className = 'swatch' + (i === 0 ? ' active' : '');
+    d.style.background = c;
+    d.addEventListener('click', function(){
+      document.querySelectorAll('.swatch').forEach(function(s){ s.classList.remove('active'); });
+      d.classList.add('active');
+      document.getElementById('accentColor').value = c;
+      card.style.setProperty('--c-accent', c);
+    });
+    swatchRow.appendChild(d);
+  });
+  card.style.setProperty('--c-accent', ACCENTS[0]);
+  document.getElementById('accentColor').addEventListener('input', function(e){
+    document.querySelectorAll('.swatch').forEach(function(s){ s.classList.remove('active'); });
+    card.style.setProperty('--c-accent', e.target.value);
+  });
+  document.getElementById('bgColor').addEventListener('input', function(e){
+    card.style.setProperty('--c-bg', e.target.value);
+  });
+  document.getElementById('hlSize').addEventListener('input', function(e){
+    document.getElementById('headlineOut').style.fontSize = e.target.value + 'px';
+    document.getElementById('hlSizeVal').textContent = e.target.value + 'px';
+  });
+  document.getElementById('bodySize').addEventListener('input', function(e){
+    document.getElementById('bodyOut').style.fontSize = e.target.value + 'px';
+    document.getElementById('bodySizeVal').textContent = e.target.value + 'px';
+  });
+
+  var CARD_SIZES = {story:{w:1080,h:1920}, square:{w:1080,h:1080}, landscape:{w:1600,h:900}};
+  var previewScale = 0.4;
+  function applyPreviewScale(){
+    cardShell.style.transform = 'scale(' + previewScale + ')';
+    cardShell.style.transformOrigin = 'center center';
+    zoomPill.textContent = Math.round(previewScale * 100) + '%';
+    zoomPill.classList.add('show');
+    clearTimeout(zoomPill._t);
+    zoomPill._t = setTimeout(function(){ zoomPill.classList.remove('show'); }, 900);
+  }
+  function fitScale(){
+    var sz = CARD_SIZES[currentRatio] || CARD_SIZES.story;
+    card.style.setProperty('--card-w', sz.w + 'px');
+    card.style.setProperty('--card-h', sz.h + 'px');
+    var availW = canvasArea.clientWidth - 28;
+    var availH = canvasArea.clientHeight - 28;
+    previewScale = Math.max(0.08, Math.min(availW / sz.w, availH / sz.h, 0.94) * 0.99);
+    applyPreviewScale();
+  }
+  document.getElementById('btnFit').addEventListener('click', fitScale);
+  window.addEventListener('resize', fitScale);
+  requestAnimationFrame(function(){ requestAnimationFrame(fitScale); });
+
+  var lastDist = 0;
+  canvasArea.addEventListener('touchstart', function(e){
+    if(e.touches.length === 2) lastDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+  }, {passive:true});
+  canvasArea.addEventListener('touchmove', function(e){
+    if(e.touches.length === 2 && lastDist){
+      var dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+      previewScale = Math.min(1.2, Math.max(0.15, previewScale * (dist / lastDist)));
+      applyPreviewScale();
+      lastDist = dist;
+    }
+  }, {passive:true});
+  canvasArea.addEventListener('dblclick', fitScale);
+
+  var modalOverlay = document.getElementById('modalOverlay');
+  var modalLoading = document.getElementById('modalLoading');
+  var modalResult = document.getElementById('modalResult');
+  var resultImg = document.getElementById('resultImg');
+  var shareBtn = document.getElementById('shareBtn');
+  var downloadBtn = document.getElementById('downloadBtn');
+  var lastBlob = null, lastFileName = '';
+
+  async function captureCard(){
+    await document.fonts.ready;
+    var sz = CARD_SIZES[currentRatio] || CARD_SIZES.story;
+    var originalTransform = cardShell.style.transform;
+    cardShell.style.transform = 'none';
+    await new Promise(function(r){ requestAnimationFrame(function(){ requestAnimationFrame(r); }); });
+    var canvas = await html2canvas(card, {
+      backgroundColor: null, useCORS: true, allowTaint: false, scale: 2,
+      width: sz.w, height: sz.h, windowWidth: sz.w, windowHeight: sz.h, imageTimeout: 30000, logging: false,
+      onclone: function(clonedDoc){
+        var c = clonedDoc.getElementById('card');
+        if(c){ c.style.transform = 'none'; c.style.width = sz.w + 'px'; c.style.height = sz.h + 'px'; }
+      }
+    });
+    cardShell.style.transform = originalTransform;
+    return canvas;
+  }
+
+  function openExport(){
+    document.querySelectorAll('#mainTools .tool-item').forEach(function(t){ t.classList.remove('active'); });
+    document.querySelectorAll('.ctx-panel').forEach(function(p){ p.classList.remove('active'); });
+    document.querySelector('[data-panel="save"]').classList.add('active');
+    document.getElementById('panel-save').classList.add('active');
+  }
+  document.getElementById('btnShare').addEventListener('click', function(){
+    openExport();
+    document.getElementById('exportBtn').click();
+  });
+
+  document.getElementById('exportBtn').addEventListener('click', async function(){
+    modalOverlay.classList.add('show');
+    modalLoading.style.display = 'block';
+    modalResult.style.display = 'none';
+    modalLoading.innerHTML = '<div class="spinner"></div><p>이미지를 만들고 있어요…</p>';
+    try {
+      var canvas = await captureCard();
+      lastFileName = 'west150-map-' + Date.now() + '.png';
+      lastBlob = await new Promise(function(resolve){ canvas.toBlob(resolve, 'image/png', 1.0); });
+      var dataUrl = lastBlob ? URL.createObjectURL(lastBlob) : canvas.toDataURL('image/png', 1.0);
+      resultImg.src = dataUrl;
+      var canShare = false;
+      if(lastBlob && navigator.canShare){
+        try {
+          var f = new File([lastBlob], lastFileName, {type:'image/png'});
+          canShare = navigator.canShare({files:[f]});
+        } catch(e){ canShare = false; }
+      }
+      if(canShare){
+        document.getElementById('modalResultTitle').textContent = '저장 준비 완료';
+        document.getElementById('modalResultHint').innerHTML = '아래 <b>「공유 / 사진에 저장」</b>을 누르면 공유 시트가 열려요.<br>「이미지 저장」을 선택하세요.';
+        shareBtn.style.display = 'block';
+      } else {
+        document.getElementById('modalResultTitle').textContent = '저장 준비 완료';
+        document.getElementById('modalResultHint').innerHTML = '<b>iPhone</b>: 이미지를 길게 눌러 「사진에 저장」<br><b>PC</b>: 다운로드 버튼 또는 우클릭 저장';
+        shareBtn.style.display = 'none';
+      }
+      modalLoading.style.display = 'none';
+      modalResult.style.display = 'block';
+      downloadBtn.onclick = function(){
+        var a = document.createElement('a');
+        a.href = dataUrl; a.download = lastFileName;
+        document.body.appendChild(a); a.click(); a.remove();
+      };
+    } catch(err){
+      console.error(err);
+      modalLoading.innerHTML = '<p style="color:#ff8080;line-height:1.6;">생성 실패<br>' + (err && err.message ? err.message : '') + '</p><button class="btn btn-secondary" onclick="location.reload()" style="margin-top:14px;">새로고침</button>';
+    }
+  });
+
+  shareBtn.addEventListener('click', async function(){
+    if(!lastBlob) return;
+    try {
+      var file = new File([lastBlob], lastFileName, {type:'image/png'});
+      await navigator.share({files:[file], title:'WEST150 MAP NEWS'});
+      modalOverlay.classList.remove('show');
+    } catch(shareErr){
+      if(shareErr && shareErr.name === 'AbortError') return;
+      alert('공유 실패. 이미지를 길게 눌러 저장해 주세요.');
+    }
+  });
+  document.getElementById('closeModalBtn').addEventListener('click', function(){ modalOverlay.classList.remove('show'); });
+  modalOverlay.addEventListener('click', function(e){ if(e.target === modalOverlay) modalOverlay.classList.remove('show'); });
+  document.getElementById('resetBtn').addEventListener('click', function(){
+    if(confirm('모든 설정을 기본값으로 되돌릴까요?')) location.reload();
+  });
+  document.getElementById('btnBack').addEventListener('click', function(){
+    if(confirm('편집을 종료할까요?')) history.back();
+  });
+
+  document.addEventListener('gesturestart', function(e){ e.preventDefault(); });
+  document.addEventListener('gesturechange', function(e){ e.preventDefault(); });
+})();
+
+</script>
+</body>
+</html>
