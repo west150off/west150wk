@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>신학 카드뉴스 에디터</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+@font-face{
+  font-family:'RIDIBatang';
+  src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_twelve@1.0/RIDIBatang.woff') format('woff');
+  font-weight:normal; font-style:normal; font-display:swap;
+}
+:root{
+  --bg:#f4f4f6; --panel:#fff; --line:#e6e6ea; --ink:#1c1c1f; --ink-dim:#8a8a92;
+  --accent:#2f6fed; --accent-soft:#eaf1ff; --danger:#e6503f;
+  --radius:14px; --radius-sm:9px; --tap:44px;
+  --safe-b:env(safe-area-inset-bottom,0px); --safe-t:env(safe-area-inset-top,0px);
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{
+  height:100%; margin:0; overscroll-behavior:none;
+  font-family:Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",sans-serif;
+  color:var(--ink); background:var(--bg); touch-action:none; user-select:none;
+}
+button{font-family:inherit; border:none; background:none; color:inherit; cursor:pointer;}
+#app{position:fixed; inset:0; display:flex; flex-direction:column;}
+#topbar{
+  flex:0 0 auto; display:flex; align-items:center; gap:6px;
+  height:calc(52px + var(--safe-t)); padding:var(--safe-t) 10px 0;
+  background:var(--panel); border-bottom:1px solid var(--line); z-index:50;
+}
+#topbar .tb-btn{width:var(--tap); height:40px; display:flex; align-items:center; justify-content:center; border-radius:var(--radius-sm); font-size:18px;}
+#topbar .tb-btn:active{background:var(--accent-soft);}
+#topbar .tb-btn:disabled{opacity:.3;}
+#topTitle{flex:1; text-align:center; font-size:14px; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+#btnSave,#btnTpl{padding:0 12px; height:36px; border-radius:999px; font-size:13px; font-weight:700; display:flex; align-items:center; gap:4px;}
+#btnSave{background:var(--accent); color:#fff;}
+#btnTpl{background:var(--bg); border:1px solid var(--line);}
+#mainArea{flex:1; display:flex; min-height:0;}
+#toolsPanel{display:none; flex-direction:column; gap:4px; width:88px; padding:10px 6px; background:var(--panel); border-right:1px solid var(--line); overflow-y:auto;}
+#propPanel{display:none; flex-direction:column; width:270px; padding:14px; gap:14px; background:var(--panel); border-left:1px solid var(--line); overflow-y:auto;}
+#canvasViewport{flex:1; position:relative; overflow:hidden; background:var(--bg);}
+#canvasStage{position:absolute; left:0; top:0; transform-origin:0 0; will-change:transform;}
+#cardCanvas{position:relative; background:#fff; box-shadow:0 2px 24px rgba(0,0,0,.14); overflow:hidden;}
+/* 레이어: highlight → DOM → ink → selection */
+#highlightCanvas,#inkCanvas{position:absolute; inset:0; width:100%; height:100%;}
+#elementsLayer{position:absolute; inset:0;}
+#selectionOverlay{position:absolute; inset:0; pointer-events:none;}
+#zoomControls{position:absolute; right:12px; bottom:12px; display:flex; flex-direction:column; background:var(--panel); border-radius:999px; box-shadow:0 4px 16px rgba(0,0,0,.12); overflow:hidden; z-index:20;}
+#zoomControls button{width:40px; height:40px; font-size:16px;}
+#zoomLevel{font-size:10px; text-align:center; color:var(--ink-dim); padding-bottom:4px;}
+.el{position:absolute; cursor:grab; outline:none;}
+.el.dragging{cursor:grabbing;}
+.el-text,.el-scripture{padding:4px; white-space:pre-wrap; word-break:break-word; line-height:1.3; min-width:20px; min-height:20px;}
+.el-text[contenteditable="true"],.el-scripture[contenteditable="true"]{cursor:text;}
+.el.is-placeholder{opacity:.42; font-style:italic;}
+.el-image{overflow:hidden; background:#e8e6e2;}
+.el-image .img-inner{width:100%; height:100%; background-size:cover; background-position:center; background-repeat:no-repeat; pointer-events:none;}
+.el-image.is-placeholder .img-inner{
+  display:flex; align-items:center; justify-content:center; color:#8a8680; font-size:16px; font-style:italic;
+}
+.el-image.is-placeholder .img-inner::after{content:attr(data-ph);}
+.el-shape svg{width:100%; height:100%; display:block; pointer-events:none;}
+.el-scripture .sc-ref{display:block; font-size:0.45em; letter-spacing:.12em; opacity:.65; margin-bottom:.35em; font-style:normal; font-family:Pretendard,sans-serif;}
+.sel-box{position:absolute; border:2px solid var(--accent); pointer-events:none;}
+.handle{position:absolute; width:26px; height:26px; margin:-13px; display:flex; align-items:center; justify-content:center; pointer-events:auto;}
+.handle::after{content:""; width:14px; height:14px; background:#fff; border:2px solid var(--accent); border-radius:50%;}
+.handle.rot::after{background:var(--accent);}
+.handle.tl{left:0;top:0;cursor:nwse-resize;} .handle.tr{left:100%;top:0;cursor:nesw-resize;}
+.handle.bl{left:0;top:100%;cursor:nesw-resize;} .handle.br{left:100%;top:100%;cursor:nwse-resize;}
+.handle.rot{left:50%;top:-40px;cursor:grab;}
+.rot-line{position:absolute; left:50%; top:-40px; width:2px; height:40px; margin-left:-1px; background:var(--accent);}
+.fit-warn{position:absolute; left:10px; top:10px; background:rgba(230,80,63,.94); color:#fff; font-size:12px; padding:8px 12px; border-radius:10px; z-index:30; max-width:85%; pointer-events:none; line-height:1.4;}
+.tool-btn{display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; border-radius:var(--radius-sm); padding:8px 4px; min-width:56px; min-height:var(--tap); color:var(--ink-dim); font-size:10px; font-weight:600;}
+.tool-btn .ic{font-size:19px;} .tool-btn.active{background:var(--accent-soft); color:var(--accent);}
+#bottomToolbar{flex:0 0 auto; display:flex; align-items:center; justify-content:space-around; padding:4px 4px calc(4px + var(--safe-b)); background:var(--panel); border-top:1px solid var(--line); z-index:40; position:relative;}
+.submenu{position:absolute; bottom:calc(100% + 8px); left:50%; transform:translateX(-50%); background:var(--panel); border-radius:var(--radius); box-shadow:0 8px 28px rgba(0,0,0,.18); display:flex; gap:4px; padding:8px; z-index:60; flex-wrap:wrap; max-width:92vw;}
+#pageStrip{flex:0 0 auto; display:flex; align-items:center; gap:8px; padding:8px 10px calc(8px + var(--safe-b)); background:var(--panel); border-top:1px solid var(--line); overflow-x:auto;}
+.page-thumb{flex:0 0 auto; width:34px; height:42px; border-radius:6px; border:2px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:var(--ink-dim); background:#fff; position:relative;}
+.page-thumb.active{border-color:var(--accent); color:var(--accent);}
+#btnAddPage{flex:0 0 auto; width:34px; height:42px; border-radius:6px; border:2px dashed var(--line); display:flex; align-items:center; justify-content:center; font-size:16px; color:var(--ink-dim);}
+.page-menu-btn{position:absolute; right:-4px; top:-6px; width:16px; height:16px; border-radius:50%; background:var(--ink-dim); color:#fff; font-size:9px; display:none; align-items:center; justify-content:center;}
+.page-thumb.active .page-menu-btn{display:flex;}
+.prop-group{display:flex; flex-direction:column; gap:6px;}
+.prop-label{font-size:11px; font-weight:700; color:var(--ink-dim);}
+.prop-row{display:flex; align-items:center; gap:8px;}
+.seg{display:flex; background:var(--bg); border-radius:8px; padding:2px; flex-wrap:wrap;}
+.seg button{flex:1; min-width:48px; padding:6px 4px; border-radius:6px; font-size:11px; font-weight:700; color:var(--ink-dim);}
+.seg button.active{background:#fff; color:var(--ink); box-shadow:0 1px 3px rgba(0,0,0,.15);}
+input[type="range"]{flex:1;}
+input[type="color"]{width:34px; height:30px; border:1px solid var(--line); border-radius:8px; padding:0; background:none;}
+input[type="text"],input[type="number"],select,textarea{
+  width:100%; padding:8px 10px; border:1px solid var(--line); border-radius:8px; font-size:13px; background:var(--bg); font-family:inherit;
+}
+textarea{min-height:80px; resize:vertical;}
+.prop-btn{flex:1; padding:9px 0; border-radius:8px; background:var(--bg); font-size:12px; font-weight:700; text-align:center;}
+.prop-btn.danger{color:var(--danger);}
+.empty-hint{font-size:12px; color:var(--ink-dim); text-align:center; padding:20px 6px; line-height:1.5;}
+.role-tag{display:inline-block; font-size:10px; font-weight:800; letter-spacing:.06em; color:var(--accent); background:var(--accent-soft); padding:3px 8px; border-radius:6px; margin-bottom:4px;}
+#sheetOverlay,#tplOverlay{position:fixed; inset:0; background:rgba(0,0,0,.32); z-index:70; opacity:0; pointer-events:none; transition:opacity .18s;}
+#sheetOverlay.show,#tplOverlay.show{opacity:1; pointer-events:auto;}
+#propSheet{
+  position:fixed; left:0; right:0; bottom:0; background:var(--panel); z-index:71;
+  border-radius:18px 18px 0 0; padding:10px 16px calc(16px + var(--safe-b));
+  transform:translateY(100%); transition:transform .2s ease; max-height:62vh; overflow-y:auto;
+}
+#propSheet.show{transform:translateY(0);}
+#tplSheet{
+  position:fixed; left:0; right:0; bottom:0; top:10%; background:var(--panel); z-index:81;
+  border-radius:18px 18px 0 0; padding:12px 16px calc(20px + var(--safe-b));
+  transform:translateY(100%); transition:transform .22s ease; overflow-y:auto;
+}
+#tplOverlay{z-index:80;}
+#tplSheet.show{transform:translateY(0);}
+.sheet-grip{width:36px; height:4px; border-radius:2px; background:var(--line); margin:0 auto 12px;}
+.tpl-title{font-size:12px; font-weight:800; letter-spacing:.14em; color:var(--ink-dim); margin-bottom:12px;}
+.tpl-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+.tpl-card{border:1px solid var(--line); border-radius:12px; overflow:hidden; text-align:left; background:#fff;}
+.tpl-preview{height:110px; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; letter-spacing:.08em;}
+.tpl-name{padding:10px 12px 2px; font-size:12px; font-weight:700;}
+.tpl-desc{padding:0 12px 12px; font-size:11px; color:var(--ink-dim);}
+@media (min-width:760px){
+  #toolsPanel,#propPanel{display:flex;}
+  #bottomToolbar{display:none;}
+  #sheetOverlay,#propSheet{display:none !important;}
+  .tpl-grid{grid-template-columns:repeat(3,1fr);}
+}
+@media (max-width:759px){ #toolsPanel,#propPanel{display:none;} }
+::-webkit-scrollbar{width:0;height:0;}
+</style>
+</head>
+<body>
+<div id="app">
+  <header id="topbar">
+    <button class="tb-btn" id="btnBack">←</button>
+    <div id="topTitle">신학 카드뉴스 에디터</div>
+    <button class="tb-btn" id="btnUndo">↶</button>
+    <button class="tb-btn" id="btnRedo">↷</button>
+    <button id="btnTpl">TEMPLATES</button>
+    <button id="btnSave">⬆ 저장</button>
+  </header>
+  <div id="mainArea">
+    <aside id="toolsPanel"></aside>
+    <div id="canvasViewport">
+      <div id="canvasStage">
+        <div id="cardCanvas">
+          <canvas id="highlightCanvas"></canvas>
+          <div id="elementsLayer"></div>
+          <canvas id="inkCanvas"></canvas>
+          <div id="selectionOverlay"></div>
+        </div>
+      </div>
+      <div id="zoomControls">
+        <button id="zoomIn">＋</button>
+        <div id="zoomLevel">100%</div>
+        <button id="zoomOut">－</button>
+        <button id="zoomFit" style="font-size:11px;">FIT</button>
+      </div>
+    </div>
+    <aside id="propPanel"></aside>
+  </div>
+  <div id="bottomToolbar"></div>
+  <div id="pageStrip"></div>
+  <input type="file" id="fileInput" accept="image/*" hidden>
+</div>
+<div id="sheetOverlay"></div>
+<div id="propSheet"><div class="sheet-grip"></div><div id="propSheetBody"></div></div>
+<div id="tplOverlay"></div>
+<div id="tplSheet">
+  <div class="sheet-grip"></div>
+  <div class="tpl-title">TEMPLATES</div>
+  <div class="tpl-grid" id="tplGrid"></div>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+const CARD_W=1080, CARD_H=1350, MIN_SIZE=24;
+const $= (s,r=document)=>r.querySelector(s);
+const $all=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const uid=p=>p+"_"+Math.random().toString(36).slice(2,9);
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+const deg2rad=d=>d*Math.PI/180;
+const isWide=()=>window.innerWidth>=760;
+
+const C={
+  black:"#0a0a0a", ivory:"#f7f4ef", off:"#faf9f7", charcoal:"#2c2c2c",
+  brown:"#3d3429", burgundy:"#6b2d3c", rule:"#c8c4bc", mute:"#8a8680",
+  white:"#ffffff", soft:"#efeee9"
+};
+const FONT_SANS="Pretendard, -apple-system, sans-serif";
+const FONT_SERIF="RIDIBatang, 'Apple Myungjo', serif";
+
+const ROLE_PH={
+  title:"[제목을 입력하세요]",
+  subtitle:"[부제목을 입력하세요]",
+  body:"[본문을 입력하세요]",
+  caption:"[캡션을 입력하세요]",
+  scripture:"[성경 구절을 입력하세요]",
+  quote:"[인용문을 입력하세요]",
+  author:"[저자]",
+  date:"[날짜]",
+  category:"[카테고리]",
+  custom:"[내용을 입력하세요]",
+  image:"[이미지를 넣으세요]",
+  heroImage:"[대표 이미지를 넣으세요]"
+};
+
+/* ---------- element factories ---------- */
+function baseText(o){
+  return Object.assign({
+    id:uid("el"), type:"text", role:"body",
+    x:72,y:100,width:900,height:80,rotation:0,
+    content:"", placeholder:ROLE_PH.body,
+    editable:true, required:false, maxLength:null,
+    fontSize:32, bold:false, italic:false, align:"left",
+    color:C.charcoal, lineHeight:1.35, letterSpacing:0, fontFamily:FONT_SANS,
+    autoFit:false, fitMode:"box", minFontSize:20, maxFontSize:72, maxLines:null,
+    autoFitLocked:false
+  }, o);
+}
+function baseShape(o){
+  return Object.assign({
+    id:uid("el"), type:"shape", shape:"rect", role:"custom",
+    x:0,y:0,width:100,height:2,rotation:0,
+    fill:C.rule, opacity:1, strokeColor:C.charcoal, strokeWidth:0
+  }, o);
+}
+function baseImage(o){
+  return Object.assign({
+    id:uid("el"), type:"image", role:"image",
+    x:0,y:0,width:400,height:300,rotation:0,
+    src:"", opacity:1, placeholder:true,
+    crop:{ mode:"fill", scale:1, offsetX:0, offsetY:0, focalPoint:{x:0.5,y:0.5} },
+    frame:{ radius:0, circle:false, borderColor:null, borderWidth:0 }
+  }, o);
+}
+function baseScripture(o){
+  return Object.assign({
+    id:uid("el"), type:"scripture", role:"scripture",
+    x:96,y:300,width:888,height:360,rotation:0,
+    version:"개역개정", book:"요한복음", chapter:1, startVerse:1, endVerse:1,
+    text:"", placeholder:true,
+    fontSize:40, bold:false, italic:false, align:"center",
+    color:C.charcoal, lineHeight:1.7, letterSpacing:0, fontFamily:FONT_SERIF,
+    autoFit:true, fitMode:"box", minFontSize:28, maxFontSize:48, maxLines:null,
+    autoFitLocked:false, showRef:true
+  }, o);
+}
+function pageOf(bg, elements){
+  return { id:uid("page"), width:CARD_W, height:CARD_H, background:bg, elements:elements, strokes:[] };
+}
+function newPage(){ return pageOf(C.white, []); }
+
+function isEmptyContent(el){
+  if(el.type==="image") return !el.src;
+  if(el.type==="scripture") return !(el.text||"").trim();
+  return !(el.content||"").trim();
+}
+function displayText(el){
+  if(el.type==="scripture"){
+    if(isEmptyContent(el)) return el.placeholder===true ? ROLE_PH.scripture : (el.placeholder||ROLE_PH.scripture);
+    return el.text;
+  }
+  if(isEmptyContent(el)){
+    if(typeof el.placeholder==="string") return el.placeholder;
+    return ROLE_PH[el.role]||ROLE_PH.custom;
+  }
+  return el.content;
+}
+function scriptureRef(el){
+  const end=el.endVerse && el.endVerse!==el.startVerse ? `-${el.endVerse}` : "";
+  return `${el.book} ${el.chapter}:${el.startVerse}${end}`;
+}
+
+/* ---------- templates (master → clone) ---------- */
+const TEMPLATE_META=[
+  {id:"NOIR", name:"NOIR", desc:"블랙 에디토리얼", previewBg:C.black, previewColor:C.ivory},
+  {id:"IVORY", name:"IVORY", desc:"클래식 신학 출판", previewBg:C.ivory, previewColor:C.black},
+  {id:"SCRIPTURA", name:"SCRIPTURA", desc:"성경 본문", previewBg:C.ivory, previewColor:C.charcoal},
+  {id:"STUDY", name:"STUDY", desc:"연구 노트", previewBg:"#f9f6f0", previewColor:C.charcoal},
+  {id:"PORTRAIT", name:"PORTRAIT", desc:"인물 도록", previewBg:C.black, previewColor:C.ivory},
+  {id:"GALLERY", name:"GALLERY", desc:"전시 도록", previewBg:C.off, previewColor:C.charcoal},
+  {id:"SCARLET", name:"SCARLET", desc:"버건디 포인트", previewBg:C.black, previewColor:C.burgundy},
+  {id:"DUALITY", name:"DUALITY", desc:"A / B 비교", previewBg:C.off, previewColor:C.charcoal},
+  {id:"ARCHIVE", name:"ARCHIVE", desc:"역사 아카이브", previewBg:C.ivory, previewColor:C.brown},
+  {id:"MONOGRAPH", name:"MONOGRAPH", desc:"학술 저널", previewBg:C.off, previewColor:C.charcoal}
+];
+
+const TEMPLATES={
+  NOIR:()=>pageOf(C.black,[
+    baseText({role:"category", content:"THEOLOGY", x:72,y:72,width:500,height:36, fontSize:18, letterSpacing:6, color:C.mute, autoFit:false}),
+    baseText({role:"title", content:"GRACE", x:72,y:480,width:936,height:140, fontSize:120, maxFontSize:120, minFontSize:48, bold:true, align:"center", color:C.ivory, fontFamily:FONT_SERIF, autoFit:true, fitMode:"box"}),
+    baseText({role:"subtitle", content:"하나님의 은혜를\n어떻게 이해할 것인가?", x:120,y:660,width:840,height:120, fontSize:34, maxFontSize:40, minFontSize:22, align:"center", color:C.ivory, autoFit:true}),
+    baseShape({shape:"line", x:440,y:860,width:200,height:2, fill:C.ivory}),
+    baseText({role:"caption", content:"THEOLOGY / 01", x:72,y:1260,width:400,height:30, fontSize:15, letterSpacing:3, color:C.mute, autoFit:false})
+  ]),
+  IVORY:()=>pageOf(C.ivory,[
+    baseText({role:"category", content:"THE DOCTRINE OF", x:72,y:200,width:936,height:40, fontSize:18, letterSpacing:8, align:"center", color:C.mute}),
+    baseText({role:"title", content:"GRACE", x:72,y:320,width:936,height:120, fontSize:96, maxFontSize:96, minFontSize:44, bold:true, align:"center", color:C.black, fontFamily:FONT_SERIF, autoFit:true}),
+    baseText({role:"subtitle", content:"은혜의 교리를\n이해하는 세 가지 관점", x:140,y:520,width:800,height:100, fontSize:30, maxFontSize:34, minFontSize:20, align:"center", color:C.charcoal, autoFit:true}),
+    baseShape({shape:"line", x:390,y:700,width:300,height:1, fill:C.rule}),
+    baseText({role:"caption", content:"THEOLOGY / 01", x:72,y:1260,width:400,height:30, fontSize:15, letterSpacing:3, color:C.mute})
+  ]),
+  SCRIPTURA:()=>pageOf(C.ivory,[
+    baseText({role:"category", content:"JOHN 1:1", x:72,y:160,width:936,height:40, fontSize:18, letterSpacing:6, align:"center", color:C.mute}),
+    baseScripture({
+      x:96,y:300,width:888,height:400,
+      book:"요한복음", chapter:1, startVerse:1, endVerse:1,
+      text:"태초에 말씀이 계시니라\n말씀이 하나님과 함께 계셨으니\n이 말씀은 곧 하나님이시니라.",
+      placeholder:false, fontSize:40, maxFontSize:44, minFontSize:28, autoFit:true, align:"center", showRef:false
+    }),
+    baseShape({shape:"line", x:390,y:820,width:300,height:1, fill:C.rule}),
+    baseText({role:"caption", content:"THE WORD  /  LOGOS", x:72,y:860,width:936,height:36, fontSize:16, letterSpacing:4, align:"center", color:C.mute}),
+    baseText({role:"body", content:"짧은 해설을 여기에 적어 주세요.", x:120,y:1100,width:840,height:60, fontSize:20, align:"center", color:C.brown, autoFit:true, minFontSize:16, maxFontSize:22}),
+    baseText({role:"caption", content:"THEOLOGY / 04", x:72,y:1260,width:400,height:28, fontSize:14, letterSpacing:3, color:C.mute})
+  ]),
+  STUDY:()=>pageOf("#f9f6f0",[
+    baseText({role:"category", content:"§  01", x:72,y:72,width:200,height:32, fontSize:16, letterSpacing:2, color:C.mute}),
+    baseText({role:"caption", content:"STUDY NOTE", x:780,y:72,width:220,height:32, fontSize:14, align:"right", letterSpacing:3, color:C.mute}),
+    baseShape({shape:"line", x:72,y:120,width:936,height:1, fill:C.rule, opacity:0.5}),
+    baseScripture({
+      x:72,y:160,width:936,height:280,
+      book:"로마서", chapter:3, startVerse:21, endVerse:26,
+      text:"이제는 율법 외에 하나님의 한 의가 나타났으니 율법과 선지자들에게 증거를 받은 것이라.",
+      placeholder:false, fontSize:28, maxFontSize:32, minFontSize:20, align:"left", showRef:true, autoFit:true
+    }),
+    baseShape({shape:"line", x:72,y:480,width:936,height:1, fill:C.rule, opacity:0.35}),
+    baseText({role:"body", content:"", placeholder:"[메모 · 질문 · 관찰]", x:72,y:520,width:936,height:320, fontSize:22, color:C.charcoal, autoFit:false}),
+    baseText({role:"caption", content:"STUDY  ·  THEOLOGY / 09", x:72,y:1260,width:500,height:28, fontSize:14, letterSpacing:2, color:C.mute})
+  ]),
+  PORTRAIT:()=>pageOf(C.black,[
+    baseImage({role:"heroImage", x:0,y:0,width:1080,height:860, crop:{mode:"fill", scale:1, offsetX:0, offsetY:0, focalPoint:{x:0.5,y:0.35}}}),
+    baseShape({shape:"rect", x:0,y:860,width:1080,height:490, fill:C.black}),
+    baseText({role:"title", content:"JOHN CALVIN", x:72,y:920,width:936,height:70, fontSize:48, maxFontSize:56, minFontSize:28, bold:true, color:C.ivory, fontFamily:FONT_SERIF, autoFit:true}),
+    baseText({role:"date", content:"1509  —  1564", x:72,y:1000,width:500,height:36, fontSize:18, letterSpacing:4, color:C.mute}),
+    baseText({role:"body", content:"Institutes of the\nChristian Religion", x:72,y:1080,width:700,height:80, fontSize:24, color:C.ivory, autoFit:true, minFontSize:16, maxFontSize:26}),
+    baseText({role:"caption", content:"PORTRAIT  /  06", x:72,y:1260,width:400,height:28, fontSize:14, letterSpacing:3, color:C.mute})
+  ]),
+  GALLERY:()=>pageOf(C.off,[
+    baseImage({role:"heroImage", x:72,y:72,width:936,height:620, frame:{radius:0, circle:false, borderColor:C.rule, borderWidth:1}}),
+    baseImage({role:"image", x:808,y:720,width:200,height:200}),
+    baseText({role:"title", content:"Untitled Theological Study", x:72,y:740,width:700,height:40, fontSize:26, color:C.black, fontFamily:FONT_SERIF, autoFit:true, minFontSize:18, maxFontSize:28}),
+    baseText({role:"author", content:"Author  ·  1640", x:72,y:800,width:500,height:28, fontSize:15, letterSpacing:2, color:C.mute}),
+    baseText({role:"caption", content:"작품·문헌·건축 캡션", x:72,y:860,width:700,height:80, fontSize:18, color:C.charcoal, autoFit:true, minFontSize:14, maxFontSize:18}),
+    baseText({role:"caption", content:"GALLERY  ·  THEOLOGY / 10", x:72,y:1260,width:500,height:28, fontSize:14, letterSpacing:2, color:C.mute})
+  ]),
+  SCARLET:()=>pageOf(C.black,[
+    baseText({role:"category", content:"THEOLOGY", x:72,y:120,width:500,height:36, fontSize:16, letterSpacing:6, color:C.mute}),
+    baseText({role:"caption", content:"03", x:72,y:200,width:200,height:80, fontSize:64, bold:true, color:C.burgundy}),
+    baseText({role:"title", content:"죄란 무엇인가?", x:72,y:520,width:936,height:80, fontSize:52, maxFontSize:56, minFontSize:32, color:C.ivory, fontFamily:FONT_SERIF, autoFit:true}),
+    baseShape({shape:"line", x:72,y:640,width:160,height:2, fill:C.burgundy}),
+    baseText({role:"category", content:"SIN", x:72,y:680,width:300,height:36, fontSize:18, letterSpacing:8, color:C.burgundy}),
+    baseText({role:"caption", content:"THEOLOGY / 08", x:72,y:1260,width:400,height:28, fontSize:14, letterSpacing:3, color:C.mute})
+  ]),
+  DUALITY:()=>pageOf(C.off,[
+    baseShape({shape:"rect", x:0,y:0,width:540,height:1350, fill:C.ivory}),
+    baseShape({shape:"rect", x:540,y:0,width:540,height:1350, fill:C.soft}),
+    baseShape({shape:"line", x:539,y:80,width:2,height:1190, fill:C.rule}),
+    baseText({role:"category", content:"A", x:72,y:80,width:100,height:36, fontSize:20, letterSpacing:4, color:C.mute}),
+    baseText({role:"category", content:"B", x:612,y:80,width:100,height:36, fontSize:20, letterSpacing:4, color:C.mute}),
+    baseText({role:"title", content:"CALVINISM", x:72,y:160,width:420,height:50, fontSize:28, bold:true, color:C.black, autoFit:true, minFontSize:18, maxFontSize:28}),
+    baseText({role:"title", content:"ARMINIANISM", x:612,y:160,width:420,height:50, fontSize:28, bold:true, color:C.black, autoFit:true, minFontSize:18, maxFontSize:28}),
+    baseText({role:"body", content:"핵심 주장\n\n성경적 근거\n\n특징", x:72,y:280,width:420,height:400, fontSize:22, color:C.charcoal, lineHeight:1.7}),
+    baseText({role:"body", content:"핵심 주장\n\n성경적 근거\n\n특징", x:612,y:280,width:420,height:400, fontSize:22, color:C.charcoal, lineHeight:1.7}),
+    baseText({role:"caption", content:"DUALITY  ·  THEOLOGY / 07", x:72,y:1260,width:500,height:28, fontSize:14, letterSpacing:2, color:C.mute})
+  ]),
+  ARCHIVE:()=>pageOf(C.ivory,[
+    baseShape({shape:"line", x:120,y:180,width:2,height:720, fill:C.rule}),
+    baseText({role:"date", content:"1517", x:160,y:180,width:800,height:140, fontSize:120, maxFontSize:120, minFontSize:48, bold:true, color:C.charcoal, fontFamily:FONT_SERIF, autoFit:true}),
+    baseText({role:"title", content:"종교개혁의 시작", x:160,y:360,width:800,height:50, fontSize:36, maxFontSize:40, minFontSize:22, color:C.black, autoFit:true}),
+    baseText({role:"body", content:"비텐베르크에서 발표된 95개 조항은\n서구 교회와 신학의 지형을 바꾸었다.", x:160,y:430,width:800,height:100, fontSize:22, color:C.brown, autoFit:true, minFontSize:16, maxFontSize:24}),
+    baseImage({role:"image", x:160,y:620,width:800,height:360}),
+    baseText({role:"caption", content:"ARCHIVE  ·  THEOLOGY / 05", x:72,y:1260,width:500,height:28, fontSize:14, letterSpacing:2, color:C.mute})
+  ]),
+  MONOGRAPH:()=>pageOf(C.off,[
+    baseText({role:"category", content:"CHRISTOLOGY", x:72,y:80,width:500,height:28, fontSize:14, letterSpacing:4, color:C.mute}),
+    baseText({role:"caption", content:"THEOLOGY / 03", x:72,y:110,width:400,height:28, fontSize:14, letterSpacing:3, color:C.mute}),
+    baseText({role:"caption", content:"ESSAY 01", x:72,y:140,width:300,height:28, fontSize:14, letterSpacing:3, color:C.mute}),
+    baseShape({shape:"line", x:72,y:200,width:936,height:1, fill:C.rule}),
+    baseText({role:"title", content:"성육신의 의미와\n현대 신학의 과제", x:72,y:240,width:936,height:140, fontSize:48, maxFontSize:52, minFontSize:28, bold:true, color:C.black, fontFamily:FONT_SERIF, autoFit:true}),
+    baseText({role:"body", content:"본 에세이는 성육신 교리가 현대 교회와 학계에서 어떻게 재해석되고 있는지를 살핀다.", x:72,y:420,width:936,height:200, fontSize:24, color:C.charcoal, lineHeight:1.6, autoFit:true, minFontSize:18, maxFontSize:26}),
+    baseText({role:"caption", content:"THEOLOGY  ·  MONOGRAPH", x:72,y:1220,width:600,height:28, fontSize:13, letterSpacing:2, color:C.mute})
+  ])
+};
+
+/* ---------- state ---------- */
+const State={
+  pages:[newPage()], currentPageIndex:0, selectedId:null, zoom:1, pan:{x:0,y:0},
+  tool:"select", fingerDraw:false,
+  penColor:"#1c1c1f", penWidth:8, penOpacity:1,
+  hlColor:"#ffe066", hlWidth:34, hlOpacity:0.4,
+  eraserSize:36,
+  history:[], historyIndex:-1,
+  fitWarning:null
+};
+function currentPage(){ return State.pages[State.currentPageIndex]; }
+function findElement(id){ return currentPage().elements.find(e=>e.id===id); }
+
+function snapshot(){ return JSON.parse(JSON.stringify({pages:State.pages, currentPageIndex:State.currentPageIndex})); }
+function pushHistory(){
+  State.history=State.history.slice(0, State.historyIndex+1);
+  State.history.push(snapshot());
+  if(State.history.length>80) State.history.shift();
+  State.historyIndex=State.history.length-1;
+  updateUndoRedoButtons();
+}
+function undo(){ if(State.historyIndex<=0) return; State.historyIndex--; restoreSnapshot(State.history[State.historyIndex]); }
+function redo(){ if(State.historyIndex>=State.history.length-1) return; State.historyIndex++; restoreSnapshot(State.history[State.historyIndex]); }
+function restoreSnapshot(snap){
+  const s=JSON.parse(JSON.stringify(snap));
+  State.pages=s.pages; State.currentPageIndex=s.currentPageIndex; State.selectedId=null;
+  renderAll(); updateUndoRedoButtons();
+}
+function updateUndoRedoButtons(){
+  $("#btnUndo").disabled=State.historyIndex<=0;
+  $("#btnRedo").disabled=State.historyIndex>=State.history.length-1;
+}
+
+/* ---------- auto-fit text ---------- */
+const _measure=document.createElement("div");
+_measure.style.cssText="position:absolute;left:-99999px;top:0;visibility:hidden;white-space:pre-wrap;word-break:break-word;padding:4px;";
+document.documentElement.appendChild(_measure);
+
+function measureTextHeight(text, fontSize, width, lineHeight, fontFamily, bold, letterSpacing){
+  _measure.style.width=width+"px";
+  _measure.style.fontSize=fontSize+"px";
+  _measure.style.lineHeight=String(lineHeight);
+  _measure.style.fontFamily=fontFamily||FONT_SANS;
+  _measure.style.fontWeight=bold?"700":"400";
+  _measure.style.letterSpacing=(letterSpacing||0)+"px";
+  _measure.textContent=text||"";
+  return _measure.offsetHeight;
+}
+function measureTextWidth(text, fontSize, fontFamily, bold, letterSpacing){
+  _measure.style.width="auto";
+  _measure.style.whiteSpace="nowrap";
+  _measure.style.fontSize=fontSize+"px";
+  _measure.style.fontFamily=fontFamily||FONT_SANS;
+  _measure.style.fontWeight=bold?"700":"400";
+  _measure.style.letterSpacing=(letterSpacing||0)+"px";
+  _measure.textContent=text||"";
+  const w=_measure.offsetWidth;
+  _measure.style.whiteSpace="pre-wrap";
+  return w;
+}
+function applyAutoFit(el){
+  if(!el.autoFit || el.autoFitLocked) return true;
+  const text=el.type==="scripture" ? (el.text||"") : (el.content||"");
+  if(!text.trim()) return true;
+  const mode=el.fitMode||"box";
+  const min=el.minFontSize||20, max=el.maxFontSize||el.fontSize||48;
+  if(mode==="fixed") return true;
+  if(mode==="expand"){
+    let fs=el.fontSize||max;
+    const h=measureTextHeight(text, fs, el.width-8, el.lineHeight||1.35, el.fontFamily, el.bold, el.letterSpacing);
+    el.height=Math.max(el.height, h+8);
+    return true;
+  }
+  let lo=min, hi=max, best=min, ok=false;
+  while(lo<=hi){
+    const mid=Math.floor((lo+hi)/2);
+    let fits=false;
+    if(mode==="width"){
+      const lines=text.split("\n");
+      fits=lines.every(ln=> measureTextWidth(ln, mid, el.fontFamily, el.bold, el.letterSpacing) <= el.width-8);
+    } else {
+      const h=measureTextHeight(text, mid, el.width-8, el.lineHeight||1.35, el.fontFamily, el.bold, el.letterSpacing);
+      fits=h <= el.height-4;
+      if(el.maxLines){
+        const approxLines=Math.ceil(h/(mid*(el.lineHeight||1.35)));
+        if(approxLines>el.maxLines) fits=false;
+      }
+    }
+    if(fits){ best=mid; ok=true; lo=mid+1; } else hi=mid-1;
+  }
+  el.fontSize=best;
+  if(!ok){
+    State.fitWarning={ id:el.id, msg:"텍스트가 너무 깁니다. 내용을 줄이거나 박스 크기를 조정해 주세요." };
+    return false;
+  }
+  if(State.fitWarning && State.fitWarning.id===el.id) State.fitWarning=null;
+  return true;
+}
+
+/* ---------- image crop CSS ---------- */
+function imageBackgroundStyle(el){
+  if(!el.src) return {};
+  const crop=el.crop||{mode:"fill", scale:1, offsetX:0, offsetY:0, focalPoint:{x:0.5,y:0.5}};
+  const mode=crop.mode||"fill";
+  const fp=crop.focalPoint||{x:0.5,y:0.5};
+  let size="cover", pos=`${fp.x*100}% ${fp.y*100}%`;
+  if(mode==="fit"){ size="contain"; pos="center"; }
+  else if(mode==="center"){ size="cover"; pos="center"; }
+  else if(mode==="custom"){
+    size=`${(crop.scale||1)*100}%`;
+    pos=`calc(50% + ${crop.offsetX||0}px) calc(50% + ${crop.offsetY||0}px)`;
+  }
+  return { backgroundImage:`url(${el.src})`, backgroundSize:size, backgroundPosition:pos };
+}
+
+/* ---------- template apply (clone) ---------- */
+function deepCloneTemplate(id){
+  const factory=TEMPLATES[id];
+  if(!factory) return null;
+  const master=factory();
+  const clone=JSON.parse(JSON.stringify(master));
+  clone.id=uid("page");
+  clone.elements.forEach(e=> e.id=uid("el"));
+  clone.strokes=[];
+  return clone;
+}
+function applyTemplate(id){
+  const clone=deepCloneTemplate(id);
+  if(!clone) return;
+  const page=currentPage();
+  page.background=clone.background;
+  page.elements=clone.elements;
+  page.strokes=[];
+  State.selectedId=null;
+  setToolSilently("select");
+  pushHistory();
+  renderAll();
+  hideTpl();
+}
+
+/* ---------- tools ---------- */
+const TOOL_DEFS=[
+  {id:"select", icon:"↖", label:"선택"},
+  {id:"text", icon:"T", label:"텍스트"},
+  {id:"scripture", icon:"✝", label:"성경"},
+  {id:"image", icon:"🖼", label:"이미지"},
+  {id:"shape", icon:"◧", label:"도형", submenu:[
+    {id:"shape:rect", icon:"▭", label:"사각"},
+    {id:"shape:ellipse", icon:"◯", label:"원"},
+    {id:"shape:line", icon:"╱", label:"선"},
+    {id:"shape:triangle", icon:"△", label:"삼각"}
+  ]},
+  {id:"pen", icon:"✎", label:"펜"},
+  {id:"highlighter", icon:"▮", label:"형광펜"},
+  {id:"eraser", icon:"⌫", label:"지우개"}
+];
+function buildToolButtons(container){
+  container.innerHTML="";
+  TOOL_DEFS.forEach(def=>{
+    const wrap=document.createElement("div"); wrap.style.position="relative";
+    const btn=document.createElement("button");
+    btn.className="tool-btn"; btn.dataset.tool=def.id;
+    btn.innerHTML=`<span class="ic">${def.icon}</span><span>${def.label}</span>`;
+    btn.addEventListener("click", ()=>onToolButtonTap(def, wrap));
+    wrap.appendChild(btn); container.appendChild(wrap);
+  });
+}
+let openSubmenuEl=null;
+function closeSubmenu(){ if(openSubmenuEl){ openSubmenuEl.remove(); openSubmenuEl=null; } }
+function onToolButtonTap(def, wrap){
+  closeSubmenu();
+  if(def.id==="text"){ addText(); return; }
+  if(def.id==="scripture"){ addScripture(); return; }
+  if(def.id==="image"){ $("#fileInput").click(); return; }
+  if(def.submenu){
+    const menu=document.createElement("div"); menu.className="submenu";
+    def.submenu.forEach(sub=>{
+      const b=document.createElement("button"); b.className="tool-btn";
+      b.innerHTML=`<span class="ic">${sub.icon}</span><span>${sub.label}</span>`;
+      b.addEventListener("click", ()=>{ addShape(sub.id.split(":")[1]); closeSubmenu(); });
+      menu.appendChild(b);
+    });
+    wrap.appendChild(menu); openSubmenuEl=menu; return;
+  }
+  setTool(def.id);
+}
+function setTool(t){ State.tool=t; selectElement(null); refreshToolButtonStates(); renderPropPanel(); updateDrawInteractivity(); }
+function setToolSilently(t){ State.tool=t; refreshToolButtonStates(); renderPropPanel(); updateDrawInteractivity(); }
+function refreshToolButtonStates(){
+  $all(".tool-btn").forEach(b=>{
+    const t=b.dataset.tool;
+    b.classList.toggle("active", t===State.tool || (t==="shape" && String(State.tool).startsWith("shape:")));
+  });
+}
+function addText(){
+  const el=baseText({content:"", role:"body", x:CARD_W/2-220, y:CARD_H/2-40, width:440, height:80, fontSize:48, maxFontSize:48, autoFit:true});
+  currentPage().elements.push(el); pushHistory(); renderElements(); selectElement(el.id); setToolSilently("select");
+}
+function addScripture(){
+  const el=baseScripture({x:CARD_W/2-400, y:CARD_H/2-180, width:800, height:360});
+  currentPage().elements.push(el); pushHistory(); renderElements(); selectElement(el.id); setToolSilently("select");
+}
+function addShape(shape){
+  const el=baseShape({shape, x:CARD_W/2-140, y:CARD_H/2-140, width:280, height:280, fill:"#2f6fed"});
+  if(shape==="line"){ el.height=6; el.width=300; el.fill=C.charcoal; }
+  currentPage().elements.push(el); pushHistory(); renderElements(); selectElement(el.id); setToolSilently("select");
+}
+function addImageFromFile(file, targetEl){
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    const img=new Image();
+    img.onload=()=>{
+      if(targetEl){
+        targetEl.src=ev.target.result;
+        targetEl.placeholder=false;
+        if(!targetEl.crop) targetEl.crop={mode:"fill", scale:1, offsetX:0, offsetY:0, focalPoint:{x:0.5,y:0.5}};
+      } else {
+        let w=480,h=480; const r=img.naturalWidth/img.naturalHeight;
+        if(r>1){ w=480; h=480/r; } else { h=480; w=480*r; }
+        const el=baseImage({src:ev.target.result, placeholder:false, x:(CARD_W-w)/2, y:(CARD_H-h)/2, width:w, height:h});
+        currentPage().elements.push(el); selectElement(el.id);
+      }
+      pushHistory(); renderElements(); setToolSilently("select");
+    };
+    img.src=ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+$("#fileInput").addEventListener("change", e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const sel=findElement(State.selectedId);
+  if(sel && sel.type==="image") addImageFromFile(f, sel);
+  else addImageFromFile(f, null);
+  e.target.value="";
+});
+
+/* ---------- viewport ---------- */
+const viewport=$("#canvasViewport"), stage=$("#canvasStage"), cardCanvas=$("#cardCanvas");
+const hlCanvas=$("#highlightCanvas"), inkCanvas=$("#inkCanvas");
+const elementsLayer=$("#elementsLayer"), selectionOverlay=$("#selectionOverlay");
+const hlCtx=hlCanvas.getContext("2d"), inkCtx=inkCanvas.getContext("2d");
+
+function applyCardSize(){
+  cardCanvas.style.width=CARD_W+"px"; cardCanvas.style.height=CARD_H+"px";
+  hlCanvas.width=CARD_W; hlCanvas.height=CARD_H;
+  inkCanvas.width=CARD_W; inkCanvas.height=CARD_H;
+}
+function applyStageTransform(){
+  stage.style.transform=`translate(${State.pan.x}px,${State.pan.y}px) scale(${State.zoom})`;
+  $("#zoomLevel").textContent=Math.round(State.zoom*100)+"%";
+}
+function fitToScreen(){
+  const vw=viewport.clientWidth-40, vh=viewport.clientHeight-40;
+  const z=clamp(Math.min(vw/CARD_W, vh/CARD_H), 0.05, 4);
+  State.zoom=z;
+  State.pan.x=(viewport.clientWidth-CARD_W*z)/2;
+  State.pan.y=(viewport.clientHeight-CARD_H*z)/2;
+  applyStageTransform();
+}
+function setZoom(z,ax,ay){
+  const old=State.zoom; z=clamp(z,0.1,4);
+  if(ax===undefined){ ax=viewport.clientWidth/2; ay=viewport.clientHeight/2; }
+  const wx=(ax-State.pan.x)/old, wy=(ay-State.pan.y)/old;
+  State.zoom=z; State.pan.x=ax-wx*z; State.pan.y=ay-wy*z; applyStageTransform();
+}
+$("#zoomIn").onclick=()=>setZoom(State.zoom*1.2);
+$("#zoomOut").onclick=()=>setZoom(State.zoom/1.2);
+$("#zoomFit").onclick=fitToScreen;
+function clientToCard(cx,cy){
+  const r=cardCanvas.getBoundingClientRect();
+  return {x:(cx-r.left)*(CARD_W/r.width), y:(cy-r.top)*(CARD_H/r.height)};
+}
+(function setupGestures(){
+  let mode=null, startPan, startDist, startZoom, startMid;
+  viewport.addEventListener("pointerdown", e=>{
+    if(e.target!==viewport && e.target!==stage) return;
+    if(State.tool!=="select") return;
+    mode="pan"; startPan={...State.pan}; viewport._ps={x:e.clientX,y:e.clientY};
+  });
+  viewport.addEventListener("pointermove", e=>{
+    if(mode==="pan" && viewport._ps){
+      State.pan.x=startPan.x+(e.clientX-viewport._ps.x);
+      State.pan.y=startPan.y+(e.clientY-viewport._ps.y);
+      applyStageTransform();
+    }
+  });
+  const end=()=>{ mode=null; viewport._ps=null; };
+  viewport.addEventListener("pointerup", end);
+  viewport.addEventListener("pointercancel", end);
+  viewport.addEventListener("wheel", e=>{ e.preventDefault(); setZoom(State.zoom*(e.deltaY<0?1.08:1/1.08), e.clientX, e.clientY); }, {passive:false});
+  viewport.addEventListener("touchstart", e=>{
+    if(e.touches.length===2){
+      mode="pinch"; const [a,b]=e.touches;
+      startDist=Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);
+      startZoom=State.zoom; startMid={x:(a.clientX+b.clientX)/2,y:(a.clientY+b.clientY)/2}; startPan={...State.pan};
+    }
+  }, {passive:true});
+  viewport.addEventListener("touchmove", e=>{
+    if(mode==="pinch" && e.touches.length===2){
+      const [a,b]=e.touches;
+      const dist=Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);
+      const mid={x:(a.clientX+b.clientX)/2,y:(a.clientY+b.clientY)/2};
+      State.pan.x=startPan.x+(mid.x-startMid.x); State.pan.y=startPan.y+(mid.y-startMid.y);
+      State.zoom=clamp(startZoom*(dist/startDist),0.1,4); applyStageTransform();
+    }
+  }, {passive:true});
+  viewport.addEventListener("touchend", e=>{ if(e.touches.length<2) mode=null; });
+})();
+
+/* ---------- render elements ---------- */
+function renderElements(){
+  const page=currentPage();
+  cardCanvas.style.background=page.background||"#fff";
+  const live=new Set(page.elements.map(e=>e.id));
+  $all(".el", elementsLayer).forEach(n=>{ if(!live.has(n.dataset.id)) n.remove(); });
+  page.elements.forEach((el,i)=>{
+    if((el.type==="text"||el.type==="scripture") && el.autoFit && !isEmptyContent(el)) applyAutoFit(el);
+    let node=document.getElementById("node_"+el.id);
+    if(!node){ node=createElementNode(el); elementsLayer.appendChild(node); }
+    updateElementNode(node, el); node.style.zIndex=i+1;
+  });
+  drawAllStrokes();
+  renderSelectionOverlay();
+  renderFitWarning();
+}
+function renderFitWarning(){
+  let w=$(".fit-warn", cardCanvas);
+  if(State.fitWarning){
+    if(!w){ w=document.createElement("div"); w.className="fit-warn"; cardCanvas.appendChild(w); }
+    w.textContent=State.fitWarning.msg;
+  } else if(w) w.remove();
+}
+function createElementNode(el){
+  const node=document.createElement("div");
+  node.className="el el-"+el.type; node.id="node_"+el.id; node.dataset.id=el.id;
+  if(el.type==="text"||el.type==="scripture"){
+    node.setAttribute("contenteditable","false");
+    node.addEventListener("input", ()=>{
+      if(el.type==="scripture") el.text=node.innerText.replace(/^[^\n]*\n/, (m)=>{ /* keep ref handled in update */ return node.dataset.editing==="body"?node.innerText:el.text; });
+      // simpler: store full inner as body when not showing structured ref edit
+      if(el.type==="scripture"){
+        // when editing, user edits body only via prop panel preferably; still allow
+        const t=node.innerText;
+        const ref=scriptureRef(el);
+        el.text = t.startsWith(ref) ? t.slice(ref.length).replace(/^\n/,"") : t;
+      } else {
+        el.content=node.innerText;
+      }
+      if(el.autoFit){ el.autoFitLocked=false; applyAutoFit(el); }
+      updateElementNode(node, el);
+    });
+    node.addEventListener("dblclick", e=>{
+      if(el.editable===false) return;
+      node.setAttribute("contenteditable","true"); node.focus(); e.stopPropagation();
+    });
+    node.addEventListener("blur", ()=>{
+      node.setAttribute("contenteditable","false");
+      if(el.maxLength && el.type==="text" && el.content.length>el.maxLength) el.content=el.content.slice(0,el.maxLength);
+      pushHistory(); renderElements();
+    });
+  } else if(el.type==="image"){
+    const inner=document.createElement("div"); inner.className="img-inner"; node.appendChild(inner);
+  } else if(el.type==="shape"){
+    node.innerHTML=shapeSVG(el);
+  }
+  attachElementPointerHandlers(node);
+  return node;
+}
+function shapeSVG(el){
+  const w=100,h=100;
+  const sa=el.strokeWidth>0?`stroke="${el.strokeColor}" stroke-width="${el.strokeWidth}"`:"";
+  if(el.shape==="rect"){
+    if(el.fill==="transparent") return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><rect x="1" y="1" width="${w-2}" height="${h-2}" fill="none" stroke="${el.strokeColor||C.rule}" stroke-width="${Math.max(1,el.strokeWidth||1)}"/></svg>`;
+    return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><rect x="1" y="1" width="${w-2}" height="${h-2}" fill="${el.fill}" ${sa}/></svg>`;
+  }
+  if(el.shape==="ellipse") return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><ellipse cx="50" cy="50" rx="49" ry="49" fill="${el.fill}" ${sa}/></svg>`;
+  if(el.shape==="line") return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><line x1="0" y1="50" x2="100" y2="50" stroke="${el.fill}" stroke-width="${Math.max(1,h)}"/></svg>`;
+  if(el.shape==="triangle") return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><polygon points="50,2 98,98 2,98" fill="${el.fill}" ${sa}/></svg>`;
+  return "";
+}
+function updateElementNode(node, el){
+  node.style.left=el.x+"px"; node.style.top=el.y+"px";
+  node.style.width=el.width+"px"; node.style.height=el.height+"px";
+  node.style.transform=`rotate(${el.rotation||0}deg)`; node.style.transformOrigin="center center";
+  const empty=isEmptyContent(el);
+  node.classList.toggle("is-placeholder", empty);
+
+  if(el.type==="text"){
+    if(document.activeElement!==node) node.textContent=displayText(el);
+    node.style.fontSize=el.fontSize+"px";
+    node.style.fontWeight=el.bold?"700":"400";
+    node.style.fontStyle=empty?"italic":(el.italic?"italic":"normal");
+    node.style.textAlign=el.align; node.style.color=el.color;
+    node.style.lineHeight=el.lineHeight; node.style.letterSpacing=(el.letterSpacing||0)+"px";
+    node.style.fontFamily=el.fontFamily||FONT_SANS;
+  } else if(el.type==="scripture"){
+    if(document.activeElement!==node){
+      if(empty) node.textContent=displayText(el);
+      else {
+        node.innerHTML="";
+        if(el.showRef!==false){
+          const ref=document.createElement("span"); ref.className="sc-ref"; ref.textContent=scriptureRef(el)+"  ·  "+(el.version||"");
+          node.appendChild(ref);
+        }
+        node.appendChild(document.createTextNode(el.text));
+      }
+    }
+    node.style.fontSize=el.fontSize+"px";
+    node.style.fontWeight=el.bold?"700":"400";
+    node.style.fontStyle=empty?"italic":(el.italic?"italic":"normal");
+    node.style.textAlign=el.align; node.style.color=el.color;
+    node.style.lineHeight=el.lineHeight; node.style.letterSpacing=(el.letterSpacing||0)+"px";
+    node.style.fontFamily=el.fontFamily||FONT_SERIF;
+  } else if(el.type==="image"){
+    const inner=node.querySelector(".img-inner");
+    const fr=el.frame||{};
+    node.style.borderRadius=fr.circle?"50%":(fr.radius||0)+"px";
+    node.style.overflow="hidden";
+    if(fr.borderWidth){ node.style.boxShadow=`inset 0 0 0 ${fr.borderWidth}px ${fr.borderColor||C.rule}`; }
+    else node.style.boxShadow="none";
+    node.style.opacity=el.opacity;
+    if(empty){
+      inner.style.backgroundImage="none";
+      inner.setAttribute("data-ph", ROLE_PH[el.role]||ROLE_PH.image);
+    } else {
+      const st=imageBackgroundStyle(el);
+      inner.style.backgroundImage=st.backgroundImage;
+      inner.style.backgroundSize=st.backgroundSize;
+      inner.style.backgroundPosition=st.backgroundPosition;
+      inner.removeAttribute("data-ph");
+    }
+  } else if(el.type==="shape"){
+    node.innerHTML=shapeSVG(el); node.style.opacity=el.opacity;
+  }
+}
+
+function selectElement(id){ State.selectedId=id; renderSelectionOverlay(); renderPropPanel(); }
+function attachElementPointerHandlers(node){
+  node.addEventListener("pointerdown", e=>{
+    if(State.tool!=="select") return;
+    if(node.getAttribute("contenteditable")==="true") return;
+    e.stopPropagation();
+    selectElement(node.dataset.id);
+    startElementDrag(e, node.dataset.id);
+  });
+}
+function startElementDrag(e, id){
+  const el=findElement(id); const start=clientToCard(e.clientX,e.clientY); const orig={x:el.x,y:el.y}; let moved=false;
+  const node=document.getElementById("node_"+id); node.classList.add("dragging");
+  function onMove(ev){ const c=clientToCard(ev.clientX,ev.clientY); el.x=orig.x+(c.x-start.x); el.y=orig.y+(c.y-start.y); moved=true; renderElements(); }
+  function onUp(){ node.classList.remove("dragging"); window.removeEventListener("pointermove",onMove); window.removeEventListener("pointerup",onUp); if(moved) pushHistory(); }
+  window.addEventListener("pointermove",onMove); window.addEventListener("pointerup",onUp);
+}
+function renderSelectionOverlay(){
+  selectionOverlay.innerHTML="";
+  const el=findElement(State.selectedId); if(!el) return;
+  const box=document.createElement("div"); box.className="sel-box";
+  box.style.left=el.x+"px"; box.style.top=el.y+"px"; box.style.width=el.width+"px"; box.style.height=el.height+"px";
+  box.style.transform=`rotate(${el.rotation||0}deg)`; box.style.transformOrigin="center center";
+  box.appendChild(Object.assign(document.createElement("div"),{className:"rot-line"}));
+  ["tl","tr","bl","br"].forEach(c=>{
+    const h=document.createElement("div"); h.className="handle "+c;
+    h.onpointerdown=e=>{ e.stopPropagation(); startResize(e, el.id, c); }; box.appendChild(h);
+  });
+  const rot=document.createElement("div"); rot.className="handle rot";
+  rot.onpointerdown=e=>{ e.stopPropagation(); startRotate(e, el.id); }; box.appendChild(rot);
+  selectionOverlay.appendChild(box);
+}
+const CORNER={tl:{sx:-1,sy:-1},tr:{sx:1,sy:-1},bl:{sx:-1,sy:1},br:{sx:1,sy:1}};
+function startResize(e, id, corner){
+  const el=findElement(id), sign=CORNER[corner], rad=deg2rad(el.rotation||0);
+  const ux={x:Math.cos(rad),y:Math.sin(rad)}, uy={x:-Math.sin(rad),y:Math.cos(rad)};
+  const center={x:el.x+el.width/2,y:el.y+el.height/2};
+  const anchor={x:center.x+(-sign.sx*el.width/2)*ux.x+(-sign.sy*el.height/2)*uy.x, y:center.y+(-sign.sx*el.width/2)*ux.y+(-sign.sy*el.height/2)*uy.y};
+  function onMove(ev){
+    const p=clientToCard(ev.clientX,ev.clientY), v={x:p.x-anchor.x,y:p.y-anchor.y};
+    let w=Math.max(MIN_SIZE, sign.sx*(v.x*ux.x+v.y*ux.y)), h=Math.max(MIN_SIZE, sign.sy*(v.x*uy.x+v.y*uy.y));
+    const nc={x:anchor.x+sign.sx*(w/2)*ux.x+sign.sy*(h/2)*uy.x, y:anchor.y+sign.sx*(w/2)*ux.y+sign.sy*(h/2)*uy.y};
+    el.width=w; el.height=h; el.x=nc.x-w/2; el.y=nc.y-h/2;
+    if(el.autoFit){ el.autoFitLocked=false; applyAutoFit(el); }
+    renderElements();
+  }
+  function onUp(){ window.removeEventListener("pointermove",onMove); window.removeEventListener("pointerup",onUp); pushHistory(); }
+  window.addEventListener("pointermove",onMove); window.addEventListener("pointerup",onUp);
+}
+function startRotate(e, id){
+  const el=findElement(id), c={x:el.x+el.width/2,y:el.y+el.height/2};
+  const sa=Math.atan2(clientToCard(e.clientX,e.clientY).y-c.y, clientToCard(e.clientX,e.clientY).x-c.x), sr=el.rotation||0;
+  function onMove(ev){ const p=clientToCard(ev.clientX,ev.clientY); el.rotation=Math.round(sr+(Math.atan2(p.y-c.y,p.x-c.x)-sa)*180/Math.PI); renderElements(); }
+  function onUp(){ window.removeEventListener("pointermove",onMove); window.removeEventListener("pointerup",onUp); pushHistory(); }
+  window.addEventListener("pointermove",onMove); window.addEventListener("pointerup",onUp);
+}
+cardCanvas.addEventListener("pointerdown", e=>{
+  if(e.target===cardCanvas||e.target===elementsLayer||e.target===hlCanvas||e.target===inkCanvas){
+    if(State.tool==="select" && e.target!==inkCanvas && e.target!==hlCanvas) selectElement(null);
+  }
+});
+
+function reorderLayer(action){
+  const page=currentPage(), idx=page.elements.findIndex(e=>e.id===State.selectedId); if(idx<0) return;
+  const [el]=page.elements.splice(idx,1);
+  if(action==="front") page.elements.push(el);
+  else if(action==="back") page.elements.unshift(el);
+  else if(action==="forward") page.elements.splice(Math.min(idx+1,page.elements.length),0,el);
+  else if(action==="backward") page.elements.splice(Math.max(idx-1,0),0,el);
+  pushHistory(); renderElements();
+}
+
+/* ---------- strokes: highlight + ink ---------- */
+let currentStroke=null, erased=false;
+function paintStroke(ctx, s){
+  if(!s.points || s.points.length<2) return;
+  ctx.save();
+  ctx.globalAlpha=s.opacity;
+  ctx.strokeStyle=s.color;
+  ctx.lineWidth=s.width;
+  ctx.lineCap="round"; ctx.lineJoin="round";
+  if(s.type==="highlight") ctx.globalCompositeOperation="multiply";
+  else ctx.globalCompositeOperation="source-over";
+  ctx.beginPath();
+  ctx.moveTo(s.points[0].x, s.points[0].y);
+  for(let i=1;i<s.points.length;i++){
+    const p=s.points[i];
+    const w=s.width * (0.5 + 0.5*(p.pressure!=null?p.pressure:0.5));
+    // simple polyline; pressure slightly affects via average
+    ctx.lineTo(p.x, p.y);
+  }
+  ctx.stroke();
+  ctx.restore();
+}
+function drawAllStrokes(){
+  hlCtx.clearRect(0,0,CARD_W,CARD_H);
+  inkCtx.clearRect(0,0,CARD_W,CARD_H);
+  const strokes=currentPage().strokes||[];
+  strokes.forEach(s=>{
+    if(s.type==="highlight") paintStroke(hlCtx, s);
+    else paintStroke(inkCtx, s);
+  });
+  if(currentStroke){
+    if(currentStroke.type==="highlight") paintStroke(hlCtx, currentStroke);
+    else paintStroke(inkCtx, currentStroke);
+  }
+}
+function ptSegDist(p,a,b){
+  const l2=(b.x-a.x)**2+(b.y-a.y)**2; if(l2===0) return Math.hypot(p.x-a.x,p.y-a.y);
+  let t=((p.x-a.x)*(b.x-a.x)+(p.y-a.y)*(b.y-a.y))/l2; t=clamp(t,0,1);
+  return Math.hypot(p.x-(a.x+t*(b.x-a.x)), p.y-(a.y+t*(b.y-a.y)));
+}
+function eraseNear(p){
+  const page=currentPage();
+  const before=page.strokes.length;
+  page.strokes=page.strokes.filter(s=>{
+    for(let i=0;i<s.points.length-1;i++) if(ptSegDist(p,s.points[i],s.points[i+1])<State.eraserSize) return false;
+    if(s.points.length===1 && Math.hypot(p.x-s.points[0].x,p.y-s.points[0].y)<State.eraserSize) return false;
+    return true;
+  });
+  return page.strokes.length!==before;
+}
+function allowDraw(pt){ return pt==="pen"||pt==="mouse"||(pt==="touch"&&State.fingerDraw); }
+function activeDrawCanvas(){
+  if(State.tool==="highlighter") return hlCanvas;
+  return inkCanvas;
+}
+function bindDraw(canvas){
+  canvas.addEventListener("pointerdown", e=>{
+    const isDraw=["pen","highlighter","eraser"].includes(State.tool);
+    if(!isDraw||!allowDraw(e.pointerType)) return;
+    canvas.setPointerCapture(e.pointerId);
+    const p=clientToCard(e.clientX,e.clientY);
+    const pressure=e.pressure>0?e.pressure:0.5;
+    if(State.tool==="eraser"){ erased=eraseNear(p); drawAllStrokes(); return; }
+    const isHL=State.tool==="highlighter";
+    currentStroke={
+      id:uid("stroke"), type:isHL?"highlight":"pen",
+      color:isHL?State.hlColor:State.penColor,
+      width:isHL?State.hlWidth:State.penWidth,
+      opacity:isHL?State.hlOpacity:State.penOpacity,
+      points:[{x:p.x,y:p.y,pressure, tiltX:e.tiltX||0, tiltY:e.tiltY||0}]
+    };
+    drawAllStrokes();
+  });
+  canvas.addEventListener("pointermove", e=>{
+    const isDraw=["pen","highlighter","eraser"].includes(State.tool);
+    if(!isDraw||!allowDraw(e.pointerType)) return;
+    if(e.buttons===0 && e.pointerType!=="pen") return;
+    const p=clientToCard(e.clientX,e.clientY);
+    if(State.tool==="eraser"){ if(eraseNear(p)) erased=true; drawAllStrokes(); return; }
+    if(currentStroke){
+      currentStroke.points.push({x:p.x,y:p.y, pressure:e.pressure>0?e.pressure:0.5, tiltX:e.tiltX||0, tiltY:e.tiltY||0});
+      drawAllStrokes();
+    }
+  });
+  function endStroke(){
+    if(currentStroke && currentStroke.points.length>1){
+      currentPage().strokes.push(currentStroke);
+      currentStroke=null; pushHistory();
+    } else currentStroke=null;
+    if(erased){ erased=false; pushHistory(); }
+    drawAllStrokes();
+  }
+  canvas.addEventListener("pointerup", endStroke);
+  canvas.addEventListener("pointercancel", endStroke);
+}
+bindDraw(hlCanvas); bindDraw(inkCanvas);
+
+function updateDrawInteractivity(){
+  const isHL=State.tool==="highlighter";
+  const isInk=State.tool==="pen"||State.tool==="eraser";
+  const drawing=isHL||isInk;
+  hlCanvas.style.pointerEvents=isHL||State.tool==="eraser"?"auto":"none";
+  inkCanvas.style.pointerEvents=isInk?"auto":"none";
+  // eraser hits both: enable both
+  if(State.tool==="eraser"){ hlCanvas.style.pointerEvents="auto"; inkCanvas.style.pointerEvents="auto"; }
+  elementsLayer.style.pointerEvents=drawing?"none":"auto";
+}
+
+/* ---------- pages ---------- */
+function renderPageStrip(){
+  const strip=$("#pageStrip"); strip.innerHTML="";
+  State.pages.forEach((p,i)=>{
+    const th=document.createElement("div");
+    th.className="page-thumb"+(i===State.currentPageIndex?" active":"");
+    th.textContent=i+1; th.onclick=()=>{ State.currentPageIndex=i; State.selectedId=null; renderAll(); };
+    const mb=document.createElement("div"); mb.className="page-menu-btn"; mb.textContent="⋯";
+    mb.onclick=e=>{ e.stopPropagation(); openPageMenu(i, mb); };
+    th.appendChild(mb); strip.appendChild(th);
+  });
+  const add=document.createElement("button"); add.id="btnAddPage"; add.textContent="+";
+  add.onclick=()=>{ State.pages.push(newPage()); State.currentPageIndex=State.pages.length-1; pushHistory(); renderAll(); };
+  strip.appendChild(add);
+}
+function openPageMenu(i, anchor){
+  closeSubmenu();
+  const menu=document.createElement("div"); menu.className="submenu";
+  [["복제",()=>{
+    const c=JSON.parse(JSON.stringify(State.pages[i])); c.id=uid("page"); c.elements.forEach(e=>e.id=uid("el"));
+    State.pages.splice(i+1,0,c); State.currentPageIndex=i+1; pushHistory(); renderAll();
+  }],["삭제",()=>{
+    if(State.pages.length<=1) return; State.pages.splice(i,1);
+    State.currentPageIndex=clamp(State.currentPageIndex,0,State.pages.length-1); pushHistory(); renderAll();
+  }]].forEach(([l,fn])=>{
+    const b=document.createElement("button"); b.className="tool-btn"; b.style.minWidth="60px";
+    b.innerHTML=`<span>${l}</span>`; b.onclick=()=>{ fn(); closeSubmenu(); }; menu.appendChild(b);
+  });
+  anchor.parentElement.appendChild(menu); openSubmenuEl=menu;
+}
+
+/* ---------- props ---------- */
+function renderPropPanel(){
+  const html=buildPropHTML();
+  if(isWide()){ $("#propPanel").innerHTML=html; bindProp($("#propPanel")); hideSheet(); }
+  else {
+    const need=State.selectedId||["pen","highlighter","eraser"].includes(State.tool);
+    if(need){ $("#propSheetBody").innerHTML=html; bindProp($("#propSheetBody")); showSheet(); }
+    else hideSheet();
+  }
+}
+function showSheet(){ $("#sheetOverlay").classList.add("show"); $("#propSheet").classList.add("show"); }
+function hideSheet(){ $("#sheetOverlay").classList.remove("show"); $("#propSheet").classList.remove("show"); }
+$("#sheetOverlay").onclick=()=>{ selectElement(null); hideSheet(); };
+
+function buildPropHTML(){
+  const el=findElement(State.selectedId);
+  if(el){
+    if(el.type==="text") return textProp(el);
+    if(el.type==="scripture") return scriptureProp(el);
+    if(el.type==="image") return imageProp(el);
+    if(el.type==="shape") return shapeProp(el);
+  }
+  if(State.tool==="pen") return penProp();
+  if(State.tool==="highlighter") return hlProp();
+  if(State.tool==="eraser") return erProp();
+  return `<div class="empty-hint">TEMPLATES로 디자인을 불러온 뒤<br>Placeholder를 선택해 편집하세요.</div>`;
+}
+function layerBtns(){
+  return `<div class="prop-group"><div class="prop-label">레이어</div>
+    <div class="prop-row"><button class="prop-btn" data-action="layer:front">맨 앞</button><button class="prop-btn" data-action="layer:forward">앞으로</button></div>
+    <div class="prop-row"><button class="prop-btn" data-action="layer:backward">뒤로</button><button class="prop-btn" data-action="layer:back">맨 뒤</button></div></div>`;
+}
+function commonBtns(){
+  return `<div class="prop-group"><div class="prop-row"><button class="prop-btn" data-action="duplicate">복제</button><button class="prop-btn danger" data-action="delete">삭제</button></div></div>`;
+}
+function textProp(el){
+  const serif=(el.fontFamily||"").includes("RIDIBatang");
+  return `
+  <div class="role-tag">ROLE · ${el.role||"text"}</div>
+  <div class="prop-group"><div class="prop-label">글꼴</div>
+    <div class="seg"><button data-font="sans" class="${!serif?'active':''}">Pretendard</button><button data-font="serif" class="${serif?'active':''}">리디바탕</button></div></div>
+  <div class="prop-group"><div class="prop-label">크기 (${el.fontSize}px)${el.autoFit?' · autoFit':''}</div>
+    <input type="range" min="${el.minFontSize||12}" max="${el.maxFontSize||160}" value="${el.fontSize}" data-bind="fontSize"></div>
+  <div class="prop-group"><div class="prop-label">자동 맞춤</div>
+    <div class="seg">
+      <button data-fit="off" class="${!el.autoFit?'active':''}">Fixed</button>
+      <button data-fit="box" class="${el.autoFit&&el.fitMode==='box'?'active':''}">Box</button>
+      <button data-fit="width" class="${el.autoFit&&el.fitMode==='width'?'active':''}">Width</button>
+      <button data-fit="expand" class="${el.autoFit&&el.fitMode==='expand'?'active':''}">Expand</button>
+    </div></div>
+  <div class="prop-group"><div class="prop-label">스타일</div>
+    <div class="prop-row"><button class="prop-btn" data-action="toggleBold">굵게</button><button class="prop-btn" data-action="toggleItalic">기울임</button></div></div>
+  <div class="prop-group"><div class="prop-label">정렬</div>
+    <div class="seg"><button data-align="left" class="${el.align==='left'?'active':''}">좌</button><button data-align="center" class="${el.align==='center'?'active':''}">중</button><button data-align="right" class="${el.align==='right'?'active':''}">우</button></div></div>
+  <div class="prop-group"><div class="prop-label">색상</div><input type="color" value="${el.color}" data-bind="color"></div>
+  <div class="prop-group"><div class="prop-label">줄간격 (${el.lineHeight})</div><input type="range" min="0.8" max="2.4" step="0.05" value="${el.lineHeight}" data-bind="lineHeight"></div>
+  ${layerBtns()}${commonBtns()}`;
+}
+function scriptureProp(el){
+  return `
+  <div class="role-tag">SCRIPTURE</div>
+  <div class="prop-group"><div class="prop-label">번역본</div><input type="text" data-sc="version" value="${el.version||""}"></div>
+  <div class="prop-group"><div class="prop-label">성경책</div><input type="text" data-sc="book" value="${el.book||""}"></div>
+  <div class="prop-row">
+    <div class="prop-group" style="flex:1"><div class="prop-label">장</div><input type="number" data-sc="chapter" value="${el.chapter||1}"></div>
+    <div class="prop-group" style="flex:1"><div class="prop-label">시작 절</div><input type="number" data-sc="startVerse" value="${el.startVerse||1}"></div>
+    <div class="prop-group" style="flex:1"><div class="prop-label">끝 절</div><input type="number" data-sc="endVerse" value="${el.endVerse||1}"></div>
+  </div>
+  <div class="prop-group"><div class="prop-label">본문</div><textarea data-sc="text">${el.text||""}</textarea></div>
+  <div class="prop-group"><div class="prop-label">크기 (${el.fontSize}px)</div><input type="range" min="${el.minFontSize||16}" max="${el.maxFontSize||72}" value="${el.fontSize}" data-bind="fontSize"></div>
+  <div class="prop-group"><div class="prop-label">색상</div><input type="color" value="${el.color}" data-bind="color"></div>
+  <div class="prop-group"><div class="prop-label">정렬</div>
+    <div class="seg"><button data-align="left" class="${el.align==='left'?'active':''}">좌</button><button data-align="center" class="${el.align==='center'?'active':''}">중</button><button data-align="right" class="${el.align==='right'?'active':''}">우</button></div></div>
+  <div class="prop-group"><div class="prop-label">줄간격 (${el.lineHeight})</div><input type="range" min="1" max="2.4" step="0.05" value="${el.lineHeight}" data-bind="lineHeight"></div>
+  ${layerBtns()}${commonBtns()}`;
+}
+function imageProp(el){
+  const crop=el.crop||{mode:"fill"};
+  return `
+  <div class="role-tag">IMAGE · ${el.role||"image"}</div>
+  <div class="prop-group"><button class="prop-btn" data-action="replaceImage">이미지 교체</button></div>
+  <div class="prop-group"><div class="prop-label">Crop 모드</div>
+    <div class="seg">
+      <button data-crop="fill" class="${crop.mode==='fill'?'active':''}">Fill</button>
+      <button data-crop="fit" class="${crop.mode==='fit'?'active':''}">Fit</button>
+      <button data-crop="center" class="${crop.mode==='center'?'active':''}">Center</button>
+      <button data-crop="custom" class="${crop.mode==='custom'?'active':''}">Custom</button>
+    </div></div>
+  <div class="prop-group"><div class="prop-label">Focal X (${Math.round((crop.focalPoint?.x||0.5)*100)}%)</div>
+    <input type="range" min="0" max="1" step="0.01" value="${crop.focalPoint?.x||0.5}" data-focal="x"></div>
+  <div class="prop-group"><div class="prop-label">Focal Y (${Math.round((crop.focalPoint?.y||0.5)*100)}%)</div>
+    <input type="range" min="0" max="1" step="0.01" value="${crop.focalPoint?.y||0.5}" data-focal="y"></div>
+  <div class="prop-group"><div class="prop-label">Custom Scale (${(crop.scale||1).toFixed(2)})</div>
+    <input type="range" min="0.5" max="3" step="0.05" value="${crop.scale||1}" data-crop-scale></div>
+  <div class="prop-group"><div class="prop-label">투명도 (${Math.round(el.opacity*100)}%)</div>
+    <input type="range" min="0" max="1" step="0.05" value="${el.opacity}" data-bind="opacity"></div>
+  ${layerBtns()}${commonBtns()}`;
+}
+function shapeProp(el){
+  return `
+  <div class="prop-group"><div class="prop-label">채우기</div><input type="color" value="${el.fill==='transparent'?'#ffffff':el.fill}" data-bind="fill"></div>
+  <div class="prop-group"><div class="prop-label">투명도</div><input type="range" min="0" max="1" step="0.05" value="${el.opacity}" data-bind="opacity"></div>
+  <div class="prop-group"><div class="prop-label">테두리 색</div><input type="color" value="${el.strokeColor}" data-bind="strokeColor"></div>
+  <div class="prop-group"><div class="prop-label">테두리 두께</div><input type="range" min="0" max="20" value="${el.strokeWidth}" data-bind="strokeWidth"></div>
+  ${layerBtns()}${commonBtns()}`;
+}
+function penProp(){
+  return `<div class="prop-group"><div class="prop-label">펜 색상</div><input type="color" value="${State.penColor}" data-tool-bind="penColor"></div>
+  <div class="prop-group"><div class="prop-label">굵기 (${State.penWidth})</div><input type="range" min="1" max="40" value="${State.penWidth}" data-tool-bind="penWidth"></div>
+  <div class="prop-group"><div class="prop-label">투명도</div><input type="range" min="0.1" max="1" step="0.05" value="${State.penOpacity}" data-tool-bind="penOpacity"></div>
+  ${fingerToggle()}`;
+}
+function hlProp(){
+  return `<div class="prop-group"><div class="prop-label">형광펜 색</div><input type="color" value="${State.hlColor}" data-tool-bind="hlColor"></div>
+  <div class="prop-group"><div class="prop-label">굵기 (${State.hlWidth})</div><input type="range" min="10" max="80" value="${State.hlWidth}" data-tool-bind="hlWidth"></div>
+  <div class="prop-group"><div class="prop-label">투명도</div><input type="range" min="0.1" max="0.8" step="0.05" value="${State.hlOpacity}" data-tool-bind="hlOpacity"></div>
+  ${fingerToggle()}`;
+}
+function erProp(){
+  return `<div class="prop-group"><div class="prop-label">지우개 (스트로크 단위) ${State.eraserSize}px</div>
+    <input type="range" min="10" max="80" value="${State.eraserSize}" data-tool-bind="eraserSize"></div>${fingerToggle()}`;
+}
+function fingerToggle(){
+  return `<div class="prop-group"><div class="prop-label">손가락 그리기</div>
+    <div class="seg"><button data-finger="off" class="${!State.fingerDraw?'active':''}">Pencil만</button>
+    <button data-finger="on" class="${State.fingerDraw?'active':''}">손가락 허용</button></div></div>`;
+}
+function bindProp(root){
+  $all("input[data-bind]", root).forEach(inp=>{
+    inp.addEventListener("input", ()=>{
+      const el=findElement(State.selectedId); if(!el) return;
+      const key=inp.dataset.bind;
+      const val=inp.type==="color"?inp.value:parseFloat(inp.value);
+      el[key]=val;
+      if(key==="fontSize") el.autoFitLocked=true;
+      if(el.autoFit && key!=="fontSize"){ el.autoFitLocked=false; applyAutoFit(el); }
+      renderElements(); renderPropPanel();
+    });
+    inp.addEventListener("change", pushHistory);
+  });
+  $all("input[data-tool-bind]", root).forEach(inp=>{
+    inp.oninput=()=>{ State[inp.dataset.toolBind]=inp.type==="color"?inp.value:parseFloat(inp.value); renderPropPanel(); };
+  });
+  $all("[data-align]", root).forEach(b=> b.onclick=()=>{ const el=findElement(State.selectedId); if(!el) return; el.align=b.dataset.align; renderElements(); renderPropPanel(); pushHistory(); });
+  $all("[data-font]", root).forEach(b=> b.onclick=()=>{ const el=findElement(State.selectedId); if(!el) return; el.fontFamily=b.dataset.font==="serif"?FONT_SERIF:FONT_SANS; renderElements(); renderPropPanel(); pushHistory(); });
+  $all("[data-fit]", root).forEach(b=> b.onclick=()=>{
+    const el=findElement(State.selectedId); if(!el) return;
+    if(b.dataset.fit==="off"){ el.autoFit=false; el.autoFitLocked=true; }
+    else { el.autoFit=true; el.fitMode=b.dataset.fit; el.autoFitLocked=false; applyAutoFit(el); }
+    renderElements(); renderPropPanel(); pushHistory();
+  });
+  $all("[data-crop]", root).forEach(b=> b.onclick=()=>{
+    const el=findElement(State.selectedId); if(!el||!el.crop) return;
+    el.crop.mode=b.dataset.crop; renderElements(); renderPropPanel(); pushHistory();
+  });
+  $all("[data-focal]", root).forEach(inp=>{
+    inp.oninput=()=>{
+      const el=findElement(State.selectedId); if(!el||!el.crop) return;
+      if(!el.crop.focalPoint) el.crop.focalPoint={x:0.5,y:0.5};
+      el.crop.focalPoint[inp.dataset.focal]=parseFloat(inp.value);
+      renderElements();
+    };
+    inp.onchange=pushHistory;
+  });
+  const scScale=root.querySelector("[data-crop-scale]");
+  if(scScale){ scScale.oninput=()=>{ const el=findElement(State.selectedId); if(!el||!el.crop) return; el.crop.scale=parseFloat(scScale.value); el.crop.mode="custom"; renderElements(); }; scScale.onchange=pushHistory; }
+  $all("[data-sc]", root).forEach(inp=>{
+    const ev=inp.tagName==="TEXTAREA"?"input":"change";
+    inp.addEventListener(ev, ()=>{
+      const el=findElement(State.selectedId); if(!el) return;
+      const k=inp.dataset.sc;
+      el[k]=inp.type==="number"?parseInt(inp.value,10):inp.value;
+      if(k==="text"){ el.placeholder=false; el.autoFitLocked=false; applyAutoFit(el); }
+      renderElements();
+    });
+    inp.addEventListener("change", pushHistory);
+  });
+  $all("[data-finger]", root).forEach(b=> b.onclick=()=>{ State.fingerDraw=b.dataset.finger==="on"; renderPropPanel(); });
+  $all("[data-action]", root).forEach(b=> b.onclick=()=>handleAction(b.dataset.action));
+}
+function handleAction(action){
+  const el=findElement(State.selectedId);
+  if(action.startsWith("layer:")){ reorderLayer(action.split(":")[1]); return; }
+  if(action==="toggleBold"){ el.bold=!el.bold; renderElements(); renderPropPanel(); pushHistory(); return; }
+  if(action==="toggleItalic"){ el.italic=!el.italic; renderElements(); renderPropPanel(); pushHistory(); return; }
+  if(action==="duplicate"){
+    const c=JSON.parse(JSON.stringify(el)); c.id=uid("el"); c.x+=24; c.y+=24;
+    currentPage().elements.push(c); pushHistory(); renderElements(); selectElement(c.id); return;
+  }
+  if(action==="delete"){
+    currentPage().elements=currentPage().elements.filter(e=>e.id!==el.id);
+    pushHistory(); selectElement(null); renderElements(); return;
+  }
+  if(action==="replaceImage"){ $("#fileInput").click(); }
+}
+
+/* ---------- templates UI ---------- */
+function buildTplGrid(){
+  const g=$("#tplGrid"); g.innerHTML="";
+  TEMPLATE_META.forEach(m=>{
+    const card=document.createElement("button"); card.className="tpl-card";
+    card.innerHTML=`<div class="tpl-preview" style="background:${m.previewBg};color:${m.previewColor}">${m.name}</div>
+      <div class="tpl-name">${m.name}</div><div class="tpl-desc">${m.desc}</div>`;
+    card.onclick=()=>applyTemplate(m.id); g.appendChild(card);
+  });
+}
+function showTpl(){ $("#tplOverlay").classList.add("show"); $("#tplSheet").classList.add("show"); }
+function hideTpl(){ $("#tplOverlay").classList.remove("show"); $("#tplSheet").classList.remove("show"); }
+$("#btnTpl").onclick=showTpl; $("#tplOverlay").onclick=hideTpl;
+
+/* ---------- export ---------- */
+$("#btnUndo").onclick=undo; $("#btnRedo").onclick=redo;
+$("#btnBack").onclick=()=>{ if(confirm("에디터를 나가시겠어요?")) history.back(); };
+$("#btnSave").onclick=exportPNG;
+
+async function exportPNG(){
+  const page=currentPage();
+  const off=document.createElement("canvas"); off.width=CARD_W; off.height=CARD_H;
+  const ctx=off.getContext("2d");
+  ctx.fillStyle=page.background||"#fff"; ctx.fillRect(0,0,CARD_W,CARD_H);
+
+  // highlight under content
+  const strokes=page.strokes||[];
+  strokes.filter(s=>s.type==="highlight").forEach(s=>paintStroke(ctx,s));
+
+  for(const el of page.elements){
+    if((el.type==="text"||el.type==="scripture") && isEmptyContent(el)) continue; // placeholder 제외
+    if(el.type==="image" && !el.src) continue;
+    ctx.save();
+    const cx=el.x+el.width/2, cy=el.y+el.height/2;
+    ctx.translate(cx,cy); ctx.rotate(deg2rad(el.rotation||0)); ctx.translate(-el.width/2,-el.height/2);
+    if(el.type==="shape"){ ctx.globalAlpha=el.opacity; drawShape(ctx,el); }
+    else if(el.type==="image"){ ctx.globalAlpha=el.opacity; await drawImage(ctx,el); }
+    else if(el.type==="text") drawText(ctx,el, el.content);
+    else if(el.type==="scripture") drawScripture(ctx,el);
+    ctx.restore();
+  }
+  strokes.filter(s=>s.type!=="highlight").forEach(s=>paintStroke(ctx,s));
+
+  off.toBlob(async blob=>{
+    const file=new File([blob],"theology-card.png",{type:"image/png"});
+    if(navigator.canShare && navigator.canShare({files:[file]})){
+      try{ await navigator.share({files:[file], title:"카드뉴스"}); return; }catch(e){}
+    }
+    const url=URL.createObjectURL(blob); const a=document.createElement("a");
+    a.href=url; a.download="theology-card.png"; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),4000);
+  },"image/png");
+}
+function drawShape(ctx,el){
+  const w=el.width,h=el.height;
+  ctx.fillStyle=el.fill==="transparent"?"rgba(0,0,0,0)":el.fill;
+  ctx.strokeStyle=el.strokeColor; ctx.lineWidth=el.strokeWidth;
+  if(el.shape==="rect"){ ctx.beginPath(); ctx.rect(0,0,w,h); if(el.fill!=="transparent") ctx.fill(); if(el.strokeWidth>0) ctx.stroke(); }
+  else if(el.shape==="ellipse"){ ctx.beginPath(); ctx.ellipse(w/2,h/2,w/2,h/2,0,0,Math.PI*2); ctx.fill(); if(el.strokeWidth>0) ctx.stroke(); }
+  else if(el.shape==="line"){ ctx.beginPath(); ctx.moveTo(0,h/2); ctx.lineTo(w,h/2); ctx.lineWidth=Math.max(1,h); ctx.strokeStyle=el.fill; ctx.stroke(); }
+  else if(el.shape==="triangle"){ ctx.beginPath(); ctx.moveTo(w/2,0); ctx.lineTo(w,h); ctx.lineTo(0,h); ctx.closePath(); ctx.fill(); if(el.strokeWidth>0) ctx.stroke(); }
+}
+function drawImage(ctx,el){
+  return new Promise(resolve=>{
+    const img=new Image();
+    img.onload=()=>{
+      const fr=el.frame||{};
+      ctx.save();
+      if(fr.circle){ ctx.beginPath(); ctx.ellipse(el.width/2,el.height/2,el.width/2,el.height/2,0,0,Math.PI*2); ctx.clip(); }
+      else if(fr.radius){ roundRect(ctx,0,0,el.width,el.height,fr.radius); ctx.clip(); }
+      const crop=el.crop||{mode:"fill", focalPoint:{x:0.5,y:0.5}};
+      const iw=img.naturalWidth, ih=img.naturalHeight, fw=el.width, fh=el.height;
+      let sx=0,sy=0,sw=iw,sh=ih, dx=0,dy=0,dw=fw,dh=fh;
+      if(crop.mode==="fit"){
+        const r=Math.min(fw/iw, fh/ih); dw=iw*r; dh=ih*r; dx=(fw-dw)/2; dy=(fh-dh)/2;
+        ctx.drawImage(img,0,0,iw,ih,dx,dy,dw,dh);
+      } else if(crop.mode==="custom"){
+        const sc=crop.scale||1; dw=fw*sc; dh=fh*sc;
+        dx=(fw-dw)/2+(crop.offsetX||0); dy=(fh-dh)/2+(crop.offsetY||0);
+        ctx.drawImage(img,0,0,iw,ih,dx,dy,dw,dh);
+      } else {
+        // fill / center with focal
+        const r=Math.max(fw/iw, fh/ih);
+        const tw=iw*r, th=ih*r;
+        const fp=crop.focalPoint||{x:0.5,y:0.5};
+        let ox=(tw-fw)*fp.x, oy=(th-fh)*fp.y;
+        if(crop.mode==="center"){ ox=(tw-fw)/2; oy=(th-fh)/2; }
+        ctx.drawImage(img, ox/r, oy/r, fw/r, fh/r, 0, 0, fw, fh);
+      }
+      ctx.restore();
+      if(fr.borderWidth){ ctx.strokeStyle=fr.borderColor||C.rule; ctx.lineWidth=fr.borderWidth; ctx.strokeRect(0,0,el.width,el.height); }
+      resolve();
+    };
+    img.onerror=resolve; img.src=el.src;
+  });
+}
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
+}
+function drawText(ctx,el, text){
+  ctx.fillStyle=el.color; ctx.textBaseline="top";
+  ctx.textAlign=el.align==="center"?"center":el.align==="right"?"right":"left";
+  const weight=el.bold?"700":"400", style=el.italic?"italic":"normal";
+  ctx.font=`${style} ${weight} ${el.fontSize}px ${el.fontFamily||FONT_SANS}`;
+  try{ ctx.letterSpacing=(el.letterSpacing||0)+"px"; }catch(e){}
+  const lines=String(text||"").split("\n"), lh=el.fontSize*(el.lineHeight||1.35);
+  const dx=el.align==="center"?el.width/2:el.align==="right"?el.width:0;
+  lines.forEach((line,i)=>ctx.fillText(line, dx, i*lh));
+}
+function drawScripture(ctx,el){
+  let y=0;
+  if(el.showRef!==false){
+    ctx.fillStyle=el.color; ctx.globalAlpha=0.65;
+    ctx.font=`400 ${Math.max(14, el.fontSize*0.35)}px ${FONT_SANS}`;
+    ctx.textAlign=el.align==="center"?"center":el.align==="right"?"right":"left";
+    ctx.textBaseline="top";
+    const dx=el.align==="center"?el.width/2:el.align==="right"?el.width:0;
+    ctx.fillText(scriptureRef(el)+"  ·  "+(el.version||""), dx, 0);
+    y=el.fontSize*0.55;
+    ctx.globalAlpha=1;
+  }
+  ctx.save(); ctx.translate(0,y);
+  drawText(ctx, Object.assign({}, el, {height:el.height-y}), el.text);
+  ctx.restore();
+}
+
+function renderAll(){
+  applyCardSize(); renderElements(); renderPageStrip();
+  refreshToolButtonStates(); renderPropPanel(); updateDrawInteractivity();
+}
+function init(){
+  buildToolButtons($("#toolsPanel"));
+  buildToolButtons($("#bottomToolbar"));
+  buildTplGrid();
+  applyCardSize(); fitToScreen(); renderAll(); pushHistory();
+  window.addEventListener("resize", fitToScreen);
+  document.addEventListener("pointerdown", e=>{
+    if(openSubmenuEl && !openSubmenuEl.contains(e.target) && !e.target.closest(".tool-btn")) closeSubmenu();
+  });
+}
+init();
+})();
+</script>
+</body>
+</html>
