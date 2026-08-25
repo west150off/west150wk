@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>X TODAY · 증거판</title>
+<style>
+:root{--bg:#0b0d10;--panel:#14171c;--panel2:#191d23;--line:#262b33;--text:#edf0f4;--muted:#8891a0;--brick:#b6453c;--brick2:#7d2c26;--gold:#c8a24a;--gold2:#8a6f2e;--steel:#5c8fc4;--green:#5a9b78;--serif:"Iowan Old Style","Palatino Linotype",Georgia,"Noto Serif KR",serif;--mono:ui-monospace,"SF Mono","Roboto Mono","Courier New",monospace;--safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#08090b;color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Pretendard",sans-serif;-webkit-user-select:none;user-select:none}
+button,input,textarea,select{font:inherit}
+button{border:0;color:inherit;background:none}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:4px}
+#app{height:100vh;height:var(--app-vh,100vh);display:flex;flex-direction:column;background:var(--bg)}
+.top{height:calc(52px + var(--safe-top));padding-top:var(--safe-top);display:flex;align-items:center;justify-content:space-between;padding-left:14px;padding-right:10px;border-bottom:1px solid var(--line);background:rgba(11,13,16,.97);z-index:30}
+.top .brand{display:flex;gap:9px;align-items:center;font-family:var(--serif);font-weight:700;font-size:16px;letter-spacing:.2px}.brand b{font-weight:700}.brand .sep{color:var(--gold2);font-family:var(--sans, -apple-system);font-weight:400}.brand small{color:var(--muted);font-weight:600;font-family:-apple-system,sans-serif;font-size:12px;letter-spacing:.3px}
+.top-actions{display:flex;gap:4px}.icon{width:36px;height:36px;border-radius:9px;display:grid;place-items:center;font-size:17px;color:var(--muted)}.icon:active{background:var(--panel2)}.icon.primary{background:var(--gold);color:#1b1305;font-size:12px;font-weight:800;letter-spacing:.2px}.icon.disabled{opacity:.3;pointer-events:none}
+.viewport{touch-action:none;position:relative;flex:1;min-height:0;overflow:hidden;background:radial-gradient(circle at 50% 32%,#181b20 0,#0e1013 42%,#08090b 100%)}
+.grid{position:absolute;inset:-1000px;background-image:radial-gradient(#2c313a 1px,transparent 1px);background-size:20px 20px;opacity:.28;transform-origin:0 0;pointer-events:none}
+.stage{position:absolute;left:0;top:0;width:2200px;height:1500px;transform-origin:0 0}
+.connections{position:absolute;inset:0;pointer-events:none;overflow:visible}
+.edge{stroke:var(--steel);stroke-width:2.2;opacity:.65;fill:none;pointer-events:stroke;cursor:pointer}.edge.selected{stroke:var(--gold);stroke-width:3;opacity:.95}
+.node{touch-action:none;position:absolute;width:180px;min-height:122px;border:1px solid var(--line);border-radius:10px;background:linear-gradient(180deg,var(--panel2),var(--panel));box-shadow:0 10px 22px rgba(0,0,0,.42);padding:10px;overflow:hidden}
+.node.selected{border-color:var(--gold);box-shadow:0 0 0 1px rgba(200,162,74,.35),0 12px 28px rgba(0,0,0,.5)}
+.node.linking{border-color:var(--steel);box-shadow:0 0 0 2px rgba(92,143,196,.55),0 12px 28px rgba(0,0,0,.5)}
+.node .exhibit{position:absolute;left:-1px;top:-1px;font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.3px;color:#1b1305;background:var(--gold);padding:2px 7px 2px 6px;border-radius:0 0 8px 0}
+.node .kind{font-size:9px;font-weight:700;letter-spacing:.35px;color:var(--muted);margin:16px 0 6px;text-transform:uppercase}.node .title{font-family:var(--serif);font-size:13px;font-weight:700;line-height:1.32;color:var(--text)}.node .desc{font-size:10px;line-height:1.45;color:#9aa1ac;margin-top:6px}.node .meta{display:flex;justify-content:space-between;align-items:center;gap:8px;color:#6d7583;font-size:8px;font-family:var(--mono);margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}.node .badge{padding:2px 6px;border-radius:4px;font-family:-apple-system,sans-serif;font-weight:700;letter-spacing:.2px}
+.node .thumb{height:70px;border-radius:6px;margin-bottom:7px;background:#20242b;overflow:hidden;position:relative}.thumb:before{content:"";position:absolute;inset:0;background:linear-gradient(145deg,#2a3542,#181a1f 55%,#4a3a22);filter:saturate(.75)}.thumb:after{content:"";position:absolute;left:34%;top:14%;width:32%;height:70%;border-radius:45% 45% 40% 40%;background:linear-gradient(180deg,#d8cdbd 0 35%,#2c2f35 36% 100%);box-shadow:30px 15px 0 -9px #8a6a52,-30px 10px 0 -11px #22262e}
+.node.small{width:158px;min-height:106px}.node.hero{width:220px;min-height:184px;padding:12px;border-color:var(--gold2)}.node.hero .thumb{height:95px}.node.hero .title{font-size:15px}.node.hero .desc{font-size:11px}.node.hero .meta{font-size:9px}
+.badge.verified{background:rgba(200,162,74,.14);color:var(--gold)}.badge.medium{background:rgba(92,143,196,.14);color:var(--steel)}.badge.low{background:rgba(182,69,60,.16);color:#e08b83}
+.toolbar{position:absolute;left:10px;right:10px;bottom:10px;display:flex;align-items:center;gap:8px;z-index:20;pointer-events:none}.toolbar>*{pointer-events:auto}
+.fab{width:44px;height:44px;border-radius:12px;background:var(--panel2);border:1px solid var(--line);color:var(--text);display:grid;place-items:center;box-shadow:0 8px 18px rgba(0,0,0,.4)}.fab.red{background:var(--gold);border-color:var(--gold);color:#1b1305;font-weight:900}.fab.active{outline:2px solid var(--steel);outline-offset:1px}.zoom{margin-left:auto;display:flex;gap:4px;background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:4px}.zoom button{width:34px;height:34px;border-radius:8px;color:var(--text)}.zoom button:active{background:#23272f}.zoom .pct{font-size:10px;font-family:var(--mono);color:var(--muted);display:grid;place-items:center;min-width:44px}
+.minimap{position:absolute;right:10px;top:10px;width:104px;height:74px;border:1px solid var(--line);background:rgba(17,19,24,.85);border-radius:8px;z-index:15;overflow:hidden}.minimap .mini-stage{position:absolute;inset:6px}.mini-node{position:absolute;min-width:4px;min-height:3px;border-radius:2px;background:#454b56}.mini-node.hot{background:var(--gold)}.mini-view{position:absolute;border:1px solid rgba(200,162,74,.8);border-radius:2px;pointer-events:none}
+.top-sheet{position:absolute;top:10px;left:10px;right:124px;z-index:15;display:flex;flex-direction:column;gap:5px}.case{background:rgba(15,17,21,.92);border:1px solid var(--line);border-left:2px solid var(--gold);border-radius:4px 10px 10px 4px;padding:9px 11px;backdrop-filter:blur(10px);cursor:pointer;-webkit-tap-highlight-color:transparent}.case:active{background:rgba(22,25,30,.95);border-color:var(--gold2)}.case .k{font-family:var(--mono);font-size:8px;color:var(--gold);letter-spacing:.8px;text-transform:uppercase}.case .v{font-family:var(--serif);font-size:13px;font-weight:700;margin-top:3px;color:var(--text)}.case .sub{font-family:var(--mono);font-size:8.5px;color:var(--muted);margin-top:4px;letter-spacing:.2px}
+.bottom{flex-shrink:0;display:flex;flex-direction:column;height:auto;min-height:0;padding:8px 10px calc(10px + var(--safe-bottom));background:var(--panel);border-top:1px solid var(--line);z-index:25;box-sizing:border-box}.bottom-grid{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1.3fr 1fr;gap:6px;max-height:118px}.bottom-card{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:8px;min-width:0;overflow:hidden;display:flex;flex-direction:column}.bottom-card h4{font-size:9px;margin:0 0 6px;color:var(--gold);letter-spacing:.5px;text-transform:uppercase;font-weight:700;flex-shrink:0}.timeline{display:flex;flex-direction:column;gap:6px;overflow:auto;flex:1;min-height:0;-webkit-overflow-scrolling:touch}.titem{display:grid;grid-template-columns:36px 8px 1fr;align-items:start;gap:5px;font-size:9px;color:#8b93a1;font-family:var(--mono)}.titem .dot{width:6px;height:6px;border-radius:50%;background:#4a505c;margin-top:2px}.titem.hot{color:var(--text)}.titem.hot .dot{background:var(--gold);box-shadow:0 0 6px rgba(200,162,74,.6)}.summary{font-size:10px;color:#b7bcc4;line-height:1.45;overflow:auto;flex:1;min-height:0;-webkit-overflow-scrolling:touch}.summary b{color:var(--text);font-family:var(--serif)}.note-area{height:64px;min-height:48px;flex:1;background:#101317;border-radius:6px;border:1px solid var(--line);color:#c6cbd2;padding:6px 8px;font-size:10px;font-family:var(--mono);line-height:1.45;resize:none;outline:none;width:100%;-webkit-user-select:text;user-select:text}.note-area:focus{border-color:var(--gold2)}.tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px;flex-shrink:0}.tag{border:1px solid var(--line);border-radius:20px;padding:3px 6px;font-size:8px;color:var(--muted)}.footer-actions{display:flex;gap:7px;margin-top:6px;flex-shrink:0;padding-bottom:0}.footer-actions button{flex:1;background:var(--panel2);border:1px solid var(--line);border-radius:8px;height:36px;font-size:10px;font-weight:700;color:var(--text)}.footer-actions button.primary{background:var(--gold);border-color:var(--gold);color:#1b1305}
+.sheet-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:90;display:none}.sheet-backdrop.show{display:block}.sheet{position:fixed;left:0;right:0;bottom:0;z-index:100;background:var(--panel);border-top:1px solid var(--line);border-radius:16px 16px 0 0;padding:10px 14px calc(14px + var(--safe-bottom));transform:translateY(102%);transition:transform .22s ease}.sheet.show{transform:translateY(0)}.handle{width:38px;height:4px;background:#3a3f47;border-radius:99px;margin:0 auto 12px}.sheet h3{font-family:var(--serif);font-size:16px;font-weight:700;margin:0 0 12px;color:var(--text)}.row{display:flex;gap:8px}.field{margin-bottom:10px;flex:1}.label{font-size:9px;color:var(--muted);letter-spacing:.3px;margin-bottom:5px;text-transform:uppercase}.input,.select{width:100%;height:42px;border-radius:8px;background:#101317;border:1px solid var(--line);color:var(--text);padding:0 11px;outline:none;-webkit-user-select:text;user-select:text}.input:focus,.select:focus,.textarea:focus{border-color:var(--gold2)}.textarea{width:100%;min-height:72px;border-radius:8px;background:#101317;border:1px solid var(--line);color:var(--text);padding:10px 11px;outline:none;resize:none;-webkit-user-select:text;user-select:text}.sheet-actions{display:flex;gap:8px;margin-top:8px}.sheet-actions button{flex:1;height:46px;border-radius:10px;font-weight:800}.cancel{background:var(--panel2);color:var(--text)}.save{background:var(--gold);color:#1b1305}.delete{background:rgba(182,69,60,.15);border:1px solid var(--brick2);color:#e08b83}
+.toast{position:fixed;left:50%;bottom:calc(168px + var(--safe-bottom));transform:translateX(-50%) translateY(10px);background:var(--text);color:#14171c;padding:9px 14px;border-radius:999px;font-size:11px;font-weight:700;opacity:0;pointer-events:none;z-index:200;transition:.18s}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.conn-mode .node{cursor:crosshair}.conn-mode .node.selected{box-shadow:0 0 0 2px rgba(92,143,196,.85)}
+@media(min-width:700px){body{display:grid;place-items:center;background:#020202}#app{width:390px;height:min(844px,var(--app-vh,100vh));border:1px solid #2a2d33;border-radius:34px;overflow:hidden;box-shadow:0 30px 100px rgba(0,0,0,.65)}}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="top">
+    <div class="brand"><b>𝕏 TODAY</b><span class="sep">|</span><small>증거판</small></div>
+    <div class="top-actions"><button class="icon" id="undo" aria-label="실행취소">↶</button><button class="icon" id="redo" aria-label="다시실행">↷</button><button class="icon primary" id="preview">미리보기</button></div>
+  </div>
+  <div class="viewport" id="viewport">
+    <div class="grid" id="grid"></div>
+    <div class="top-sheet">
+      <div class="case" id="caseCard" role="button" aria-label="케이스 수정"><div class="k" id="caseK">CASE FILE · 2026.08.15</div><div class="v" id="caseV">트럼프 연설 중단 · 유족 위로 사건</div><div class="sub" id="caseSub">증거 9개 · 연결 8개 · 신뢰도 종합 8.3/10</div></div>
+    </div>
+    <div class="minimap" id="minimap"><div class="mini-stage" id="miniStage"></div><div class="mini-view" id="miniView"></div></div>
+    <div class="stage" id="stage"><svg class="connections" id="connections" viewBox="0 0 2200 1500" preserveAspectRatio="none"></svg></div>
+    <div class="toolbar"><button class="fab red" id="add" title="증거 추가">＋</button><button class="fab" id="connect" title="연결">↗</button><button class="fab" id="focus" title="전체 보기">⌗</button><div class="zoom"><button id="zoomOut">−</button><div class="pct" id="zoomPct">100%</div><button id="zoomIn">＋</button></div></div>
+  </div>
+  <div class="bottom">
+    <div class="bottom-grid">
+      <div class="bottom-card"><h4>타임라인</h4><div class="timeline" id="timeline"></div></div>
+      <div class="bottom-card"><h4>연결된 근거 요약</h4><div class="summary" id="summary"></div></div>
+      <div class="bottom-card"><h4>에디터 노트</h4><textarea class="note-area" id="editorNote">유족 이름 추가 확인 필요 · 충격범 신원은 별도 보드에서 관리</textarea><div class="tags"><span class="tag">트럼프</span><span class="tag">총격 사건</span><span class="tag">유족 위로</span></div></div>
+    </div>
+    <div class="footer-actions"><button id="export">내보내기</button><button class="primary" id="addBottom">＋ 증거 추가</button></div>
+  </div>
+</div>
+<div class="sheet-backdrop" id="backdrop"></div>
+<div class="sheet" id="sheet">
+  <div class="handle"></div><h3 id="sheetTitle">증거 추가</h3>
+  <div class="field"><div class="label" id="fTitleLabel">제목</div><input class="input" id="fTitle" placeholder="증거 제목"></div>
+  <div class="row" id="rowTypeTrust"><div class="field"><div class="label">유형</div><select class="select" id="fType"><option>사진/영상</option><option>기사/보도</option><option>발언/인용</option><option>문서</option><option>공식 발표</option></select></div><div class="field"><div class="label">신뢰도</div><select class="select" id="fTrust"><option value="높음">높음</option><option value="중간">중간</option><option value="낮음">낮음</option></select></div></div>
+  <div class="field" id="rowDesc"><div class="label">내용</div><textarea class="textarea" id="fDesc" placeholder="이 증거가 무엇을 보여주는지 입력"></textarea></div>
+  <div class="row" id="rowDateTime"><div class="field"><div class="label">날짜</div><input class="input" id="fDate" placeholder="2026.08.15"></div><div class="field" id="fieldTime"><div class="label">시간</div><input class="input" id="fTime" placeholder="18:14"></div></div>
+  <div class="sheet-actions"><button class="cancel" id="cancel">취소</button><button class="delete" id="delete" style="display:none">삭제</button><button class="save" id="save">저장</button></div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+(() => {
+  function setAppHeight(){
+    const vv=window.visualViewport;
+    const h=vv?Math.round(vv.height):window.innerHeight;
+    document.documentElement.style.setProperty('--app-vh',h+'px');
+    if(vv)document.documentElement.style.setProperty('--vv-offset',Math.round(vv.offsetTop)+'px');
+  }
+  setAppHeight();
+  window.addEventListener('resize',setAppHeight);
+  window.addEventListener('orientationchange',()=>setTimeout(setAppHeight,150));
+  if(window.visualViewport){
+    window.visualViewport.addEventListener('resize',setAppHeight);
+    window.visualViewport.addEventListener('scroll',setAppHeight);
+  }
+  const stage=document.getElementById('stage'), viewport=document.getElementById('viewport'), svg=document.getElementById('connections');
+  const grid=document.getElementById('grid'), miniStage=document.getElementById('miniStage'), miniView=document.getElementById('miniView');
+  const timeline=document.getElementById('timeline'), summary=document.getElementById('summary'), toast=document.getElementById('toast'), caseSub=document.getElementById('caseSub'), caseK=document.getElementById('caseK'), caseV=document.getElementById('caseV');
+  const sheet=document.getElementById('sheet'), backdrop=document.getElementById('backdrop');
+  const fTitle=document.getElementById('fTitle'), fType=document.getElementById('fType'), fTrust=document.getElementById('fTrust'), fDesc=document.getElementById('fDesc'), fDate=document.getElementById('fDate'), fTime=document.getElementById('fTime');
+  const fDelete=document.getElementById('delete'), undoBtn=document.getElementById('undo'), redoBtn=document.getElementById('redo');
+  const STAGE_W=2200, STAGE_H=1500;
+  let zoom=1, panX=-120, panY=-60, selected=null, connecting=false, connectFrom=null, editing=null, editingCase=false;
+  let caseMeta={date:'2026.08.15', title:'트럼프 연설 중단 · 유족 위로 사건'};
+  let nodes=[
+    {id:'n1',x:820,y:170,w:220,cls:'hero',type:'핵심 사건',title:'연설 중단 후 유족 위로',desc:'트럼프는 연설 도중 피해자 유족에게 직접 다가가 위로했다.',date:'2026.08.15',time:'18:14',trust:'높음',hero:true},
+    {id:'n2',x:330,y:140,type:'사전 전개',title:'연설 시작 직전 현장',desc:'연설 직전 현장 영상과 발언 흐름을 확인.',date:'2026.08.15',time:'17:53',trust:'높음',thumb:true},
+    {id:'n3',x:1315,y:150,type:'충격 발생',title:'충격 순간 영상',desc:'현장에서 총격 발생. 이후 연설 흐름이 중단됐다.',date:'2026.08.15',time:'18:11',trust:'높음',thumb:true},
+    {id:'n4',x:350,y:405,type:'유족 증언',title:'유족 측 발언',desc:'유족이 현장에서 들은 발언과 상황을 인터뷰로 확인.',date:'2026.08.15',time:'18:15',trust:'높음'},
+    {id:'n5',x:1300,y:420,type:'사망자 정보',title:'코리 캠퍼타로레',desc:'피해자 가족 관련 기본 정보 및 문서.',date:'2026.08.13',time:'',trust:'높음'},
+    {id:'n6',x:560,y:680,type:'현장 경호 요원 발언',title:'경호 요원 진술',desc:'익명 경호 요원이 사건 직후 상황을 설명.',date:'2026.08.15',time:'18:12',trust:'중간'},
+    {id:'n7',x:850,y:675,type:'지역 언론 보도',title:'Butler Eagle',desc:'현장 사건과 연설 중단 사실을 보도.',date:'2026.08.15',time:'18:16',trust:'높음'},
+    {id:'n8',x:1135,y:675,type:'백악관 공식 입장',title:'백악관 공식 입장',desc:'피해자 가족에게 직접 위로를 전했다는 공식 설명.',date:'2026.08.15',time:'18:20',trust:'높음'},
+    {id:'n9',x:1435,y:680,type:'SNS 반응',title:'SNS 반응',desc:'현장 행동에 대한 반응이 확산.',date:'2026.08.15',time:'18:30',trust:'중간'}
+  ];
+  let edges=[['n2','n1'],['n3','n1'],['n4','n1'],['n5','n1'],['n1','n6'],['n1','n7'],['n1','n8'],['n1','n9']];
+  const snapshots=[];let historyIndex=-1;
+  function state(){return JSON.stringify({nodes,edges,zoom,panX,panY,caseMeta})}
+  function push(){snapshots.splice(historyIndex+1);snapshots.push(state());if(snapshots.length>30)snapshots.shift();historyIndex=snapshots.length-1;updateHistoryButtons()}
+  function restore(s){const x=JSON.parse(s);nodes=x.nodes;edges=x.edges;zoom=x.zoom;panX=x.panX;panY=x.panY;if(x.caseMeta)caseMeta=x.caseMeta;render();updateHistoryButtons()}
+  function updateHistoryButtons(){undoBtn.classList.toggle('disabled',historyIndex<=0);redoBtn.classList.toggle('disabled',historyIndex>=snapshots.length-1)}
+  function flash(t){toast.textContent=t;toast.classList.add('show');clearTimeout(flash.t);flash.t=setTimeout(()=>toast.classList.remove('show'),1500)}
+  function applyTransform(){stage.style.transform=`translate(${panX}px,${panY}px) scale(${zoom})`;grid.style.transform=`translate(${panX%18}px,${panY%18}px) scale(${zoom})`;document.getElementById('zoomPct').textContent=Math.round(zoom*100)+'%';updateMini()}
+  function screenToWorld(clientX,clientY){const r=viewport.getBoundingClientRect();return{x:(clientX-r.left-panX)/zoom,y:(clientY-r.top-panY)/zoom}}
+  function nodeCenter(n){return{x:n.x+n.w/2,y:n.y+(n.h||140)/2}}
+  function trustClass(t){return t==='높음'?'verified':t==='낮음'?'low':'medium'}
+  function elNode(n,idx){const el=document.createElement('div');el.className='node '+(n.cls||'')+(selected===n.id?' selected':'')+(connectFrom===n.id?' linking':'');el.dataset.id=n.id;el.style.left=n.x+'px';el.style.top=n.y+'px';el.style.width=(n.w||180)+'px';if(n.h)el.style.minHeight=n.h+'px';const ex='EX·'+String(idx+1).padStart(2,'0');el.innerHTML=`<div class="exhibit">${ex}</div>${n.thumb||n.hero?'<div class="thumb"></div>':''}<div class="kind">${n.type}</div><div class="title">${esc(n.title)}</div><div class="desc">${esc(n.desc)}</div><div class="meta"><span>${n.date||''} ${n.time||''}</span><span class="badge ${trustClass(n.trust)}">신뢰도 ${n.trust}</span></div>`; bindNode(el,n);return el}
+  function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+  function bindNode(el,n){let sx=0,sy=0,startX=0,startY=0,moved=false;el.addEventListener('pointerdown',e=>{e.stopPropagation();if(connecting){handleConnect(n.id);return}selected=n.id;el.setPointerCapture(e.pointerId);const w=screenToWorld(e.clientX,e.clientY);startX=n.x;startY=n.y;sx=w.x;sy=w.y;moved=false;el.style.zIndex='20'});el.addEventListener('pointermove',e=>{if(!el.hasPointerCapture(e.pointerId)||connecting)return;const w=screenToWorld(e.clientX,e.clientY);const dx=w.x-sx,dy=w.y-sy;if(Math.abs(dx)+Math.abs(dy)>3)moved=true;n.x=startX+dx;n.y=startY+dy;el.style.left=n.x+'px';el.style.top=n.y+'px';drawEdges();updateMini()});el.addEventListener('pointerup',e=>{if(connecting)return;try{el.releasePointerCapture(e.pointerId)}catch{}el.style.zIndex='';if(moved){push();save()}else openEditor(n.id);render()});el.addEventListener('pointercancel',()=>{})}
+  function handleConnect(id){if(!connectFrom){connectFrom=id;selected=id;render();flash('연결할 두 번째 증거를 선택하세요')}else if(connectFrom===id){connectFrom=null;render();flash('연결 취소')}else{if(!edges.some(e=>(e[0]===connectFrom&&e[1]===id)||(e[0]===id&&e[1]===connectFrom))){edges.push([connectFrom,id]);push();save();flash('증거 연결됨')}else{flash('이미 연결된 증거입니다')}connectFrom=null;connecting=false;document.body.classList.remove('conn-mode');document.getElementById('connect').classList.remove('active');render()}}
+  function deleteEdge(a,b){edges=edges.filter(e=>!((e[0]===a&&e[1]===b)||(e[0]===b&&e[1]===a)));push();save();render();flash('연결이 삭제되었습니다')}
+  function drawEdges(){svg.innerHTML='';for(const [a,b] of edges){const na=nodes.find(n=>n.id===a),nb=nodes.find(n=>n.id===b);if(!na||!nb)continue;const p1=nodeCenter(na),p2=nodeCenter(nb);const line=document.createElementNS('http://www.w3.org/2000/svg','line');line.setAttribute('x1',p1.x);line.setAttribute('y1',p1.y);line.setAttribute('x2',p2.x);line.setAttribute('y2',p2.y);line.setAttribute('class','edge '+((a===selected||b===selected)?'selected':''));line.addEventListener('pointerdown',e=>e.stopPropagation());line.addEventListener('click',e=>{e.stopPropagation();if(connecting)return;deleteEdge(a,b)});svg.appendChild(line)}}
+  function trustScore(t){return t==='높음'?9:t==='중간'?6:3}
+  function renderCase(){const avg=nodes.length?(nodes.reduce((s,n)=>s+trustScore(n.trust),0)/nodes.length).toFixed(1):'0.0';caseK.textContent=`CASE FILE · ${caseMeta.date||''}`;caseV.textContent=caseMeta.title||'제목 없음';caseSub.textContent=`증거 ${nodes.length}개 · 연결 ${edges.length}개 · 신뢰도 종합 ${avg}/10`}
+  function render(){stage.querySelectorAll('.node').forEach(x=>x.remove());nodes.forEach((n,i)=>stage.appendChild(elNode(n,i)));drawEdges();applyTransform();renderTimeline();renderSummary();renderCase();save();updateMini()}
+  function renderTimeline(){const arr=[...nodes].filter(n=>n.time).sort((a,b)=>(a.time||'').localeCompare(b.time||''));timeline.innerHTML=arr.slice(0,7).map(n=>`<div class="titem ${n.id===selected?'hot':''}"><span>${n.time||''}</span><span class="dot"></span><span>${esc(n.title)}</span></div>`).join('')}
+  function renderSummary(){const related=nodes.filter(n=>n.id!==selected&&edges.some(e=>(e[0]===selected&&e[1]===n.id)||(e[1]===selected&&e[0]===n.id)));const focus=nodes.find(n=>n.id===selected);summary.innerHTML=focus?`<b>${esc(focus.title)}</b><br><br>${related.length?related.slice(0,4).map(n=>'• '+esc(n.title)).join('<br>'):'연결된 근거를 선택하세요'}`:'중앙 사건 또는 증거 카드를 탭하세요.'}
+  function updateMini(){miniStage.innerHTML='';const mw=miniStage.clientWidth||92,mh=miniStage.clientHeight||62;const sx=mw/STAGE_W,sy=mh/STAGE_H;for(const n of nodes){const d=document.createElement('div');d.className='mini-node '+(n.id===selected?'hot':'');d.style.left=Math.max(0,n.x*sx)+'px';d.style.top=Math.max(0,n.y*sy)+'px';d.style.width=Math.max(4,(n.w||180)*sx)+'px';d.style.height=Math.max(3,(n.h||140)*sy)+'px';miniStage.appendChild(d)}const r=viewport.getBoundingClientRect();miniView.style.left=Math.max(0,(-panX/zoom)*sx)+'px';miniView.style.top=Math.max(0,(-panY/zoom)*sy)+'px';miniView.style.width=Math.min(mw,(r.width/zoom)*sx)+'px';miniView.style.height=Math.min(mh,(r.height/zoom)*sy)+'px'}
+  function centerAll(){if(!nodes.length){flash('증거가 없습니다');return}const minX=Math.min(...nodes.map(n=>n.x)),maxX=Math.max(...nodes.map(n=>n.x+(n.w||180)));const minY=Math.min(...nodes.map(n=>n.y)),maxY=Math.max(...nodes.map(n=>n.y+(n.h||140)));const r=viewport.getBoundingClientRect();const zx=Math.min(.95,r.width/(maxX-minX+80)),zy=Math.min(.95,r.height/(maxY-minY+80));zoom=Math.max(.55,Math.min(1,Math.min(zx,zy)));panX=(r.width-(maxX-minX)*zoom)/2-minX*zoom;panY=(r.height-(maxY-minY)*zoom)/2-minY*zoom;applyTransform();push();save()}
+  function openEditor(id){editing=id;editingCase=false;setSheetMode('node');const n=nodes.find(x=>x.id===id);if(!n)return;document.getElementById('sheetTitle').textContent='증거 수정';fTitle.value=n.title;fType.value=n.type;fTrust.value=n.trust;fDesc.value=n.desc;fDate.value=n.date||'';fTime.value=n.time||'';fDelete.style.display=nodes.length>1?'block':'none';sheet.classList.add('show');backdrop.classList.add('show');setTimeout(()=>fTitle.focus(),150)}
+  function setSheetMode(mode){
+    const isCase=mode==='case';
+    document.getElementById('rowTypeTrust').style.display=isCase?'none':'';
+    document.getElementById('rowDesc').style.display=isCase?'none':'';
+    document.getElementById('fieldTime').style.display=isCase?'none':'';
+    document.getElementById('fTitleLabel').textContent=isCase?'케이스 제목':'제목';
+    fTitle.placeholder=isCase?'케이스 제목':'증거 제목';
+  }
+  function openCaseEditor(){
+    editing=null;editingCase=true;setSheetMode('case');
+    document.getElementById('sheetTitle').textContent='케이스 수정';
+    fTitle.value=caseMeta.title||'';fDate.value=caseMeta.date||'';fTime.value='';
+    fDelete.style.display='none';
+    sheet.classList.add('show');backdrop.classList.add('show');
+    setTimeout(()=>fTitle.focus(),150);
+  }
+  function closeSheet(){sheet.classList.remove('show');backdrop.classList.remove('show');editing=null;editingCase=false;setSheetMode('node')}
+  function newEditor(){editing=null;editingCase=false;setSheetMode('node');document.getElementById('sheetTitle').textContent='증거 추가';fTitle.value='';fType.value='사진/영상';fTrust.value='높음';fDesc.value='';fDate.value=caseMeta.date||'2026.08.15';fTime.value='';fDelete.style.display='none';sheet.classList.add('show');backdrop.classList.add('show');setTimeout(()=>fTitle.focus(),150)}
+  function saveForm(){const title=fTitle.value.trim();if(!title){flash('제목을 입력하세요');return}if(editingCase){caseMeta.title=title;caseMeta.date=fDate.value.trim()||caseMeta.date;flash('케이스가 수정되었습니다');push();closeSheet();render();return}if(editing){const n=nodes.find(x=>x.id===editing);Object.assign(n,{title,type:fType.value,trust:fTrust.value,desc:fDesc.value.trim(),date:fDate.value.trim(),time:fTime.value.trim()});selected=n.id;flash('증거가 수정되었습니다')}else{const id='n'+Date.now().toString(36);const base=nodes.find(n=>n.id==='n1')||nodes[0]||{x:900,y:600};nodes.push({id,x:base.x+40,y:base.y+360,w:180,type:fType.value,title,trust:fTrust.value,desc:fDesc.value.trim(),date:fDate.value.trim(),time:fTime.value.trim()});selected=id;flash('증거가 추가되었습니다')}push();closeSheet();render()}
+  function deleteNode(){if(!editing)return;if(nodes.length<=1){flash('마지막 증거는 삭제할 수 없습니다');return}const id=editing;nodes=nodes.filter(n=>n.id!==id);edges=edges.filter(e=>e[0]!==id&&e[1]!==id);if(selected===id)selected=null;if(connectFrom===id)connectFrom=null;push();closeSheet();render();flash('증거가 삭제되었습니다')}
+  function save(){try{localStorage.setItem('xtoday_evidence_v1',JSON.stringify({nodes,edges,note:document.getElementById('editorNote').value,zoom,panX,panY,caseMeta}))}catch{}}
+  function load(){try{const x=JSON.parse(localStorage.getItem('xtoday_evidence_v1')||'null');if(x?.nodes?.length){nodes=x.nodes;edges=x.edges||[];zoom=x.zoom||1;panX=x.panX??-120;panY=x.panY??-60;document.getElementById('editorNote').value=x.note||'';if(x.caseMeta)caseMeta=x.caseMeta}}catch{}}
+  document.getElementById('caseCard').onclick=()=>{if(connecting)return;openCaseEditor()};
+  document.getElementById('add').onclick=newEditor;document.getElementById('addBottom').onclick=newEditor;document.getElementById('cancel').onclick=closeSheet;backdrop.onclick=closeSheet;document.getElementById('save').onclick=saveForm;fDelete.onclick=deleteNode;
+  document.getElementById('connect').onclick=()=>{connecting=!connecting;connectFrom=null;document.body.classList.toggle('conn-mode',connecting);document.getElementById('connect').classList.toggle('active',connecting);flash(connecting?'증거 2개를 차례로 눌러 연결':'연결 모드 종료')};
+  document.getElementById('zoomIn').onclick=()=>{zoom=Math.min(1.7,zoom+.1);applyTransform();save()};document.getElementById('zoomOut').onclick=()=>{zoom=Math.max(.5,zoom-.1);applyTransform();save()};document.getElementById('focus').onclick=centerAll;
+  document.getElementById('preview').onclick=()=>flash('미리보기 준비 완료');document.getElementById('export').onclick=()=>{const txt=nodes.map(n=>`[${n.type}] ${n.title}\n${n.desc}`).join('\n\n');navigator.clipboard?.writeText(txt).then(()=>flash('증거 목록 복사됨')).catch(()=>flash('복사할 수 없습니다'))};
+  document.getElementById('undo').onclick=()=>{if(historyIndex>0){historyIndex--;restore(snapshots[historyIndex]);flash('실행 취소')}};document.getElementById('redo').onclick=()=>{if(historyIndex<snapshots.length-1){historyIndex++;restore(snapshots[historyIndex]);flash('다시 실행')}};
+  let panStart=null;viewport.addEventListener('pointerdown',e=>{if(e.target.closest('.node,.toolbar,.top-sheet,.minimap'))return;viewport.setPointerCapture(e.pointerId);panStart={x:e.clientX,y:e.clientY,px:panX,py:panY,moved:false}});viewport.addEventListener('pointermove',e=>{if(!panStart)return;const dx=e.clientX-panStart.x,dy=e.clientY-panStart.y;if(Math.abs(dx)+Math.abs(dy)>2)panStart.moved=true;panX=panStart.px+dx;panY=panStart.py+dy;applyTransform()});viewport.addEventListener('pointerup',e=>{if(!panStart)return;if(panStart.moved)push();panStart=null;save()});viewport.addEventListener('pointercancel',()=>panStart=null);
+  viewport.addEventListener('wheel',e=>{e.preventDefault();const factor=e.deltaY>0?.92:1.08;const before=screenToWorld(e.clientX,e.clientY);zoom=Math.max(.5,Math.min(1.7,zoom*factor));const r=viewport.getBoundingClientRect();panX=e.clientX-r.left-before.x*zoom;panY=e.clientY-r.top-before.y*zoom;applyTransform();save()},{passive:false});
+  document.getElementById('editorNote').addEventListener('input',save);
+  load();push();render();
+})();
+</script>
+</body>
+</html>
