@@ -353,7 +353,41 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;hei
 }
 .ov-stamp.circle.show{display:flex;}
 
-
+/* Page number badge */
+.ov-pagenum{
+  position:absolute;
+  display:none;
+  font-family:'Pretendard',sans-serif;
+  font-weight:700;
+  font-size:28px;
+  letter-spacing:1px;
+  color:#fff;
+  text-shadow:0 2px 8px rgba(0,0,0,.55);
+  white-space:nowrap;
+  line-height:1.2;
+  z-index:7;
+  pointer-events:none;
+  opacity:.92;
+}
+.ov-pagenum.show{display:block;}
+.ov-pagenum.style-pill{
+  background:rgba(0,0,0,.55);
+  padding:8px 16px;
+  border-radius:20px;
+  border:1px solid rgba(255,255,255,.2);
+  text-shadow:none;
+}
+.ov-pagenum.style-outline{
+  -webkit-text-stroke:1.5px rgba(0,0,0,.4);
+  text-shadow:0 0 6px rgba(0,0,0,.6);
+}
+.ov-pagenum.style-box{
+  background:rgba(0,0,0,.5);
+  padding:6px 14px;
+  border-radius:4px;
+  border:1.5px solid rgba(255,255,255,.25);
+  text-shadow:none;
+}
 
 </style>
 </head>
@@ -406,6 +440,7 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;hei
             <div class="ov-stamp jeongjeong" id="ovJeongjeong">정정</div>
             <div class="ov-stamp circle factcheck" id="ovFactCircle">팩트<br>체크</div>
             <div class="ov-stamp circle verified" id="ovVerifiedCircle">검증<br>완료</div>
+            <div class="ov-pagenum" id="ovPageNum">1</div>
           </div>
           <div class="card-top">
             <div class="kicker-wrap pos-left" id="kickerWrap">
@@ -647,6 +682,62 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
       <div class="field">
         <div class="field-label">간격 (여러 개일 때) <span class="val" id="ovGapVal">16px</span></div>
         <input type="range" id="ovGap" min="4" max="40" step="2" value="16">
+      </div>
+      <div class="section-label" style="margin-top:20px;">페이지 번호</div>
+      <div class="field" style="margin-bottom:12px;">
+        <label style="display:flex;align-items:center;gap:10px;font-size:13px;color:#c8c8d0;">
+          <input type="checkbox" id="pageNumToggle" style="width:18px;height:18px;accent-color:var(--accent);">
+          페이지 번호 표시
+        </label>
+      </div>
+      <div class="field">
+        <div class="field-label">표시 형식</div>
+        <div class="chip-row" id="pageNumFormatChips">
+          <div class="chip active" data-fmt="num">1</div>
+          <div class="chip" data-fmt="padded">01</div>
+          <div class="chip" data-fmt="slash">1 / 3</div>
+          <div class="chip" data-fmt="page">PAGE 1</div>
+        </div>
+      </div>
+      <div class="field">
+        <div class="field-label">스타일</div>
+        <div class="chip-row" id="pageNumStyleChips">
+          <div class="chip active" data-style="plain">텍스트</div>
+          <div class="chip" data-style="pill">필</div>
+          <div class="chip" data-style="box">박스</div>
+          <div class="chip" data-style="outline">아웃라인</div>
+        </div>
+      </div>
+      <div class="field">
+        <div class="field-label">기준 위치</div>
+        <div class="chip-row" id="pageNumPosChips">
+          <div class="chip" data-pos="tl">좌상단</div>
+          <div class="chip" data-pos="tr">우상단</div>
+          <div class="chip" data-pos="bl">좌하단</div>
+          <div class="chip active" data-pos="br">우하단</div>
+          <div class="chip" data-pos="bc">하단중앙</div>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <div class="field-label">가로 위치 <span class="val" id="pageNumOffXVal">88%</span></div>
+          <input type="range" id="pageNumOffX" min="0" max="95" step="1" value="88">
+        </div>
+        <div class="field">
+          <div class="field-label">세로 위치 <span class="val" id="pageNumOffYVal">92%</span></div>
+          <input type="range" id="pageNumOffY" min="0" max="95" step="1" value="92">
+        </div>
+      </div>
+      <div class="upload-hint" style="margin-top:0;margin-bottom:10px;">프리셋으로 빠르게 이동 · 슬라이더로 자유 위치</div>
+      <div class="row2">
+        <div class="field">
+          <div class="field-label">크기 <span class="val" id="pageNumScaleVal">100%</span></div>
+          <input type="range" id="pageNumScale" min="50" max="180" step="5" value="100">
+        </div>
+        <div class="field">
+          <div class="field-label">색상</div>
+          <input type="color" class="color-input" id="pageNumColor" value="#ffffff">
+        </div>
       </div>
 </div><div class="ctx-panel" id="panel-save">
 <div class="section-label">내보내기</div>
@@ -1403,6 +1494,165 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
     updateOverlay();
   }
 
+  /* ===== Page number ===== */
+  const pageNumEl = document.getElementById('ovPageNum');
+  let pageNumOn = false;
+  let pageNumFormat = 'num'; // num | padded | slash | page
+  let pageNumStyle = 'plain'; // plain | pill | box | outline
+  let pageNumPos = 'br';
+  let pageNumOffX = 88, pageNumOffY = 92, pageNumScale = 100;
+  let pageNumColor = '#ffffff';
+
+  const PAGE_NUM_PRESETS = {
+    tl: {x:4, y:4},
+    tr: {x:88, y:4},
+    bl: {x:4, y:92},
+    br: {x:88, y:92},
+    bc: {x:46, y:92},
+  };
+
+  function formatPageNumText(){
+    const n = currentPageIndex + 1;
+    const total = Math.max(1, pages.length || 1);
+    if(pageNumFormat === 'padded') return String(n).padStart(2,'0');
+    if(pageNumFormat === 'slash') return n + ' / ' + total;
+    if(pageNumFormat === 'page') return 'PAGE ' + n;
+    return String(n);
+  }
+
+  function updatePageNum(){
+    if(!pageNumEl) return;
+    pageNumEl.classList.toggle('show', pageNumOn);
+    pageNumEl.textContent = formatPageNumText();
+    pageNumEl.classList.remove('style-pill','style-box','style-outline');
+    if(pageNumStyle === 'pill') pageNumEl.classList.add('style-pill');
+    else if(pageNumStyle === 'box') pageNumEl.classList.add('style-box');
+    else if(pageNumStyle === 'outline') pageNumEl.classList.add('style-outline');
+    pageNumEl.style.color = pageNumColor;
+    pageNumEl.style.left = pageNumOffX + '%';
+    pageNumEl.style.top = pageNumOffY + '%';
+    pageNumEl.style.right = 'auto';
+    pageNumEl.style.bottom = 'auto';
+    const scale = pageNumScale / 100;
+    pageNumEl.style.transform = 'scale(' + scale + ')';
+    pageNumEl.style.transformOrigin = 'top left';
+  }
+
+  function getPageNumState(){
+    return {
+      on: pageNumOn,
+      format: pageNumFormat,
+      style: pageNumStyle,
+      pos: pageNumPos,
+      offX: pageNumOffX,
+      offY: pageNumOffY,
+      scale: pageNumScale,
+      color: pageNumColor,
+    };
+  }
+
+  function setPageNumState(s){
+    if(!s){
+      pageNumOn = false;
+      document.getElementById('pageNumToggle').checked = false;
+      pageNumFormat = 'num';
+      pageNumStyle = 'plain';
+      pageNumPos = 'br';
+      pageNumOffX = 88; pageNumOffY = 92; pageNumScale = 100;
+      pageNumColor = '#ffffff';
+      document.getElementById('pageNumOffX').value = 88;
+      document.getElementById('pageNumOffXVal').textContent = '88%';
+      document.getElementById('pageNumOffY').value = 92;
+      document.getElementById('pageNumOffYVal').textContent = '92%';
+      document.getElementById('pageNumScale').value = 100;
+      document.getElementById('pageNumScaleVal').textContent = '100%';
+      document.getElementById('pageNumColor').value = '#ffffff';
+      document.querySelectorAll('#pageNumFormatChips .chip').forEach(c=>c.classList.toggle('active', c.dataset.fmt==='num'));
+      document.querySelectorAll('#pageNumStyleChips .chip').forEach(c=>c.classList.toggle('active', c.dataset.style==='plain'));
+      document.querySelectorAll('#pageNumPosChips .chip').forEach(c=>c.classList.toggle('active', c.dataset.pos==='br'));
+      updatePageNum();
+      return;
+    }
+    pageNumOn = !!s.on;
+    document.getElementById('pageNumToggle').checked = pageNumOn;
+    pageNumFormat = s.format || 'num';
+    pageNumStyle = s.style || 'plain';
+    pageNumPos = s.pos || 'br';
+    pageNumOffX = (s.offX!=null ? s.offX : 88);
+    pageNumOffY = (s.offY!=null ? s.offY : 92);
+    pageNumScale = s.scale || 100;
+    pageNumColor = s.color || '#ffffff';
+    document.getElementById('pageNumOffX').value = pageNumOffX;
+    document.getElementById('pageNumOffXVal').textContent = pageNumOffX + '%';
+    document.getElementById('pageNumOffY').value = pageNumOffY;
+    document.getElementById('pageNumOffYVal').textContent = pageNumOffY + '%';
+    document.getElementById('pageNumScale').value = pageNumScale;
+    document.getElementById('pageNumScaleVal').textContent = pageNumScale + '%';
+    document.getElementById('pageNumColor').value = pageNumColor;
+    document.querySelectorAll('#pageNumFormatChips .chip').forEach(c=>c.classList.toggle('active', c.dataset.fmt===pageNumFormat));
+    document.querySelectorAll('#pageNumStyleChips .chip').forEach(c=>c.classList.toggle('active', c.dataset.style===pageNumStyle));
+    document.querySelectorAll('#pageNumPosChips .chip').forEach(c=>c.classList.toggle('active', c.dataset.pos===pageNumPos));
+    updatePageNum();
+  }
+
+  document.getElementById('pageNumToggle').addEventListener('change',e=>{
+    pageNumOn = e.target.checked;
+    updatePageNum();
+  });
+  document.querySelectorAll('#pageNumFormatChips .chip').forEach(chip=>{
+    chip.addEventListener('click',()=>{
+      document.querySelectorAll('#pageNumFormatChips .chip').forEach(c=>c.classList.remove('active'));
+      chip.classList.add('active');
+      pageNumFormat = chip.dataset.fmt;
+      updatePageNum();
+    });
+  });
+  document.querySelectorAll('#pageNumStyleChips .chip').forEach(chip=>{
+    chip.addEventListener('click',()=>{
+      document.querySelectorAll('#pageNumStyleChips .chip').forEach(c=>c.classList.remove('active'));
+      chip.classList.add('active');
+      pageNumStyle = chip.dataset.style;
+      updatePageNum();
+    });
+  });
+  document.querySelectorAll('#pageNumPosChips .chip').forEach(chip=>{
+    chip.addEventListener('click',()=>{
+      document.querySelectorAll('#pageNumPosChips .chip').forEach(c=>c.classList.remove('active'));
+      chip.classList.add('active');
+      pageNumPos = chip.dataset.pos;
+      const p = PAGE_NUM_PRESETS[pageNumPos] || {x:88,y:92};
+      pageNumOffX = p.x; pageNumOffY = p.y;
+      document.getElementById('pageNumOffX').value = pageNumOffX;
+      document.getElementById('pageNumOffXVal').textContent = pageNumOffX + '%';
+      document.getElementById('pageNumOffY').value = pageNumOffY;
+      document.getElementById('pageNumOffYVal').textContent = pageNumOffY + '%';
+      updatePageNum();
+    });
+  });
+  document.getElementById('pageNumOffX').addEventListener('input',e=>{
+    pageNumOffX = parseInt(e.target.value,10);
+    document.getElementById('pageNumOffXVal').textContent = pageNumOffX + '%';
+    document.querySelectorAll('#pageNumPosChips .chip').forEach(c=>c.classList.remove('active'));
+    pageNumPos = 'custom';
+    updatePageNum();
+  });
+  document.getElementById('pageNumOffY').addEventListener('input',e=>{
+    pageNumOffY = parseInt(e.target.value,10);
+    document.getElementById('pageNumOffYVal').textContent = pageNumOffY + '%';
+    document.querySelectorAll('#pageNumPosChips .chip').forEach(c=>c.classList.remove('active'));
+    pageNumPos = 'custom';
+    updatePageNum();
+  });
+  document.getElementById('pageNumScale').addEventListener('input',e=>{
+    pageNumScale = parseInt(e.target.value,10);
+    document.getElementById('pageNumScaleVal').textContent = pageNumScale + '%';
+    updatePageNum();
+  });
+  document.getElementById('pageNumColor').addEventListener('input',e=>{
+    pageNumColor = e.target.value;
+    updatePageNum();
+  });
+
   const pageStrip=document.getElementById('page-list');
   let pages=[];
   let currentPageIndex=0;
@@ -1444,6 +1694,7 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
       masthead:card.classList.contains('tpl-masthead'),
       brandMark:brandMarkOut.textContent,
       overlay: getOverlayState(),
+      pageNum: getPageNumState(),
     };
   }
 
@@ -1522,6 +1773,7 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
     templateRowSocial.querySelectorAll('.chip').forEach(c=>c.classList.toggle('active',c.dataset.tpl===currentTemplateId));
 
     setOverlayState(data.overlay || null);
+    setPageNumState(data.pageNum || null);
   }
 
   function renderPageStrip(){
@@ -1574,6 +1826,7 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
   document.getElementById('btnAddPage').addEventListener('click',addPage);
   pages=[serializePage()];
   renderPageStrip();
+  updatePageNum();
 
   let previewScale=0.4;
   function applyPreviewScale(){
@@ -1806,4 +2059,3 @@ document.addEventListener('gesturestart',e=>e.preventDefault());
 </script>
 </body>
 </html>
-
