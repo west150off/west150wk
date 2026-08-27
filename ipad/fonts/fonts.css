@@ -1,0 +1,79 @@
+/* Offline local fonts — WEST150 editors */
+@font-face{font-family:'Pretendard';font-weight:400;font-display:swap;src:url('Pretendard-Regular.woff2') format('woff2')}
+@font-face{font-family:'Pretendard';font-weight:500;font-display:swap;src:url('Pretendard-Medium.woff2') format('woff2')}
+@font-face{font-family:'Pretendard';font-weight:600;font-display:swap;src:url('Pretendard-SemiBold.woff2') format('woff2')}
+@font-face{font-family:'Pretendard';font-weight:700;font-display:swap;src:url('Pretendard-Bold.woff2') format('woff2')}
+@font-face{font-family:'Pretendard';font-weight:800;font-display:swap;src:url('Pretendard-ExtraBold.woff2') format('woff2')}
+@font-face{font-family:'Pretendard';font-weight:900;font-display:swap;src:url('Pretendard-Black.woff2') format('woff2')}
+
+@font-face{font-family:'RIDIBatang';font-weight:400;font-display:swap;src:url('RIDIBatang.woff') format('woff')}
+
+@font-face{font-family:'GmarketSans';font-weight:500;font-display:swap;src:url('GmarketSansMedium.woff') format('woff')}
+@font-face{font-family:'GmarketSans';font-weight:700;font-display:swap;src:url('GmarketSansBold.woff') format('woff')}
+
+@font-face{font-family:'Noto Sans KR';font-weight:400;font-display:swap;src:url('NotoSansKR-Regular.woff2') format('woff2')}
+@font-face{font-family:'Noto Sans KR';font-weight:500;font-display:swap;src:url('NotoSansKR-Medium.woff2') format('woff2')}
+@font-face{font-family:'Noto Sans KR';font-weight:700;font-display:swap;src:url('NotoSansKR-Bold.woff2') format('woff2')}
+@font-face{font-family:'Noto Sans KR';font-weight:900;font-display:swap;src:url('NotoSansKR-Black.woff2') format('woff2')}
+
+@font-face{font-family:'Noto Serif KR';font-weight:400;font-display:swap;src:url('NotoSerifKR-Regular.woff2') format('woff2')}
+@font-face{font-family:'Noto Serif KR';font-weight:700;font-display:swap;src:url('NotoSerifKR-Bold.woff2') format('woff2')}
+@font-face{font-family:'Noto Serif KR';font-weight:900;font-display:swap;src:url('NotoSerifKR-Black.woff2') format('woff2')}
+
+@font-face{font-family:'Black Han Sans';font-weight:400;font-display:swap;src:url('BlackHanSans-Regular.woff2') format('woff2')}
+
+@font-face{font-family:'Nanum Myeongjo';font-weight:400;font-display:swap;src:url('NanumMyeongjo-Regular.woff2') format('woff2')}
+@font-face{font-family:'Nanum Myeongjo';font-weight:700;font-display:swap;src:url('NanumMyeongjo-Bold.woff2') format('woff2')}
+@font-face{font-family:'Nanum Myeongjo';font-weight:800;font-display:swap;src:url('NanumMyeongjo-Bold.woff2') format('woff2')}
+
+@font-face{font-family:'Nanum Gothic';font-weight:400;font-display:swap;src:url('NanumGothic-Regular.woff2') format('woff2')}
+@font-face{font-family:'Nanum Gothic';font-weight:700;font-display:swap;src:url('NanumGothic-Bold.woff2') format('woff2')}
+@font-face{font-family:'Nanum Gothic';font-weight:800;font-display:swap;src:url('NanumGothic-Bold.woff2') format('woff2')}
+
+@font-face{font-family:'IBM Plex Sans KR';font-weight:400;font-display:swap;src:url('IBMPlexSansKR-Regular.woff2') format('woff2')}
+@font-face{font-family:'IBM Plex Sans KR';font-weight:600;font-display:swap;src:url('IBMPlexSansKR-SemiBold.woff2') format('woff2')}
+@font-face{font-family:'IBM Plex Sans KR';font-weight:700;font-display:swap;src:url('IBMPlexSansKR-Bold.woff2') format('woff2')}
+
+@font-face{font-family:'Do Hyeon';font-weight:400;font-display:swap;src:url('DoHyeon-Regular.woff2') format('woff2')}
+@font-face{font-family:'Song Myung';font-weight:400;font-display:swap;src:url('SongMyung-Regular.woff2') format('woff2')}
+
+@font-face{font-family:'Oswald';font-weight:500;font-display:swap;src:url('Oswald-Medium.woff2') format('woff2')}
+@font-face{font-family:'Oswald';font-weight:600;font-display:swap;src:url('Oswald-Medium.woff2') format('woff2')}
+@font-face{font-family:'Oswald';font-weight:700;font-display:swap;src:url('Oswald-Bold.woff2') format('woff2')}
+
+/* Fallbacks for fonts not bundled (system/local if installed) */
+@font-face{font-family:'Gothic A1';font-weight:400;font-display:swap;src:local('Gothic A1'),local('Malgun Gothic'),local('Apple SD Gothic Neo')}
+@font-face{font-family:'Jua';font-weight:400;font-display:swap;src:local('Jua'),local('Apple SD Gothic Neo')}
+@font-face{font-family:'Gaegu';font-weight:400;font-display:swap;src:local('Gaegu'),local('Apple SD Gothic Neo')}
+@font-face{font-family:'Gowun Batang';font-weight:400;font-display:swap;src:local('Gowun Batang'),local('Batang')}
+@font-face{font-family:'Gowun Dodum';font-weight:400;font-display:swap;src:local('Gowun Dodum'),local('Apple SD Gothic Neo')}
+@font-face{font-family:'Gasoek One';font-weight:400;font-display:swap;src:local('Gasoek One'),local('Black Han Sans')}
+@font-face{font-family:'Dongle';font-weight:400;font-display:swap;src:local('Dongle'),local('Apple SD Gothic Neo')}
+@font-face{font-family:'Orbit';font-weight:400;font-display:swap;src:local('Orbit'),local('Apple SD Gothic Neo')}
+@font-face{font-family:'Alata';font-weight:400;font-display:swap;src:local('Alata'),local('Arial')}
+
+/* Alias for variable font references */
+@font-face{font-family:'Pretendard Variable';font-weight:100 900;font-display:swap;src:url('Pretendard-Regular.woff2') format('woff2')}
+@font-face{font-family:'Pretendard Variable';font-weight:400;font-display:swap;src:url('Pretendard-Regular.woff2') format('woff2')}
+@font-face{font-family:'Pretendard Variable';font-weight:500;font-display:swap;src:url('Pretendard-Medium.woff2') format('woff2')}
+@font-face{font-family:'Pretendard Variable';font-weight:600;font-display:swap;src:url('Pretendard-SemiBold.woff2') format('woff2')}
+@font-face{font-family:'Pretendard Variable';font-weight:700;font-display:swap;src:url('Pretendard-Bold.woff2') format('woff2')}
+@font-face{font-family:'Pretendard Variable';font-weight:800;font-display:swap;src:url('Pretendard-ExtraBold.woff2') format('woff2')}
+@font-face{font-family:'Pretendard Variable';font-weight:900;font-display:swap;src:url('Pretendard-Black.woff2') format('woff2')}
+@font-face{font-family:'RidiBatang';font-weight:400;font-display:swap;src:url('RIDIBatang.woff') format('woff')}
+@font-face{font-family:'Gmarket Sans';font-weight:500;font-display:swap;src:url('GmarketSansMedium.woff') format('woff')}
+@font-face{font-family:'Gmarket Sans';font-weight:700;font-display:swap;src:url('GmarketSansBold.woff') format('woff')}
+@font-face{font-family:'Spoqa Han Sans Neo';font-weight:400;font-display:swap;src:local('Spoqa Han Sans Neo'),local('Apple SD Gothic Neo'),local('Malgun Gothic')}
+@font-face{font-family:'Nanum Square';font-weight:400;font-display:swap;src:local('NanumSquare'),local('Nanum Gothic'),local('Apple SD Gothic Neo')}
+@font-face{font-family:'Gaegu';font-weight:400;font-display:swap;src:local('Gaegu'),local('Apple SD Gothic Neo')}
+@font-face{font-family:'Gaegu';font-weight:700;font-display:swap;src:local('Gaegu'),local('Apple SD Gothic Neo')}
+
+@font-face{font-family:'Inter';font-weight:400;font-display:swap;src:url('Inter-Regular.woff2') format('woff2')}
+@font-face{font-family:'Inter';font-weight:500;font-display:swap;src:url('Inter-Medium.woff2') format('woff2')}
+@font-face{font-family:'Inter';font-weight:600;font-display:swap;src:url('Inter-SemiBold.woff2') format('woff2')}
+@font-face{font-family:'Inter';font-weight:700;font-display:swap;src:url('Inter-Bold.woff2') format('woff2')}
+@font-face{font-family:'Inter';font-weight:800;font-display:swap;src:url('Inter-ExtraBold.woff2') format('woff2')}
+@font-face{font-family:'Inter';font-weight:900;font-display:swap;src:url('Inter-Black.woff2') format('woff2')}
+@font-face{font-family:'Playfair Display';font-weight:500;font-display:swap;src:url('PlayfairDisplay-Medium.woff2') format('woff2')}
+@font-face{font-family:'Playfair Display';font-weight:600;font-display:swap;src:url('PlayfairDisplay-SemiBold.woff2') format('woff2')}
+@font-face{font-family:'Playfair Display';font-weight:700;font-display:swap;src:url('PlayfairDisplay-Bold.woff2') format('woff2')}
