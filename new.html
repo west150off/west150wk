@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>紙帖 · 인덱스카드 에디터</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Gowun+Batang:wght@400;700&family=Song+Myung&family=Gaegu:wght@400;700&family=Nanum+Pen+Script&family=East+Sea+Dokdo&family=Poor+Story&family=Do+Hyeon&family=Black+Han+Sans&family=Stylish&family=Yeon+Sung&family=Gugi&family=Special+Elite&family=Courier+Prime:wght@400;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Nanum+Gothic:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root{
+  --washi:#F3ECDD;
+  --kraft:#E7D9B8;
+  --ink:#2B2A25;
+  --ink-soft:#6b6252;
+  --indigo:#233B53;
+  --indigo-deep:#131F2B;
+  --hanko:#B23B2E;
+  --rule:#CDBD92;
+  --line:#DED2B4;
+  --app-bg:#EFE6D2;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{margin:0; height:100%; overscroll-behavior:none;}
+body{
+  background:var(--app-bg);
+  background-image: radial-gradient(circle at 1px 1px, rgba(60,50,30,.07) 1px, transparent 0);
+  background-size:3px 3px;
+  font-family:'Nanum Gothic', sans-serif;
+  color:var(--ink);
+  display:flex; flex-direction:column; height:100dvh; overflow:hidden;
+}
+
+/* ---------- top bar ---------- */
+.topbar{
+  padding:14px 18px 10px; flex-shrink:0;
+  display:flex; align-items:baseline; justify-content:space-between;
+  border-bottom:1px solid var(--rule);
+}
+.topbar h1{margin:0; font-family:'Song Myung', serif; font-size:19px; letter-spacing:.05em;}
+.topbar span{font-size:10px; color:var(--ink-soft); letter-spacing:.15em;}
+
+/* ---------- template strip ---------- */
+.tpl-strip{
+  display:flex; gap:8px; padding:10px 14px; overflow-x:auto; flex-shrink:0;
+  border-bottom:1px solid var(--rule); background:rgba(255,255,255,.25);
+}
+.tpl-chip{
+  flex:0 0 auto; padding:7px 13px; border-radius:20px; font-size:12px; white-space:nowrap;
+  border:1px solid var(--rule); background:#fff; color:var(--ink-soft); cursor:pointer;
+}
+.tpl-chip.active{background:var(--indigo); color:#F3ECDD; border-color:var(--indigo);}
+
+/* ---------- stage ---------- */
+.stage-wrapper{flex:1; overflow:auto; display:flex; align-items:flex-start; justify-content:center; padding:22px 12px;}
+.card-stage{
+  width:620px; height:960px; position:relative; transform-origin: top left; flex-shrink:0;
+  background:var(--washi); box-shadow:0 14px 34px rgba(30,24,12,.28), 0 2px 6px rgba(30,24,12,.15);
+  border-radius:3px; overflow:hidden; padding:60px 50px; color:var(--ink);
+}
+.card-stage::after{
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background-image: radial-gradient(circle at 1px 1px, rgba(60,50,30,.055) 1px, transparent 0);
+  background-size:3px 3px;
+}
+.deco{position:absolute; inset:0; pointer-events:none;}
+[contenteditable]{outline:none; min-height:1em; position:relative; z-index:1;}
+[contenteditable]:empty:before{content:attr(data-ph); color:rgba(60,50,30,.32);}
+.capturing [contenteditable]:empty:before{content:'';}
+.capturing .drag-handle, .capturing .img-del{display:none !important;}
+
+.card-kicker{font-size:14px; letter-spacing:.28em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:16px; font-family:'Special Elite', monospace;}
+.card-title{font-size:34px; font-family:'Nanum Myeongjo', serif; font-weight:800; line-height:1.32; margin-bottom:22px;}
+.card-body{font-size:19px; line-height:2; font-family:'Gowun Batang', serif; white-space:pre-wrap; min-height:320px;}
+.card-meta{font-size:13px; color:var(--ink-soft); margin-top:26px; font-family:'Special Elite', monospace; letter-spacing:.06em;}
+
+/* 1. 도서카드 */
+[data-template="lib"]{background:var(--kraft);}
+[data-template="lib"] .deco::before, [data-template="lib"] .deco::after{
+  content:''; position:absolute; top:26px; width:15px; height:15px; border-radius:50%;
+  background:radial-gradient(circle at 35% 35%, #fff, #cbb98a 60%, #a89568);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.18);
+}
+[data-template="lib"] .deco::before{left:120px;}
+[data-template="lib"] .deco::after{right:120px;}
+[data-template="lib"] .card-body{background-image: repeating-linear-gradient(to bottom, transparent, transparent 37px, var(--rule) 38px);}
+[data-template="lib"] .card-meta{border-top:1px dashed var(--ink-soft); padding-top:10px;}
+
+/* 2. 원고지 카드 */
+[data-template="genko"]{background:#F8F3E5;}
+[data-template="genko"] .deco::before{
+  content:''; position:absolute; top:0; bottom:0; left:36px; width:2px; background:rgba(178,59,46,.45);
+}
+[data-template="genko"] .card-body{
+  background-image: repeating-linear-gradient(to right, var(--rule) 0 1px, transparent 1px 38px),
+                     repeating-linear-gradient(to bottom, var(--rule) 0 1px, transparent 1px 38px);
+  padding:6px;
+}
+[data-template="genko"] .card-title{font-family:'Song Myung', serif;}
+
+/* 3. 인터뷰 카드 */
+[data-template="interview"]{background:#FBF7EB; box-shadow: inset 0 0 0 6px #fff, inset 0 0 0 8px var(--ink);}
+[data-template="interview"] .card-title{font-family:'Song Myung', serif;}
+[data-template="interview"] .card-body{font-size:22px; font-family:'Nanum Myeongjo', serif; min-height:260px;}
+[data-template="interview"] .deco::after{
+  content:'印'; position:absolute; right:46px; bottom:56px; width:86px; height:86px;
+  border:3px solid var(--hanko); border-radius:6px; color:var(--hanko); opacity:.75;
+  display:flex; align-items:center; justify-content:center; font-family:'Song Myung',serif; font-size:40px;
+  transform:rotate(-5deg);
+}
+
+/* 4. 발언 카드 (다크) */
+[data-template="statement"]{background:linear-gradient(160deg, var(--indigo), var(--indigo-deep)); color:#F3ECDD;}
+[data-template="statement"]::after{background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,.045) 1px, transparent 0);}
+[data-template="statement"] .card-kicker{color:#C9B98A;}
+[data-template="statement"] .card-title{font-family:'Song Myung', serif; font-size:27px; color:#E8DEC0;}
+[data-template="statement"] .card-body{font-size:27px; font-family:'Nanum Myeongjo', serif; line-height:1.75; min-height:260px;}
+[data-template="statement"] .card-meta{color:#B7AD8E;}
+[data-template="statement"] .deco::before{content:'「'; position:absolute; top:8px; left:26px; font-size:130px; color:rgba(243,236,221,.13); font-family:'Song Myung',serif;}
+[data-template="statement"] .deco::after{content:'」'; position:absolute; bottom:36px; right:26px; font-size:130px; color:rgba(243,236,221,.13); font-family:'Song Myung',serif;}
+[data-template="statement"] [contenteditable]:empty:before{color:rgba(243,236,221,.38);}
+
+/* 5. 엽서 카드 */
+[data-template="postcard"]{background:#F7F1E2;}
+[data-template="postcard"] .deco::before{content:''; position:absolute; top:44px; bottom:44px; left:352px; width:1px; background:var(--rule);}
+[data-template="postcard"] .deco::after{
+  content:'切手'; position:absolute; top:44px; right:44px; width:96px; height:126px;
+  border:2px dashed var(--ink-soft); display:flex; align-items:center; justify-content:center;
+  font-family:'Song Myung', serif; color:var(--ink-soft); opacity:.55; font-size:20px;
+}
+[data-template="postcard"] .card-body{width:290px;}
+
+/* 6. 메모 카드 */
+[data-template="memo"]{background:#FFFDF6; padding-top:96px;}
+[data-template="memo"] .deco::before{
+  content:'MEMO'; position:absolute; top:38px; left:50px; font-family:'Special Elite', monospace;
+  letter-spacing:.32em; color:var(--hanko); font-size:13px; border-bottom:3px solid var(--hanko); padding-bottom:6px;
+}
+[data-template="memo"] .card-body{background-image: repeating-linear-gradient(to bottom, transparent, transparent 33px, var(--rule) 34px);}
+
+/* ---------- image layer ---------- */
+.image-layer{position:absolute; inset:0; z-index:5;}
+.img-item{position:absolute; touch-action:none; cursor:grab;}
+.img-item img{width:100%; height:100%; object-fit:cover; display:block; border:3px solid #fff; box-shadow:0 4px 14px rgba(0,0,0,.28);}
+.img-item.round img{border-radius:50%;}
+.img-item.selected img{outline:2px dashed var(--hanko); outline-offset:3px;}
+.img-del{
+  position:absolute; top:-11px; right:-11px; width:24px; height:24px; border-radius:50%;
+  background:var(--hanko); color:#fff; border:2px solid #fff; font-size:13px; line-height:1;
+  display:flex; align-items:center; justify-content:center; cursor:pointer;
+}
+
+/* ---------- bottom tabs ---------- */
+.tabbar{flex-shrink:0; border-top:1px solid var(--rule); background:#fff;}
+.tabs{display:flex;}
+.tab-btn{
+  flex:1; padding:11px 4px 9px; text-align:center; font-size:11px; color:var(--ink-soft);
+  background:none; border:none; border-top:2px solid transparent; font-family:'Nanum Gothic',sans-serif;
+}
+.tab-btn.active{color:var(--indigo); border-top-color:var(--hanko); font-weight:700;}
+.tab-panel{display:none; padding:12px 16px 16px; max-height:150px; overflow-y:auto;}
+.tab-panel.active{display:block;}
+
+.row{display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+.btn{
+  padding:9px 14px; border-radius:8px; border:1px solid var(--rule); background:#fdfaf2;
+  font-size:13px; color:var(--ink); font-family:'Nanum Gothic',sans-serif;
+}
+.btn.on{background:var(--indigo); color:#fff; border-color:var(--indigo);}
+.swatch-wrap{display:flex; align-items:center; gap:6px; border:1px solid var(--rule); border-radius:8px; padding:5px 9px; background:#fdfaf2;}
+.swatch-wrap input[type=color]{width:22px; height:22px; border:none; padding:0; background:none;}
+.hint{font-size:11px; color:var(--ink-soft); margin:6px 0 2px;}
+
+.font-grid{display:flex; flex-wrap:wrap; gap:8px;}
+.font-chip{padding:8px 12px; border:1px solid var(--rule); border-radius:8px; background:#fdfaf2; font-size:15px;}
+.font-chip.active{border-color:var(--indigo); box-shadow:0 0 0 1px var(--indigo) inset;}
+
+.export-btn{
+  width:100%; padding:13px; border-radius:9px; border:none; background:var(--hanko); color:#fff;
+  font-size:15px; font-weight:700; font-family:'Nanum Gothic',sans-serif; letter-spacing:.03em;
+}
+.export-sub{font-size:11px; color:var(--ink-soft); text-align:center; margin-top:6px;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <h1>紙帖 인덱스카드</h1>
+  <span>ANALOG INDEX CARD EDITOR</span>
+</div>
+
+<div class="tpl-strip" id="tplStrip"></div>
+
+<div class="stage-wrapper" id="stageWrapper">
+  <div class="card-stage" id="cardStage" data-template="lib">
+    <div class="deco"></div>
+    <div class="card-kicker" contenteditable data-ph="분류 · 라벨" id="fKicker"></div>
+    <div class="card-title" contenteditable data-ph="제목 / 이름" id="fTitle"></div>
+    <div class="card-body" contenteditable data-ph="본문 내용을 입력하세요." id="fBody"></div>
+    <div class="card-meta" contenteditable data-ph="날짜 · 출처" id="fMeta"></div>
+    <div class="image-layer" id="imageLayer"></div>
+  </div>
+</div>
+
+<div class="tabbar">
+  <div class="tabs" id="tabButtons"></div>
+
+  <div class="tab-panel active" data-panel="text">
+    <div class="hint">서식을 적용할 텍스트를 먼저 드래그로 선택하세요</div>
+    <div class="row">
+      <button class="btn" data-cmd="bold"><b>B</b> 굵게</button>
+      <button class="btn" data-cmd="italic"><i>I</i> 이텔릭</button>
+      <div class="swatch-wrap">
+        <button class="btn" data-cmd="underline" style="border:none; padding:0 4px;">U 밑줄</button>
+        <input type="color" id="underlineColor" value="#2B2A25">
+      </div>
+      <div class="swatch-wrap">
+        <button class="btn" data-cmd="highlight" style="border:none; padding:0 4px;">▩ 형광펜</button>
+        <input type="color" id="highlightColor" value="#F5D97A">
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-panel" data-panel="image">
+    <div class="row">
+      <label class="btn" for="imgInput" style="cursor:pointer;">＋ 작은 이미지 추가</label>
+      <input type="file" id="imgInput" accept="image/*" style="display:none;">
+      <button class="btn" id="imgRound">○ 원형</button>
+      <button class="btn" id="imgSquare">▭ 사각</button>
+      <button class="btn" id="imgDelSel">선택 삭제</button>
+    </div>
+    <div class="hint">이미지를 드래그해서 자리를 잡고, 아래 슬라이더로 크기를 조절하세요</div>
+    <div class="row">
+      <input type="range" id="imgSize" min="40" max="320" value="110" style="flex:1;">
+    </div>
+  </div>
+
+  <div class="tab-panel" data-panel="font">
+    <div class="hint">텍스트를 선택한 뒤 글꼴을 탭하세요 (선택 없으면 카드 전체에 적용)</div>
+    <div class="font-grid" id="fontGrid"></div>
+  </div>
+
+  <div class="tab-panel" data-panel="export">
+    <button class="export-btn" id="exportBtn">📷 사진으로 저장 · 공유</button>
+    <div class="export-sub">아이폰 공유 시트에서 "이미지 저장"을 선택하면 사진 앱에 저장됩니다</div>
+  </div>
+</div>
+
+<script>
+/* ---------------- templates ---------------- */
+const TEMPLATES = [
+  {id:'lib', name:'도서카드'},
+  {id:'genko', name:'원고지'},
+  {id:'interview', name:'인터뷰'},
+  {id:'statement', name:'발언(다크)'},
+  {id:'postcard', name:'엽서'},
+  {id:'memo', name:'메모'},
+];
+const tplStrip = document.getElementById('tplStrip');
+const stage = document.getElementById('cardStage');
+TEMPLATES.forEach((t,i)=>{
+  const chip = document.createElement('button');
+  chip.className = 'tpl-chip' + (i===0?' active':'');
+  chip.textContent = t.name;
+  chip.onclick = ()=>{
+    stage.dataset.template = t.id;
+    [...tplStrip.children].forEach(c=>c.classList.remove('active'));
+    chip.classList.add('active');
+  };
+  tplStrip.appendChild(chip);
+});
+
+/* ---------------- tabs ---------------- */
+const TABS = [
+  {id:'text', label:'Ag 텍스트'},
+  {id:'image', label:'🖼 이미지'},
+  {id:'font', label:'文 글꼴'},
+  {id:'export', label:'↓ 저장'},
+];
+const tabButtons = document.getElementById('tabButtons');
+TABS.forEach((t,i)=>{
+  const b = document.createElement('button');
+  b.className = 'tab-btn' + (i===0?' active':'');
+  b.textContent = t.label;
+  b.onclick = ()=>{
+    document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    document.querySelector(`.tab-panel[data-panel="${t.id}"]`).classList.add('active');
+  };
+  tabButtons.appendChild(b);
+});
+
+/* ---------------- fit stage to screen ---------------- */
+function fitStage(){
+  const wrapper = document.getElementById('stageWrapper');
+  const maxW = wrapper.clientWidth - 24;
+  const scale = Math.min(1, maxW/620);
+  stage.style.transform = `scale(${scale})`;
+  wrapper.style.setProperty('--scaled-h', (960*scale)+'px');
+  const spacer = 960*scale + 44;
+  wrapper.style.minHeight = spacer+'px';
+}
+window.addEventListener('resize', fitStage);
+window.addEventListener('load', fitStage);
+setTimeout(fitStage, 50);
+
+/* ---------------- rich text formatting ---------------- */
+let lastRange = null;
+document.querySelectorAll('[contenteditable]').forEach(el=>{
+  el.addEventListener('mouseup', saveRange);
+  el.addEventListener('keyup', saveRange);
+  el.addEventListener('touchend', ()=>setTimeout(saveRange, 30));
+});
+function saveRange(){
+  const sel = window.getSelection();
+  if(sel.rangeCount && !sel.isCollapsed){
+    lastRange = sel.getRangeAt(0).cloneRange();
+  }
+}
+function wrapSelection(styleObj){
+  const sel = window.getSelection();
+  let range = (sel.rangeCount && !sel.isCollapsed) ? sel.getRangeAt(0) : lastRange;
+  if(!range || range.collapsed){
+    alert('먼저 텍스트를 드래그해서 선택해주세요.');
+    return;
+  }
+  const span = document.createElement('span');
+  Object.assign(span.style, styleObj);
+  try{
+    span.appendChild(range.extractContents());
+    range.insertNode(span);
+  }catch(e){ /* ignore */ }
+  sel.removeAllRanges();
+  lastRange = null;
+}
+document.querySelectorAll('[data-cmd]').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const cmd = btn.dataset.cmd;
+    if(cmd==='bold') wrapSelection({fontWeight:'700'});
+    if(cmd==='italic') wrapSelection({fontStyle:'italic'});
+    if(cmd==='underline') wrapSelection({
+      textDecoration:'underline',
+      textDecorationColor: document.getElementById('underlineColor').value,
+      textDecorationThickness:'2px', textUnderlineOffset:'3px'
+    });
+    if(cmd==='highlight') wrapSelection({
+      backgroundColor: document.getElementById('highlightColor').value,
+      padding:'0 2px', borderRadius:'2px'
+    });
+  });
+});
+
+/* ---------------- fonts ---------------- */
+const FONTS = [
+  '나눔명조:Nanum Myeongjo', '고운바탕:Gowun Batang', '송명:Song Myung', '개구:Gaegu',
+  '나눔펜:Nanum Pen Script', '동해:East Sea Dokdo', '포스토리:Poor Story', '도현:Do Hyeon',
+  '블랙한산스:Black Han Sans', '스타일리시:Stylish', '연성:Yeon Sung', '구지:Gugi',
+  '타자기:Special Elite', '쿠리에:Courier Prime', 'Garamond:EB Garamond', '나눔고딕:Nanum Gothic'
+];
+const fontGrid = document.getElementById('fontGrid');
+let activeField = document.getElementById('fBody');
+document.querySelectorAll('[contenteditable]').forEach(el=>{
+  el.addEventListener('focus', ()=>activeField = el);
+});
+FONTS.forEach(f=>{
+  const [label, family] = f.split(':');
+  const chip = document.createElement('button');
+  chip.className = 'font-chip';
+  chip.style.fontFamily = `'${family}', sans-serif`;
+  chip.textContent = label;
+  chip.onclick = ()=>{
+    const sel = window.getSelection();
+    if(sel.rangeCount && !sel.isCollapsed){
+      wrapSelection({fontFamily:`'${family}', sans-serif`});
+    } else if(lastRange && !lastRange.collapsed){
+      const savedSel = lastRange;
+      const span = document.createElement('span');
+      span.style.fontFamily = `'${family}', sans-serif`;
+      span.appendChild(savedSel.extractContents());
+      savedSel.insertNode(span);
+      lastRange = null;
+    } else {
+      activeField.style.fontFamily = `'${family}', sans-serif`;
+    }
+  };
+  fontGrid.appendChild(chip);
+});
+
+/* ---------------- images ---------------- */
+const imageLayer = document.getElementById('imageLayer');
+const imgInput = document.getElementById('imgInput');
+const imgSize = document.getElementById('imgSize');
+let selectedImg = null;
+let shapeMode = 'round';
+
+document.getElementById('imgRound').onclick = ()=>{ shapeMode='round'; if(selectedImg) selectedImg.classList.add('round'); };
+document.getElementById('imgSquare').onclick = ()=>{ shapeMode='square'; if(selectedImg) selectedImg.classList.remove('round'); };
+
+imgInput.addEventListener('change', (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    const wrap = document.createElement('div');
+    wrap.className = 'img-item' + (shapeMode==='round' ? ' round' : '');
+    wrap.style.width = imgSize.value+'px';
+    wrap.style.height = imgSize.value+'px';
+    wrap.style.left = '40px';
+    wrap.style.top = '40px';
+    const img = document.createElement('img');
+    img.src = reader.result;
+    const del = document.createElement('div');
+    del.className = 'img-del';
+    del.textContent = '×';
+    del.onclick = (ev)=>{ ev.stopPropagation(); wrap.remove(); if(selectedImg===wrap) selectedImg=null; };
+    wrap.appendChild(img);
+    wrap.appendChild(del);
+    imageLayer.appendChild(wrap);
+    makeDraggable(wrap);
+    selectImage(wrap);
+  };
+  reader.readAsDataURL(file);
+  imgInput.value = '';
+});
+
+function selectImage(wrap){
+  document.querySelectorAll('.img-item').forEach(x=>x.classList.remove('selected'));
+  wrap.classList.add('selected');
+  selectedImg = wrap;
+  imgSize.value = parseInt(wrap.style.width);
+}
+document.getElementById('imgDelSel').onclick = ()=>{
+  if(selectedImg){ selectedImg.remove(); selectedImg=null; }
+};
+imgSize.addEventListener('input', ()=>{
+  if(selectedImg){
+    selectedImg.style.width = imgSize.value+'px';
+    selectedImg.style.height = imgSize.value+'px';
+  }
+});
+
+function makeDraggable(el){
+  el.addEventListener('pointerdown', (e)=>{
+    selectImage(el);
+    const stageRect = stage.getBoundingClientRect();
+    const scale = stageRect.width/620;
+    const startX = e.clientX, startY = e.clientY;
+    const origLeft = parseFloat(el.style.left);
+    const origTop = parseFloat(el.style.top);
+    el.style.cursor = 'grabbing';
+    function onMove(ev){
+      const dx = (ev.clientX-startX)/scale;
+      const dy = (ev.clientY-startY)/scale;
+      let nl = origLeft+dx, nt = origTop+dy;
+      nl = Math.max(-20, Math.min(620-20, nl));
+      nt = Math.max(-20, Math.min(960-20, nt));
+      el.style.left = nl+'px';
+      el.style.top = nt+'px';
+    }
+    function onUp(){
+      el.style.cursor='grab';
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+    }
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+  });
+}
+
+/* ---------------- export / share ---------------- */
+document.getElementById('exportBtn').addEventListener('click', async ()=>{
+  const btn = document.getElementById('exportBtn');
+  const prevText = btn.textContent;
+  btn.textContent = '이미지 생성 중...';
+  const prevTransform = stage.style.transform;
+  stage.style.transform = 'none';
+  stage.classList.add('capturing');
+  document.querySelectorAll('.img-item').forEach(x=>x.classList.remove('selected'));
+  await new Promise(r=>setTimeout(r, 60));
+  try{
+    const canvas = await html2canvas(stage, {scale:3, backgroundColor:null, useCORS:true});
+    canvas.toBlob(async (blob)=>{
+      stage.style.transform = prevTransform;
+      stage.classList.remove('capturing');
+      fitStage();
+      btn.textContent = prevText;
+      if(!blob) return;
+      const file = new File([blob], '인덱스카드.png', {type:'image/png'});
+      if(navigator.canShare && navigator.canShare({files:[file]})){
+        try{ await navigator.share({files:[file], title:'인덱스 카드'}); }
+        catch(err){ /* 사용자가 취소함 */ }
+      } else {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = '인덱스카드.png';
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(()=>URL.revokeObjectURL(url), 4000);
+      }
+    }, 'image/png');
+  }catch(err){
+    stage.style.transform = prevTransform;
+    stage.classList.remove('capturing');
+    fitStage();
+    btn.textContent = prevText;
+    alert('저장 중 오류가 발생했습니다: '+err.message);
+  }
+});
+</script>
+</body>
+</html>
