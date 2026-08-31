@@ -1982,7 +1982,7 @@ const CardCanvas = forwardRef(({ deck, slide, slideIndex, totalSlides, scale = 1
                 String(slideIndex + 1).padStart(2, '0'),
                 " / ",
                 String(totalSlides).padStart(2, '0')))),
-        React.createElement("main", { className: `relative z-10 my-auto w-full flex flex-col justify-center ${textAlign === 'center' ? 'text-center items-center' : 'text-left items-start'}` },
+       React.createElement("main", { className: `relative z-10 w-full flex flex-col ${slide.type === 'quote' ? 'justify-start pt-2' : 'my-auto justify-center'} ${textAlign === 'center' ? 'text-center items-center' : 'text-left items-start'}` },
             slide.type === 'cover' && (React.createElement("div", { className: `w-full ${layout.containerGapClass}` },
                 renderFeaturedImageSlot('top'),
                 React.createElement("h1", { className: `${fontClass} ${layout.titleClass} font-black uppercase whitespace-pre-line`, style: titleFontStyle }, renderInlineMarks(slide.title, accentColor, 'title')),
