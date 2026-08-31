@@ -1,0 +1,2355 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WEST150 LINK — Investigation Board Editor</title>
+  <link rel="stylesheet" href="fonts/fonts.css" />
+  <script src="libs/html2canvas.min.js"></script>
+  <style>
+    :root {
+      --bg: #12110f;
+      --panel: rgba(16, 15, 13, 0.94);
+      --cork1: #8f734d;
+      --cork2: #6b5235;
+      --paper: #f5f0e6;
+      --ink: #1a1712;
+      --muted: #6b6458;
+      --accent: #c73e2e;
+      --border: rgba(255,255,255,0.08);
+      --macbar-h: 30px;
+      --topbar-h: 52px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg);
+      font-family: 'Pretendard', -apple-system, sans-serif;
+      color: #e8e2d6;
+      height: 100vh;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    /* ===== MAC MENU BAR ===== */
+    #macbar {
+      position: fixed; top: 0; left: 0; right: 0; height: var(--macbar-h);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 12px;
+      background: rgba(28, 26, 23, 0.55);
+      -webkit-backdrop-filter: blur(18px) saturate(180%);
+      backdrop-filter: blur(18px) saturate(180%);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      font-family: -apple-system, BlinkMacSystemFont, 'Pretendard', sans-serif;
+      font-size: 13px; color: rgba(235,232,225,0.92);
+      z-index: 500; user-select: none;
+    }
+    #macbar .mac-left, #macbar .mac-right { display: flex; align-items: center; gap: 2px; }
+    #macbar .mac-logo {
+      width: 15px; height: 15px; border-radius: 50%; margin-right: 6px;
+      background: radial-gradient(circle at 32% 28%, #fff2d0, #e8b84b 45%, #a5721e 100%);
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.15) inset;
+      flex-shrink: 0;
+    }
+    #macbar .mac-title {
+      font-weight: 700; font-size: 12.5px; letter-spacing: 0.3px;
+      margin-right: 10px; color: #f0ece2;
+    }
+    #macbar .mac-title span { color: #e85a48; }
+    .mac-menu { position: relative; }
+    .mac-menu > button {
+      background: none; border: none; color: inherit; font: inherit;
+      padding: 4px 10px; border-radius: 4px; cursor: pointer;
+      font-size: 12.5px; opacity: 0.88;
+    }
+    .mac-menu > button:hover, .mac-menu.open > button {
+      background: rgba(255,255,255,0.12); opacity: 1;
+    }
+    .mac-dropdown {
+      display: none; position: absolute; top: calc(100% + 5px); left: 0;
+      min-width: 190px; background: rgba(40,38,34,0.85);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      backdrop-filter: blur(24px) saturate(180%);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px; padding: 5px; z-index: 510;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+    }
+    .mac-menu.open .mac-dropdown { display: block; }
+    .mac-dropdown .mac-item {
+      display: flex; align-items: center; gap: 7px;
+      padding: 6px 9px; border-radius: 5px; font-size: 12.5px;
+      color: #ece8dd; cursor: pointer; white-space: nowrap;
+    }
+    .mac-dropdown .mac-item:hover { background: #0a84ff; color: #fff; }
+    .mac-dropdown .mac-sep { height: 1px; background: rgba(255,255,255,0.1); margin: 4px 2px; }
+    #macbar .mac-search-wrap { display: flex; align-items: center; gap: 6px; margin-right: 10px; }
+    #macbar .mac-search-btn {
+      background: none; border: none; color: inherit; cursor: pointer;
+      font-size: 13px; padding: 4px 6px; border-radius: 4px; opacity: 0.85;
+    }
+    #macbar .mac-search-btn:hover { background: rgba(255,255,255,0.12); opacity: 1; }
+    #macbar .mac-search-input {
+      width: 0; opacity: 0; padding: 0; border: none; outline: none;
+      background: rgba(255,255,255,0.1); border-radius: 5px; color: #fff;
+      font-size: 12px; font-family: inherit; height: 22px;
+      transition: width 0.18s ease, opacity 0.18s ease, padding 0.18s ease;
+    }
+    #macbar .mac-search-input.open { width: 150px; opacity: 1; padding: 0 8px; }
+    #macbar .mac-clock {
+      font-variant-numeric: tabular-nums; font-size: 12.5px; opacity: 0.9;
+      padding: 4px 6px;
+    }
+
+    /* ===== TOPBAR ===== */
+    #topbar {
+      position: fixed; top: var(--macbar-h); left: 0; right: 0; height: var(--topbar-h);
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 14px; z-index: 200;
+    }
+    #logo {
+      font-family: 'Pretendard', monospace;
+      font-weight: 700; font-size: 16px; letter-spacing: 2px;
+    }
+    #logo span { color: #e85a48; }
+
+    .toolbar {
+      display: flex; gap: 4px; align-items: center; flex-wrap: wrap;
+    }
+    .tool-btn {
+      height: 34px; padding: 0 11px;
+      border-radius: 6px; border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04);
+      color: #d0c8b8; font-size: 12px; font-family: inherit;
+      cursor: pointer; display: flex; align-items: center; gap: 5px;
+      transition: all 0.15s; white-space: nowrap;
+    }
+    .tool-btn:hover { background: rgba(232,90,72,0.12); border-color: rgba(232,90,72,0.35); color: #ffb0a4; }
+    .tool-btn.active { background: rgba(232,90,72,0.2); border-color: rgba(232,90,72,0.5); color: #ffb0a4; }
+    .tool-btn.primary { background: rgba(232,90,72,0.18); border-color: rgba(232,90,72,0.4); color: #ffb0a4; }
+    .sep { width: 1px; height: 22px; background: var(--border); margin: 0 6px; }
+
+    /* ===== LEFT TOOLS ===== */
+    #leftbar {
+      position: fixed; top: calc(var(--macbar-h) + var(--topbar-h)); left: 0; bottom: 0; width: 56px;
+      background: var(--panel); border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; align-items: center; padding: 12px 0; gap: 6px; z-index: 150;
+    }
+    .icon-btn {
+      width: 40px; height: 40px; border-radius: 8px;
+      border: 1px solid transparent; background: transparent;
+      color: #a8a090; font-size: 18px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s; position: relative;
+    }
+    .icon-btn:hover, .icon-btn.active {
+      background: rgba(232,90,72,0.15); border-color: rgba(232,90,72,0.35); color: #ffb0a4;
+    }
+    .icon-btn .tip {
+      display: none; position: absolute; left: 48px; top: 50%; transform: translateY(-50%);
+      background: #1e1c18; border: 1px solid var(--border); padding: 4px 10px;
+      border-radius: 4px; font-size: 11px; white-space: nowrap; color: #d0c8b8; pointer-events: none; z-index: 300;
+    }
+    .icon-btn:hover .tip { display: block; }
+
+    /* ===== RIGHT PANEL ===== */
+    #rightpanel {
+      position: fixed; top: calc(var(--macbar-h) + var(--topbar-h)); right: 0; bottom: 0; width: 280px;
+      background: var(--panel); border-left: 1px solid var(--border);
+      z-index: 150; display: flex; flex-direction: column; overflow: hidden;
+    }
+    #rightpanel h3 {
+      font-size: 11px; letter-spacing: 1.2px; color: #8a8478;
+      text-transform: uppercase; padding: 14px 16px 8px;
+    }
+    .prop-section {
+      padding: 0 14px 14px; border-bottom: 1px solid var(--border);
+    }
+    .prop-row {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
+    }
+    .prop-row label {
+      font-size: 12px; color: #9a9285; width: 64px; flex-shrink: 0;
+    }
+    .prop-row select, .prop-row input[type="text"], .prop-row input[type="number"] {
+      flex: 1; height: 30px; padding: 0 8px;
+      background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+      border-radius: 5px; color: #e0d8c8; font-size: 12px; font-family: inherit;
+    }
+    .card-edit-row textarea {
+  flex: 1;
+  min-height: 70px;
+  padding: 8px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  color: #e0d8c8;
+  font-size: 12px;
+  font-family: inherit;
+  line-height: 1.5;
+  resize: vertical;
+    }
+
+    .card-edit-row input[type="text"] {
+  flex: 1;
+  height: 30px;
+  padding: 0 8px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  color: #e0d8c8;
+  font-size: 12px;
+  font-family: inherit;
+    }
+
+    .card-edit-field {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .card-edit-field input[type="text"],
+    .card-edit-field textarea {
+      width: 100%;
+    }
+    .field-style-controls {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .field-style-controls select {
+      flex: 1;
+      min-width: 0;
+      height: 26px;
+      padding: 0 6px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: #bdb5a7;
+      font-size: 11px;
+      font-family: inherit;
+    }
+    .field-style-controls input[type="range"] {
+      width: 72px;
+      flex: 0 0 72px;
+    }
+    .field-size-val {
+      width: 26px;
+      flex: 0 0 26px;
+      font-size: 10px;
+      color: #8a8478;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+    .prop-row input[type="color"] {
+      width: 36px; height: 30px; border: 1px solid var(--border);
+      border-radius: 5px; background: transparent; cursor: pointer; padding: 2px;
+    }
+    .prop-row input[type="range"] {
+      flex: 1; accent-color: #e85a48;
+    }
+    .size-val { font-size: 11px; color: #8a8478; width: 32px; text-align: right; }
+    .toggle-group { display: flex; gap: 4px; flex: 1; }
+    .toggle-btn {
+      flex: 1; height: 30px; border-radius: 5px;
+      border: 1px solid var(--border); background: rgba(255,255,255,0.04);
+      color: #b0a898; font-size: 13px; cursor: pointer; font-family: inherit;
+    }
+    .toggle-btn.active { background: rgba(232,90,72,0.2); border-color: rgba(232,90,72,0.45); color: #ffb0a4; }
+
+    #prop-empty {
+      padding: 40px 20px; text-align: center; color: #6a6458; font-size: 13px; line-height: 1.6;
+    }
+    #prop-content { display: none; flex: 1; overflow-y: auto; }
+    #prop-content.visible { display: block; }
+
+    .stamp-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 0 14px 14px;
+    }
+    .stamp-item {
+      height: 36px; border-radius: 5px; border: 1px dashed rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.03); color: #c0b8a8; font-size: 11px;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      font-weight: 600; transition: all 0.15s;
+    }
+    .stamp-item:hover { border-color: rgba(232,90,72,0.5); background: rgba(232,90,72,0.1); color: #ffb0a4; }
+
+    /* ===== BOARD ===== */
+    #board-wrap {
+      position: fixed; top: calc(var(--macbar-h) + var(--topbar-h)); left: 56px; right: 280px; bottom: 0;
+      overflow: hidden; background: #1a1814; cursor: default;
+    }
+    #board-wrap.connect-mode { cursor: crosshair; }
+    #board-wrap.stamp-mode { cursor: cell; }
+
+    #board {
+      position: absolute;
+      width: 1800px; height: 1200px;
+      left: 50%; top: 50%;
+      transform-origin: center center;
+      background:
+        radial-gradient(ellipse at 25% 15%, rgba(160,130,90,0.12) 0%, transparent 50%),
+        radial-gradient(ellipse at 75% 85%, rgba(110,85,50,0.1) 0%, transparent 45%),
+        linear-gradient(160deg, #8f734d 0%, #7a5f3e 45%, #6b5235 100%);
+      box-shadow:
+        inset 0 0 100px rgba(0,0,0,0.3),
+        0 0 0 14px #2a2218,
+        0 0 0 16px #1a1510,
+        0 24px 70px rgba(0,0,0,0.55);
+      border-radius: 3px;
+    }
+    #board::before {
+      content: ''; position: absolute; inset: 0; opacity: 0.3; pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 160px; mix-blend-mode: multiply;
+    }
+
+    #svg-layer {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      pointer-events: none; overflow: visible; z-index: 5;
+    }
+    #svg-layer .connector-hit {
+      pointer-events: stroke; cursor: pointer;
+    }
+
+    /* ===== CARDS ===== */
+    .card {
+      position: absolute; z-index: 10;
+      min-width: 160px;
+      background: var(--paper); color: var(--ink);
+      border-radius: 4px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.22), 0 8px 20px rgba(0,0,0,0.15);
+      cursor: grab;
+      transition: box-shadow 0.15s;
+    }
+    .card:hover { z-index: 15; }
+    .card.selected {
+      box-shadow: 0 0 0 2.5px var(--accent), 0 8px 24px rgba(199,62,46,0.3);
+      z-index: 20;
+    }
+    .card.dragging { cursor: grabbing; z-index: 40; opacity: 0.95; }
+
+    .pin {
+      position: absolute; top: -9px; left: 50%; transform: translateX(-50%);
+      width: 16px; height: 16px; border-radius: 50%;
+      box-shadow: 0 2px 3px rgba(0,0,0,0.35), inset 0 1px 1px rgba(255,255,255,0.3);
+      z-index: 2;
+    }
+    .pin.quote { background: radial-gradient(circle at 35% 30%, #7ab8ff, #2a6fad); }
+    .pin.note  { background: radial-gradient(circle at 35% 30%, #f0d878, #c4a020); }
+    .pin.media { background: radial-gradient(circle at 35% 30%, #a0e0b0, #3a9a58); }
+    .pin.plate { background: radial-gradient(circle at 35% 30%, #f5e6bf, #a9854a); }
+
+    /* Quote card — speech bubble style */
+    .card.quote {
+      background: #f8f4ec;
+      border-left: 4px solid #2a6fad;
+    }
+    .card.quote .card-body::before {
+      content: '"';
+      font-family: Georgia, serif;
+      font-size: 42px; line-height: 0.6;
+      color: rgba(42,111,173,0.25);
+      position: absolute; top: 4px; left: 6px;
+    }
+
+    /* Note card */
+    .card.note {
+      background: #fef9e8;
+      border-top: 3px solid #c4a020;
+    }
+
+    /* Media card */
+    .card.media {
+      background: #f0f0ec;
+      padding: 0; overflow: hidden;
+    }
+    .card.media .media-preview {
+      width: 100%; height: 120px;
+      background: #ddd8d0 center/cover no-repeat;
+      display: flex; align-items: center; justify-content: center;
+      color: #8a8478; font-size: 13px;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+    .card.media .media-preview img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+
+    /* Plate card — brass nameplate style (명패 / 제작자·출처) */
+    .card.plate {
+      background: linear-gradient(160deg, #ddc191 0%, #c4a366 45%, #a9854a 100%);
+      border: 1px solid #7a6234;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3), 0 8px 20px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.35);
+    }
+    .card.plate::before, .card.plate::after {
+      content: ''; position: absolute; top: 7px; width: 6px; height: 6px; border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #f5e6bf, #8a6b32 70%);
+      box-shadow: 0 1px 1px rgba(0,0,0,0.4);
+    }
+    .card.plate::before { left: 7px; }
+    .card.plate::after { right: 7px; }
+    .card.plate .card-title { color: #3a2c12; text-shadow: 0 1px 0 rgba(255,255,255,0.4); }
+    .card.plate .card-meta  { color: #5a4620; }
+    .card.plate .card-body  { color: #4a3a1c; }
+
+    .card-inner { padding: 18px 14px 12px; position: relative; }
+    .card.media .card-inner { padding: 10px 12px 12px; }
+
+    .card-type {
+      display: inline-block; font-size: 10px; font-weight: 600;
+      letter-spacing: 0.6px; padding: 2px 6px; border-radius: 3px; margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+    .card-type.quote { background: rgba(42,111,173,0.12); color: #1a558a; }
+    .card-type.note  { background: rgba(196,160,32,0.15); color: #8a6e10; }
+    .card-type.media { background: rgba(58,154,88,0.12); color: #2a6a3c; }
+    .card-type.plate { background: rgba(122,98,52,0.28); color: #4a3912; }
+
+    .card-field {
+      font-size: 12px; line-height: 1.45; outline: none;
+      min-height: 1.2em; word-break: break-word; white-space: pre-wrap;
+    }
+    
+    .card-field.is-empty { display: none !important; }
+    .card.selected .card-field.is-empty.editing,
+    .card-field.editing { display: block !important; min-height: 1.2em; }
+    .card-field.editing { outline: 1px dashed rgba(42,111,173,0.35); border-radius: 2px; }
+    .rel-item .rel-name[contenteditable="true"] {
+      outline: 1px solid rgba(232,90,72,0.5); border-radius: 3px; padding: 1px 4px;
+      background: rgba(0,0,0,0.2);
+    }
+    .rel-item input[type="color"].rel-color {
+      width: 18px; height: 18px; padding: 0; border: none; background: none; cursor: pointer;
+      border-radius: 3px;
+    }
+
+    .card-field[contenteditable="true"]:focus {
+      background: rgba(42,111,173,0.06); border-radius: 2px;
+    }
+    .card-title { font-weight: 600; font-size: 14px; margin-bottom: 4px; color: #1a1712; }
+    .card-meta  { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+    .card-body  { font-size: 12.5px; color: #3a342c; line-height: 1.55; position: relative; }
+
+    .card-delete {
+      position: absolute; top: 6px; right: 6px;
+      width: 20px; height: 20px; border-radius: 50%;
+      background: rgba(0,0,0,0.08); border: none; color: #888;
+      font-size: 12px; cursor: pointer; display: none; align-items: center; justify-content: center;
+      z-index: 5;
+    }
+    .card.selected .card-delete, .card:hover .card-delete { display: flex; }
+    .card-delete:hover { background: #c73e2e; color: #fff; }
+
+    /* resize handle */
+    .resize-handle {
+      position: absolute;
+      right: 0; bottom: 0;
+      width: 16px; height: 16px;
+      cursor: nwse-resize;
+      z-index: 6;
+      opacity: 0;
+      background:
+        linear-gradient(135deg, transparent 50%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.15) 60%, transparent 60%),
+        linear-gradient(135deg, transparent 65%, rgba(0,0,0,0.2) 65%, rgba(0,0,0,0.2) 75%, transparent 75%);
+    }
+    .card.selected .resize-handle,
+    .card:hover .resize-handle { opacity: 1; }
+
+    .rel-list {
+      max-height: 140px; overflow-y: auto; margin-bottom: 8px;
+    }
+    .rel-item {
+      display: flex; align-items: center; gap: 6px;
+      padding: 5px 6px; margin-bottom: 3px;
+      border-radius: 4px; background: rgba(255,255,255,0.03);
+      border: 1px solid transparent; cursor: pointer; font-size: 12px;
+    }
+    .rel-item:hover, .rel-item.active {
+      background: rgba(232,90,72,0.1); border-color: rgba(232,90,72,0.3);
+    }
+    .rel-item .swatch {
+      width: 12px; height: 12px; border-radius: 2px; flex-shrink: 0;
+    }
+    .rel-item .rel-name { flex: 1; color: #d0c8b8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .rel-item .rel-del {
+      background: none; border: none; color: #666; cursor: pointer; font-size: 12px; padding: 0 2px;
+    }
+    .rel-item .rel-del:hover { color: #e85a48; }
+    .rel-add-row {
+      display: flex; gap: 4px; margin-top: 6px;
+    }
+    .rel-add-row input[type="text"] {
+      flex: 1; height: 28px; padding: 0 8px;
+      background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+      border-radius: 5px; color: #e0d8c8; font-size: 12px; font-family: inherit;
+    }
+    .rel-add-row input[type="color"] {
+      width: 28px; height: 28px; border: 1px solid var(--border);
+      border-radius: 5px; background: transparent; cursor: pointer; padding: 1px;
+    }
+    .rel-add-row button {
+      height: 28px; padding: 0 10px; border-radius: 5px;
+      border: 1px solid var(--border); background: rgba(255,255,255,0.06);
+      color: #c8c0b0; font-size: 12px; cursor: pointer; font-family: inherit;
+    }
+    .rel-add-row button:hover { background: rgba(232,90,72,0.15); color: #ffb0a4; }
+
+    /* ===== STAMPS ===== */
+    .stamp {
+      position: absolute; z-index: 25;
+      padding: 6px 12px;
+      border: 2.5px solid currentColor;
+      border-radius: 4px;
+      font-weight: 800; font-size: 14px; letter-spacing: 1px;
+      transform: rotate(-12deg);
+      cursor: grab; opacity: 0.88;
+      pointer-events: auto;
+      white-space: nowrap;
+      user-select: none;
+    }
+    .stamp.selected {
+      outline: 2px dashed #e85a48; outline-offset: 4px;
+    }
+    .stamp.dragging { cursor: grabbing; z-index: 50; }
+
+    /* ===== CONNECTOR LABELS ===== */
+    .conn-label {
+      position: absolute; z-index: 8;
+      background: rgba(30, 28, 24, 0.92);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 4px;
+      padding: 3px 8px;
+      font-size: 11px; color: #e0d8c8;
+      white-space: nowrap;
+      cursor: pointer;
+      transform: translate(-50%, -50%);
+      max-width: 160px;
+      overflow: hidden; text-overflow: ellipsis;
+    }
+    .conn-label.selected {
+      border-color: #e85a48; box-shadow: 0 0 0 1px #e85a48;
+    }
+    .conn-label[contenteditable="true"] {
+      outline: none; min-width: 60px;
+    }
+
+    /* status */
+    #status {
+      position: fixed; bottom: 10px; left: 70px;
+      font-size: 11px; color: rgba(180,170,150,0.45); z-index: 100;
+    }
+    #zoom-info {
+      position: fixed; bottom: 10px; right: 300px;
+      font-size: 11px; color: rgba(180,170,150,0.45); z-index: 100;
+      font-variant-numeric: tabular-nums;
+    }
+  </style>
+</head>
+<body>
+  <div id="macbar">
+    <div class="mac-left">
+      <div class="mac-logo"></div>
+      <div class="mac-title">WEST<span>150</span> LINK</div>
+
+      <div class="mac-menu" data-menu="file">
+        <button type="button">파일</button>
+        <div class="mac-dropdown">
+          <div class="mac-item" data-action="export">📷 이미지로 저장</div>
+          <div class="mac-item" data-action="reset-view">⌂ 전체보기</div>
+          <div class="mac-sep"></div>
+          <div class="mac-item" data-action="new-board">🗑 새 보드로 초기화</div>
+        </div>
+      </div>
+
+      <div class="mac-menu" data-menu="view">
+        <button type="button">보기</button>
+        <div class="mac-dropdown">
+          <div class="mac-item" data-action="zoom-in">🔍＋ 확대</div>
+          <div class="mac-item" data-action="zoom-out">🔍－ 축소</div>
+          <div class="mac-item" data-action="reset-view">⌂ 전체보기</div>
+          <div class="mac-sep"></div>
+          <div class="mac-item" data-action="board-default">▣ 기본 보드 비율</div>
+          <div class="mac-item" data-action="board-instagram">▣ 인스타 4:5 보드</div>
+          <div class="mac-sep"></div>
+          <div class="mac-item" data-action="clear-filter">✕ 필터/검색 해제</div>
+        </div>
+      </div>
+
+      <div class="mac-menu" data-menu="insert">
+        <button type="button">삽입</button>
+        <div class="mac-dropdown">
+          <div class="mac-item" data-action="add-quote">💬 발언 카드</div>
+          <div class="mac-item" data-action="add-note">📝 메모 카드</div>
+          <div class="mac-item" data-action="add-media">🖼 미디어 카드</div>
+          <div class="mac-item" data-action="add-plate">🪧 명패 추가</div>
+          <div class="mac-sep"></div>
+          <div class="mac-item" data-action="stamp-mode">💮 도장 찍기</div>
+        </div>
+      </div>
+
+      <div class="mac-menu" data-menu="tools">
+        <button type="button">도구</button>
+        <div class="mac-dropdown">
+          <div class="mac-item" data-action="select-mode">↖ 선택 모드</div>
+          <div class="mac-item" data-action="connect-mode">⊹ 연결 모드</div>
+          <div class="mac-item" data-action="stamp-mode">◎ 도장 모드</div>
+          <div class="mac-sep"></div>
+          <div class="mac-item" data-action="delete-selected">⌫ 선택 삭제</div>
+        </div>
+      </div>
+
+      <div class="mac-menu" data-menu="filter">
+        <button type="button">필터</button>
+        <div class="mac-dropdown">
+          <div class="mac-item" data-filter="all">전체 보기</div>
+          <div class="mac-item" data-filter="quote">💬 발언만</div>
+          <div class="mac-item" data-filter="note">📝 메모만</div>
+          <div class="mac-item" data-filter="media">🖼 미디어만</div>
+          <div class="mac-item" data-filter="plate">🪧 명패만</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mac-right">
+      <div class="mac-search-wrap">
+        <input type="text" id="mac-search-input" class="mac-search-input" placeholder="카드 검색…" />
+        <button type="button" class="mac-search-btn" id="mac-search-btn" title="검색">🔍</button>
+      </div>
+      <div class="mac-clock" id="mac-clock">--:--</div>
+    </div>
+  </div>
+
+  <div id="topbar">
+    <div id="logo">WEST<span>150</span> LINK</div>
+    <div class="toolbar">
+      <button class="tool-btn" id="btn-add-quote" title="발언 카드">💬 발언</button>
+      <button class="tool-btn" id="btn-add-note" title="메모 카드">📝 메모</button>
+      <button class="tool-btn" id="btn-add-media" title="미디어 카드">🖼 미디어</button>
+      <button class="tool-btn" id="btn-add-plate" title="명패 (제목·제작자·출처)">🪧 명패</button>
+      <div class="sep"></div>
+      <button class="tool-btn" id="btn-connect" title="연결선 모드">🔗 연결</button>
+      <button class="tool-btn" id="btn-stamp-mode" title="도장 찍기">💮 도장</button>
+      <div class="sep"></div>
+      <button class="tool-btn" id="btn-export">📷 이미지 저장</button>
+      <button class="tool-btn" id="btn-board-format" title="보드 비율 전환">📐 4:5 보드</button>
+      <button class="tool-btn primary" id="btn-reset-view">⌂ 전체보기</button>
+    </div>
+  </div>
+
+  <div id="leftbar">
+    <button class="icon-btn active" data-mode="select" title="선택">
+      ↖<span class="tip">선택 / 이동</span>
+    </button>
+    <button class="icon-btn" data-mode="connect" title="연결">
+      ⊹<span class="tip">스마트 연결선</span>
+    </button>
+    <button class="icon-btn" data-mode="stamp" title="도장">
+      ◎<span class="tip">도장 찍기</span>
+    </button>
+    <div style="flex:1"></div>
+    <button class="icon-btn" id="btn-del" title="삭제">
+      ⌫<span class="tip">선택 삭제 (Del)</span>
+    </button>
+  </div>
+
+  <div id="rightpanel">
+    <div id="prop-empty">
+      카드를 선택하거나<br>새로 추가하세요.<br><br>
+      <span style="font-size:11px;opacity:0.7">발언 · 메모 · 미디어 카드<br>연결선 · 도장 지원</span>
+    </div>
+    <div id="prop-content">
+      <h3>텍스트 스타일</h3>
+      <div class="prop-section">
+        <div class="prop-row">
+          <label>글꼴</label>
+          <select id="prop-font">
+            <option value="Pretendard">Pretendard</option>
+            <option value="RIDIBatang">리디바탕</option>
+            <option value="Georgia, serif">Georgia</option>
+            <option value="'Courier New', monospace">Courier</option>
+          </select>
+        </div>
+        <div class="prop-row">
+          <label>크기</label>
+          <input type="range" id="prop-size" min="10" max="72" value="13" />
+          <span class="size-val" id="prop-size-val">13</span>
+        </div>
+        <div class="prop-row">
+          <label>글자색</label>
+          <input type="color" id="prop-color" value="#1a1712" />
+        </div>
+        <div class="prop-row">
+          <label>강조색</label>
+          <input type="color" id="prop-highlight" value="#ffe566" />
+        </div>
+        <div class="prop-row">
+          <label>스타일</label>
+          <div class="toggle-group">
+            <button class="toggle-btn" id="prop-bold" title="굵게"><b>B</b></button>
+            <button class="toggle-btn" id="prop-underline" title="밑줄"><u>U</u></button>
+            <button class="toggle-btn" id="prop-hl" title="형광 강조">HL</button>
+          </div>
+        </div>
+      </div>
+
+      <h3>카드 정보</h3>
+      <div class="prop-section" id="card-fields">
+        <div class="prop-row">
+          <label>유형</label>
+          <input type="text" id="prop-type" readonly />
+        </div>
+        <div class="prop-row card-edit-row" id="quote-title-row">
+          <label>발언 제목</label>
+          <div class="card-edit-field">
+            <input type="text" id="prop-quote-title" placeholder="발언 제목을 입력하세요" />
+            
+            <div class="field-style-controls">
+              <select id="quote-title-font" title="이 항목 글꼴">
+                <option value="Pretendard">Pretendard</option>
+                <option value="RIDIBatang">리디바탕</option>
+                <option value="Georgia, serif">Georgia</option>
+                <option value="'Courier New', monospace">Courier</option>
+              </select>
+              <input type="range" id="quote-title-size" min="10" max="72" value="13" title="이 항목 글자 크기" />
+              <span class="field-size-val" id="quote-title-size-val">13</span>
+            </div>
+          </div>
+        </div>
+        <div class="prop-row card-edit-row" id="quote-meta-row">
+          <label>발언자</label>
+          <div class="card-edit-field">
+            <input type="text" id="prop-quote-meta" placeholder="발언자를 입력하세요" />
+            
+            <div class="field-style-controls">
+              <select id="quote-meta-font" title="이 항목 글꼴">
+                <option value="Pretendard">Pretendard</option>
+                <option value="RIDIBatang">리디바탕</option>
+                <option value="Georgia, serif">Georgia</option>
+                <option value="'Courier New', monospace">Courier</option>
+              </select>
+              <input type="range" id="quote-meta-size" min="10" max="72" value="13" title="이 항목 글자 크기" />
+              <span class="field-size-val" id="quote-meta-size-val">13</span>
+            </div>
+          </div>
+        </div>
+        <div class="prop-row card-edit-row" id="quote-body-row">
+          <label>발언 내용</label>
+          <div class="card-edit-field">
+            <textarea id="prop-quote-body" placeholder="발언 내용을 입력하세요"></textarea>
+            
+            <div class="field-style-controls">
+              <select id="quote-body-font" title="이 항목 글꼴">
+                <option value="Pretendard">Pretendard</option>
+                <option value="RIDIBatang">리디바탕</option>
+                <option value="Georgia, serif">Georgia</option>
+                <option value="'Courier New', monospace">Courier</option>
+              </select>
+              <input type="range" id="quote-body-size" min="10" max="72" value="13" title="이 항목 글자 크기" />
+              <span class="field-size-val" id="quote-body-size-val">13</span>
+            </div>
+          </div>
+        </div>
+        <div class="prop-row card-edit-row" id="note-request-row">
+          <label>수정요청 메모</label>
+          <div class="card-edit-field">
+            <textarea id="prop-note-request" placeholder="수정요청 내용을 입력하세요"></textarea>
+            
+            <div class="field-style-controls">
+              <select id="note-request-font" title="이 항목 글꼴">
+                <option value="Pretendard">Pretendard</option>
+                <option value="RIDIBatang">리디바탕</option>
+                <option value="Georgia, serif">Georgia</option>
+                <option value="'Courier New', monospace">Courier</option>
+              </select>
+              <input type="range" id="note-request-size" min="10" max="72" value="13" title="이 항목 글자 크기" />
+              <span class="field-size-val" id="note-request-size-val">13</span>
+            </div>
+          </div>
+        </div>
+        <div class="prop-row card-edit-row" id="plate-title-row">
+          <label>명패 제목</label>
+          <div class="card-edit-field">
+            <input type="text" id="prop-plate-title" placeholder="제목을 입력하세요" />
+            
+            <div class="field-style-controls">
+              <select id="plate-title-font" title="이 항목 글꼴">
+                <option value="Pretendard">Pretendard</option>
+                <option value="RIDIBatang">리디바탕</option>
+                <option value="Georgia, serif">Georgia</option>
+                <option value="'Courier New', monospace">Courier</option>
+              </select>
+              <input type="range" id="plate-title-size" min="10" max="72" value="13" title="이 항목 글자 크기" />
+              <span class="field-size-val" id="plate-title-size-val">13</span>
+            </div>
+          </div>
+        </div>
+        <div class="prop-row card-edit-row" id="plate-meta-row">
+          <label>제작자</label>
+          <div class="card-edit-field">
+            <input type="text" id="prop-plate-meta" placeholder="제작자를 입력하세요" />
+            
+            <div class="field-style-controls">
+              <select id="plate-meta-font" title="이 항목 글꼴">
+                <option value="Pretendard">Pretendard</option>
+                <option value="RIDIBatang">리디바탕</option>
+                <option value="Georgia, serif">Georgia</option>
+                <option value="'Courier New', monospace">Courier</option>
+              </select>
+              <input type="range" id="plate-meta-size" min="10" max="72" value="13" title="이 항목 글자 크기" />
+              <span class="field-size-val" id="plate-meta-size-val">13</span>
+            </div>
+          </div>
+        </div>
+        <div class="prop-row card-edit-row" id="plate-body-row">
+          <label>출처</label>
+          <div class="card-edit-field">
+            <textarea id="prop-plate-body" placeholder="출처를 입력하세요"></textarea>
+            
+            <div class="field-style-controls">
+              <select id="plate-body-font" title="이 항목 글꼴">
+                <option value="Pretendard">Pretendard</option>
+                <option value="RIDIBatang">리디바탕</option>
+                <option value="Georgia, serif">Georgia</option>
+                <option value="'Courier New', monospace">Courier</option>
+              </select>
+              <input type="range" id="plate-body-size" min="10" max="72" value="13" title="이 항목 글자 크기" />
+              <span class="field-size-val" id="plate-body-size-val">13</span>
+            </div>
+          </div>
+        </div>
+        <div class="prop-row card-edit-row" id="media-body-row">
+          <label>내용</label>
+          <div class="card-edit-field">
+            <textarea id="prop-media-body" placeholder="이미지 메모 내용을 입력하세요"></textarea>
+            
+            <div class="field-style-controls">
+              <select id="media-body-font" title="이 항목 글꼴">
+                <option value="Pretendard">Pretendard</option>
+                <option value="RIDIBatang">리디바탕</option>
+                <option value="Georgia, serif">Georgia</option>
+                <option value="'Courier New', monospace">Courier</option>
+              </select>
+              <input type="range" id="media-body-size" min="10" max="72" value="13" title="이 항목 글자 크기" />
+              <span class="field-size-val" id="media-body-size-val">13</span>
+            </div>
+          </div>
+        </div>
+        <div class="prop-row">
+          <label>너비</label>
+          <input type="range" id="prop-width" min="160" max="480" value="240" />
+          <span class="size-val" id="prop-width-val">240</span>
+        </div>
+        <div class="prop-row">
+          <label>높이</label>
+          <input type="range" id="prop-height" min="100" max="400" value="160" />
+          <span class="size-val" id="prop-height-val">자동</span>
+        </div>
+        <div class="prop-row">
+          <label></label>
+          <span style="font-size:11px;color:#7a7570">카드 모서리를 드래그해도 크기 조절 가능</span>
+        </div>
+      </div>
+
+      <h3>카드 종류 이름</h3>
+      <div class="prop-section" id="type-label-section">
+        <div class="prop-row">
+          <label>발언 슬롯</label>
+          <input type="text" id="type-label-quote" data-type="quote" placeholder="예: 발언" />
+        </div>
+        <div class="prop-row">
+          <label>메모 슬롯</label>
+          <input type="text" id="type-label-note" data-type="note" placeholder="예: 메모" />
+        </div>
+        <div class="prop-row">
+          <label>미디어 슬롯</label>
+          <input type="text" id="type-label-media" data-type="media" placeholder="예: 미디어" />
+        </div>
+        <div class="prop-row">
+          <label>명패 슬롯</label>
+          <input type="text" id="type-label-plate" data-type="plate" placeholder="예: 명패" />
+        </div>
+        <div style="font-size:11px;color:#7a7570;line-height:1.45;margin-top:4px">
+          여기 이름을 바꾸면 버튼·카드 뱃지·메뉴에 바로 반영됩니다.
+        </div>
+      </div>
+
+      <h3>연결 관계 카테고리</h3>
+      <div class="prop-section">
+        <div class="rel-list" id="rel-list"></div>
+        <div class="rel-add-row">
+          <input type="text" id="rel-new-name" placeholder="새 관계 이름" />
+          <input type="color" id="rel-new-color" value="#c73e2e" />
+          <button type="button" id="rel-add-btn">추가</button>
+        </div>
+        <div class="prop-row" style="margin-top:10px">
+          <label>라벨</label>
+          <input type="text" id="prop-label" placeholder="선 위에 표시할 문구" />
+        </div>
+        <div class="prop-row">
+          <label>선 색</label>
+          <input type="color" id="prop-line-color" value="#c73e2e" />
+        </div>
+      </div>
+
+      <h3>도장</h3>
+      <div class="stamp-grid" id="stamp-palette">
+        <div class="stamp-item" data-text="중요" data-color="#c73e2e">중요</div>
+        <div class="stamp-item" data-text="CONFIDENTIAL" data-color="#2a6fad">CONFIDENTIAL</div>
+        <div class="stamp-item" data-text="모순" data-color="#c73e2e">모순</div>
+        <div class="stamp-item" data-text="확인" data-color="#2d8a4e">확인</div>
+        <div class="stamp-item" data-text="보류" data-color="#c4891a">보류</div>
+        <div class="stamp-item" data-text="핵심" data-color="#8b3a9e">핵심</div>
+        <div class="stamp-item" data-text="★" data-color="#c4891a">★</div>
+        <div class="stamp-item" data-text="삭제예정" data-color="#666">삭제예정</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="board-wrap">
+    <div id="board">
+      <svg id="svg-layer"></svg>
+    </div>
+  </div>
+
+  <div id="status">카드를 추가하거나 드래그하세요 · 연결 모드에서 카드 두 개를 순서대로 클릭</div>
+  <div id="zoom-info">100%</div>
+
+  <script>
+    // ========== State ==========
+    const board = document.getElementById('board');
+    const boardWrap = document.getElementById('board-wrap');
+    const svgLayer = document.getElementById('svg-layer');
+
+    let nodes = [];
+    let links = [];
+    let stamps = [];
+    let nextId = 1;
+
+    // 사용자가 자유롭게 추가/삭제하는 연결 관계 카테고리
+    let relations = [
+      { id: 'match',    label: '일치 / 뒷받침', color: '#2d8a4e' },
+      { id: 'conflict', label: '모순됨',         color: '#c73e2e' },
+      { id: 'causal',   label: '이어짐 / 인과', color: '#c4891a' },
+      { id: 'says',     label: '발언함',         color: '#2a6fad' },
+      { id: 'ref',      label: '참고',           color: '#7a7570' }
+    ];
+
+    let mode = 'select'; // select | connect | stamp
+    let selected = null; // { kind: 'node'|'link'|'stamp', id }
+    let connectFrom = null;
+    let pendingStamp = null; // { text, color }
+    let activeRelId = 'conflict'; // 새 연결선 기본 관계
+
+    // 카드 종류 표시 이름 (발언·메모·미디어·명패) — 사용자가 수정 가능
+    let typeLabels = {
+      quote: '발언',
+      note: '메모',
+      media: '미디어',
+      plate: '명패'
+    };
+    function typeName(type) {
+      return (typeLabels && typeLabels[type]) || ({ quote:'발언', note:'메모', media:'미디어', plate:'명패' }[type] || type);
+    }
+
+    let scale = 0.7;
+    let offsetX = 0, offsetY = 0;
+
+    // 보드 비율: 기존 기본 보드 / 인스타 4:5
+    let boardFormat = 'default';
+    const BOARD_FORMATS = {
+      default: { width: 1800, height: 1200, label: '기본 보드' },
+      instagram: { width: 1800, height: 2250, label: '인스타 4:5' }
+    };
+    function currentBoardSize() { return BOARD_FORMATS[boardFormat] || BOARD_FORMATS.default; }
+    function applyBoardFormat(format) {
+      boardFormat = BOARD_FORMATS[format] ? format : 'default';
+      const size = currentBoardSize();
+      board.style.width = size.width + 'px';
+      board.style.height = size.height + 'px';
+      const formatBtn = $('btn-board-format');
+      if (formatBtn) {
+        formatBtn.textContent = boardFormat === 'instagram' ? '📐 기본 보드' : '📐 4:5 보드';
+        formatBtn.title = boardFormat === 'instagram' ? '기본 보드 비율로 전환' : '인스타 4:5 보드로 전환';
+        formatBtn.classList.toggle('active', boardFormat === 'instagram');
+      }
+      setStatus(boardFormat === 'instagram' ? '인스타 4:5 보드' : '기본 보드');
+    }
+
+
+    // ========== Persist ==========
+    const STORAGE_KEY = 'west150_link_board_v1';
+    let saveTimer = null;
+    function scheduleSave() {
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(persistBoard, 400);
+    }
+    function persistBoard() {
+      try {
+        const data = {
+          v: 1,
+          nodes, links, stamps, relations, typeLabels, activeRelId, nextId,
+          scale, offsetX, offsetY,
+          savedAt: new Date().toISOString()
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      } catch (e) {
+        setStatus('저장 실패: 저장 공간이 부족할 수 있습니다.');
+      }
+    }
+    function loadBoard() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return false;
+        const data = JSON.parse(raw);
+        if (!data || !Array.isArray(data.nodes)) return false;
+        nodes = data.nodes || [];
+        links = data.links || [];
+        stamps = data.stamps || [];
+        if (Array.isArray(data.relations) && data.relations.length) relations = data.relations;
+        if (data.typeLabels && typeof data.typeLabels === 'object') {
+          typeLabels = Object.assign({ quote:'발언', note:'메모', media:'미디어', plate:'명패' }, data.typeLabels);
+        }
+        activeRelId = data.activeRelId || (relations[0] && relations[0].id) || activeRelId;
+        if (typeof data.nextId === 'number') nextId = data.nextId;
+        if (typeof data.scale === 'number') scale = data.scale;
+        if (typeof data.offsetX === 'number') offsetX = data.offsetX;
+        if (typeof data.offsetY === 'number') offsetY = data.offsetY;
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }
+    function rebuildBoardFromState() {
+      board.querySelectorAll('.card, .stamp, .conn-label').forEach(el => el.remove());
+      svgLayer.innerHTML = '';
+      nodes.forEach(n => renderNode(n));
+      stamps.forEach(s => {
+        // re-render stamps if helper exists
+        if (typeof renderStamp === 'function') renderStamp(s);
+        else {
+          // fallback: use addStamp DOM path via existing stamps array already filled
+          const el = document.createElement('div');
+          el.className = 'stamp';
+          el.dataset.id = s.id;
+          el.textContent = s.text;
+          el.style.left = s.x + 'px';
+          el.style.top = s.y + 'px';
+          el.style.color = s.color;
+          el.style.borderColor = s.color;
+          board.appendChild(el);
+        }
+      });
+      drawLinks();
+      updateTransform();
+      renderRelList();
+    }
+
+
+
+    function syncTypeLabelUI() {
+      const map = {
+        quote: typeName('quote'),
+        note: typeName('note'),
+        media: typeName('media'),
+        plate: typeName('plate')
+      };
+      const setBtn = (id, label, titleExtra) => {
+        const el = $(id);
+        if (!el) return;
+        const icon = { 'btn-add-quote':'💬', 'btn-add-note':'📝', 'btn-add-media':'🖼', 'btn-add-plate':'🪧' }[id] || '';
+        el.textContent = icon + ' ' + label;
+        el.title = label + (titleExtra || ' 카드');
+      };
+      setBtn('btn-add-quote', map.quote);
+      setBtn('btn-add-note', map.note);
+      setBtn('btn-add-media', map.media);
+      setBtn('btn-add-plate', map.plate, ' (제목·제작자·출처)');
+
+      // mac menu add
+      document.querySelectorAll('.mac-item[data-action]').forEach(item => {
+        const a = item.dataset.action;
+        if (a === 'add-quote') item.textContent = '💬 ' + map.quote + ' 카드';
+        if (a === 'add-note') item.textContent = '📝 ' + map.note + ' 카드';
+        if (a === 'add-media') item.textContent = '🖼 ' + map.media + ' 카드';
+        if (a === 'add-plate') item.textContent = '🪧 ' + map.plate + ' 추가';
+      });
+      // filter menu
+      document.querySelectorAll('.mac-item[data-filter]').forEach(item => {
+        const f = item.dataset.filter;
+        if (f === 'quote') item.textContent = '💬 ' + map.quote + '만';
+        if (f === 'note') item.textContent = '📝 ' + map.note + '만';
+        if (f === 'media') item.textContent = '🖼 ' + map.media + '만';
+        if (f === 'plate') item.textContent = '🪧 ' + map.plate + '만';
+      });
+
+      // right panel inputs
+      const iq = $('type-label-quote'); if (iq && document.activeElement !== iq) iq.value = map.quote;
+      const inote = $('type-label-note'); if (inote && document.activeElement !== inote) inote.value = map.note;
+      const im = $('type-label-media'); if (im && document.activeElement !== im) im.value = map.media;
+      const ip = $('type-label-plate'); if (ip && document.activeElement !== ip) ip.value = map.plate;
+
+      // empty panel hint
+      const empty = $('prop-empty');
+      if (empty) {
+        empty.innerHTML = map.quote + ' · ' + map.note + ' · ' + map.media + ' 카드<br>연결선 · 도장 지원';
+      }
+    }
+
+    function setTypeLabel(type, label) {
+      const next = (label || '').trim() || typeName(type);
+      typeLabels[type] = next;
+      // re-render all cards of this type (badge text)
+      nodes.filter(n => n.type === type).forEach(n => renderNode(n));
+      syncTypeLabelUI();
+      scheduleSave();
+      setStatus('카드 종류 이름 변경: ' + next);
+    }
+
+
+    // ========== Helpers ==========
+    function uid() { return 'n' + (nextId++); }
+    function $(id) { return document.getElementById(id); }
+    function getRel(id) { return relations.find(r => r.id === id); }
+
+    function setStatus(msg) {
+      $('status').textContent = msg;
+    }
+
+    function updateTransform() {
+      board.style.transform = `translate(calc(-50% + ${offsetX}px), calc(-50% + ${offsetY}px)) scale(${scale})`;
+      $('zoom-info').textContent = Math.round(scale * 100) + '%';
+    }
+
+    // ========== Node creation ==========
+    const DEFAULTS = {
+      quote: {
+        type: 'quote',
+        title: '',
+        meta: '',
+        body: '',
+        w: 240, h: 0
+      },
+      note: {
+        type: 'note',
+        title: '',
+        meta: '',
+        body: '',
+        w: 220, h: 0
+      },
+      media: {
+        type: 'media',
+        title: '',
+        meta: '',
+        body: '',
+        mediaUrl: '',
+        w: 240, h: 200
+      },
+      plate: {
+        type: 'plate',
+        title: '',
+        meta: '',
+        body: '',
+        w: 260, h: 0
+      }
+    };
+
+    function addNode(type, x, y) {
+      const d = DEFAULTS[type];
+      const node = {
+        id: uid(),
+        type,
+        x: x ?? 200 + Math.random() * 400,
+        y: y ?? 150 + Math.random() * 300,
+        title: d.title,
+        meta: d.meta,
+        body: d.body,
+        mediaUrl: d.mediaUrl || '',
+        width: d.w,
+        height: d.h, // 0 = auto
+        font: 'Pretendard',
+        fontSize: type === 'quote' ? 14 : 13,
+        color: '#1a1712',
+        bold: false,
+        underline: false,
+        highlight: false,
+        highlightColor: '#ffe566'
+      };
+      nodes.push(node);
+      renderNode(node);
+      selectItem('node', node.id);
+      setStatus(`${typeName(type)} 카드 추가됨 · 자유롭게 드래그해서 위치를 옮기세요 · 모서리로 크기 조절`);
+      scheduleSave();
+      return node;
+    }
+
+    function ensureFieldStyles(node) {
+      if (!node.fieldStyles || typeof node.fieldStyles !== 'object') node.fieldStyles = {};
+      ['title', 'meta', 'body'].forEach(field => {
+        if (!node.fieldStyles[field] || typeof node.fieldStyles[field] !== 'object') {
+          node.fieldStyles[field] = {};
+        }
+      });
+      return node.fieldStyles;
+    }
+
+    function getFieldStyle(node, field) {
+      const styles = ensureFieldStyles(node);
+      const saved = styles[field] || {};
+      const baseSize = node.fontSize || 13;
+      return {
+        font: saved.font || node.font || 'Pretendard',
+        fontSize: typeof saved.fontSize === 'number' ? saved.fontSize : (field === 'meta' ? Math.max(10, baseSize - 2) : baseSize)
+      };
+    }
+
+    function renderNode(node) {
+      let el = board.querySelector(`.card[data-id="${node.id}"]`);
+      if (!el) {
+        el = document.createElement('div');
+        el.className = `card ${node.type}`;
+        el.dataset.id = node.id;
+        el.dataset.kind = 'node';
+        board.appendChild(el);
+        bindCardEvents(el, node);
+      }
+
+      el.style.left = node.x + 'px';
+      el.style.top = node.y + 'px';
+      el.style.width = (node.width || 220) + 'px';
+      if (node.height && node.height > 0) {
+        el.style.height = node.height + 'px';
+        el.style.overflow = 'hidden';
+      } else {
+        el.style.height = 'auto';
+        el.style.overflow = 'visible';
+      }
+
+      const typeLabel = typeName(node.type);
+
+      let mediaHtml = '';
+      if (node.type === 'media') {
+        const previewH = node.height > 0 ? Math.max(60, node.height - 70) : 120;
+        if (node.mediaUrl) {
+          mediaHtml = `<div class="media-preview" style="height:${previewH}px"><img src="${node.mediaUrl}" alt="" /></div>`;
+        } else {
+          mediaHtml = `<div class="media-preview" style="height:${previewH}px" data-upload="${node.id}">📷 클릭하여 사진 업로드</div>`;
+        }
+      }
+
+      const titleStyle = getFieldStyle(node, 'title');
+      const metaStyle = getFieldStyle(node, 'meta');
+      const bodyStyle = getFieldStyle(node, 'body');
+      const titleCss = `font-family:${titleStyle.font};font-size:${titleStyle.fontSize}px;color:${node.color};` +
+        (node.bold ? 'font-weight:700;' : '') +
+        (node.underline ? 'text-decoration:underline;' : '') +
+        (node.highlight ? `background:${node.highlightColor};` : '');
+      const metaCss = `font-family:${metaStyle.font};font-size:${metaStyle.fontSize}px;color:#6b6458;`;
+      const bodyCss = `font-family:${bodyStyle.font};font-size:${bodyStyle.fontSize}px;color:${node.color};` +
+        (node.bold ? 'font-weight:700;' : '') +
+        (node.underline ? 'text-decoration:underline;' : '') +
+        (node.highlight ? `background:${node.highlightColor};` : '');
+
+      el.innerHTML = `
+        <div class="pin ${node.type}"></div>
+        <button class="card-delete" data-del="${node.id}">×</button>
+        ${mediaHtml}
+        <div class="card-inner">
+          <span class="card-type ${node.type}">${typeLabel}</span>
+          <div class="card-field card-title${(node.title||'').trim()?'':' is-empty'}" contenteditable="false" data-field="title" style="${titleCss}">${escapeHtml(node.title)}</div>
+          <div class="card-field card-meta${(node.meta||'').trim()?'':' is-empty'}" contenteditable="false" data-field="meta" style="${metaCss}">${escapeHtml(node.meta)}</div>
+          <div class="card-field card-body${(node.body||'').trim()?'':' is-empty'}" contenteditable="false" data-field="body" style="${bodyCss}">${escapeHtml(node.body)}</div>
+        </div>
+        <div class="resize-handle" data-resize="${node.id}"></div>
+      `;
+
+      el.querySelector('.card-delete')?.addEventListener('click', e => {
+        e.stopPropagation();
+        deleteNode(node.id);
+      });
+      const uploadZone = el.querySelector('[data-upload]');
+      if (uploadZone) {
+        uploadZone.addEventListener('click', e => {
+          e.stopPropagation();
+
+          const fileInput = document.createElement('input');
+          fileInput.type = 'file';
+          fileInput.accept = 'image/*';
+          fileInput.style.display = 'none';
+          document.body.appendChild(fileInput);
+
+          fileInput.addEventListener('change', () => {
+            const file = fileInput.files && fileInput.files[0];
+            if (!file) {
+              fileInput.remove();
+              return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = () => {
+              node.mediaUrl = reader.result;
+              renderNode(node);
+              scheduleSave();
+              fileInput.remove();
+            };
+            reader.onerror = () => {
+              setStatus('이미지를 불러오지 못했습니다.');
+              fileInput.remove();
+            };
+            reader.readAsDataURL(file);
+          }, { once: true });
+
+          fileInput.click();
+        });
+      }
+      // resize handle
+      const rh = el.querySelector('.resize-handle');
+      if (rh) bindResize(rh, node, el);
+    }
+
+    function escapeHtml(s) {
+      return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    function bindResize(handle, node, el) {
+      let resizing = false, sx, sy, ow, oh;
+      handle.addEventListener('pointerdown', e => {
+        e.stopPropagation();
+        e.preventDefault();
+        resizing = true;
+        handle.setPointerCapture(e.pointerId);
+        sx = e.clientX; sy = e.clientY;
+        ow = node.width || el.offsetWidth;
+        oh = node.height || el.offsetHeight || 120;
+        selectItem('node', node.id);
+      });
+      handle.addEventListener('pointermove', e => {
+        if (!resizing) return;
+        const dx = (e.clientX - sx) / scale;
+        const dy = (e.clientY - sy) / scale;
+        node.width = Math.max(160, Math.min(500, ow + dx));
+        node.height = Math.max(90, Math.min(500, oh + dy));
+        el.style.width = node.width + 'px';
+        el.style.height = node.height + 'px';
+        el.style.overflow = 'hidden';
+        // update media preview height live
+        const mp = el.querySelector('.media-preview');
+        if (mp) mp.style.height = Math.max(60, node.height - 70) + 'px';
+        if ($('prop-width')) {
+          $('prop-width').value = node.width;
+          $('prop-width-val').textContent = Math.round(node.width);
+          $('prop-height').value = node.height;
+          $('prop-height-val').textContent = Math.round(node.height);
+        }
+        drawLinks();
+      });
+      handle.addEventListener('pointerup', () => { resizing = false; });
+    }
+
+    function bindCardEvents(el, node) {
+      let dragging = false, sx, sy, ox, oy, moved = false;
+
+      el.addEventListener('pointerdown', e => {
+        if (e.button !== 0) return;
+        if (e.target.closest('.card-delete') || e.target.closest('[data-upload]') || e.target.closest('.resize-handle')) return;
+        if (mode === 'connect') {
+          e.stopPropagation();
+          handleConnectClick(node.id);
+          return;
+        }
+        if (mode === 'stamp') return;
+
+        dragging = true;
+        moved = false;
+        el.classList.add('dragging');
+        el.setPointerCapture(e.pointerId);
+        sx = e.clientX; sy = e.clientY;
+        ox = node.x; oy = node.y;
+        selectItem('node', node.id);
+      });
+
+      el.addEventListener('pointermove', e => {
+        if (!dragging) return;
+        const dx = (e.clientX - sx) / scale;
+        const dy = (e.clientY - sy) / scale;
+        if (Math.hypot(dx, dy) > 3) moved = true;
+        const boardSize = currentBoardSize();
+        node.x = Math.max(10, Math.min(boardSize.width - 250, ox + dx));
+        node.y = Math.max(20, Math.min(boardSize.height - 100, oy + dy));
+        el.style.left = node.x + 'px';
+        el.style.top = node.y + 'px';
+        drawLinks();
+      });
+
+      el.addEventListener('pointerup', e => {
+        if (!dragging) return;
+        dragging = false;
+        el.classList.remove('dragging');
+        if (moved) scheduleSave();
+      });
+
+      // double-click to edit (빈 칸도 더블클릭하면 다시 나타남)
+      el.addEventListener('dblclick', e => {
+        if (mode !== 'select') return;
+        const hit = document.elementFromPoint(e.clientX, e.clientY);
+        const badge = hit && hit.closest('.card-type');
+        if (badge) {
+          const next = prompt('카드 종류 이름 수정', typeName(node.type));
+          if (next !== null) setTypeLabel(node.type, next);
+          return;
+        }
+        let field = hit && hit.closest('.card-field');
+        // 빈 필드(is-empty)는 display:none 이라 히트 안 됨 → 카드 안쪽 더블클릭 시 비어 있는 첫 필드 편집
+        if (!field) {
+          const inner = hit && hit.closest('.card-inner');
+          if (inner) {
+            field = el.querySelector('.card-field.is-empty') || el.querySelector('.card-field');
+          }
+        }
+        if (!field) return;
+        field.classList.add('editing');
+        field.classList.remove('is-empty');
+        field.contentEditable = 'true';
+        field.focus();
+        const range = document.createRange();
+        range.selectNodeContents(field);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+
+        const save = () => {
+          field.contentEditable = 'false';
+          field.classList.remove('editing');
+          const key = field.dataset.field;
+          node[key] = (field.innerText || '').trim();
+          field.textContent = node[key];
+          if (!node[key]) field.classList.add('is-empty');
+          else field.classList.remove('is-empty');
+          field.removeEventListener('blur', save);
+          scheduleSave();
+        };
+        field.addEventListener('blur', save);
+        // Enter is intentionally left as a normal line-break action while editing.
+      });
+    }
+
+    function deleteNode(id) {
+      nodes = nodes.filter(n => n.id !== id);
+      links = links.filter(l => l.from !== id && l.to !== id);
+      board.querySelector(`.card[data-id="${id}"]`)?.remove();
+      if (selected?.kind === 'node' && selected.id === id) clearSelection();
+      drawLinks();
+      setStatus('카드가 삭제되었습니다.');
+      scheduleSave();
+    }
+
+    // ========== Links (Smart Connectors) ==========
+    function handleConnectClick(nodeId) {
+      if (!connectFrom) {
+        connectFrom = nodeId;
+        setStatus('연결 시작점 선택됨 → 도착 카드를 클릭하세요.');
+        board.querySelector(`.card[data-id="${nodeId}"]`)?.classList.add('selected');
+      } else if (connectFrom === nodeId) {
+        connectFrom = null;
+        setStatus('연결 취소됨.');
+        clearSelection();
+      } else {
+        const preset = getRel(activeRelId) || relations[0];
+        const link = {
+          id: uid(),
+          from: connectFrom,
+          to: nodeId,
+          rel: preset.id,
+          label: preset.label,
+          color: preset.color
+        };
+        links.push(link);
+        connectFrom = null;
+        drawLinks();
+        selectItem('link', link.id);
+        setStatus('연결선 추가됨 · 우측에서 관계 카테고리·라벨·색을 바꾸세요.');
+        scheduleSave();
+        setMode('select');
+      }
+    }
+
+    function drawLinks() {
+      // remove old paths and labels
+      svgLayer.innerHTML = '';
+      board.querySelectorAll('.conn-label').forEach(e => e.remove());
+
+      links.forEach(link => {
+        const a = nodes.find(n => n.id === link.from);
+        const b = nodes.find(n => n.id === link.to);
+        if (!a || !b) return;
+
+        const x1 = a.x + 110, y1 = a.y + 8;
+        const x2 = b.x + 110, y2 = b.y + 8;
+        const mx = (x1 + x2) / 2;
+        const my = (y1 + y2) / 2 - 36;
+
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('d', `M ${x1} ${y1} Q ${mx} ${my} ${x2} ${y2}`);
+        path.setAttribute('fill', 'none');
+        path.setAttribute('stroke', link.color || '#c73e2e');
+        path.setAttribute('stroke-width', '2.5');
+        path.setAttribute('stroke-linecap', 'round');
+        path.style.filter = 'drop-shadow(0 1px 1px rgba(0,0,0,0.3))';
+        path.style.pointerEvents = 'stroke';
+        path.style.cursor = 'pointer';
+        path.dataset.linkId = link.id;
+        path.addEventListener('click', e => {
+          e.stopPropagation();
+          selectItem('link', link.id);
+        });
+        svgLayer.appendChild(path);
+
+        // hit area wider
+        const hit = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        hit.setAttribute('d', path.getAttribute('d'));
+        hit.setAttribute('fill', 'none');
+        hit.setAttribute('stroke', 'transparent');
+        hit.setAttribute('stroke-width', '14');
+        hit.style.pointerEvents = 'stroke';
+        hit.style.cursor = 'pointer';
+        hit.addEventListener('click', e => {
+          e.stopPropagation();
+          selectItem('link', link.id);
+        });
+        svgLayer.appendChild(hit);
+
+        // label
+        const label = document.createElement('div');
+        label.className = 'conn-label';
+        label.dataset.linkId = link.id;
+        label.textContent = link.label || getRel(link.rel)?.label || '';
+        label.style.left = mx + 'px';
+        label.style.top = (my + 8) + 'px';
+        label.style.borderColor = link.color || '#c73e2e';
+        if (selected?.kind === 'link' && selected.id === link.id) {
+          label.classList.add('selected');
+        }
+        label.addEventListener('click', e => {
+          e.stopPropagation();
+          selectItem('link', link.id);
+        });
+        label.addEventListener('dblclick', e => {
+          e.stopPropagation();
+          label.contentEditable = 'true';
+          label.focus();
+          const save = () => {
+            label.contentEditable = 'false';
+            link.label = label.innerText.trim();
+            $('prop-label').value = link.label;
+            label.removeEventListener('blur', save);
+          };
+          label.addEventListener('blur', save);
+        });
+        board.appendChild(label);
+      });
+    }
+
+    // ========== Stamps ==========
+    function addStamp(text, color, x, y) {
+      const s = {
+        id: uid(),
+        text,
+        color: color || '#c73e2e',
+        x: x ?? 400,
+        y: y ?? 300,
+        rot: -8 - Math.random() * 10
+      };
+      stamps.push(s);
+      renderStamp(s);
+      selectItem('stamp', s.id);
+      setStatus('도장이 추가되었습니다. 드래그로 위치를 옮기세요.');
+    }
+
+    function renderStamp(s) {
+      let el = board.querySelector(`.stamp[data-id="${s.id}"]`);
+      if (!el) {
+        el = document.createElement('div');
+        el.className = 'stamp';
+        el.dataset.id = s.id;
+        el.dataset.kind = 'stamp';
+        board.appendChild(el);
+        bindStampEvents(el, s);
+      }
+      el.textContent = s.text;
+      el.style.color = s.color;
+      el.style.left = s.x + 'px';
+      el.style.top = s.y + 'px';
+      el.style.transform = `rotate(${s.rot}deg)`;
+    }
+
+    function bindStampEvents(el, s) {
+      let dragging = false, sx, sy, ox, oy;
+      el.addEventListener('pointerdown', e => {
+        if (e.button !== 0) return;
+        dragging = true;
+        el.classList.add('dragging');
+        el.setPointerCapture(e.pointerId);
+        sx = e.clientX; sy = e.clientY;
+        ox = s.x; oy = s.y;
+        selectItem('stamp', s.id);
+        e.preventDefault();
+        e.stopPropagation();
+      });
+      el.addEventListener('pointermove', e => {
+        if (!dragging) return;
+        s.x = ox + (e.clientX - sx) / scale;
+        s.y = oy + (e.clientY - sy) / scale;
+        el.style.left = s.x + 'px';
+        el.style.top = s.y + 'px';
+      });
+      el.addEventListener('pointerup', () => {
+        dragging = false;
+        el.classList.remove('dragging');
+      });
+    }
+
+    // ========== Selection & Props ==========
+    function selectItem(kind, id) {
+      selected = { kind, id };
+      // visual
+      board.querySelectorAll('.card.selected, .stamp.selected, .conn-label.selected').forEach(e => e.classList.remove('selected'));
+      if (kind === 'node') {
+        board.querySelector(`.card[data-id="${id}"]`)?.classList.add('selected');
+      } else if (kind === 'stamp') {
+        board.querySelector(`.stamp[data-id="${id}"]`)?.classList.add('selected');
+      } else if (kind === 'link') {
+        board.querySelector(`.conn-label[data-link-id="${id}"]`)?.classList.add('selected');
+      }
+      updatePropPanel();
+    }
+
+    function clearSelection() {
+      selected = null;
+      board.querySelectorAll('.card.selected, .stamp.selected, .conn-label.selected').forEach(e => e.classList.remove('selected'));
+      $('prop-empty').style.display = 'block';
+      $('prop-content').classList.remove('visible');
+    }
+
+    function syncFieldStyleControls(node) {
+      const map = [
+        ['title', 'quote', 'quote-title-font', 'quote-title-size', 'quote-title-size-val'],
+        ['meta', 'quote', 'quote-meta-font', 'quote-meta-size', 'quote-meta-size-val'],
+        ['body', 'quote', 'quote-body-font', 'quote-body-size', 'quote-body-size-val'],
+        ['body', 'note', 'note-request-font', 'note-request-size', 'note-request-size-val'],
+        ['body', 'media', 'media-body-font', 'media-body-size', 'media-body-size-val'],
+        ['title', 'plate', 'plate-title-font', 'plate-title-size', 'plate-title-size-val'],
+        ['meta', 'plate', 'plate-meta-font', 'plate-meta-size', 'plate-meta-size-val'],
+        ['body', 'plate', 'plate-body-font', 'plate-body-size', 'plate-body-size-val']
+      ];
+      map.forEach(([field, type, fontId, sizeId, valId]) => {
+        if (node.type !== type) return;
+        const fs = getFieldStyle(node, field);
+        const fontEl = $(fontId);
+        const sizeEl = $(sizeId);
+        const valEl = $(valId);
+        if (fontEl) fontEl.value = fs.font;
+        if (sizeEl) sizeEl.value = fs.fontSize;
+        if (valEl) valEl.textContent = fs.fontSize;
+      });
+    }
+
+    function updatePropPanel() {
+      if (!selected) {
+        clearSelection();
+        return;
+      }
+      $('prop-empty').style.display = 'none';
+      $('prop-content').classList.add('visible');
+
+      renderRelList();
+
+      if (selected.kind === 'node') {
+        const n = nodes.find(x => x.id === selected.id);
+        if (!n) return;
+        $('prop-font').value = n.font;
+        $('prop-size').value = n.fontSize;
+        $('prop-size-val').textContent = n.fontSize;
+        $('prop-color').value = n.color;
+        $('prop-highlight').value = n.highlightColor;
+        $('prop-bold').classList.toggle('active', n.bold);
+        $('prop-underline').classList.toggle('active', n.underline);
+        $('prop-hl').classList.toggle('active', n.highlight);
+        $('prop-type').value = typeName(n.type) + ' 카드';
+
+        const editRows = {
+          quote: ['quote-title-row', 'quote-meta-row', 'quote-body-row'],
+          note: ['note-request-row'],
+          media: ['media-body-row'],
+          plate: ['plate-title-row', 'plate-meta-row', 'plate-body-row']
+        };
+        document.querySelectorAll('.card-edit-row').forEach(row => {
+          row.style.display = 'none';
+        });
+        (editRows[n.type] || []).forEach(id => {
+          const row = $(id);
+          if (row) row.style.display = 'flex';
+        });
+
+        $('prop-quote-title').value = n.title || '';
+        $('prop-quote-meta').value = n.meta || '';
+        $('prop-quote-body').value = n.body || '';
+        $('prop-note-request').value = n.body || '';
+        $('prop-media-body').value = n.body || '';
+        $('prop-plate-title').value = n.title || '';
+        $('prop-plate-meta').value = n.meta || '';
+        $('prop-plate-body').value = n.body || '';
+        syncFieldStyleControls(n);
+        $('prop-width').value = n.width || 220;
+        $('prop-width-val').textContent = Math.round(n.width || 220);
+        if (n.height > 0) {
+          $('prop-height').value = n.height;
+          $('prop-height-val').textContent = Math.round(n.height);
+        } else {
+          $('prop-height').value = 160;
+          $('prop-height-val').textContent = '자동';
+        }
+      } else if (selected.kind === 'link') {
+        const l = links.find(x => x.id === selected.id);
+        if (!l) return;
+        activeRelId = l.rel;
+        $('prop-label').value = l.label || '';
+        $('prop-line-color').value = l.color || '#c73e2e';
+        renderRelList();
+      }
+    }
+
+        function renderRelList() {
+      const list = $('rel-list');
+      if (!list) return;
+      list.innerHTML = '';
+      relations.forEach(r => {
+        const item = document.createElement('div');
+        item.className = 'rel-item' + (r.id === activeRelId ? ' active' : '');
+        item.innerHTML = `
+          <input type="color" class="rel-color" value="${r.color}" title="색 변경" />
+          <span class="rel-name" title="더블클릭하여 이름 수정">${escapeHtml(r.label)}</span>
+          <button type="button" class="rel-del" title="삭제">×</button>
+        `;
+        item.addEventListener('click', e => {
+          if (e.target.classList.contains('rel-del') || e.target.classList.contains('rel-color') || e.target.classList.contains('rel-name')) return;
+          activeRelId = r.id;
+          if (selected?.kind === 'link') {
+            const l = links.find(x => x.id === selected.id);
+            if (l) {
+              l.rel = r.id;
+              l.label = r.label;
+              l.color = r.color;
+              $('prop-label').value = l.label;
+              $('prop-line-color').value = l.color;
+              drawLinks();
+              selectItem('link', l.id);
+            }
+          }
+          renderRelList();
+          setStatus('관계 카테고리: ' + r.label);
+        });
+        // 이름 수정
+        const nameEl = item.querySelector('.rel-name');
+        nameEl.addEventListener('dblclick', e => {
+          e.stopPropagation();
+          nameEl.contentEditable = 'true';
+          nameEl.focus();
+          const range = document.createRange();
+          range.selectNodeContents(nameEl);
+          const sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(range);
+          const finish = () => {
+            nameEl.contentEditable = 'false';
+            const next = (nameEl.innerText || '').trim() || r.label;
+            const prev = r.label;
+            r.label = next;
+            nameEl.textContent = next;
+            // 같은 카테고리를 쓰는 연결선 라벨 동기화
+            links.forEach(l => {
+              if (l.rel === r.id) l.label = next;
+            });
+            drawLinks();
+            scheduleSave();
+            setStatus('카테고리 이름 변경: ' + prev + ' → ' + next);
+            nameEl.removeEventListener('blur', finish);
+          };
+          nameEl.addEventListener('blur', finish);
+          nameEl.addEventListener('keydown', ev => {
+            if (ev.key === 'Enter') { ev.preventDefault(); nameEl.blur(); }
+          });
+        });
+        // 색 수정
+        item.querySelector('.rel-color').addEventListener('input', e => {
+          e.stopPropagation();
+          r.color = e.target.value;
+          links.forEach(l => {
+            if (l.rel === r.id) l.color = r.color;
+          });
+          drawLinks();
+          scheduleSave();
+        });
+        item.querySelector('.rel-color').addEventListener('click', e => e.stopPropagation());
+        item.querySelector('.rel-del').addEventListener('click', e => {
+          e.stopPropagation();
+          if (relations.length <= 1) {
+            setStatus('관계는 최소 1개 이상 필요합니다.');
+            return;
+          }
+          relations = relations.filter(x => x.id !== r.id);
+          if (activeRelId === r.id) activeRelId = relations[0].id;
+          renderRelList();
+          scheduleSave();
+          setStatus('관계 카테고리가 삭제되었습니다.');
+        });
+        list.appendChild(item);
+      });
+    }
+
+
+    // prop listeners
+    $('prop-font').addEventListener('change', () => {
+      if (selected?.kind !== 'node') return;
+      const n = nodes.find(x => x.id === selected.id);
+      n.font = $('prop-font').value;
+      renderNode(n);
+    });
+    $('prop-size').addEventListener('input', () => {
+      if (selected?.kind !== 'node') return;
+      const n = nodes.find(x => x.id === selected.id);
+      n.fontSize = +$('prop-size').value;
+      $('prop-size-val').textContent = n.fontSize;
+      renderNode(n);
+    });
+    $('prop-color').addEventListener('input', () => {
+      if (selected?.kind !== 'node') return;
+      const n = nodes.find(x => x.id === selected.id);
+      n.color = $('prop-color').value;
+      renderNode(n);
+    });
+    $('prop-highlight').addEventListener('input', () => {
+      if (selected?.kind !== 'node') return;
+      const n = nodes.find(x => x.id === selected.id);
+      n.highlightColor = $('prop-highlight').value;
+      if (n.highlight) renderNode(n);
+    });
+    $('prop-bold').addEventListener('click', () => {
+      if (selected?.kind !== 'node') return;
+      const n = nodes.find(x => x.id === selected.id);
+      n.bold = !n.bold;
+      $('prop-bold').classList.toggle('active', n.bold);
+      renderNode(n);
+    });
+    $('prop-underline').addEventListener('click', () => {
+      if (selected?.kind !== 'node') return;
+      const n = nodes.find(x => x.id === selected.id);
+      n.underline = !n.underline;
+      $('prop-underline').classList.toggle('active', n.underline);
+      renderNode(n);
+    });
+    $('prop-hl').addEventListener('click', () => {
+      if (selected?.kind !== 'node') return;
+      const n = nodes.find(x => x.id === selected.id);
+      n.highlight = !n.highlight;
+      $('prop-hl').classList.toggle('active', n.highlight);
+      renderNode(n);
+    });
+
+    $('prop-width').addEventListener('input', () => {
+      if (selected?.kind !== 'node') return;
+      const n = nodes.find(x => x.id === selected.id);
+      n.width = +$('prop-width').value;
+      $('prop-width-val').textContent = n.width;
+      renderNode(n);
+      drawLinks();
+    });
+    $('prop-height').addEventListener('input', () => {
+      if (selected?.kind !== 'node') return;
+      const n = nodes.find(x => x.id === selected.id);
+      n.height = +$('prop-height').value;
+      $('prop-height-val').textContent = n.height;
+      renderNode(n);
+      drawLinks();
+    });
+
+    const bindCardTextInput = (id, field, allowedType) => {
+      $(id).addEventListener('input', () => {
+        if (selected?.kind !== 'node') return;
+        const n = nodes.find(x => x.id === selected.id);
+        if (!n || n.type !== allowedType) return;
+        n[field] = $(id).value;
+        renderNode(n);
+        scheduleSave();
+      });
+    };
+
+    bindCardTextInput('prop-quote-title', 'title', 'quote');
+    bindCardTextInput('prop-quote-meta', 'meta', 'quote');
+    bindCardTextInput('prop-quote-body', 'body', 'quote');
+    bindCardTextInput('prop-note-request', 'body', 'note');
+    bindCardTextInput('prop-media-body', 'body', 'media');
+    bindCardTextInput('prop-plate-title', 'title', 'plate');
+    bindCardTextInput('prop-plate-meta', 'meta', 'plate');
+    bindCardTextInput('prop-plate-body', 'body', 'plate');
+
+    const bindFieldStyleControls = (field, fontId, sizeId, sizeValId, allowedType) => {
+      $(fontId).addEventListener('change', () => {
+        if (selected?.kind !== 'node') return;
+        const n = nodes.find(x => x.id === selected.id);
+        if (!n || n.type !== allowedType) return;
+        const styles = ensureFieldStyles(n);
+        styles[field].font = $(fontId).value;
+        renderNode(n);
+        scheduleSave();
+      });
+      $(sizeId).addEventListener('input', () => {
+        if (selected?.kind !== 'node') return;
+        const n = nodes.find(x => x.id === selected.id);
+        if (!n || n.type !== allowedType) return;
+        const styles = ensureFieldStyles(n);
+        styles[field].fontSize = +$(sizeId).value;
+        $(sizeValId).textContent = styles[field].fontSize;
+        renderNode(n);
+        scheduleSave();
+      });
+    };
+
+    bindFieldStyleControls('title', 'quote-title-font', 'quote-title-size', 'quote-title-size-val', 'quote');
+    bindFieldStyleControls('meta', 'quote-meta-font', 'quote-meta-size', 'quote-meta-size-val', 'quote');
+    bindFieldStyleControls('body', 'quote-body-font', 'quote-body-size', 'quote-body-size-val', 'quote');
+    bindFieldStyleControls('body', 'note-request-font', 'note-request-size', 'note-request-size-val', 'note');
+    bindFieldStyleControls('body', 'media-body-font', 'media-body-size', 'media-body-size-val', 'media');
+    bindFieldStyleControls('title', 'plate-title-font', 'plate-title-size', 'plate-title-size-val', 'plate');
+    bindFieldStyleControls('meta', 'plate-meta-font', 'plate-meta-size', 'plate-meta-size-val', 'plate');
+    bindFieldStyleControls('body', 'plate-body-font', 'plate-body-size', 'plate-body-size-val', 'plate');
+
+    $('prop-label').addEventListener('change', () => {
+      if (selected?.kind !== 'link') return;
+      const l = links.find(x => x.id === selected.id);
+      l.label = $('prop-label').value;
+      drawLinks();
+      selectItem('link', l.id);
+      scheduleSave();
+    });
+    $('prop-line-color').addEventListener('input', () => {
+      if (selected?.kind !== 'link') return;
+      const l = links.find(x => x.id === selected.id);
+      l.color = $('prop-line-color').value;
+      // also update category color if matching
+      const rel = getRel(l.rel);
+      if (rel && rel.label === l.label) rel.color = l.color;
+      drawLinks();
+      selectItem('link', l.id);
+      renderRelList();
+    });
+
+    $('rel-add-btn').addEventListener('click', () => {
+      const name = $('rel-new-name').value.trim();
+      if (!name) {
+        setStatus('관계 이름을 입력하세요.');
+        return;
+      }
+      const color = $('rel-new-color').value;
+      const id = 'rel_' + uid();
+      relations.push({ id, label: name, color });
+      activeRelId = id;
+      $('rel-new-name').value = '';
+      renderRelList();
+      setStatus(`관계 카테고리 "${name}" 추가됨`);
+      scheduleSave();
+    });
+    $('rel-new-name').addEventListener('keydown', e => {
+      if (e.key === 'Enter') $('rel-add-btn').click();
+    });
+
+    // 카드 종류 이름 편집
+    ['quote','note','media','plate'].forEach(type => {
+      const input = $('type-label-' + type);
+      if (!input) return;
+      input.addEventListener('change', () => setTypeLabel(type, input.value));
+      input.addEventListener('keydown', e => {
+        if (e.key === 'Enter') { e.preventDefault(); input.blur(); }
+      });
+    });
+
+
+
+    // ========== Mode ==========
+    function setMode(m) {
+      mode = m;
+      connectFrom = null;
+      if (m !== 'stamp') pendingStamp = null;
+      document.querySelectorAll('#leftbar .icon-btn[data-mode]').forEach(b => {
+        b.classList.toggle('active', b.dataset.mode === m);
+      });
+      $('btn-connect').classList.toggle('active', m === 'connect');
+      $('btn-stamp-mode').classList.toggle('active', m === 'stamp');
+      boardWrap.classList.toggle('connect-mode', m === 'connect');
+      boardWrap.classList.toggle('stamp-mode', m === 'stamp');
+      if (m === 'connect') setStatus('연결 모드: 시작 카드 → 도착 카드를 순서대로 클릭하세요.');
+      else if (m === 'stamp') setStatus('도장 모드: 우측에서 도장 고른 뒤 → 코르크 보드 빈 곳을 클릭하세요.');
+      else setStatus('선택 모드');
+    }
+
+    document.querySelectorAll('#leftbar .icon-btn[data-mode]').forEach(btn => {
+      btn.addEventListener('click', () => setMode(btn.dataset.mode));
+    });
+    $('btn-connect').addEventListener('click', () => setMode(mode === 'connect' ? 'select' : 'connect'));
+    $('btn-stamp-mode').addEventListener('click', () => setMode(mode === 'stamp' ? 'select' : 'stamp'));
+
+    // stamp palette — 클릭하면 도장 선택 + 도장 모드 진입
+    document.querySelectorAll('.stamp-item').forEach(item => {
+      item.addEventListener('click', () => {
+        pendingStamp = { text: item.dataset.text, color: item.dataset.color };
+        setMode('stamp');
+        setStatus(`도장 [${pendingStamp.text}] 선택됨 → 코르크 보드(빈 공간)를 클릭하면 찍힙니다`);
+      });
+    });
+
+    // 화면 좌표 → 보드 내부 좌표 변환
+    function clientToBoard(clientX, clientY) {
+      const rect = board.getBoundingClientRect();
+      // getBoundingClientRect already includes scale, so divide by scale
+      const x = (clientX - rect.left) / scale;
+      const y = (clientY - rect.top) / scale;
+      return { x, y };
+    }
+
+    // 보드 영역 클릭: 도장 찍기 / 선택 해제
+    boardWrap.addEventListener('click', e => {
+      // 카드·도장·라벨 위 클릭은 무시 (각자 핸들러 있음)
+      if (e.target.closest('.card') || e.target.closest('.stamp') || e.target.closest('.conn-label')) {
+        return;
+      }
+
+      if (mode === 'stamp' && pendingStamp) {
+        const { x, y } = clientToBoard(e.clientX, e.clientY);
+        addStamp(pendingStamp.text, pendingStamp.color, x - 20, y - 12);
+        setStatus(`도장 [${pendingStamp.text}] 찍힘 · 같은 도장으로 계속 찍거나, 다른 도장을 고르세요 (Esc로 종료)`);
+        return;
+      }
+
+      if (mode === 'select') {
+        clearSelection();
+      }
+    });
+
+    // ========== Top buttons ==========
+    $('btn-add-quote').addEventListener('click', () => { setMode('select'); addNode('quote'); });
+    $('btn-add-note').addEventListener('click', () => { setMode('select'); addNode('note'); });
+    $('btn-add-media').addEventListener('click', () => { setMode('select'); addNode('media'); });
+    $('btn-add-plate').addEventListener('click', () => { setMode('select'); addNode('plate', 40, 30); });
+
+    $('btn-del').addEventListener('click', deleteSelected);
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Delete' || e.key === 'Backspace') {
+        const target = e.target;
+        const isTextEntry = target?.isContentEditable ||
+          ['INPUT', 'TEXTAREA', 'SELECT'].includes(target?.tagName);
+        if (isTextEntry) return;
+        deleteSelected();
+      }
+      if (e.key === 'Escape') {
+        setMode('select');
+        clearSelection();
+        connectFrom = null;
+      }
+    });
+
+    function deleteSelected() {
+      if (!selected) return;
+      if (selected.kind === 'node') deleteNode(selected.id);
+      else if (selected.kind === 'link') {
+        links = links.filter(l => l.id !== selected.id);
+        drawLinks();
+        clearSelection();
+        setStatus('연결선이 삭제되었습니다.');
+      } else if (selected.kind === 'stamp') {
+        stamps = stamps.filter(s => s.id !== selected.id);
+        board.querySelector(`.stamp[data-id="${selected.id}"]`)?.remove();
+        clearSelection();
+        setStatus('도장이 삭제되었습니다.');
+      }
+    }
+
+    // ========== Pan / Zoom ==========
+    boardWrap.addEventListener('wheel', e => {
+      e.preventDefault();
+      scale = Math.min(1.5, Math.max(0.3, scale * (e.deltaY > 0 ? 0.92 : 1.08)));
+      updateTransform();
+    }, { passive: false });
+
+    let panning = false, psx, psy, pox, poy;
+    boardWrap.addEventListener('pointerdown', e => {
+      if (e.target.closest('.card') || e.target.closest('.stamp') || e.target.closest('.conn-label')) return;
+      if (e.button === 0 || e.button === 1) {
+        panning = true;
+        boardWrap.setPointerCapture(e.pointerId);
+        psx = e.clientX; psy = e.clientY;
+        pox = offsetX; poy = offsetY;
+      }
+    });
+    boardWrap.addEventListener('pointermove', e => {
+      if (!panning) return;
+      offsetX = pox + (e.clientX - psx);
+      offsetY = poy + (e.clientY - psy);
+      updateTransform();
+    });
+    boardWrap.addEventListener('pointerup', () => { panning = false; });
+
+    $('btn-reset-view').addEventListener('click', () => {
+      scale = 0.7; offsetX = 0; offsetY = 0;
+      updateTransform();
+    });
+
+    $('btn-board-format').addEventListener('click', () => {
+      applyBoardFormat(boardFormat === 'instagram' ? 'default' : 'instagram');
+    });
+
+    // ========== Export ==========
+    $('btn-export').addEventListener('click', async () => {
+      const btn = $('btn-export');
+      btn.textContent = '저장 중…';
+      try {
+        if (typeof html2canvas === 'undefined') {
+          throw new Error('html2canvas가 없습니다. libs/html2canvas.min.js 경로를 확인하세요.');
+        }
+        const prev = { scale, offsetX, offsetY };
+        scale = 1; offsetX = 0; offsetY = 0;
+        updateTransform();
+        await new Promise(r => requestAnimationFrame(r));
+        const canvas = await html2canvas(board, {
+          backgroundColor: '#7a5f3e',
+          scale: 2,
+          useCORS: true,
+          logging: false
+        });
+        scale = prev.scale; offsetX = prev.offsetX; offsetY = prev.offsetY;
+        updateTransform();
+        const a = document.createElement('a');
+        a.download = 'WEST150_LINK.png';
+        a.href = canvas.toDataURL('image/png');
+        a.click();
+      } catch (err) {
+        alert('저장 실패: ' + err.message + '\n브라우저 스크린샷을 이용해주세요.');
+      }
+      btn.textContent = '📷 이미지 저장';
+    });
+
+    // ========== Seed sample ==========
+    function seed() {
+      const p1 = addNode('plate', 40, 30);
+      p1.title = 'WEST150 LINK — 사건 조사 보드';
+      p1.meta = '제작자: 이름을 입력하세요';
+      p1.body = '출처: 출처를 입력하세요';
+      renderNode(p1);
+
+      const q1 = addNode('quote', 160, 220);
+      q1.title = '그때 저는 집에 있었습니다';
+      q1.meta = '김서준 · 08.12 14:20 · 1차 진술';
+      q1.body = '사건 당일 오후 2시부터 4시까지 자택에 있었다고 주장.';
+      renderNode(q1);
+
+      const n1 = addNode('note', 480, 120);
+      n1.title = '알리바이 대조 필요';
+      n1.meta = '수사 메모';
+      n1.body = '통신 기록·CCTV와 시간대 교차 검증할 것.';
+      renderNode(n1);
+
+      const m1 = addNode('media', 800, 100);
+      m1.title = '현장 CCTV #03';
+      m1.meta = '08.12 14:38';
+      renderNode(m1);
+
+      const q2 = addNode('quote', 200, 420);
+      q2.title = '이상한 발소리가 들렸어요';
+      q2.meta = '박하린 · 08.12 16:05 · 목격';
+      q2.body = '복도에서 급히 뛰어가는 발소리와 문 닫히는 소리.';
+      renderNode(q2);
+
+      const n2 = addNode('note', 560, 450);
+      n2.title = '통신 기록 분석';
+      n2.meta = '증거 메모';
+      n2.body = '14:22~15:05 기지국이 현장 인근. 알리바이와 모순.';
+      n2.highlight = true;
+      renderNode(n2);
+
+      links.push(
+        { id: uid(), from: q1.id, to: n1.id, rel: 'says', label: '발언함', color: '#2a6fad' },
+        { id: uid(), from: q1.id, to: n2.id, rel: 'conflict', label: '모순됨', color: '#c73e2e' },
+        { id: uid(), from: q2.id, to: m1.id, rel: 'match', label: '일치 / 뒷받침', color: '#2d8a4e' },
+        { id: uid(), from: n2.id, to: m1.id, rel: 'causal', label: '이어짐 / 인과', color: '#c4891a' }
+      );
+      drawLinks();
+
+      addStamp('중요', '#c73e2e', 720, 380);
+      addStamp('모순', '#c73e2e', 380, 360);
+
+      clearSelection();
+      renderRelList();
+      setStatus('샘플 보드 로드됨 · 카드 모서리로 크기 조절 · 우측에서 관계 카테고리 추가 가능');
+    }
+
+    // ========== Mac-style top menu bar ==========
+    let activeFilterType = 'all';
+    let searchQuery = '';
+
+    function refreshCardVisibility() {
+      nodes.forEach(n => {
+        const el = board.querySelector(`.card[data-id="${n.id}"]`);
+        if (!el) return;
+        let visible = true;
+        if (activeFilterType !== 'all' && n.type !== activeFilterType) visible = false;
+        if (searchQuery) {
+          const q = searchQuery.toLowerCase();
+          const text = `${n.title} ${n.meta} ${n.body}`.toLowerCase();
+          if (!text.includes(q)) visible = false;
+        }
+        el.style.opacity = visible ? '1' : '0.12';
+      });
+    }
+
+    function clearFilterAndSearch() {
+      activeFilterType = 'all';
+      searchQuery = '';
+      $('mac-search-input').value = '';
+      refreshCardVisibility();
+      setStatus('필터/검색이 초기화되었습니다 · 모든 카드가 표시됩니다.');
+    }
+
+    // dropdown open/close
+    const macMenus = document.querySelectorAll('.mac-menu');
+    macMenus.forEach(menu => {
+      const btn = menu.querySelector('button');
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        const willOpen = !menu.classList.contains('open');
+        macMenus.forEach(m => m.classList.remove('open'));
+        if (willOpen) menu.classList.add('open');
+      });
+    });
+    document.addEventListener('click', () => {
+      macMenus.forEach(m => m.classList.remove('open'));
+    });
+
+    // menu item actions
+    document.querySelectorAll('.mac-dropdown .mac-item[data-action]').forEach(item => {
+      item.addEventListener('click', () => {
+        const action = item.dataset.action;
+        switch (action) {
+          case 'export': $('btn-export').click(); break;
+          case 'reset-view': $('btn-reset-view').click(); break;
+          case 'board-default': applyBoardFormat('default'); break;
+          case 'board-instagram': applyBoardFormat('instagram'); break;
+          case 'new-board':
+            if (confirm('현재 보드의 모든 카드·연결선·도장을 지우고 새로 시작할까요?')) {
+              nodes = []; links = []; stamps = [];
+              board.querySelectorAll('.card, .stamp, .conn-label').forEach(el => el.remove());
+              svgLayer.innerHTML = '';
+              clearSelection();
+              setStatus('새 보드로 초기화되었습니다.');
+              scheduleSave();
+            }
+            break;
+          case 'zoom-in': scale = Math.min(1.5, scale * 1.1); updateTransform(); break;
+          case 'zoom-out': scale = Math.max(0.3, scale * 0.9); updateTransform(); break;
+          case 'clear-filter': clearFilterAndSearch(); break;
+          case 'add-quote': setMode('select'); addNode('quote'); break;
+          case 'add-note': setMode('select'); addNode('note'); break;
+          case 'add-media': setMode('select'); addNode('media'); break;
+          case 'add-plate': setMode('select'); addNode('plate', 40, 30); break;
+          case 'stamp-mode': setMode('stamp'); break;
+          case 'select-mode': setMode('select'); break;
+          case 'connect-mode': setMode('connect'); break;
+          case 'delete-selected': deleteSelected(); break;
+        }
+      });
+    });
+
+    // filter items
+    document.querySelectorAll('.mac-dropdown .mac-item[data-filter]').forEach(item => {
+      item.addEventListener('click', () => {
+        activeFilterType = item.dataset.filter;
+        refreshCardVisibility();
+        setStatus(activeFilterType === 'all'
+          ? '필터 해제 · 모든 카드 표시'
+          : `필터 적용됨: ${item.textContent.trim()}`);
+      });
+    });
+
+    // search
+    const macSearchInput = $('mac-search-input');
+    $('mac-search-btn').addEventListener('click', e => {
+      e.stopPropagation();
+      macSearchInput.classList.toggle('open');
+      if (macSearchInput.classList.contains('open')) {
+        macSearchInput.focus();
+      } else {
+        macSearchInput.value = '';
+        searchQuery = '';
+        refreshCardVisibility();
+      }
+    });
+    macSearchInput.addEventListener('click', e => e.stopPropagation());
+    macSearchInput.addEventListener('input', () => {
+      searchQuery = macSearchInput.value.trim();
+      refreshCardVisibility();
+      if (searchQuery) {
+        const count = nodes.filter(n => `${n.title} ${n.meta} ${n.body}`.toLowerCase().includes(searchQuery.toLowerCase())).length;
+        setStatus(`"${searchQuery}" 검색 결과: ${count}개 카드`);
+      } else {
+        setStatus('검색어가 지워졌습니다 · 모든 카드 표시');
+      }
+    });
+    macSearchInput.addEventListener('keydown', e => {
+      if (e.key === 'Escape') { macSearchInput.value = ''; macSearchInput.blur(); macSearchInput.classList.remove('open'); searchQuery = ''; refreshCardVisibility(); }
+    });
+
+    // live clock
+    function updateMacClock() {
+      const el = $('mac-clock');
+      if (!el) return;
+      el.textContent = new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', hour12: true });
+    }
+    updateMacClock();
+    setInterval(updateMacClock, 1000 * 15);
+
+    // Init
+    syncTypeLabelUI();
+    updateTransform();
+    if (loadBoard() && nodes.length) {
+      nextId = Math.max(nextId, ...nodes.map(n => parseInt(String(n.id).replace(/\D/g,''),10)||0), 1) + 1;
+      board.querySelectorAll('.card, .stamp, .conn-label').forEach(el => el.remove());
+      svgLayer.innerHTML = '';
+      nodes.forEach(n => renderNode(n));
+      // stamps
+      const savedStamps = (stamps || []).slice();
+      stamps = [];
+      savedStamps.forEach(s => {
+        // push with same data via addStamp then fix id
+        const before = stamps.length;
+        addStamp(s.text, s.color, s.x, s.y);
+        if (stamps[before]) {
+          const created = stamps[before];
+          const oldId = created.id;
+          created.id = s.id;
+          const el = board.querySelector(`.stamp[data-id="${oldId}"]`);
+          if (el) el.dataset.id = s.id;
+        }
+      });
+      drawLinks();
+      updateTransform();
+      renderRelList();
+      clearSelection();
+      setStatus('저장된 보드를 불러왔습니다 · 자동 저장 중');
+    } else {
+      renderRelList();
+      seed();
+      scheduleSave();
+    }
+      applyBoardFormat('default');
+</script>
+</body>
+</html>

@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#2c241c">
+<title>핀보드 · 말한 것들</title>
+<link rel="stylesheet" href="../fonts/fonts.css">
+<script src="../libs/html2canvas.min.js"></script>
+<style>
+:root{
+  --bg:#2a221c;
+  --bg2:#332b22;
+  --panel:#3d342c;
+  --ink:#f3ece1;
+  --muted:#a89880;
+  --line:#4a4036;
+  --gold:#c4a574;
+  --rot:#c0453a;
+  --pin:#b8332a;
+  --serif:"Noto Serif KR","Song Myung",Georgia,serif;
+  --sans:"Pretendard","Noto Sans KR",-apple-system,sans-serif;
+  --mono:"IBM Plex Sans KR",ui-monospace,monospace;
+  --safe-t:env(safe-area-inset-top,0px);
+  --safe-b:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{
+  height:100%;
+  background:
+    radial-gradient(ellipse 100% 60% at 50% 0%,#3a3028 0%,transparent 50%),
+    var(--bg);
+  color:var(--ink);
+  font-family:var(--sans);
+  -webkit-font-smoothing:antialiased;
+  -webkit-tap-highlight-color:transparent;
+}
+button,input,textarea,select{font:inherit;color:inherit;border:0;background:none}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+#app{
+  min-height:100%;
+  max-width:640px;
+  margin:0 auto;
+  padding:calc(16px + var(--safe-t)) 14px calc(32px + var(--safe-b));
+}
+.view{display:none}.view.active{display:block}
+
+/* ===== 헤더 ===== */
+.masthead{
+  border:1px solid var(--line);
+  background:linear-gradient(180deg,var(--panel),var(--bg2));
+  padding:20px 16px 16px;
+  margin-bottom:18px;
+  position:relative;
+  box-shadow:0 8px 24px rgba(0,0,0,.3);
+}
+.masthead::before{
+  content:"";
+  position:absolute;left:0;top:0;bottom:0;width:4px;
+  background:linear-gradient(180deg,var(--rot),var(--gold));
+}
+.kicker{
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:.28em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:8px;
+  padding-left:8px;
+}
+.masthead h1{
+  font-family:var(--serif);
+  font-size:1.75rem;
+  font-weight:700;
+  padding-left:8px;
+  line-height:1.2;
+}
+.sub{
+  margin-top:8px;
+  font-size:13px;
+  color:var(--muted);
+  padding-left:8px;
+  line-height:1.45;
+}
+.toolbar{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:14px;
+  padding-left:8px;
+}
+.search{
+  flex:1;
+  min-width:120px;
+  background:var(--bg);
+  border:1px solid var(--line);
+  padding:12px 12px;
+  font-size:15px;
+  border-radius:2px;
+}
+.btn{
+  padding:12px 14px;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.06em;
+  border:1px solid var(--line);
+  border-radius:2px;
+  background:var(--bg2);
+  color:var(--ink);
+  white-space:nowrap;
+}
+.btn.primary{background:var(--rot);border-color:var(--rot);color:#fff}
+.btn.danger{color:#e08b83;border-color:#5a302c;background:transparent}
+.btn.ghost{background:transparent;border-color:transparent;color:var(--muted)}
+
+.sec-label{
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  margin:6px 0 14px;
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+.sec-label b{color:var(--gold)}
+
+/* ===== 보드 그리드 ===== */
+.board{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+  gap:18px 14px;
+  padding:8px 4px 20px;
+}
+.pin-card{
+  position:relative;
+  background:#f4efe4;
+  color:#1a1612;
+  border-radius:2px;
+  box-shadow:
+    0 2px 4px rgba(0,0,0,.15),
+    0 10px 20px rgba(0,0,0,.25);
+  cursor:pointer;
+  transition:transform .15s;
+  overflow:hidden;
+}
+.pin-card:active{transform:scale(.98)}
+.pin-card .pin{
+  position:absolute;
+  top:-6px;
+  left:50%;
+  transform:translateX(-50%);
+  width:18px;
+  height:18px;
+  background:radial-gradient(circle at 40% 35%,#e85a4f,#9e2a22);
+  border-radius:50%;
+  box-shadow:0 2px 4px rgba(0,0,0,.4);
+  z-index:2;
+}
+.pin-card .pin::after{
+  content:"";
+  position:absolute;
+  top:14px;
+  left:50%;
+  transform:translateX(-50%);
+  width:3px;
+  height:8px;
+  background:#6b1e18;
+  border-radius:1px;
+}
+.pin-card .thumb{
+  width:100%;
+  aspect-ratio:1;
+  object-fit:cover;
+  display:block;
+  background:#ddd5c5;
+}
+.pin-card .no-photo{
+  width:100%;
+  aspect-ratio:1;
+  background:linear-gradient(145deg,#e8e0d0,#d4cbb8);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#8a7e6c;
+  font-size:13px;
+}
+.pin-card .info{
+  padding:10px 10px 12px;
+}
+.pin-card .name{
+  font-family:var(--serif);
+  font-size:15px;
+  font-weight:700;
+  line-height:1.25;
+  margin-bottom:4px;
+}
+.pin-card .said{
+  font-size:12px;
+  color:#5a5044;
+  line-height:1.4;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+
+/* ===== 박스/서랍 타일 ===== */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.tile{
+  background:linear-gradient(145deg,#3a3028,#241e18);
+  border:1px solid #4a3c32;
+  border-radius:3px;
+  padding:16px 14px;
+  min-height:110px;
+  cursor:pointer;
+  position:relative;
+  box-shadow:0 6px 16px rgba(0,0,0,.3);
+}
+.tile h3{
+  font-family:var(--serif);
+  font-size:1.1rem;
+  font-weight:700;
+  margin-bottom:8px;
+}
+.tile .stat{
+  font-family:var(--mono);
+  font-size:11px;
+  color:var(--muted);
+  letter-spacing:.08em;
+}
+.tile.box{
+  background:linear-gradient(160deg,#e8dcc8,#d4c4a8);
+  color:#1a1612;
+  border-color:#b8a888;
+}
+.tile.box .stat{color:#5a4e42}
+
+.crumb{
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:14px;
+  padding-bottom:10px;
+  border-bottom:1px solid var(--line);
+}
+.crumb button{color:var(--gold);font-size:11px}
+.crumb span{margin:0 6px;opacity:.4}
+
+.page-bar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-bottom:14px;
+}
+.page-bar h2{
+  font-family:var(--serif);
+  font-size:1.35rem;
+  font-weight:700;
+}
+.page-bar .right{display:flex;gap:6px;flex-wrap:wrap}
+
+/* ===== 편집 화면 ===== */
+.edit-photo{
+  width:100%;
+  max-width:280px;
+  margin:0 auto 16px;
+  position:relative;
+}
+.edit-photo img{
+  width:100%;
+  aspect-ratio:1;
+  object-fit:cover;
+  border-radius:4px;
+  display:block;
+  background:#ddd;
+}
+.edit-photo .placeholder{
+  width:100%;
+  aspect-ratio:1;
+  background:#3a322a;
+  border:1px dashed var(--line);
+  border-radius:4px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:var(--muted);
+  font-size:14px;
+}
+.photo-actions{
+  display:flex;
+  gap:8px;
+  margin-top:10px;
+  justify-content:center;
+}
+.field{
+  width:100%;
+  background:var(--bg);
+  border:1px solid var(--line);
+  padding:12px 12px;
+  font-size:15px;
+  border-radius:2px;
+  color:var(--ink);
+}
+label.lbl{
+  display:block;
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin:14px 0 6px;
+}
+.cedit{
+  min-height:140px;
+  padding:14px;
+  background:var(--bg);
+  border:1px solid var(--line);
+  border-radius:2px;
+  line-height:1.6;
+  font-size:16px;
+  outline:none;
+  white-space:pre-wrap;
+  word-break:keep-all;
+}
+.cedit:empty:before{content:attr(data-ph);color:#6a5e52}
+
+.size-bar{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin:12px 0;
+  flex-wrap:wrap;
+}
+.size-bar input[type=range]{
+  flex:1;
+  min-width:120px;
+  accent-color:var(--gold);
+}
+.size-val{
+  font-family:var(--mono);
+  font-size:13px;
+  color:var(--gold);
+  min-width:36px;
+}
+
+/* ===== 미리보기 (핀 카드) ===== */
+.preview-wrap{
+  margin-top:20px;
+  padding-top:16px;
+  border-top:1px solid var(--line);
+}
+.preview-label{
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:12px;
+  text-align:center;
+}
+.capture-area{
+  display:flex;
+  justify-content:center;
+  padding:20px 10px 30px;
+  background:
+    radial-gradient(circle at 20% 30%,#5a4a3a 0%,transparent 40%),
+    radial-gradient(circle at 80% 70%,#4a3c30 0%,transparent 40%),
+    #3d342c;
+  border-radius:4px;
+}
+.sheet-frame{width:100%;max-width:320px}
+
+/* 실제 출력용 카드 */
+.kcard{
+  position:relative;
+  background:#f7f1e5;
+  color:#1a1612;
+  border-radius:3px;
+  box-shadow:
+    0 4px 8px rgba(0,0,0,.2),
+    0 14px 28px rgba(0,0,0,.35);
+  overflow:hidden;
+  width:100%;
+}
+.kcard .pin{
+  position:absolute;
+  top:-8px;
+  left:50%;
+  transform:translateX(-50%);
+  width:22px;
+  height:22px;
+  background:radial-gradient(circle at 40% 35%,#e85a4f,#9e2a22);
+  border-radius:50%;
+  box-shadow:0 3px 6px rgba(0,0,0,.45);
+  z-index:3;
+}
+.kcard .pin::after{
+  content:"";
+  position:absolute;
+  top:18px;
+  left:50%;
+  transform:translateX(-50%);
+  width:4px;
+  height:10px;
+  background:#6b1e18;
+  border-radius:1px;
+}
+.kcard .photo{
+  width:100%;
+  aspect-ratio:1;
+  object-fit:cover;
+  display:block;
+  background:#ddd5c5;
+}
+.kcard .no-photo{
+  width:100%;
+  aspect-ratio:1;
+  background:linear-gradient(145deg,#e8e0d0,#d4cbb8);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#8a7e6c;
+  font-size:14px;
+}
+.kcard .body{
+  padding:14px 16px 18px;
+}
+.kcard .name{
+  font-family:var(--serif);
+  font-weight:700;
+  line-height:1.3;
+  margin-bottom:8px;
+}
+.kcard .said{
+  line-height:1.55;
+  word-break:keep-all;
+  white-space:pre-wrap;
+}
+.kcard .foot{
+  padding:0 16px 12px;
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:#7a6e60;
+  display:flex;
+  justify-content:space-between;
+}
+
+.empty{
+  padding:40px 16px;
+  text-align:center;
+  color:var(--muted);
+  font-family:var(--serif);
+  font-style:italic;
+  line-height:1.6;
+  font-size:15px;
+}
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:calc(20px + var(--safe-b));
+  transform:translateX(-50%) translateY(8px);
+  background:var(--ink);
+  color:#1a1612;
+  font-size:13px;
+  font-weight:700;
+  padding:12px 18px;
+  border-radius:999px;
+  opacity:0;
+  pointer-events:none;
+  transition:.2s;
+  z-index:50;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.modal-bg{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.7);
+  display:none;
+  align-items:flex-end;
+  justify-content:center;
+  z-index:40;
+  padding:16px;
+}
+.modal-bg.show{display:flex}
+.modal{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:8px 8px 0 0;
+  padding:20px;
+  width:100%;
+  max-width:400px;
+}
+.modal h3{
+  font-family:var(--serif);
+  font-size:1.2rem;
+  margin-bottom:12px;
+}
+.modal-actions{display:flex;gap:8px;margin-top:16px}
+.modal-actions .btn{flex:1}
+</style>
+</head>
+<body>
+<div id="app">
+  <!-- 서랍 -->
+  <section id="view-drawers" class="view active">
+    <header class="masthead">
+      <div class="kicker">핀보드</div>
+      <h1>말한 것들</h1>
+      <p class="sub">사진 · 이름 · 그 사람이 한 말<br>보드에 핀으로 고정</p>
+      <div class="toolbar">
+        <input class="search" id="search" type="search" placeholder="검색…">
+        <button type="button" class="btn" id="btnBackup">내보내기</button>
+        <button type="button" class="btn" id="btnImport">가져오기</button>
+        <input type="file" id="importFile" accept="application/json,.json" hidden>
+        <button type="button" class="btn primary" id="btnNewDrawer">+ 서랍</button>
+      </div>
+    </header>
+    <div class="sec-label"><span>서랍</span><b id="drawerCount">00</b></div>
+    <div class="grid" id="drawerGrid"></div>
+    <div class="empty" id="drawerEmpty" hidden>서랍이 없습니다.<br>첫 서랍을 만들어 보세요.</div>
+  </section>
+
+  <!-- 박스 -->
+  <section id="view-boxes" class="view">
+    <div class="crumb">
+      <button type="button" id="toDrawers">서랍</button><span>/</span>
+      <span id="crumbDrawer">—</span>
+    </div>
+    <div class="page-bar">
+      <h2 id="boxTitle">—</h2>
+      <div class="right">
+        <button type="button" class="btn" id="btnEditDrawer">이름</button>
+        <button type="button" class="btn danger" id="btnDelDrawer">삭제</button>
+        <button type="button" class="btn primary" id="btnNewBox">+ 박스</button>
+      </div>
+    </div>
+    <div class="sec-label"><span>박스</span><b id="boxCount">00</b></div>
+    <div class="grid" id="boxGrid"></div>
+    <div class="empty" id="boxEmpty" hidden>이 서랍에 박스가 없습니다.</div>
+  </section>
+
+  <!-- 카드 목록 (보드) -->
+  <section id="view-cards" class="view">
+    <div class="crumb">
+      <button type="button" id="toDrawers2">서랍</button><span>/</span>
+      <button type="button" id="toBoxes">박스</button><span>/</span>
+      <span id="crumbBox">—</span>
+    </div>
+    <div class="page-bar">
+      <h2 id="cardsTitle">—</h2>
+      <div class="right">
+        <button type="button" class="btn" id="btnEditBox">이름</button>
+        <button type="button" class="btn danger" id="btnDelBox">삭제</button>
+        <button type="button" class="btn primary" id="btnNewCard">+ 카드</button>
+      </div>
+    </div>
+    <div class="sec-label"><span>핀 카드</span><b id="cardCount">00</b></div>
+    <div class="board" id="cardList"></div>
+    <div class="empty" id="cardEmpty" hidden>이 박스에 카드가 없습니다.<br>첫 카드를 추가해 보세요.</div>
+  </section>
+
+  <!-- 편집 -->
+  <section id="view-edit" class="view">
+    <div class="page-bar">
+      <button type="button" class="btn ghost" id="btnBackCards">← 보드</button>
+      <div class="right">
+        <button type="button" class="btn" id="btnPng">PNG</button>
+        <button type="button" class="btn primary" id="btnSaveCard">저장</button>
+        <button type="button" class="btn danger" id="btnDelCard">삭제</button>
+      </div>
+    </div>
+
+    <div class="edit-photo" id="photoArea">
+      <div class="placeholder" id="photoPlaceholder">사진 없음</div>
+      <img id="photoImg" hidden alt="">
+      <div class="photo-actions">
+        <button type="button" class="btn" id="btnAddPhoto">사진 추가</button>
+        <button type="button" class="btn danger" id="btnRemovePhoto" hidden>제거</button>
+        <input type="file" id="photoInput" accept="image/*" hidden>
+      </div>
+    </div>
+
+    <label class="lbl">이름</label>
+    <input class="field" id="cardName" placeholder="이름 또는 호칭" maxlength="40">
+
+    <label class="lbl">말한 내용</label>
+    <div class="cedit" id="faceEditor" contenteditable="true" data-ph="그 사람이 한 말을 적어 주세요…"></div>
+
+    <label class="lbl">글꼴 크기</label>
+    <div class="size-bar">
+      <input type="range" id="fontSize" min="14" max="28" value="17" step="1">
+      <span class="size-val" id="fontSizeVal">17</span>
+    </div>
+
+    <label class="lbl">번호 / 코드</label>
+    <input class="field" id="cardCode" placeholder="예: 01" maxlength="12" style="max-width:140px">
+
+    <div class="preview-wrap">
+      <div class="preview-label">미리보기 · 인스타/스레드용</div>
+      <div class="capture-area">
+        <div class="sheet-frame" id="previewFrame"></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="modal-bg" id="nameModal">
+  <div class="modal">
+    <h3 id="nameTitle">이름</h3>
+    <input class="field" id="nameInput" placeholder="이름" maxlength="50">
+    <div class="modal-actions">
+      <button type="button" class="btn" id="nameCancel">취소</button>
+      <button type="button" class="btn primary" id="nameSave">확인</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  const KEY = 'west150_pinboard_v1';
+  let data = {drawers:[]};
+  let drawerId = null, boxId = null, cardId = null;
+  let nameMode = null, filter = '';
+
+  const $ = id => document.getElementById(id);
+  function uid(p){ return p + Date.now().toString(36) + Math.random().toString(36).slice(2,5); }
+  function toast(m){
+    const el = $('toast');
+    el.textContent = m;
+    el.classList.add('show');
+    clearTimeout(toast._t);
+    toast._t = setTimeout(() => el.classList.remove('show'), 1800);
+  }
+  function show(v){
+    document.querySelectorAll('.view').forEach(x => x.classList.remove('active'));
+    $('view-' + v).classList.add('active');
+    window.scrollTo(0,0);
+  }
+  function load(){
+    try{
+      const r = localStorage.getItem(KEY);
+      if(r){
+        const d = JSON.parse(r);
+        if(d && Array.isArray(d.drawers)) data = d;
+      }
+    }catch(e){}
+  }
+  function save(){
+    try{ localStorage.setItem(KEY, JSON.stringify(data)); }
+    catch(e){ toast('저장 공간 부족 (사진이 너무 클 수 있음)'); }
+  }
+  function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function plain(html){
+    const d = document.createElement('div');
+    d.innerHTML = html || '';
+    return (d.textContent || '').trim();
+  }
+  function sanitize(html){
+    const d = document.createElement('div');
+    d.innerHTML = html || '';
+    d.querySelectorAll('script,style,iframe').forEach(n => n.remove());
+    const allow = ['br','div','p','span','b','i','strong','em'];
+    const walk = n => {
+      if(n.nodeType !== 1) return;
+      const t = n.tagName.toLowerCase();
+      if(!allow.includes(t)){
+        const p = n.parentNode;
+        while(n.firstChild) p.insertBefore(n.firstChild, n);
+        p.removeChild(n);
+        return;
+      }
+      [...n.attributes].forEach(a => n.removeAttribute(a.name));
+      [...n.children].forEach(walk);
+    };
+    [...d.children].forEach(walk);
+    return d.innerHTML;
+  }
+
+  function getDrawer(){ return data.drawers.find(d => d.id === drawerId); }
+  function getBox(){
+    const d = getDrawer();
+    return d && (d.boxes||[]).find(b => b.id === boxId);
+  }
+  function getCard(){
+    const b = getBox();
+    return b && (b.cards||[]).find(c => c.id === cardId);
+  }
+  function countCards(box){ return (box.cards||[]).length; }
+  function countBoxCards(drawer){
+    return (drawer.boxes||[]).reduce((n,b) => n + countCards(b), 0);
+  }
+
+  /* ===== 렌더 ===== */
+  function renderDrawers(){
+    let list = data.drawers;
+    $('drawerCount').textContent = String(list.length).padStart(2,'0');
+    const grid = $('drawerGrid');
+    const empty = $('drawerEmpty');
+    if(!list.length){ grid.innerHTML = ''; empty.hidden = false; return; }
+    empty.hidden = true;
+    const q = filter.trim().toLowerCase();
+    if(q){
+      list = list.filter(d =>
+        d.name.toLowerCase().includes(q) ||
+        (d.boxes||[]).some(b =>
+          b.name.toLowerCase().includes(q) ||
+          (b.cards||[]).some(c =>
+            (c.name||'').toLowerCase().includes(q) ||
+            plain(c.content||'').toLowerCase().includes(q)
+          )
+        )
+      );
+    }
+    grid.innerHTML = list.map(d => `
+      <div class="tile" data-id="${d.id}">
+        <h3></h3>
+        <div class="stat"></div>
+      </div>`).join('');
+    list.forEach((d,i) => {
+      const el = grid.children[i];
+      el.querySelector('h3').textContent = d.name || '서랍';
+      el.querySelector('.stat').textContent =
+        (d.boxes||[]).length + '개 박스 · ' + countBoxCards(d) + '장';
+      el.onclick = () => { drawerId = d.id; renderBoxes(); show('boxes'); };
+    });
+  }
+
+  function renderBoxes(){
+    const d = getDrawer();
+    if(!d){ show('drawers'); return; }
+    $('crumbDrawer').textContent = d.name || '서랍';
+    $('boxTitle').textContent = d.name || '서랍';
+    const boxes = d.boxes || [];
+    $('boxCount').textContent = String(boxes.length).padStart(2,'0');
+    const grid = $('boxGrid');
+    const empty = $('boxEmpty');
+    if(!boxes.length){ grid.innerHTML = ''; empty.hidden = false; return; }
+    empty.hidden = true;
+    grid.innerHTML = boxes.map(b => `
+      <div class="tile box" data-id="${b.id}">
+        <h3></h3>
+        <div class="stat"></div>
+      </div>`).join('');
+    boxes.forEach((b,i) => {
+      const el = grid.children[i];
+      el.querySelector('h3').textContent = b.name || '박스';
+      el.querySelector('.stat').textContent = countCards(b) + '장';
+      el.onclick = () => { boxId = b.id; renderCards(); show('cards'); };
+    });
+  }
+
+  function renderCards(){
+    const d = getDrawer();
+    const b = getBox();
+    if(!d || !b){ show('drawers'); return; }
+    $('crumbBox').textContent = b.name || '박스';
+    $('cardsTitle').textContent = b.name || '박스';
+    const cards = b.cards || [];
+    $('cardCount').textContent = String(cards.length).padStart(2,'0');
+    const list = $('cardList');
+    const empty = $('cardEmpty');
+    if(!cards.length){ list.innerHTML = ''; empty.hidden = false; return; }
+    empty.hidden = true;
+
+    list.innerHTML = cards.map(c => `
+      <article class="pin-card" data-id="${c.id}">
+        <div class="pin"></div>
+        <div class="media"></div>
+        <div class="info">
+          <div class="name"></div>
+          <div class="said"></div>
+        </div>
+      </article>`).join('');
+
+    cards.forEach((c,i) => {
+      const el = list.children[i];
+      const media = el.querySelector('.media');
+      if(c.image){
+        const img = document.createElement('img');
+        img.className = 'thumb';
+        img.src = c.image;
+        img.alt = '';
+        media.appendChild(img);
+      } else {
+        media.innerHTML = '<div class="no-photo">사진 없음</div>';
+      }
+      el.querySelector('.name').textContent = c.name || '이름 없음';
+      el.querySelector('.said').textContent = plain(c.content) || '—';
+      el.onclick = () => openCard(c.id);
+    });
+  }
+
+  function openCard(id){
+    cardId = id;
+    const c = getCard();
+    if(!c) return;
+
+    $('cardName').value = c.name || '';
+    $('cardCode').value = c.code || '';
+    $('faceEditor').innerHTML = c.content || '';
+    const size = c.fontSize || 17;
+    $('fontSize').value = size;
+    $('fontSizeVal').textContent = size;
+
+    if(c.image){
+      $('photoImg').src = c.image;
+      $('photoImg').hidden = false;
+      $('photoPlaceholder').hidden = true;
+      $('btnRemovePhoto').hidden = false;
+    } else {
+      $('photoImg').hidden = true;
+      $('photoPlaceholder').hidden = false;
+      $('btnRemovePhoto').hidden = true;
+    }
+
+    updatePreview();
+    show('edit');
+  }
+
+  function currentContent(){ return sanitize($('faceEditor').innerHTML); }
+
+  function flushCard(){
+    const c = getCard();
+    if(!c) return;
+    c.name = $('cardName').value.trim();
+    c.content = currentContent();
+    c.code = $('cardCode').value.trim();
+    c.fontSize = parseInt($('fontSize').value, 10) || 17;
+    c.updatedAt = new Date().toISOString();
+  }
+
+  function renderCardHTML(c){
+    const name = esc(c.name || '이름 없음');
+    const content = c.content || '&nbsp;';
+    const size = c.fontSize || 17;
+    const footL = esc((getDrawer()||{}).name || '');
+    const footR = esc(c.code || '');
+
+    let photoHtml = '';
+    if(c.image){
+      photoHtml = `<img class="photo" src="${c.image}" alt="">`;
+    } else {
+      photoHtml = `<div class="no-photo">사진 없음</div>`;
+    }
+
+    return `
+      <div class="kcard">
+        <div class="pin"></div>
+        ${photoHtml}
+        <div class="body">
+          <div class="name" style="font-size:${Math.min(size + 4, 28)}px">${name}</div>
+          <div class="said" style="font-size:${size}px">${content}</div>
+        </div>
+        <div class="foot"><span>${footL}</span><span>${footR}</span></div>
+      </div>`;
+  }
+
+  function updatePreview(){
+    const c = getCard();
+    if(!c) return;
+    const tmp = {
+      ...c,
+      name: $('cardName').value.trim(),
+      content: currentContent(),
+      code: $('cardCode').value.trim(),
+      fontSize: parseInt($('fontSize').value, 10) || 17
+    };
+    // 사진은 이미 c.image에 있음
+    $('previewFrame').innerHTML = renderCardHTML(tmp);
+  }
+
+  function newCard(){
+    const b = getBox();
+    if(!b) return;
+    if(!b.cards) b.cards = [];
+    const c = {
+      id: uid('c'),
+      name: '',
+      content: '',
+      image: null,
+      fontSize: 17,
+      code: String(b.cards.length + 1).padStart(2,'0'),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    b.cards.push(c);
+    save();
+    openCard(c.id);
+  }
+
+  /* 사진 */
+  $('btnAddPhoto').onclick = () => $('photoInput').click();
+  $('photoInput').onchange = e => {
+    const f = e.target.files && e.target.files[0];
+    if(!f) return;
+    if(f.size > 1.8 * 1024 * 1024){
+      toast('사진이 너무 큽니다 (2MB 이하 권장)');
+      e.target.value = '';
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const c = getCard();
+      if(!c) return;
+      c.image = reader.result;
+      $('photoImg').src = c.image;
+      $('photoImg').hidden = false;
+      $('photoPlaceholder').hidden = true;
+      $('btnRemovePhoto').hidden = false;
+      updatePreview();
+      toast('사진 추가됨');
+    };
+    reader.readAsDataURL(f);
+    e.target.value = '';
+  };
+  $('btnRemovePhoto').onclick = () => {
+    const c = getCard();
+    if(!c) return;
+    c.image = null;
+    $('photoImg').hidden = true;
+    $('photoPlaceholder').hidden = false;
+    $('btnRemovePhoto').hidden = true;
+    updatePreview();
+  };
+
+  /* 글꼴 크기 */
+  $('fontSize').oninput = () => {
+    $('fontSizeVal').textContent = $('fontSize').value;
+    updatePreview();
+  };
+
+  /* PNG */
+  async function exportPng(){
+    flushCard();
+    save();
+    const c = getCard();
+    if(!c) return;
+    if(typeof html2canvas === 'undefined'){ toast('html2canvas 없음'); return; }
+    toast('이미지 생성 중…');
+    try{
+      updatePreview();
+      const target = $('previewFrame').firstElementChild;
+      await document.fonts.ready;
+      const canvas = await html2canvas(target, {
+        backgroundColor: null,
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        allowTaint: true
+      });
+      const a = document.createElement('a');
+      const name = (c.name || 'card').replace(/[\\/:*?"<>|]/g,'_').slice(0,30);
+      a.download = name + '.png';
+      a.href = canvas.toDataURL('image/png');
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      toast('PNG 저장됨');
+    }catch(err){
+      console.error(err);
+      toast('PNG 실패');
+    }
+  }
+
+  /* 이벤트 */
+  $('btnNewDrawer').onclick = () => openNameModal('newDrawer','');
+  $('btnEditDrawer').onclick = () => {
+    const d = getDrawer();
+    if(d) openNameModal('editDrawer', d.name);
+  };
+  $('btnNewBox').onclick = () => openNameModal('newBox','');
+  $('btnEditBox').onclick = () => {
+    const b = getBox();
+    if(b) openNameModal('editBox', b.name);
+  };
+  $('nameCancel').onclick = () => $('nameModal').classList.remove('show');
+  $('nameModal').onclick = e => {
+    if(e.target === $('nameModal')) $('nameModal').classList.remove('show');
+  };
+  $('nameSave').onclick = () => {
+    const name = $('nameInput').value.trim() || '이름 없음';
+    if(nameMode === 'newDrawer'){
+      data.drawers.push({id:uid('d'), name, boxes:[], createdAt:new Date().toISOString()});
+      save(); renderDrawers();
+    } else if(nameMode === 'editDrawer'){
+      const d = getDrawer();
+      if(d){ d.name = name; save(); renderBoxes(); }
+    } else if(nameMode === 'newBox'){
+      const d = getDrawer();
+      if(!d) return;
+      if(!d.boxes) d.boxes = [];
+      d.boxes.push({id:uid('b'), name, cards:[], createdAt:new Date().toISOString()});
+      save(); renderBoxes();
+    } else if(nameMode === 'editBox'){
+      const b = getBox();
+      if(b){ b.name = name; save(); renderCards(); }
+    }
+    $('nameModal').classList.remove('show');
+    toast('저장됨');
+  };
+
+  function openNameModal(mode, preset){
+    nameMode = mode;
+    const titles = {
+      newDrawer:'새 서랍', editDrawer:'서랍 이름',
+      newBox:'새 박스', editBox:'박스 이름'
+    };
+    $('nameTitle').textContent = titles[mode] || '이름';
+    $('nameInput').value = preset || '';
+    $('nameModal').classList.add('show');
+    setTimeout(() => $('nameInput').focus(), 60);
+  }
+
+  $('btnDelDrawer').onclick = () => {
+    if(!drawerId || !confirm('이 서랍과 안의 모든 내용을 삭제할까요?')) return;
+    data.drawers = data.drawers.filter(d => d.id !== drawerId);
+    drawerId = null;
+    save(); renderDrawers(); show('drawers'); toast('삭제됨');
+  };
+  $('btnDelBox').onclick = () => {
+    const d = getDrawer();
+    if(!d || !boxId || !confirm('이 박스와 카드를 삭제할까요?')) return;
+    d.boxes = (d.boxes||[]).filter(b => b.id !== boxId);
+    boxId = null;
+    save(); renderBoxes(); show('boxes'); toast('삭제됨');
+  };
+  $('btnDelCard').onclick = () => {
+    const b = getBox();
+    if(!b || !cardId || !confirm('이 카드를 삭제할까요?')) return;
+    b.cards = (b.cards||[]).filter(c => c.id !== cardId);
+    cardId = null;
+    save(); renderCards(); show('cards'); toast('삭제됨');
+  };
+
+  $('btnNewCard').onclick = newCard;
+  $('btnSaveCard').onclick = () => {
+    flushCard();
+    save();
+    toast('저장됨');
+    updatePreview();
+  };
+  $('btnPng').onclick = exportPng;
+  $('btnBackCards').onclick = () => {
+    flushCard();
+    save();
+    renderCards();
+    show('cards');
+  };
+
+  $('faceEditor').addEventListener('input', updatePreview);
+  $('cardName').oninput = updatePreview;
+  $('cardCode').oninput = updatePreview;
+
+  $('toDrawers').onclick = $('toDrawers2').onclick = () => {
+    renderDrawers(); show('drawers');
+  };
+  $('toBoxes').onclick = () => { renderBoxes(); show('boxes'); };
+
+  $('search').oninput = e => {
+    filter = e.target.value || '';
+    renderDrawers();
+  };
+
+  $('btnBackup').onclick = () => {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));
+    a.download = 'pinboard-backup.json';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    toast('내보냄');
+  };
+  $('btnImport').onclick = () => $('importFile').click();
+  $('importFile').onchange = e => {
+    const f = e.target.files && e.target.files[0];
+    if(!f) return;
+    const r = new FileReader();
+    r.onload = () => {
+      try{
+        const d = JSON.parse(r.result);
+        if(!d || !Array.isArray(d.drawers)) throw 0;
+        if(data.drawers.length && !confirm('모든 데이터를 바꿀까요?')) return;
+        data = d;
+        save();
+        renderDrawers();
+        show('drawers');
+        toast('가져옴');
+      }catch(err){ toast('잘못된 JSON'); }
+    };
+    r.readAsText(f);
+    e.target.value = '';
+  };
+
+  function seed(){
+    if(data.drawers.length) return;
+    data.drawers = [{
+      id: uid('d'),
+      name: '사람들',
+      boxes: [{
+        id: uid('b'),
+        name: '최근',
+        cards: [{
+          id: uid('c'),
+          name: '예시',
+          content: '여기에 그 사람이 한 말을 적으면 됩니다.',
+          image: null,
+          fontSize: 17,
+          code: '01',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        }]
+      }],
+      createdAt: new Date().toISOString()
+    }];
+    save();
+  }
+
+  load();
+  seed();
+  renderDrawers();
+})();
+</script>
+</body>
+</html>
