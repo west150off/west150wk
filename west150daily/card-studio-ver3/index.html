@@ -971,9 +971,8 @@ async function exportSlideToPngBlob(element, scale = 2) {
     // sizing (Tailwind's aspect-[4/5] etc.) can't be re-measured
     // differently by the capture library than what's on screen.
     await waitForImagesToLoad(element);
-    const rect = element.getBoundingClientRect();
-    const explicitWidth = Math.round(rect.width);
-    const explicitHeight = Math.round(rect.height);
+    const explicitWidth = element.offsetWidth || Math.round(element.getBoundingClientRect().width);
+    const explicitHeight = element.offsetHeight || Math.round(element.getBoundingClientRect().height);
     // 1. Try html-to-image without font embedding overhead (Takes < 100ms)
     try {
         const htmlToImagePromise = toBlob(element, {
