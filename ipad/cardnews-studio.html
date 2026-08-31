@@ -20,14 +20,43 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);
 button,input,select,textarea{font-family:inherit;}
 #app{display:flex;flex-direction:column;height:100%;}
 #topbar{height:36px;background:var(--panel);border-bottom:1px solid var(--border);
-  display:flex;align-items:center;padding:0 12px;gap:4px;flex-shrink:0;z-index:100;}
-#topbar .brand{font-size:11px;font-weight:600;letter-spacing:.06em;margin-right:16px;white-space:nowrap;}
+  display:flex;align-items:center;padding:0 8px 0 12px;gap:0;flex-shrink:0;z-index:200;}
+#topbar .brand{font-size:11px;font-weight:600;letter-spacing:.06em;margin-right:20px;white-space:nowrap;}
 #topbar .actions{margin-left:auto;display:flex;gap:6px;align-items:center;}
 .tb-btn{height:26px;padding:0 10px;font-size:11px;border:1px solid var(--border);border-radius:3px;
   background:var(--secondary);color:var(--text);cursor:pointer;}
 .tb-btn:hover{background:var(--hover);}
 .tb-btn.primary{background:#E8E8EC;color:#0A0A0B;border-color:#E8E8EC;font-weight:500;}
 .tb-btn.primary:hover{background:#fff;}
+/* ===== Menu bar (desktop style) ===== */
+.menu-bar{display:flex;align-items:center;height:100%;gap:0;}
+.menu-item{position:relative;height:100%;display:flex;align-items:center;}
+.menu-item > .menu-label{
+  padding:0 12px;height:100%;display:flex;align-items:center;
+  font-size:12px;color:var(--text);cursor:default;user-select:none;
+  border:none;background:transparent;font-family:inherit;
+}
+.menu-item:hover > .menu-label,
+.menu-item.open > .menu-label{background:var(--hover);color:#fff;}
+.menu-item.active-panel > .menu-label{color:var(--accent);}
+.menu-dropdown{
+  display:none;position:absolute;top:100%;left:0;min-width:200px;
+  background:var(--panel);border:1px solid var(--border);border-radius:4px;
+  box-shadow:0 8px 28px rgba(0,0,0,.55);padding:4px 0;z-index:300;
+}
+.menu-item.open > .menu-dropdown{display:block;}
+.menu-dropdown button,
+.menu-dropdown .menu-action{
+  display:flex;align-items:center;justify-content:space-between;
+  width:100%;padding:7px 14px;border:none;background:transparent;
+  color:var(--text);font-size:12px;text-align:left;cursor:pointer;font-family:inherit;
+  gap:16px;white-space:nowrap;
+}
+.menu-dropdown button:hover,
+.menu-dropdown .menu-action:hover{background:var(--hover);}
+.menu-dropdown .menu-action .shortcut{color:var(--sub);font-size:10px;}
+.menu-dropdown .sep{height:1px;background:var(--border);margin:4px 0;}
+.menu-dropdown .menu-hint{padding:6px 14px;font-size:10px;color:var(--disabled);pointer-events:none;}
 #workspace{display:flex;flex:1;min-height:0;}
 #left-panel{width:200px;background:var(--panel);border-right:1px solid var(--border);
   display:flex;flex-direction:column;flex-shrink:0;}
@@ -42,11 +71,17 @@ button,input,select,textarea{font-family:inherit;}
   display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--sub);flex-shrink:0;}
 .page-item.active .page-thumb{border-color:var(--accent);color:var(--text);}
 .page-info{flex:1;min-width:0;}
-.page-num{font-size:10px;color:var(--disabled);}
-.page-name{font-size:11px;color:var(--text);}
-.page-del-btn{width:20px;height:20px;border:none;background:transparent;color:var(--sub);cursor:pointer;border-radius:3px;opacity:0;}
+.page-num{font-size:11px;color:var(--sub);font-weight:600;letter-spacing:.06em;}
+.page-name{font-size:12px;color:var(--text);font-weight:600;}
+.page-type-tag{font-size:10px;color:var(--disabled);margin-top:2px;}
+.page-del-btn{
+  height:24px;padding:0 8px;border:1px solid var(--border);background:var(--secondary);
+  color:var(--sub);cursor:pointer;border-radius:3px;font-size:11px;font-weight:500;
+  flex-shrink:0;white-space:nowrap;opacity:0.85;
+}
 .page-item:hover .page-del-btn,.page-item.active .page-del-btn{opacity:1;}
-.page-del-btn:hover{background:var(--hover);color:var(--text);}
+.page-del-btn:hover{background:#3a1a1e;border-color:#e0334c;color:#ff6b7a;}
+.page-del-btn:disabled{opacity:0.3;cursor:not-allowed;pointer-events:none;}
 #left-footer{padding:8px;border-top:1px solid var(--border);}
 .btn-block{width:100%;height:28px;padding:0 12px;font-size:11px;border:1px solid var(--border);border-radius:3px;
   background:var(--secondary);color:var(--text);cursor:pointer;}
@@ -62,11 +97,14 @@ button,input,select,textarea{font-family:inherit;}
 .zoom-pill.show{opacity:1;}
 #right-panel{width:320px;background:var(--panel);border-left:1px solid var(--border);
   display:flex;flex-direction:column;flex-shrink:0;}
-#rightTabs{display:flex;flex-wrap:wrap;border-bottom:1px solid var(--border);flex-shrink:0;}
-#rightTabs button{flex:1;min-width:33%;padding:10px 4px;background:transparent;border:none;border-bottom:2px solid transparent;
-  color:var(--sub);font-size:10px;font-weight:600;cursor:pointer;}
-#rightTabs button:hover{color:var(--text);}
-#rightTabs button.active{color:var(--text);border-bottom-color:var(--accent);}
+#rightTabs{display:none;} /* controlled by top menu instead */
+#rightPanelHeader{height:36px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 12px;border-bottom:1px solid var(--border);flex-shrink:0;}
+#rightPanelTitle{font-size:11px;font-weight:600;letter-spacing:.04em;color:var(--text);}
+#btnBackWriting{height:24px;padding:0 10px;font-size:11px;border:1px solid var(--border);border-radius:3px;
+  background:var(--secondary);color:var(--sub);cursor:pointer;display:none;}
+#btnBackWriting:hover{background:var(--hover);color:var(--text);}
+#btnBackWriting.show{display:inline-flex;align-items:center;}
 #rightBody{flex:1;overflow-y:auto;padding:12px;}
 .ctx-panel{display:none;}
 .ctx-panel.active{display:block;}
@@ -353,7 +391,73 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;hei
 }
 .ov-stamp.circle.show{display:flex;}
 
-
+/* ===== Extended blocks (stat / quote / bullets / versus / factcheck / source) ===== */
+.block-el{display:none;margin-top:18px;}
+.block-el.show{display:block;}
+.bullet-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:12px;}
+.bullet-list li{
+  display:flex;align-items:flex-start;gap:12px;font-size:28px;line-height:1.4;
+  color:rgba(255,255,255,.92);text-shadow:0 2px 8px rgba(0,0,0,.35);word-break:keep-all;
+}
+.bullet-list li::before{
+  content:'';width:10px;height:10px;border-radius:50%;background:var(--accent);
+  margin-top:10px;flex-shrink:0;box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent);
+}
+.highlight-box{
+  border-left:5px solid var(--accent);background:rgba(0,0,0,.35);padding:18px 22px;border-radius:0 8px 8px 0;
+}
+.highlight-box .hl-label{
+  font-size:14px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;
+}
+.highlight-box .hl-text{font-size:24px;line-height:1.45;color:rgba(255,255,255,.9);white-space:pre-wrap;word-break:keep-all;}
+.stat-block{text-align:left;}
+.stat-value{font-size:96px;font-weight:900;line-height:1;letter-spacing:-1px;color:#fff;text-shadow:0 4px 20px rgba(0,0,0,.4);}
+.stat-label{font-size:28px;font-weight:600;margin-top:12px;color:rgba(255,255,255,.9);white-space:pre-wrap;}
+.stat-compare{font-size:22px;margin-top:8px;color:var(--accent);font-weight:600;}
+.quote-speaker{margin-top:16px;font-size:24px;font-weight:700;color:rgba(255,255,255,.9);}
+.quote-role{font-size:20px;color:rgba(255,255,255,.65);margin-top:4px;}
+.versus-row{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:8px;}
+.versus-col{background:rgba(0,0,0,.32);border-radius:10px;padding:18px 16px;border:1px solid rgba(255,255,255,.12);}
+.versus-title{font-size:22px;font-weight:800;color:var(--accent);margin-bottom:10px;}
+.versus-body{font-size:20px;line-height:1.45;color:rgba(255,255,255,.88);white-space:pre-wrap;word-break:keep-all;}
+.fc-claim{font-size:24px;line-height:1.45;color:rgba(255,255,255,.88);white-space:pre-wrap;font-style:italic;margin-bottom:14px;}
+.fc-verdict{display:inline-block;font-size:22px;font-weight:800;padding:8px 16px;border-radius:6px;background:var(--accent);color:#fff;margin-bottom:14px;}
+.fc-evidence{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;}
+.fc-evidence li{font-size:22px;line-height:1.4;color:rgba(255,255,255,.9);padding-left:18px;border-left:3px solid var(--accent);}
+.source-bar{
+  margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,.15);
+  font-size:18px;color:rgba(255,255,255,.7);display:none;line-height:1.4;
+}
+.source-bar.show{display:block;}
+.page-number-mark{
+  position:absolute;bottom:28px;left:50%;transform:translateX(-50%);
+  z-index:6;font-size:20px;font-weight:700;letter-spacing:0.12em;
+  color:rgba(255,255,255,.75);text-shadow:0 2px 8px rgba(0,0,0,.4);
+  font-variant-numeric:tabular-nums;pointer-events:none;
+  display:none;
+}
+.page-number-mark.show{display:block;}
+#card.size-feed .page-number-mark{bottom:22px;}
+#card.size-square .page-number-mark{bottom:18px;}
+#card.layout-split .page-number-mark{bottom:18px;}
+.fc-verify-pill{
+  display:none;align-items:center;gap:8px;margin-top:12px;padding:8px 14px;border-radius:999px;
+  font-size:16px;font-weight:700;width:fit-content;border:1.5px solid currentColor;
+}
+.fc-verify-pill.show{display:inline-flex;}
+.type-chip-row{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+.type-chip{
+  padding:14px 10px;text-align:center;border-radius:6px;font-size:13px;font-weight:700;
+  background:var(--secondary);border:1px solid var(--border);color:var(--sub);cursor:pointer;
+  letter-spacing:0.02em;line-height:1.2;min-height:48px;
+  display:flex;align-items:center;justify-content:center;
+}
+.type-chip:hover{color:var(--text);border-color:#3A3A40;background:var(--hover);}
+.type-chip.active{background:var(--active);border-color:var(--accent);color:var(--text);box-shadow:inset 0 0 0 1px var(--accent);}
+.block-toggle-row{display:flex;flex-direction:column;gap:8px;}
+.block-toggle-row label{display:flex;align-items:center;gap:10px;font-size:12px;color:#c8c8d0;cursor:pointer;}
+.block-toggle-row input{width:16px;height:16px;accent-color:var(--accent);}
+.panel-subnote{font-size:10px;color:var(--disabled);margin-bottom:10px;line-height:1.4;}
 
 </style>
 </head>
@@ -362,6 +466,44 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;hei
 <div id="app">
   <div id="topbar">
     <div class="brand">WEST150 CARD NEWS</div>
+    <div class="menu-bar" id="menuBar">
+      <div class="menu-item" data-menu="file">
+        <button type="button" class="menu-label">파일</button>
+        <div class="menu-dropdown">
+          <button type="button" data-action="export-current">현재 페이지 PNG 저장</button>
+          <button type="button" data-action="export-all">전체 페이지 저장</button>
+          <div class="sep"></div>
+          <button type="button" data-action="reset">기본값으로 초기화</button>
+        </div>
+      </div>
+      <div class="menu-item" data-menu="writing">
+        <button type="button" class="menu-label">내용</button>
+      </div>
+      <div class="menu-item" data-menu="blocks">
+        <button type="button" class="menu-label">블록</button>
+      </div>
+      <div class="menu-item" data-menu="image">
+        <button type="button" class="menu-label">이미지</button>
+      </div>
+      <div class="menu-item" data-menu="textstyle">
+        <button type="button" class="menu-label">글자</button>
+      </div>
+      <div class="menu-item" data-menu="template">
+        <button type="button" class="menu-label">테마</button>
+      </div>
+      <div class="menu-item" data-menu="overlay">
+        <button type="button" class="menu-label">배지</button>
+      </div>
+      <div class="menu-item" data-menu="view">
+        <button type="button" class="menu-label">보기</button>
+        <div class="menu-dropdown">
+          <button type="button" data-action="fit">화면에 맞춤</button>
+          <div class="sep"></div>
+          <button type="button" data-action="zoom-in">확대 (+)</button>
+          <button type="button" data-action="zoom-out">축소 (−)</button>
+        </div>
+      </div>
+    </div>
     <div class="actions">
       <button type="button" class="tb-btn" id="btnFit">맞춤</button>
       <button type="button" class="tb-btn primary" id="btnShare">PNG 저장</button>
@@ -383,7 +525,7 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;hei
           <div class="card-shell" id="cardShell">
         <div class="card" id="card">
           <div class="card-bg-wrap" id="bgWrap">
-            <div class="noimg" id="noImgMsg">배경 사진을 올려보세요<br><span style="font-size:18px;opacity:.6">하단 · 이미지 · 업로드</span></div>
+            <div class="noimg" id="noImgMsg">배경 사진을 올려보세요<br><span style="font-size:18px;opacity:.6">상단 메뉴 · 이미지</span></div>
           </div>
           <div class="card-duotone" id="duotoneLayer"></div>
           <div class="card-scrim" id="scrimLayer"></div>
@@ -421,12 +563,58 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;hei
                 <div class="headline" id="headlineOut"></div>
                 <div class="subtitle-kr" id="subKrOut"></div>
                 <div class="subtitle-en" id="subEnOut"></div>
+                <!-- STAT -->
+                <div class="block-el stat-block" id="blockStat">
+                  <div class="stat-value" id="statValueOut"></div>
+                  <div class="stat-label" id="statLabelOut"></div>
+                  <div class="stat-compare" id="statCompareOut"></div>
+                </div>
+                <!-- QUOTE speaker -->
+                <div class="block-el" id="blockQuoteMeta">
+                  <div class="quote-speaker" id="quoteSpeakerOut"></div>
+                  <div class="quote-role" id="quoteRoleOut"></div>
+                </div>
+                <!-- BULLETS -->
+                <div class="block-el" id="blockBullets">
+                  <ul class="bullet-list" id="bulletListOut"></ul>
+                </div>
+                <!-- HIGHLIGHT -->
+                <div class="block-el highlight-box" id="blockHighlight">
+                  <div class="hl-label" id="hlLabelOut"></div>
+                  <div class="hl-text" id="hlTextOut"></div>
+                </div>
+                <!-- VERSUS -->
+                <div class="block-el" id="blockVersus">
+                  <div class="versus-row">
+                    <div class="versus-col">
+                      <div class="versus-title" id="versusLeftTitleOut"></div>
+                      <div class="versus-body" id="versusLeftBodyOut"></div>
+                    </div>
+                    <div class="versus-col">
+                      <div class="versus-title" id="versusRightTitleOut"></div>
+                      <div class="versus-body" id="versusRightBodyOut"></div>
+                    </div>
+                  </div>
+                </div>
+                <!-- FACTCHECK -->
+                <div class="block-el" id="blockFactcheck">
+                  <div class="fc-claim" id="fcClaimOut"></div>
+                  <div class="fc-verdict" id="fcVerdictOut"></div>
+                  <ul class="fc-evidence" id="fcEvidenceOut"></ul>
+                </div>
+                <!-- VERIFY PILL -->
+                <div class="fc-verify-pill" id="fcVerifyPill">
+                  <span id="fcVerifyIcon">✓</span>
+                  <span id="fcVerifyText"></span>
+                </div>
               </div>
             </div>
             <div class="divider" id="dividerOut"></div>
             <div class="byline" id="bylineOut"></div>
+            <div class="source-bar" id="sourceBarOut"></div>
             <div class="brand-mark" id="brandMarkOut"></div>
           </div>
+          <div class="page-number-mark show" id="pageNumberOut">01 / 01</div>
         </div>
       </div>
         </div>
@@ -435,28 +623,92 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;hei
     </div>
 
     <div id="right-panel">
-      <div id="rightTabs">
-        <button type="button" class="active" data-panel="writing">글쓰기</button>
+      <div id="rightTabs" style="display:none;">
+        <button type="button" class="active" data-panel="writing">내용</button>
+        <button type="button" data-panel="blocks">블록</button>
         <button type="button" data-panel="image">이미지</button>
         <button type="button" data-panel="textstyle">글자</button>
-        <button type="button" data-panel="template">스타일</button>
+        <button type="button" data-panel="template">테마</button>
         <button type="button" data-panel="overlay">배지</button>
         <button type="button" data-panel="save">저장</button>
       </div>
+      <div id="rightPanelHeader">
+        <span id="rightPanelTitle">내용</span>
+        <button type="button" id="btnBackWriting">← 내용으로</button>
+      </div>
       <div id="rightBody">
         <div class="ctx-panel active" id="panel-writing">
-<div class="section-label">텍스트 내용</div>
-      <div class="field"><div class="field-label">킥커</div><textarea id="kickerText" rows="1">GLOBAL POLITICS</textarea></div>
+<div class="section-label">카드 타입</div>
+      <div class="panel-subnote">타입에 따라 블록 구성이 바뀝니다.</div>
+      <div class="field"><div class="type-chip-row" id="slideTypeRow">
+          <div class="type-chip active" data-type="cover">커버</div>
+          <div class="type-chip" data-type="content">본문</div>
+          <div class="type-chip" data-type="stat">통계</div>
+          <div class="type-chip" data-type="quote">인용</div>
+          <div class="type-chip" data-type="summary">요약</div>
+          <div class="type-chip" data-type="factcheck">팩트체크</div>
+          <div class="type-chip" data-type="versus">대결</div>
+          <div class="type-chip" data-type="default">기본</div>
+        </div></div>
+<div class="section-label" style="margin-top:14px;">기본 텍스트</div>
+      <div class="field"><div class="field-label">킥커 / 카테고리</div><textarea id="kickerText" rows="1">GLOBAL POLITICS</textarea></div>
       <div class="field"><div class="field-label">핸들 / 계정</div><textarea id="handleText" rows="1">@west150daily</textarea></div>
-      <div class="field"><div class="field-label">헤드라인</div><textarea id="headlineText" rows="3">트럼프,
+      <div class="field"><div class="field-label">헤드라인 / 제목</div><textarea id="headlineText" rows="3">트럼프,
 EU에 "큰 대가"
 경고</textarea></div>
       <div class="field"><div class="field-label">서브타이틀 · 국문</div><textarea id="subKrText" rows="2">EU 빅테크 과징금 보복 예고,
 한국 디지털 규제도 영향권 주목</textarea></div>
-      <div class="field"><div class="field-label">서브타이틀 · 영문</div><textarea id="subEnText" rows="2">TRUMP WARNS EU OVER GOOGLE FINE,
+      <div class="field"><div class="field-label">서브타이틀 · 영문 / 본문</div><textarea id="subEnText" rows="2">TRUMP WARNS EU OVER GOOGLE FINE,
 SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
       <div class="field"><div class="field-label">매체 / 바이라인</div><textarea id="bylineText" rows="1">조선일보  |  김은중 기자  |  2026.07.25 오전 5:14</textarea></div>
-</div><div class="ctx-panel" id="panel-image">
+      <div class="field" style="margin-top:8px;">
+        <label style="display:flex;align-items:center;gap:10px;font-size:12px;color:#c8c8d0;cursor:pointer;">
+          <input type="checkbox" id="showPageNumber" checked style="width:16px;height:16px;accent-color:var(--accent);">
+          카드에 페이지 번호 표시 (예: 01 / 03)
+        </label>
+      </div>
+</div>
+<div class="ctx-panel" id="panel-blocks">
+<div class="section-label">블록 표시</div>
+      <div class="panel-subnote">타입 기본값 + 수동 토글</div>
+      <div class="field block-toggle-row">
+        <label><input type="checkbox" id="blkBullets"> 불릿 포인트</label>
+        <label><input type="checkbox" id="blkHighlight"> 하이라이트 박스</label>
+        <label><input type="checkbox" id="blkStat"> 통계 숫자</label>
+        <label><input type="checkbox" id="blkQuote"> 인용 화자</label>
+        <label><input type="checkbox" id="blkVersus"> 대결(좌·우)</label>
+        <label><input type="checkbox" id="blkFactcheck"> 팩트체크 본문</label>
+        <label><input type="checkbox" id="blkSource"> 출처 인용</label>
+        <label><input type="checkbox" id="blkVerify"> 검증 배지</label>
+      </div>
+<div class="section-label" style="margin-top:14px;">불릿 포인트</div>
+      <div class="field"><div class="field-label">한 줄에 하나씩</div><textarea id="bulletsText" rows="4" placeholder="첫 번째&#10;두 번째"></textarea></div>
+<div class="section-label" style="margin-top:14px;">하이라이트 박스</div>
+      <div class="field"><div class="field-label">라벨</div><textarea id="hlLabelText" rows="1">KEY TAKEAWAY</textarea></div>
+      <div class="field"><div class="field-label">내용</div><textarea id="hlBodyText" rows="2">핵심 메시지를 입력하세요</textarea></div>
+<div class="section-label" style="margin-top:14px;">통계</div>
+      <div class="field"><div class="field-label">큰 숫자</div><textarea id="statValueText" rows="1">$3,800억</textarea></div>
+      <div class="field"><div class="field-label">설명 라벨</div><textarea id="statLabelText" rows="1">2027년 글로벌 AI 반도체 예상 시장 규모</textarea></div>
+      <div class="field"><div class="field-label">비교 / 출처</div><textarea id="statCompareText" rows="1">전년 대비 420% 폭증</textarea></div>
+<div class="section-label" style="margin-top:14px;">인용 메타</div>
+      <div class="field"><div class="field-label">화자</div><textarea id="quoteSpeakerText" rows="1">헬레나 보스</textarea></div>
+      <div class="field"><div class="field-label">직함 / 소속</div><textarea id="quoteRoleText" rows="1">MIT 인공지능 연구소 수석연구원</textarea></div>
+<div class="section-label" style="margin-top:14px;">대결 (Versus)</div>
+      <div class="field"><div class="field-label">왼쪽 제목</div><textarea id="versusLeftTitleText" rows="1">내연기관</textarea></div>
+      <div class="field"><div class="field-label">왼쪽 내용</div><textarea id="versusLeftBodyText" rows="3">총합: 260g CO₂/km</textarea></div>
+      <div class="field"><div class="field-label">오른쪽 제목</div><textarea id="versusRightTitleText" rows="1">전기차 (BEV)</textarea></div>
+      <div class="field"><div class="field-label">오른쪽 내용</div><textarea id="versusRightBodyText" rows="3">총합: 110g CO₂/km (-58%)</textarea></div>
+<div class="section-label" style="margin-top:14px;">팩트체크</div>
+      <div class="field"><div class="field-label">검증 대상 주장</div><textarea id="fcClaimText" rows="2">“전기차는 배터리 제조 탄소 때문에 친환경이 아니다.”</textarea></div>
+      <div class="field"><div class="field-label">판정</div><textarea id="fcVerdictText" rows="1">사실 아님 (FALSE)</textarea></div>
+      <div class="field"><div class="field-label">근거 (줄바꿈)</div><textarea id="fcEvidenceText" rows="3">제조 탄소는 1.5~2만 km에서 상쇄
+수명 주기 기준 55~70% 감축
+재활용으로 추가 절감</textarea></div>
+<div class="section-label" style="margin-top:14px;">출처 · 검증</div>
+      <div class="field"><div class="field-label">출처 문구</div><textarea id="sourceText" rows="1">Source: Gartner Global Tech Outlook 2026</textarea></div>
+      <div class="field"><div class="field-label">검증 기관 라벨</div><textarea id="verifyText" rows="1">SNU 팩트체크 · 교차 검증 완료</textarea></div>
+</div>
+<div class="ctx-panel" id="panel-image">
 <div class="section-label">배경 이미지</div>
       <div class="field">
         <label class="upload-btn" for="fileInput">📷 사진 업로드</label>
@@ -485,7 +737,38 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
         <input type="range" id="scrimRange" min="0" max="90" step="1" value="55">
       </div>
 </div><div class="ctx-panel" id="panel-textstyle">
-<div class="section-label">전체 폰트 일괄 적용</div>
+<div class="section-label">스마트 오토핏 (Auto Layout)</div>
+      <div class="field" style="margin-bottom:10px;">
+        <label style="display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px;color:#c8c8d0;cursor:pointer;">
+          <span style="display:flex;align-items:center;gap:8px;">
+            <input type="checkbox" id="autoFitToggle" checked style="width:18px;height:18px;accent-color:var(--accent);">
+            Auto Fit
+          </span>
+          <span id="autoFitBadge" style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;background:rgba(224,51,76,.18);color:var(--accent);">ON</span>
+        </label>
+      </div>
+      <div class="field">
+        <div class="field-label">밀도 모드</div>
+        <div class="chip-row" id="autoFitModeRow">
+          <div class="chip active" data-mode="smart">스마트</div>
+          <div class="chip" data-mode="spacious">여유</div>
+          <div class="chip" data-mode="balanced">균형</div>
+          <div class="chip" data-mode="compact">압축</div>
+        </div>
+      </div>
+      <div class="field" style="background:var(--secondary);border:1px solid var(--border);border-radius:4px;padding:10px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <span style="font-size:10px;color:var(--sub);">현재 상태</span>
+          <span id="autoFitStatus" style="font-size:11px;font-weight:600;color:var(--text);">표준 균형</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:10px;color:var(--sub);">적합도</span>
+          <span id="autoFitScore" style="font-size:11px;font-weight:700;color:var(--accent);">100%</span>
+        </div>
+      </div>
+      <button type="button" class="btn" id="btnAutoFitAll" style="margin-top:10px;">⟳ 지금 오토핏 적용</button>
+      <div class="upload-hint">글자 양·줄 수·카드 규격으로 밀도를 계산해 헤드라인·서브 크기를 자동 조절합니다. (참고: 스마트 레이아웃)</div>
+      <div class="section-label" style="margin-top:16px;">전체 폰트 일괄 적용</div>
       <div class="field"><div class="field-label">모든 글자에 한번에 적용</div><select id="allFontSelect"></select></div>
       <div class="section-label" style="margin-top:16px;">요소별 스타일</div>
       <div id="textStyleAccordion">
@@ -524,7 +807,8 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
           <div class="acc-body">
             <div class="row2"><div class="field"><div class="field-label">폰트</div><select id="headlineFont"></select></div><div class="field"><div class="field-label">굵기</div><select id="headlineWeight"></select></div></div>
             <div class="field"><div class="field-label">크기 <span class="val" id="headlineSizeVal">92px</span></div><input type="range" id="headlineSize" min="30" max="220" value="92"></div>
-            <div class="field"><div class="field-label">색상</div><input type="color" class="color-input" id="headlineColor" value="#ffffff"></div>
+            <button type="button" class="btn btn-secondary" id="btnAutoFitHeadline" style="margin-top:0;padding:7px;font-size:11px;">⟳ 헤드라인 오토핏</button>
+            <div class="field" style="margin-top:10px;"><div class="field-label">색상</div><input type="color" class="color-input" id="headlineColor" value="#ffffff"></div>
           </div>
         </div>
         <div class="acc-item" data-acc-item>
@@ -532,7 +816,8 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
           <div class="acc-body">
             <div class="row2"><div class="field"><div class="field-label">폰트</div><select id="subKrFont"></select></div><div class="field"><div class="field-label">굵기</div><select id="subKrWeight"></select></div></div>
             <div class="field"><div class="field-label">크기 <span class="val" id="subKrSizeVal">34px</span></div><input type="range" id="subKrSize" min="14" max="80" value="34"></div>
-            <div class="field"><div class="field-label">색상</div><input type="color" class="color-input" id="subKrColor" value="#d4d4da"></div>
+            <button type="button" class="btn btn-secondary" id="btnAutoFitSubKr" style="margin-top:0;padding:7px;font-size:11px;">⟳ 국문 서브 오토핏</button>
+            <div class="field" style="margin-top:10px;"><div class="field-label">색상</div><input type="color" class="color-input" id="subKrColor" value="#d4d4da"></div>
           </div>
         </div>
         <div class="acc-item" data-acc-item>
@@ -540,7 +825,8 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
           <div class="acc-body">
             <div class="row2"><div class="field"><div class="field-label">폰트</div><select id="subEnFont"></select></div><div class="field"><div class="field-label">굵기</div><select id="subEnWeight"></select></div></div>
             <div class="field"><div class="field-label">크기 <span class="val" id="subEnSizeVal">24px</span></div><input type="range" id="subEnSize" min="10" max="60" value="24"></div>
-            <div class="field"><div class="field-label">색상</div><input type="color" class="color-input" id="subEnColor" value="#8f8f9a"></div>
+            <button type="button" class="btn btn-secondary" id="btnAutoFitSubEn" style="margin-top:0;padding:7px;font-size:11px;">⟳ 영문 서브 오토핏</button>
+            <div class="field" style="margin-top:10px;"><div class="field-label">색상</div><input type="color" class="color-input" id="subEnColor" value="#8f8f9a"></div>
           </div>
         </div>
         <div class="acc-item" data-acc-item>
@@ -707,14 +993,98 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
     setTimeout(()=>toastEl.classList.remove('show'),2000);
   }
 
-  document.querySelectorAll('#rightTabs button').forEach(item=>{
-    item.addEventListener('click',()=>{
-      document.querySelectorAll('#rightTabs button').forEach(t=>t.classList.remove('active'));
-      document.querySelectorAll('.ctx-panel').forEach(p=>p.classList.remove('active'));
-      item.classList.add('active');
-      const panel = document.getElementById('panel-'+item.dataset.panel);
-      if(panel) panel.classList.add('active');
-      setTimeout(fitScale,50);
+  const PANEL_TITLES = {
+    writing: '내용',
+    blocks: '블록',
+    image: '이미지',
+    textstyle: '글자',
+    template: '테마',
+    overlay: '배지',
+    save: '저장'
+  };
+  let currentPanelId = 'writing';
+
+  function switchPanel(panelId){
+    if(!PANEL_TITLES[panelId]) return;
+    currentPanelId = panelId;
+    document.querySelectorAll('.ctx-panel').forEach(p=>p.classList.remove('active'));
+    const panel = document.getElementById('panel-'+panelId);
+    if(panel) panel.classList.add('active');
+    document.querySelectorAll('#rightTabs button').forEach(t=>{
+      t.classList.toggle('active', t.dataset.panel === panelId);
+    });
+    const titleEl = document.getElementById('rightPanelTitle');
+    if(titleEl) titleEl.textContent = PANEL_TITLES[panelId] || panelId;
+    const backBtn = document.getElementById('btnBackWriting');
+    if(backBtn) backBtn.classList.toggle('show', panelId !== 'writing');
+    document.querySelectorAll('.menu-item').forEach(m=>{
+      m.classList.toggle('active-panel', m.dataset.menu === panelId);
+    });
+    closeAllMenus();
+    setTimeout(fitScale,50);
+  }
+
+  document.getElementById('btnBackWriting')?.addEventListener('click',()=>switchPanel('writing'));
+
+  /* ===== Top menu bar ===== */
+  function closeAllMenus(){
+    document.querySelectorAll('.menu-item').forEach(m=>m.classList.remove('open'));
+  }
+  document.querySelectorAll('.menu-item > .menu-label').forEach(label=>{
+    label.addEventListener('click',e=>{
+      e.stopPropagation();
+      const item = label.closest('.menu-item');
+      const menuId = item.dataset.menu;
+      if(['writing','blocks','image','textstyle','template','overlay'].includes(menuId)){
+        switchPanel(menuId);
+        return;
+      }
+      const isOpen = item.classList.contains('open');
+      closeAllMenus();
+      if(!isOpen) item.classList.add('open');
+    });
+    label.addEventListener('mouseenter',()=>{
+      const anyOpen = document.querySelector('.menu-item.open');
+      if(!anyOpen) return;
+      const item = label.closest('.menu-item');
+      const menuId = item.dataset.menu;
+      if(['writing','blocks','image','textstyle','template','overlay'].includes(menuId)) return;
+      closeAllMenus();
+      item.classList.add('open');
+    });
+  });
+  document.addEventListener('click',e=>{
+    if(!e.target.closest('.menu-item')) closeAllMenus();
+  });
+  document.addEventListener('keydown',e=>{
+    if(e.key === 'Escape') closeAllMenus();
+  });
+  document.querySelectorAll('.menu-dropdown button[data-action]').forEach(btn=>{
+    btn.addEventListener('click',e=>{
+      e.stopPropagation();
+      const action = btn.dataset.action;
+      closeAllMenus();
+      if(action === 'export-current'){
+        switchPanel('save');
+        document.getElementById('exportBtn')?.click();
+      } else if(action === 'export-all'){
+        switchPanel('save');
+        document.getElementById('exportAllBtn')?.click();
+      } else if(action === 'reset'){
+        document.getElementById('resetBtn')?.click();
+      } else if(action === 'fit'){
+        fitScale();
+      } else if(action === 'zoom-in'){
+        if(typeof previewScale !== 'undefined'){
+          previewScale = Math.min(1.2, previewScale + 0.05);
+          applyPreviewScale();
+        }
+      } else if(action === 'zoom-out'){
+        if(typeof previewScale !== 'undefined'){
+          previewScale = Math.max(0.1, previewScale - 0.05);
+          applyPreviewScale();
+        }
+      }
     });
   });
 
@@ -898,6 +1268,8 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
     card.classList.add('size-'+sz.id);
     if(sizeRow) sizeRow.querySelectorAll('.chip').forEach(c=>c.classList.toggle('active',c.dataset.size===id));
     setTimeout(fitScale,50);
+    // re-run smart auto-fit for new aspect ratio
+    setTimeout(()=>{ if(typeof autoFitEnabled!=='undefined' && autoFitEnabled && typeof autoFitAll==='function') autoFitAll(true); }, 80);
   }
   CARD_SIZES.forEach(sz=>{
     const c=document.createElement('div');
@@ -1005,6 +1377,35 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
       subKr:{font:"'Nanum Myeongjo', serif",weight:'400',color:'#dcdcdc'},
       subEn:{font:"'Pretendard', sans-serif",weight:'500',color:'#8eb4d0'},
       byline:{font:"'Nanum Myeongjo', serif",weight:'400',color:'#a3a3a3'}},
+    /* ===== 참고 스튜디오 테마 추가 ===== */
+    {id:'pages',name:'Apple Pages',accent:'#0071E3',toneIndex:2,scrimIndex:3,scrimAmount:55,divider:true,badge:false,masthead:false,brandMark:'',layout:'cover',
+      kicker:{font:"'Pretendard', sans-serif",weight:'700',color:'#0071E3'},
+      handle:{font:"'Pretendard', sans-serif",weight:'500',color:'#c0c0c0'},
+      headline:{font:"'Pretendard', sans-serif",weight:'800',color:'#ffffff'},
+      subKr:{font:"'Pretendard', sans-serif",weight:'500',color:'#e0e0e0'},
+      subEn:{font:"'Pretendard', sans-serif",weight:'500',color:'#8eb4e8'},
+      byline:{font:"'Pretendard', sans-serif",weight:'500',color:'#a3a3a3'}},
+    {id:'darklux',name:'Night Luxury',accent:'#EAB308',toneIndex:0,scrimIndex:3,scrimAmount:70,divider:false,badge:false,masthead:false,brandMark:'',layout:'cover',
+      kicker:{font:"'Nanum Myeongjo', serif",weight:'700',color:'#EAB308'},
+      handle:{font:"'Pretendard', sans-serif",weight:'500',color:'#c9c9c9'},
+      headline:{font:"'Nanum Myeongjo', serif",weight:'900',color:'#ffffff'},
+      subKr:{font:"'Nanum Myeongjo', serif",weight:'400',color:'#e8e0c8'},
+      subEn:{font:"'Pretendard', sans-serif",weight:'600',color:'#EAB308'},
+      byline:{font:"'Pretendard', sans-serif",weight:'500',color:'#a3a3a3'}},
+    {id:'breaking24',name:'24H Live News',accent:'#E11D48',toneIndex:0,scrimIndex:0,scrimAmount:70,divider:false,badge:true,masthead:false,brandMark:'',layout:'default',
+      kicker:{font:"'Pretendard', sans-serif",weight:'800',color:'#ffffff'},
+      handle:{font:"'Pretendard', sans-serif",weight:'600',color:'#e6e6e6'},
+      headline:{font:"'Black Han Sans', sans-serif",weight:'400',color:'#ffffff'},
+      subKr:{font:"'Pretendard', sans-serif",weight:'600',color:'#f0f0f0'},
+      subEn:{font:"'Pretendard', sans-serif",weight:'700',color:'#ff9db0'},
+      byline:{font:"'Pretendard', sans-serif",weight:'600',color:'#d0d0d0'}},
+    {id:'threads',name:'Threads / IG',accent:'#7C3AED',toneIndex:2,scrimIndex:3,scrimAmount:60,divider:false,badge:false,masthead:false,brandMark:'',layout:'cover',
+      kicker:{font:"'Pretendard', sans-serif",weight:'800',color:'#7C3AED'},
+      handle:{font:"'Pretendard', sans-serif",weight:'500',color:'#c9c9c9'},
+      headline:{font:"'Pretendard', sans-serif",weight:'900',color:'#ffffff'},
+      subKr:{font:"'Pretendard', sans-serif",weight:'500',color:'#e6e6e6'},
+      subEn:{font:"'Pretendard', sans-serif",weight:'600',color:'#c4b5fd'},
+      byline:{font:"'Pretendard', sans-serif",weight:'500',color:'#a3a3a3'}},
   ];
   /* ===== 인스타·스레드 전용 뉴스 브랜드 5종 (정사각/4:5 규격에 최적화) ===== */
   const SOCIAL_TEMPLATES=[
@@ -1213,6 +1614,345 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
   bindText('subEn','subEnOut');
   bindText('byline','bylineOut');
 
+  /* ===== Slide types & content blocks ===== */
+  let currentSlideType = 'cover';
+  const TYPE_DEFAULT_BLOCKS = {
+    cover:     { bullets:false, highlight:false, stat:false, quote:false, versus:false, factcheck:false, source:false, verify:false },
+    content:   { bullets:true,  highlight:true,  stat:false, quote:false, versus:false, factcheck:false, source:true,  verify:false },
+    stat:      { bullets:false, highlight:true,  stat:true,  quote:false, versus:false, factcheck:false, source:true,  verify:false },
+    quote:     { bullets:false, highlight:false, stat:false, quote:true,  versus:false, factcheck:false, source:false, verify:false },
+    summary:   { bullets:true,  highlight:true,  stat:false, quote:false, versus:false, factcheck:false, source:false, verify:false },
+    factcheck: { bullets:false, highlight:false, stat:false, quote:false, versus:false, factcheck:true,  source:true,  verify:true  },
+    versus:    { bullets:false, highlight:false, stat:false, quote:false, versus:true,  factcheck:false, source:true,  verify:false },
+    default:   { bullets:false, highlight:false, stat:false, quote:false, versus:false, factcheck:false, source:false, verify:false },
+  };
+  let blockFlags = { ...TYPE_DEFAULT_BLOCKS.cover };
+
+  function setBlockFlagUI(){
+    const map = {
+      blkBullets:'bullets', blkHighlight:'highlight', blkStat:'stat', blkQuote:'quote',
+      blkVersus:'versus', blkFactcheck:'factcheck', blkSource:'source', blkVerify:'verify'
+    };
+    Object.keys(map).forEach(id=>{
+      const el = document.getElementById(id);
+      if(el) el.checked = !!blockFlags[map[id]];
+    });
+  }
+
+  function renderBullets(){
+    const ul = document.getElementById('bulletListOut');
+    if(!ul) return;
+    ul.innerHTML = '';
+    const lines = (document.getElementById('bulletsText')?.value||'').split('\n').map(s=>s.trim()).filter(Boolean);
+    lines.forEach(line=>{
+      const li = document.createElement('li');
+      li.textContent = line;
+      ul.appendChild(li);
+    });
+  }
+  function renderFcEvidence(){
+    const ul = document.getElementById('fcEvidenceOut');
+    if(!ul) return;
+    ul.innerHTML = '';
+    const lines = (document.getElementById('fcEvidenceText')?.value||'').split('\n').map(s=>s.trim()).filter(Boolean);
+    lines.forEach(line=>{
+      const li = document.createElement('li');
+      li.textContent = line;
+      ul.appendChild(li);
+    });
+  }
+  function renderBlocks(){
+    const show = (id, on)=> document.getElementById(id)?.classList.toggle('show', !!on);
+    show('blockBullets', blockFlags.bullets);
+    show('blockHighlight', blockFlags.highlight);
+    show('blockStat', blockFlags.stat);
+    show('blockQuoteMeta', blockFlags.quote);
+    show('blockVersus', blockFlags.versus);
+    show('blockFactcheck', blockFlags.factcheck);
+    show('sourceBarOut', blockFlags.source);
+    show('fcVerifyPill', blockFlags.verify);
+
+    if(blockFlags.bullets) renderBullets();
+    if(blockFlags.highlight){
+      document.getElementById('hlLabelOut').textContent = document.getElementById('hlLabelText')?.value||'';
+      document.getElementById('hlTextOut').textContent = document.getElementById('hlBodyText')?.value||'';
+    }
+    if(blockFlags.stat){
+      document.getElementById('statValueOut').textContent = document.getElementById('statValueText')?.value||'';
+      document.getElementById('statLabelOut').textContent = document.getElementById('statLabelText')?.value||'';
+      document.getElementById('statCompareOut').textContent = document.getElementById('statCompareText')?.value||'';
+    }
+    if(blockFlags.quote){
+      document.getElementById('quoteSpeakerOut').textContent = document.getElementById('quoteSpeakerText')?.value||'';
+      document.getElementById('quoteRoleOut').textContent = document.getElementById('quoteRoleText')?.value||'';
+    }
+    if(blockFlags.versus){
+      document.getElementById('versusLeftTitleOut').textContent = document.getElementById('versusLeftTitleText')?.value||'';
+      document.getElementById('versusLeftBodyOut').textContent = document.getElementById('versusLeftBodyText')?.value||'';
+      document.getElementById('versusRightTitleOut').textContent = document.getElementById('versusRightTitleText')?.value||'';
+      document.getElementById('versusRightBodyOut').textContent = document.getElementById('versusRightBodyText')?.value||'';
+    }
+    if(blockFlags.factcheck){
+      document.getElementById('fcClaimOut').textContent = document.getElementById('fcClaimText')?.value||'';
+      document.getElementById('fcVerdictOut').textContent = document.getElementById('fcVerdictText')?.value||'';
+      renderFcEvidence();
+    }
+    if(blockFlags.source){
+      document.getElementById('sourceBarOut').textContent = document.getElementById('sourceText')?.value||'';
+    }
+    if(blockFlags.verify){
+      document.getElementById('fcVerifyText').textContent = document.getElementById('verifyText')?.value||'';
+    }
+  }
+
+  function setSlideType(type, applyDefaults){
+    currentSlideType = type || 'default';
+    document.querySelectorAll('#slideTypeRow .type-chip').forEach(c=>{
+      c.classList.toggle('active', c.dataset.type === currentSlideType);
+    });
+    if(applyDefaults !== false){
+      blockFlags = { ...(TYPE_DEFAULT_BLOCKS[currentSlideType] || TYPE_DEFAULT_BLOCKS.default) };
+      setBlockFlagUI();
+    }
+    // layout hint: quote type uses quote layout if available
+    if(currentSlideType === 'quote' && typeof applyLayout === 'function'){
+      // soft preference only when switching type
+    }
+    renderBlocks();
+  }
+
+  document.querySelectorAll('#slideTypeRow .type-chip').forEach(chip=>{
+    chip.addEventListener('click', ()=> setSlideType(chip.dataset.type, true));
+  });
+  const blockToggleMap = {
+    blkBullets:'bullets', blkHighlight:'highlight', blkStat:'stat', blkQuote:'quote',
+    blkVersus:'versus', blkFactcheck:'factcheck', blkSource:'source', blkVerify:'verify'
+  };
+  Object.keys(blockToggleMap).forEach(id=>{
+    document.getElementById(id)?.addEventListener('change', e=>{
+      blockFlags[blockToggleMap[id]] = e.target.checked;
+      renderBlocks();
+    });
+  });
+  [
+    'bulletsText','hlLabelText','hlBodyText','statValueText','statLabelText','statCompareText',
+    'quoteSpeakerText','quoteRoleText','versusLeftTitleText','versusLeftBodyText',
+    'versusRightTitleText','versusRightBodyText','fcClaimText','fcVerdictText','fcEvidenceText',
+    'sourceText','verifyText'
+  ].forEach(id=>{
+    document.getElementById(id)?.addEventListener('input', renderBlocks);
+  });
+  setBlockFlagUI();
+  renderBlocks();
+
+  /* ===== Smart Auto-Fit (density-based, inspired by editorial auto layout) ===== */
+  let autoFitEnabled = true;
+  let autoFitMode = 'smart'; // smart | spacious | balanced | compact
+
+  // Base sizes per density × card size
+  const DENSITY_SIZES = {
+    story: {
+      spacious:     { headline: 110, subKr: 38, subEn: 26 },
+      balanced:     { headline: 92,  subKr: 34, subEn: 24 },
+      compact:      { headline: 72,  subKr: 28, subEn: 20 },
+      'ultra-dense':{ headline: 56,  subKr: 22, subEn: 16 },
+    },
+    feed: {
+      spacious:     { headline: 88,  subKr: 32, subEn: 22 },
+      balanced:     { headline: 74,  subKr: 28, subEn: 20 },
+      compact:      { headline: 60,  subKr: 24, subEn: 17 },
+      'ultra-dense':{ headline: 48,  subKr: 20, subEn: 14 },
+    },
+    square: {
+      spacious:     { headline: 78,  subKr: 30, subEn: 20 },
+      balanced:     { headline: 66,  subKr: 26, subEn: 18 },
+      compact:      { headline: 54,  subKr: 22, subEn: 16 },
+      'ultra-dense':{ headline: 44,  subKr: 18, subEn: 14 },
+    },
+  };
+  const SIZE_BOUNDS = {
+    headline: { min: 30, max: 220, maxHeightRatio: 0.40 },
+    subKr:    { min: 14, max: 80,  maxHeightRatio: 0.16 },
+    subEn:    { min: 10, max: 60,  maxHeightRatio: 0.12 },
+  };
+
+  function calcVisualLoad(){
+    const title = document.getElementById('headlineText')?.value || '';
+    const subKr = document.getElementById('subKrText')?.value || '';
+    const subEn = document.getElementById('subEnText')?.value || '';
+    const titleLines = (title.match(/\n/g)||[]).length + 1;
+    const titleChars = title.length;
+    const subChars = subKr.length + subEn.length;
+    let vMul = 1.0;
+    if(currentSizeId === 'story') vMul = 1.35;
+    else if(currentSizeId === 'feed') vMul = 1.0;
+    else if(currentSizeId === 'square') vMul = 0.82;
+    const load = (
+      (titleLines > 1 ? titleLines * 28 : titleChars * 0.85) +
+      subChars * 0.45 +
+      (titleChars > 40 ? 30 : 0) +
+      (subChars > 60 ? 25 : 0)
+    ) / vMul;
+    return load;
+  }
+
+  function resolveDensity(load){
+    if(autoFitMode === 'spacious') return 'spacious';
+    if(autoFitMode === 'balanced') return 'balanced';
+    if(autoFitMode === 'compact') return 'compact';
+    // smart
+    if(load < 55) return 'spacious';
+    if(load < 120) return 'balanced';
+    if(load < 190) return 'compact';
+    return 'ultra-dense';
+  }
+
+  function densityLabel(d){
+    return ({
+      spacious: '여유로운 여백 (Spacious)',
+      balanced: '표준 균형 (Balanced)',
+      compact: '밀도 압축 (Compact)',
+      'ultra-dense': '고밀도 정렬 (Ultra-Dense)',
+    })[d] || d;
+  }
+
+  function getContentWidth(){
+    const sz = CARD_SIZES.find(s=>s.id===currentSizeId)||CARD_SIZES[0];
+    const pad = currentSizeId==='square' ? 108 : (currentSizeId==='feed' ? 124 : 144);
+    return Math.max(200, sz.w - pad);
+  }
+  function getCardHeight(){
+    const sz = CARD_SIZES.find(s=>s.id===currentSizeId)||CARD_SIZES[0];
+    return sz.h;
+  }
+
+  function refineSizeToFit(prefix, targetSize){
+    const bounds = SIZE_BOUNDS[prefix];
+    if(!bounds) return targetSize;
+    const outId = prefix==='headline'?'headlineOut':(prefix==='subKr'?'subKrOut':'subEnOut');
+    const out = document.getElementById(outId);
+    if(!out) return targetSize;
+    const text = out.textContent || '';
+    if(!text.trim()) return targetSize;
+    const maxW = getContentWidth();
+    const maxH = Math.round(getCardHeight() * bounds.maxHeightRatio);
+    const measure = document.createElement('div');
+    measure.style.cssText = [
+      'position:absolute','left:-99999px','top:0','visibility:hidden',
+      'white-space:pre-wrap','word-break:keep-all',
+      'line-height:'+(prefix==='headline'?'1.16':'1.45'),
+      'width:'+maxW+'px','font-family:'+(out.style.fontFamily||'Pretendard,sans-serif'),
+      'font-weight:'+(out.style.fontWeight||'700'),'padding:0','margin:0','border:none'
+    ].join(';');
+    measure.textContent = text;
+    document.body.appendChild(measure);
+    let lo = bounds.min, hi = Math.min(bounds.max, targetSize), best = bounds.min;
+    while(lo <= hi){
+      const mid = (lo + hi) >> 1;
+      measure.style.fontSize = mid + 'px';
+      if(measure.scrollWidth <= maxW + 2 && measure.scrollHeight <= maxH){
+        best = mid; lo = mid + 1;
+      } else {
+        hi = mid - 1;
+      }
+    }
+    document.body.removeChild(measure);
+    return best;
+  }
+
+  function applySize(prefix, px){
+    const sizeEl = document.getElementById(prefix+'Size');
+    const sizeVal = document.getElementById(prefix+'SizeVal');
+    const outId = prefix==='headline'?'headlineOut':(prefix==='subKr'?'subKrOut':'subEnOut');
+    const out = document.getElementById(outId);
+    if(sizeEl) sizeEl.value = px;
+    if(sizeVal) sizeVal.textContent = px + 'px';
+    if(out) out.style.fontSize = px + 'px';
+  }
+
+  function updateAutoFitUI(density, score){
+    const status = document.getElementById('autoFitStatus');
+    const scoreEl = document.getElementById('autoFitScore');
+    const badge = document.getElementById('autoFitBadge');
+    if(status) status.textContent = densityLabel(density);
+    if(scoreEl) scoreEl.textContent = score + '%';
+    if(badge){
+      badge.textContent = autoFitEnabled ? 'ON' : 'OFF';
+      badge.style.background = autoFitEnabled ? 'rgba(224,51,76,.18)' : 'rgba(100,100,110,.25)';
+      badge.style.color = autoFitEnabled ? 'var(--accent)' : 'var(--sub)';
+    }
+  }
+
+  function autoFitAll(silent){
+    if(typeof currentSizeId === 'undefined') return;
+    const load = calcVisualLoad();
+    const density = resolveDensity(load);
+    let score = 100;
+    if(load > 220) score = Math.max(70, Math.round(100 - (load - 220) * 0.25));
+    else if(load < 40) score = 96;
+
+    const sizeKey = (currentSizeId === 'feed' || currentSizeId === 'square') ? currentSizeId : 'story';
+    const presets = (DENSITY_SIZES[sizeKey] || DENSITY_SIZES.story)[density] || DENSITY_SIZES.story.balanced;
+
+    const results = {};
+    ['headline','subKr','subEn'].forEach(p=>{
+      // start from density preset, then clamp so text never overflows
+      const refined = refineSizeToFit(p, presets[p]);
+      applySize(p, refined);
+      results[p] = refined;
+    });
+
+    updateAutoFitUI(density, score);
+    if(!silent){
+      showToast('오토핏 · '+densityLabel(density)+'  ·  H'+results.headline+' / K'+results.subKr+' / E'+results.subEn);
+    }
+    return results;
+  }
+
+  // Toggle
+  document.getElementById('autoFitToggle')?.addEventListener('change', e=>{
+    autoFitEnabled = e.target.checked;
+    updateAutoFitUI(resolveDensity(calcVisualLoad()), 100);
+    if(autoFitEnabled) autoFitAll();
+  });
+  // Mode chips
+  document.querySelectorAll('#autoFitModeRow .chip').forEach(chip=>{
+    chip.addEventListener('click', ()=>{
+      document.querySelectorAll('#autoFitModeRow .chip').forEach(c=>c.classList.remove('active'));
+      chip.classList.add('active');
+      autoFitMode = chip.dataset.mode || 'smart';
+      if(autoFitEnabled) autoFitAll();
+      else updateAutoFitUI(resolveDensity(calcVisualLoad()), 100);
+    });
+  });
+  document.getElementById('btnAutoFitAll')?.addEventListener('click', ()=>autoFitAll(false));
+  document.getElementById('btnAutoFitHeadline')?.addEventListener('click', ()=>{
+    const r = autoFitAll(true);
+    if(r) showToast('헤드라인 오토핏 → '+r.headline+'px');
+  });
+  document.getElementById('btnAutoFitSubKr')?.addEventListener('click', ()=>{
+    const r = autoFitAll(true);
+    if(r) showToast('국문 서브 오토핏 → '+r.subKr+'px');
+  });
+  document.getElementById('btnAutoFitSubEn')?.addEventListener('click', ()=>{
+    const r = autoFitAll(true);
+    if(r) showToast('영문 서브 오토핏 → '+r.subEn+'px');
+  });
+
+  // Auto-apply when text changes (debounced) if enabled
+  let _afTimer = null;
+  ['headlineText','subKrText','subEnText'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.addEventListener('input', ()=>{
+      if(!autoFitEnabled) return;
+      clearTimeout(_afTimer);
+      _afTimer = setTimeout(()=>autoFitAll(true), 280);
+    });
+  });
+  // Initial status
+  setTimeout(()=>{ if(autoFitEnabled) autoFitAll(true); else updateAutoFitUI(resolveDensity(calcVisualLoad()),100); }, 100);
+
   document.getElementById('dividerToggle').addEventListener('change',e=>{
     document.getElementById('dividerOut').style.display=e.target.checked?'block':'none';
   });
@@ -1417,6 +2157,28 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
         subEn:document.getElementById('subEnText').value,
         byline:document.getElementById('bylineText').value,
       },
+      slideType: currentSlideType,
+      showPageNumber: document.getElementById('showPageNumber')?.checked !== false,
+      blocks: { ...blockFlags },
+      blockTexts: {
+        bullets: document.getElementById('bulletsText')?.value||'',
+        hlLabel: document.getElementById('hlLabelText')?.value||'',
+        hlBody: document.getElementById('hlBodyText')?.value||'',
+        statValue: document.getElementById('statValueText')?.value||'',
+        statLabel: document.getElementById('statLabelText')?.value||'',
+        statCompare: document.getElementById('statCompareText')?.value||'',
+        quoteSpeaker: document.getElementById('quoteSpeakerText')?.value||'',
+        quoteRole: document.getElementById('quoteRoleText')?.value||'',
+        versusLeftTitle: document.getElementById('versusLeftTitleText')?.value||'',
+        versusLeftBody: document.getElementById('versusLeftBodyText')?.value||'',
+        versusRightTitle: document.getElementById('versusRightTitleText')?.value||'',
+        versusRightBody: document.getElementById('versusRightBodyText')?.value||'',
+        fcClaim: document.getElementById('fcClaimText')?.value||'',
+        fcVerdict: document.getElementById('fcVerdictText')?.value||'',
+        fcEvidence: document.getElementById('fcEvidenceText')?.value||'',
+        source: document.getElementById('sourceText')?.value||'',
+        verify: document.getElementById('verifyText')?.value||'',
+      },
       styles:fontTargets.reduce((acc,t)=>{
         acc[t]={
           font:document.getElementById(t+'Font').value,
@@ -1454,6 +2216,36 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
     document.getElementById('subKrText').value=data.texts.subKr;
     document.getElementById('subEnText').value=data.texts.subEn;
     document.getElementById('bylineText').value=data.texts.byline;
+
+    // slide type + blocks
+    currentSlideType = data.slideType || 'default';
+    document.querySelectorAll('#slideTypeRow .type-chip').forEach(c=>{
+      c.classList.toggle('active', c.dataset.type === currentSlideType);
+    });
+    const showPn = document.getElementById('showPageNumber');
+    if(showPn) showPn.checked = data.showPageNumber !== false;
+    blockFlags = Object.assign({}, TYPE_DEFAULT_BLOCKS.default, data.blocks || TYPE_DEFAULT_BLOCKS[currentSlideType] || {});
+    setBlockFlagUI();
+    const bt = data.blockTexts || {};
+    const setVal = (id,v)=>{ const el=document.getElementById(id); if(el && v!=null) el.value=v; };
+    setVal('bulletsText', bt.bullets);
+    setVal('hlLabelText', bt.hlLabel);
+    setVal('hlBodyText', bt.hlBody);
+    setVal('statValueText', bt.statValue);
+    setVal('statLabelText', bt.statLabel);
+    setVal('statCompareText', bt.statCompare);
+    setVal('quoteSpeakerText', bt.quoteSpeaker);
+    setVal('quoteRoleText', bt.quoteRole);
+    setVal('versusLeftTitleText', bt.versusLeftTitle);
+    setVal('versusLeftBodyText', bt.versusLeftBody);
+    setVal('versusRightTitleText', bt.versusRightTitle);
+    setVal('versusRightBodyText', bt.versusRightBody);
+    setVal('fcClaimText', bt.fcClaim);
+    setVal('fcVerdictText', bt.fcVerdict);
+    setVal('fcEvidenceText', bt.fcEvidence);
+    setVal('sourceText', bt.source);
+    setVal('verifyText', bt.verify);
+    renderBlocks();
 
     fontTargets.forEach(t=>{
       document.getElementById(t+'Font').value=data.styles[t].font;
@@ -1522,23 +2314,48 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
     templateRowSocial.querySelectorAll('.chip').forEach(c=>c.classList.toggle('active',c.dataset.tpl===currentTemplateId));
 
     setOverlayState(data.overlay || null);
+    updatePageNumberMark();
   }
+
+  const TYPE_LABELS = {
+    cover:'커버', content:'본문', stat:'통계', quote:'인용',
+    summary:'요약', factcheck:'팩트체크', versus:'대결', default:'기본'
+  };
+
+  function updatePageNumberMark(){
+    const el = document.getElementById('pageNumberOut');
+    const toggle = document.getElementById('showPageNumber');
+    if(!el) return;
+    const cur = String(currentPageIndex + 1).padStart(2, '0');
+    const total = String(Math.max(1, pages.length)).padStart(2, '0');
+    el.textContent = cur + ' / ' + total;
+    const on = toggle ? toggle.checked : true;
+    el.classList.toggle('show', on);
+  }
+
+  document.getElementById('showPageNumber')?.addEventListener('change', updatePageNumberMark);
 
   function renderPageStrip(){
     pageStrip.querySelectorAll('.page-item').forEach(c=>c.remove());
     pages.forEach((p,i)=>{
       const chip=document.createElement('div');
       chip.className='page-item'+(i===currentPageIndex?' active':'');
-      chip.innerHTML='<div class="page-thumb">'+(i+1)+'</div><div class="page-info"><div class="page-num">PAGE</div><div class="page-name">'+(i+1)+'번</div></div>';
+      const typeLabel = TYPE_LABELS[p.slideType] || TYPE_LABELS.default;
+      const num = String(i+1).padStart(2,'0');
+      chip.innerHTML='<div class="page-thumb">'+num+'</div><div class="page-info"><div class="page-num">PAGE '+num+'</div><div class="page-name">'+(i+1)+'번</div><div class="page-type-tag">'+typeLabel+'</div></div>';
       chip.addEventListener('click',()=>switchPage(i));
-      if(i===currentPageIndex&&pages.length>1){
-        const del=document.createElement('span');
-        del.className='page-del-btn';del.textContent='×';
+      if(pages.length>1){
+        const del=document.createElement('button');
+        del.type='button';
+        del.className='page-del-btn';
+        del.textContent='삭제';
+        del.title=(i+1)+'번 페이지 삭제';
         del.addEventListener('click',ev=>{ev.stopPropagation();deletePage(i);});
         chip.appendChild(del);
       }
       pageStrip.appendChild(chip);
     });
+    updatePageNumberMark();
   }
 
   function switchPage(idx){
@@ -1550,15 +2367,31 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
     setTimeout(fitScale,50);
   }
 
-  function addPage(){
+  function addPage(preferredType){
     pages[currentPageIndex]=serializePage();
     const dup=JSON.parse(JSON.stringify(pages[currentPageIndex]));
+    // optional type pick: cover/content/stat/quote/summary/factcheck/versus
+    const typeList = ['cover','content','stat','quote','summary','factcheck','versus','default'];
+    let t = preferredType;
+    if(!t){
+      const ans = prompt('카드 타입을 선택하세요:\n1 cover  2 content  3 stat  4 quote\n5 summary  6 factcheck  7 versus  8 default', '2');
+      const map = {'1':'cover','2':'content','3':'stat','4':'quote','5':'summary','6':'factcheck','7':'versus','8':'default'};
+      const key = String(ans||'').trim();
+      t = map[key] || (typeList.includes(key) ? key : 'content');
+      if(!typeList.includes(t)) t = 'content';
+    }
+    dup.slideType = t;
+    dup.blocks = { ...(TYPE_DEFAULT_BLOCKS[t] || TYPE_DEFAULT_BLOCKS.default) };
     pages.push(dup);
     currentPageIndex=pages.length-1;
     applyPage(pages[currentPageIndex]);
+    setSlideType(t, false);
+    blockFlags = { ...(dup.blocks) };
+    setBlockFlagUI();
+    renderBlocks();
     renderPageStrip();
     setTimeout(fitScale,50);
-    showToast('페이지 추가됨 ('+pages.length+')');
+    showToast('페이지 추가됨 · 타입: '+t+' ('+pages.length+')');
   }
 
   function deletePage(idx){
@@ -1688,11 +2521,7 @@ SOUTH KOREA WATCHES TRADE FALLOUT</textarea></div>
   }
 
   function openExport(){
-    document.querySelectorAll('#rightTabs button').forEach(t=>t.classList.remove('active'));
-    document.querySelectorAll('.ctx-panel').forEach(p=>p.classList.remove('active'));
-    document.querySelector('#rightTabs button[data-panel="save"]').classList.add('active');
-    document.getElementById('panel-save').classList.add('active');
-    setTimeout(fitScale,50);
+    switchPanel('save');
   }
   document.getElementById('btnShare').addEventListener('click',()=>{
     openExport();
