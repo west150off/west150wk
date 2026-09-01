@@ -1,0 +1,3293 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>신학 노트 스튜디오 (Theology Notes Studio)</title>
+<meta name="description" content="인스타그램 및 스레드 업로드용 애플 페이지스(Pages) 스타일 신학 묵상·카드뉴스 에디터 & 이미지 내보내기" />
+<!-- Tailwind CSS (browser JIT build, no install needed) -->
+<script src="./deps/tailwindcdn.js"></script>
+
+<style>
+  #root-loading {
+    position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+    background: #EBE9E1; font-family: -apple-system, sans-serif; color: #666; font-size: 13px; z-index: 9999;
+  }
+</style>
+
+</head>
+<body class="bg-[#EBE9E1] text-[#2D2D2D] antialiased selection:bg-[#A39171]/30 selection:text-[#2D2D2D]">
+<div id="root"><div id="root-loading">로딩 중…</div></div>
+<!-- Offline local dependencies -->
+<script src="./deps/react.umd.js"></script>
+<script src="./deps/react-dom.umd.js"></script>
+<script>
+  // Make React available as lowercase for lucide UMD
+  window.react = window.React;
+</script>
+<script src="./deps/lucide-react.umd.js"></script>
+<script src="./deps/jszip.min.js"></script>
+<script src="./deps/html-to-image.js"></script>
+<script>
+// === Offline adapted globals ===
+const { useState, useEffect, useRef } = React;
+const { createRoot } = ReactDOM;
+const {
+  CheckCircle2, AlertCircle, Info, X, ChevronLeft, ChevronRight, Quote,
+  Download, FileCode, Share2, Loader2, Plus, Trash2, Copy, ChevronUp, ChevronDown, BookMarked,
+  Languages, FileText, Layout, Scroll, Type, Palette, User, BookOpen, Sparkles, Sliders,
+  Maximize2, Minimize2, Layers, Save, Check, ArrowRight, Search, Archive, FolderDown, Upload,
+  Clipboard, ExternalLink
+} = LucideReact;
+const QuoteIcon = Quote; // alias
+const JSZip = window.JSZip;
+const { toPng, toBlob } = window.htmlToImage;
+
+
+// ==== dist/data/theologyPresets.js ====
+
+const THEMES = {
+    'natural-tones': {
+        id: 'natural-tones',
+        name: '내추럴 톤즈 (Natural Tones)',
+        nameEn: 'Natural Tones',
+        bgColor: '#FFFFFF',
+        bgTextureClass: 'bg-white',
+        textColor: '#2D2D2D',
+        mutedTextColor: '#7A786F',
+        accentColor: '#A39171', // Natural Ochre/Gold
+        badgeBg: '#F4F2EB',
+        badgeText: '#5C5A4E',
+        cardBg: '#FAF9F6',
+        borderColor: '#D6D3C8',
+        quoteBorder: '#A39171',
+        previewColor: '#FAF9F6'
+    },
+    'pages-ivory': {
+        id: 'pages-ivory',
+        name: '페이지스 아이보리',
+        nameEn: 'Pages Ivory',
+        bgColor: '#FAF7EE',
+        bgTextureClass: 'bg-[#FAF7EE]',
+        textColor: '#292524',
+        mutedTextColor: '#78716C',
+        accentColor: '#A39171', // natural warm gold
+        badgeBg: '#F3EDE0',
+        badgeText: '#5C5A4E',
+        cardBg: '#FFFFFF',
+        borderColor: '#D6D3C8',
+        quoteBorder: '#A39171',
+        previewColor: '#FAF7EE'
+    },
+    'pages-pure': {
+        id: 'pages-pure',
+        name: '페이지스 클래식 화이트',
+        nameEn: 'Classic White',
+        bgColor: '#FFFFFF',
+        bgTextureClass: 'bg-white',
+        textColor: '#2D2D2D',
+        mutedTextColor: '#7A786F',
+        accentColor: '#5C5A4E',
+        badgeBg: '#F4F2EB',
+        badgeText: '#2D2D2D',
+        cardBg: '#FAF9F6',
+        borderColor: '#D6D3C8',
+        quoteBorder: '#5C5A4E',
+        previewColor: '#FFFFFF'
+    },
+    'linen-cream': {
+        id: 'linen-cream',
+        name: '리넨 크림 에디토리얼',
+        nameEn: 'Linen Editorial',
+        bgColor: '#F4F2EB',
+        bgTextureClass: 'bg-[#F4F2EB]',
+        textColor: '#2D2D2D',
+        mutedTextColor: '#7A786F',
+        accentColor: '#A39171',
+        badgeBg: '#EAE8E0',
+        badgeText: '#5C5A4E',
+        cardBg: '#FAF9F6',
+        borderColor: '#D6D3C8',
+        quoteBorder: '#A39171',
+        previewColor: '#F4F2EB'
+    },
+    'parchment-warm': {
+        id: 'parchment-warm',
+        name: '고전 양피지 웜',
+        nameEn: 'Warm Parchment',
+        bgColor: '#F1EFE7',
+        bgTextureClass: 'bg-[#F1EFE7]',
+        textColor: '#2D2D2D',
+        mutedTextColor: '#7A786F',
+        accentColor: '#A39171',
+        badgeBg: '#EAE8E0',
+        badgeText: '#5C5A4E',
+        cardBg: '#FAF9F6',
+        borderColor: '#D6D3C8',
+        quoteBorder: '#A39171',
+        previewColor: '#F1EFE7'
+    },
+    'sage-olive': {
+        id: 'sage-olive',
+        name: '세이지 올리브 묵상',
+        nameEn: 'Sage Meditation',
+        bgColor: '#F1F4EE',
+        bgTextureClass: 'bg-[#F1F4EE]',
+        textColor: '#2D2D2D',
+        mutedTextColor: '#667364',
+        accentColor: '#8E9A82',
+        badgeBg: '#E1E8DC',
+        badgeText: '#5C5A4E',
+        cardBg: '#FAF9F6',
+        borderColor: '#D6D3C8',
+        quoteBorder: '#8E9A82',
+        previewColor: '#F1F4EE'
+    },
+    'oxford-navy': {
+        id: 'oxford-navy',
+        name: '옥스퍼드 딥 네이비',
+        nameEn: 'Oxford Navy',
+        bgColor: '#1A2129',
+        bgTextureClass: 'bg-[#1A2129]',
+        textColor: '#F8FAFC',
+        mutedTextColor: '#94A3B8',
+        accentColor: '#A39171', // warm gold
+        badgeBg: '#252F3B',
+        badgeText: '#E6DCC8',
+        cardBg: '#252F3B',
+        borderColor: '#3B4856',
+        quoteBorder: '#A39171',
+        previewColor: '#1A2129'
+    },
+    'charcoal-noir': {
+        id: 'charcoal-noir',
+        name: '차콜 미니멀 노아',
+        nameEn: 'Charcoal Noir',
+        bgColor: '#2D2D2D',
+        bgTextureClass: 'bg-[#2D2D2D]',
+        textColor: '#F4F4F5',
+        mutedTextColor: '#A1A1AA',
+        accentColor: '#D6D3C8',
+        badgeBg: '#3D3D3D',
+        badgeText: '#FAF9F6',
+        cardBg: '#383838',
+        borderColor: '#525252',
+        quoteBorder: '#A39171',
+        previewColor: '#2D2D2D'
+    },
+    'editorial-crimson': {
+        id: 'editorial-crimson',
+        name: '앤틱 바인딩 크림슨',
+        nameEn: 'Antique Binding',
+        bgColor: '#FAF9F6',
+        bgTextureClass: 'bg-[#FAF9F6]',
+        textColor: '#2D2D2D',
+        mutedTextColor: '#7A786F',
+        accentColor: '#7B3434',
+        badgeBg: '#F5EBEB',
+        badgeText: '#7B3434',
+        cardBg: '#FFFFFF',
+        borderColor: '#D6D3C8',
+        quoteBorder: '#7B3434',
+        previewColor: '#FAF9F6'
+    }
+};
+const GREEK_HEBREW_DICTIONARY = [
+    {
+        id: 'charis',
+        original: 'χάρις',
+        transliteration: 'charis (카리스)',
+        language: 'greek',
+        meaning: '값없이 주어지는 하나님의 호의, 자격 없는 자를 향한 무조건적 은혜',
+        note: '에베소서 2:8, 로마서 3:24'
+    },
+    {
+        id: 'chesed',
+        original: 'חֶסֶד',
+        transliteration: 'chesed (헤세드)',
+        language: 'hebrew',
+        meaning: '언약에 기초한 변함없는 사랑, 인애, 자비, 성실한 긍휼',
+        note: '시편 136편, 호세아 6:6'
+    },
+    {
+        id: 'agape',
+        original: 'ἀγάπη',
+        transliteration: 'agape (아가페)',
+        language: 'greek',
+        meaning: '자기희생적이고 무조건적인 신적 사랑',
+        note: '요한일서 4:8, 고린도전서 13장'
+    },
+    {
+        id: 'kenosis',
+        original: 'κένωσις',
+        transliteration: 'kenosis (케노시스)',
+        language: 'greek',
+        meaning: '그리스도께서 자기를 비워 종의 형체를 입으신 비하와 겸손',
+        note: '빌립보서 2:7'
+    },
+    {
+        id: 'shalom',
+        original: 'שָׁלוֹם',
+        transliteration: 'shalom (샬롬)',
+        language: 'hebrew',
+        meaning: '단순한 전쟁의 부재를 넘어선 온전함, 조화, 번영, 영육간의 완전한 평화',
+        note: '민수기 6:26, 이사야 9:6'
+    },
+    {
+        id: 'pistis',
+        original: 'πίστις',
+        transliteration: 'pistis (피스티스)',
+        language: 'greek',
+        meaning: '신뢰, 충성, 확신, 하나님을 향한 전인격적인 맡김과 신앙',
+        note: '히브리서 11:1, 로마서 1:17'
+    },
+    {
+        id: 'dikaiosyne',
+        original: 'δικαιοσύνη',
+        transliteration: 'dikaiosyne (디카이오시네)',
+        language: 'greek',
+        meaning: '의(義), 하나님의 공의, 그리스도를 통해 전가되는 칭의적 의',
+        note: '로마서 3:21-22'
+    },
+    {
+        id: 'qadosh',
+        original: 'קָדוֹשׁ',
+        transliteration: 'qadosh (카도쉬)',
+        language: 'hebrew',
+        meaning: '거룩함, 구별됨, 속된 것과 분리되어 하나님께 속한 절대적 성결',
+        note: '이사야 6:3, 레위기 11:44'
+    },
+    {
+        id: 'berit',
+        original: 'בְּרִית',
+        transliteration: 'berit (베리트)',
+        language: 'hebrew',
+        meaning: '언약, 하나님과 인간 사이에 맺어진 구속사적 약속과 조약',
+        note: '창세기 15:18, 예레미야 31:31'
+    },
+    {
+        id: 'logos',
+        original: 'λόγος',
+        transliteration: 'logos (로고스)',
+        language: 'greek',
+        meaning: '말씀, 신적 이성, 창조와 계시의 주체이신 성육신하신 그리스도',
+        note: '요한복음 1:1, 1:14'
+    },
+    {
+        id: 'metanoia',
+        original: 'μετάνοια',
+        transliteration: 'metanoia (메타노이아)',
+        language: 'greek',
+        meaning: '마음의 근본적 전환, 회개, 삶의 방향을 하나님께로 온전히 돌이킴',
+        note: '마가복음 1:15, 사도행전 2:38'
+    },
+    {
+        id: 'ruach',
+        original: 'רוּחַ',
+        transliteration: 'ruach (루아흐)',
+        language: 'hebrew',
+        meaning: '영, 바람, 호흡, 생명을 불어넣으시는 성령 하나님의 생기',
+        note: '창세기 1:2, 에스겔 37:9'
+    }
+];
+const THEOLOGY_QUOTES = [
+    {
+        author: '디트리히 본회퍼 (Dietrich Bonhoeffer)',
+        work: '나를 따르라 (The Cost of Discipleship)',
+        quote: '값싼 은혜는 교회의 치명적인 적이다. 싸구려 은혜는 죄인을 의롭다 함이 아니라 죄 자체를 의롭다 하는 것이다. 그러나 값비싼 은혜는 인간에게 목숨을 요구하며, 그에게 유일한 참 생명을 주는 복음이다.',
+        era: '20세기 신학자/순교자'
+    },
+    {
+        author: '장 칼뱅 (John Calvin)',
+        work: '기독교 강요 (Institutes of the Christian Religion)',
+        quote: '우리가 지닌 거의 모든 지혜, 곧 참되고 건전한 지혜는 두 부분으로 이루어져 있다. 그것은 하나님을 아는 지식과 우리 자신을 아는 지식이다.',
+        era: '16세기 종교개혁가'
+    },
+    {
+        author: '아우구스티누스 (Aurelius Augustinus)',
+        work: '고백록 (Confessiones)',
+        quote: '주께서는 우리를 주님을 향하도록 지으셨으므로, 우리의 영혼이 주님 안에서 안식을 얻기까지는 결코 참된 평안을 누릴 수 없나이다.',
+        era: '초대 교부'
+    },
+    {
+        author: 'C. S. 루이스 (C.S. Lewis)',
+        work: '순전한 기독교 (Mere Christianity)',
+        quote: '하나님은 우리에게 단순히 좋은 삶을 주시려는 것이 아닙니다. 그분은 우리를 완전히 다른 존재, 곧 하나님의 자녀로 다시 빚으려 하십니다.',
+        era: '20세기 기독교 변증가'
+    },
+    {
+        author: '팀 켈러 (Timothy Keller)',
+        work: '복음과 삶 (Center Church)',
+        quote: '복음은 이것이다: 우리는 생각했던 것보다 훨씬 더 큰 죄인이지만, 동시에 예수 그리스도 안에서 믿을 수 없을 만큼 더 큰 사랑과 용납을 받고 있다는 사실이다.',
+        era: '현대 신학자/목회자'
+    },
+    {
+        author: '헤르만 바빙크 (Herman Bavinck)',
+        work: '개혁교의학 (Reformed Dogmatics)',
+        quote: '신학은 오직 하나님만을 영화롭게 하기 위해 연구되어야 한다. 교의학은 사변이 아니라 하나님의 계시를 신앙으로 사유하고 찬양하는 경건의 행위이다.',
+        era: '네덜란드 개혁파 신학자'
+    },
+    {
+        author: '마르틴 루터 (Martin Luther)',
+        work: '갈라디아서 주석 (Commentary on Galatians)',
+        quote: '칭의는 교회가 서고 넘어지는 조항이다. 인간의 공로가 배제될 때에만 십자가의 영광이 온전히 찬란하게 빛난다.',
+        era: '16세기 종교개혁가'
+    },
+    {
+        author: '조나단 에드워즈 (Jonathan Edwards)',
+        work: '신앙감정론 (Religious Affections)',
+        quote: '참된 신앙의 상당 부분은 거룩한 감정에 있다. 영적으로 눈을 뜬 영혼은 하나님의 아름다우심 그 자체로 인해 벅찬 희열을 느낀다.',
+        era: '18세기 청교도 대각성 신학자'
+    }
+];
+const PRESET_TEMPLATES = [
+    {
+        id: 'template-natural-grace-truth',
+        title: '은혜와 무한한 진리: Grace & Infinite Truth',
+        seriesName: 'Meditations on John',
+        category: '성경신학 (Biblical Theology)',
+        authorName: '신학노트 스튜디오',
+        authorHandle: '@theology.notes',
+        aspectRatio: '4:5',
+        theme: 'natural-tones',
+        fontFamily: 'gowun-batang',
+        fontSizeMultiplier: 1.0,
+        showWatermark: true,
+        showSlideNumber: true,
+        showCategoryBadge: true,
+        showSeriesHeader: true,
+        borderStyle: 'thin-rule',
+        createdAt: '2026-08-28',
+        updatedAt: '2026-08-28',
+        slides: [
+            {
+                id: 'slide-1',
+                type: 'cover',
+                tagline: 'MEDITATIONS ON JOHN · NO. 12',
+                slideTitle: 'Grace and\nInfinite Truth.',
+                subtitle: '말씀이 육신이 되어 우리 가운데 거하시매',
+                bodyText: '말씀이 육신이 되어 우리 가운데 거하시매 우리가 그의 영광을 보니 아버지의 독생자의 영광이요 은혜와 진리가 충만하더라 (요한복음 1:14). 하나님의 은혜는 단순히 용서에 그치지 않고 우리를 온전케 하시는 생명의 능력입니다.',
+                footerNote: '신학 에디토리얼 노트 · 자연스러운 묵상'
+            },
+            {
+                id: 'slide-2',
+                type: 'scripture-focus',
+                tagline: '성경 본문 주해',
+                slideTitle: '말씀의 성육신: 스케노오(σκηνόω)',
+                subtitle: '요한복음 1장 14절',
+                bodyText: '요한은 그리스도의 성육신을 묘사하며 광야의 장막을 가리키는 헬라어 동사를 사용했습니다. 하나님께서 인간의 연약한 현실 속에 친히 장막을 치셨습니다.',
+                scriptureVerse: {
+                    ref: '요한복음 1:14',
+                    text: '말씀이 육신이 되어 우리 가운데 거하시매 우리가 그의 영광을 보니 아버지의 독생자의 영광이요 은혜와 진리가 충만하더라',
+                    translation: '개역개정'
+                },
+                bulletPoints: [
+                    '거하시매(σκηνόω): 구약의 성막처럼 하나님의 임재가 우리 삶 한가운데 머무심',
+                    '독생자의 영광: 십자가와 부활을 통해 온전히 드러난 신적 사랑의 광채',
+                    '은혜와 진리: 결코 분리될 수 없는 하나님의 온전한 구원 경륜'
+                ]
+            },
+            {
+                id: 'slide-3',
+                type: 'exegesis-words',
+                tagline: '원어 묵상 (신약 헬라어)',
+                slideTitle: '은혜와 진리의 두 기둥',
+                subtitle: '카리스(χάρις)와 알레데이아(ἀλήθεια)',
+                bodyText: '진리는 우리를 비추는 거룩한 빛이며, 은혜는 그 길을 걸어갈 수 있게 하는 생명의 호흡입니다.',
+                originalWords: [
+                    {
+                        id: 'w-charis',
+                        original: 'χάρις',
+                        transliteration: 'charis (카리스)',
+                        language: 'greek',
+                        meaning: '자격 없는 자에게 베푸시는 값없는 하나님의 호의와 생명력',
+                        note: '구약의 헤세드(חֶסֶד, 언약적 사랑)와 맞닿아 있는 개념'
+                    },
+                    {
+                        id: 'w-aletheia',
+                        original: 'ἀλήθεια',
+                        transliteration: 'alētheia (알레데이아)',
+                        language: 'greek',
+                        meaning: '숨김없이 드러난 실재, 왜곡 없는 거룩한 진리',
+                        note: '그리스도 안에서 실체화된 하나님의 궁극적 계시'
+                    }
+                ]
+            },
+            {
+                id: 'slide-4',
+                type: 'quote-focus',
+                tagline: '신학자 명언 인용',
+                slideTitle: '복음의 본질: 은혜와 진리',
+                subtitle: '팀 켈러가 말하는 복음의 역설',
+                bodyText: '복음은 우리가 생각하는 것보다 훨씬 더 큰 절망을 폭로하는 동시에, 상상할 수 없을 만큼 완전한 은혜를 부어줍니다.',
+                theologyQuote: {
+                    author: '팀 켈러 (Timothy Keller)',
+                    work: '『내가 만든 신 (Counterfeit Gods)』',
+                    quote: '복음이란 우리는 스스로 생각하는 것보다 훨씬 더 죄가 많고 흠이 많지만, 예수 그리스도 안에서 믿을 수 없을 만큼 사랑받고 용납받았다는 진리이다.'
+                },
+                footerNote: '은혜 없는 진리는 율법주의를 낳고, 진리 없는 은혜는 방종을 낳습니다.'
+            },
+            {
+                id: 'slide-5',
+                type: 'summary-outro',
+                tagline: '오늘의 묵상 & 나눔 질문',
+                slideTitle: '은혜와 진리 안에서 걷는 하루',
+                subtitle: '당신의 삶의 장막에 머무시는 하나님',
+                bodyText: '하나님은 오늘도 우리의 연약한 일상 한가운데 장막을 치시고 친히 동행하십니다.',
+                bulletPoints: [
+                    '묵상 1: 나는 하나님의 은혜를 값없이 누리며 동시에 거룩한 진리에 순종하고 있는가?',
+                    '묵상 2: 오늘 나의 말과 태도 속에 은혜와 진리가 어떻게 조화롭게 배어 나와야 할까?',
+                    '기도: 주님, 저의 삶에 은혜와 진리가 충만하게 하소서.'
+                ],
+                footerNote: '글/정리: @theology.notes · 시리즈: Meditations on John'
+            }
+        ]
+    },
+    {
+        id: 'template-bonhoeffer-grace',
+        title: '값싼 은혜와 값비싼 은혜: 본회퍼의 제자도',
+        seriesName: '기독교 고전 신학 묵상 시리즈 01',
+        category: '성화와 제자도 · 기독교 윤리',
+        authorName: '신학노트 아카이브',
+        authorHandle: '@theology.notes',
+        aspectRatio: '4:5',
+        theme: 'natural-tones',
+        fontFamily: 'gowun-batang',
+        fontSizeMultiplier: 1.0,
+        showWatermark: true,
+        showSlideNumber: true,
+        showCategoryBadge: true,
+        showSeriesHeader: true,
+        borderStyle: 'thin-rule',
+        createdAt: '2026-08-28',
+        updatedAt: '2026-08-28',
+        slides: [
+            {
+                id: 'slide-1',
+                type: 'cover',
+                tagline: 'CLASSICAL THEOLOGY · VOL. 01',
+                slideTitle: '값싼 은혜에 물든\n현대 신앙을 향한 경고',
+                subtitle: '디트리히 본회퍼 『나를 따르라』에서 배우는 참된 제자도와 은혜의 본질',
+                bodyText: '우리는 은혜를 공짜 면죄부로 여기고 있지는 않습니까? 십자가의 따름이 없는 은혜는 왜 치명적인 독이 되는지 고찰합니다.',
+                footerNote: '기독교 고전에서 길어 올린 오늘의 신학적 통찰'
+            },
+            {
+                id: 'slide-2',
+                type: 'scripture-focus',
+                tagline: '성경 본문 주해',
+                slideTitle: '부르심의 첫걸음: 자기를 부인함',
+                subtitle: '마태복음 16장 24-25절',
+                bodyText: '예수 그리스도께서 제자들에게 요구하신 것은 안락한 종교 생활이 아닌, 십자가를 지고 당신의 발자취를 온전히 따르는 결단이었습니다.',
+                scriptureVerse: {
+                    ref: '마태복음 16:24',
+                    text: '이에 예수께서 제자들에게 이르시되 누구든지 나를 따라오려거든 자기를 부인하고 자기 십자가를 지고 나를 따를 것이니라',
+                    translation: '개역개정'
+                },
+                bulletPoints: [
+                    '자기 부인(Self-denial): 나의 뜻이 아닌 하나님의 주권을 인정하는 전향',
+                    '자기 십자가: 그리스도를 따름으로 인해 필연적으로 마주하는 거룩한 고난',
+                    '따름(Follow): 관념적 동의가 아닌 구체적인 순종의 삶'
+                ]
+            },
+            {
+                id: 'slide-3',
+                type: 'quote-focus',
+                tagline: '신학자 명언 및 텍스트 분석',
+                slideTitle: '싸구려 은혜 vs 값비싼 은혜',
+                subtitle: '교회의 치명적인 적을 폭로하다',
+                bodyText: '본회퍼는 참된 회개와 순종의 훈련 없이 남발되는 죄의 용서를 가리켜 "값싼 은혜"라고 단호히 선언했습니다.',
+                theologyQuote: {
+                    author: '디트리히 본회퍼 (Dietrich Bonhoeffer)',
+                    work: '『나를 따르라 (Nachfolge)』',
+                    quote: '값싼 은혜는 교회의 원수다. 그것은 회개 없는 사죄요, 공동체의 규율 없는 세례이며, 고백 없는 성찬이다. 반면 값비싼 은혜는 우리에게 생명을 요구하지만, 그리스도의 온전한 생명을 선사한다.'
+                },
+                footerNote: '신앙의 참된 기초는 그리스도의 성육신과 십자가의 대가 위에 서 있습니다.'
+            },
+            {
+                id: 'slide-4',
+                type: 'exegesis-words',
+                tagline: '원어 묵상 (신약 헬라어)',
+                slideTitle: '은혜의 참된 깊이: 카리스(χάρις)',
+                subtitle: '헬라어 어원과 신학적 함의',
+                bodyText: '바울 서신에서 은혜를 가리키는 헬라어 단어는 단순히 감상적인 너그러움이 아니라, 인간의 불가능성을 뚫고 들어오는 신적 주권의 역사입니다.',
+                originalWords: [
+                    {
+                        id: 'w1',
+                        original: 'χάρις',
+                        transliteration: 'charis (카리스)',
+                        language: 'greek',
+                        meaning: '자격 없는 자에게 거저 주어지는 하나님의 주권적 선물',
+                        note: '선물이기에 인간의 공로는 무력화되며, 수혜자는 자발적 헌신으로 반응하게 됨'
+                    },
+                    {
+                        id: 'w2',
+                        original: 'μαθητής',
+                        transliteration: 'mathētēs (마데테스)',
+                        language: 'greek',
+                        meaning: '배우는 자, 스승의 전 삶을 본받고 훈련하는 제자',
+                        note: '신약에서 성도는 단순 청중이 아니라 스승의 도를 실천하는 제자로 규정됨'
+                    }
+                ]
+            },
+            {
+                id: 'slide-5',
+                type: 'summary-outro',
+                tagline: '오늘을 위한 적용과 묵상 질문',
+                slideTitle: '은혜 위에 서서, 다시 제자의 길로',
+                subtitle: '당신의 일상 속에서 회복해야 할 십자가',
+                bodyText: '구원은 100% 하나님의 은혜로 주어지지만, 그 은혜를 맛본 자는 결코 과거의 죄에 안주할 수 없습니다. 우리는 오늘 주님을 따르고 있습니까?',
+                bulletPoints: [
+                    '묵상 질문 1: 나는 하나님을 내 편의를 위한 수단으로 삼고 있지 않은가?',
+                    '묵상 질문 2: 이번 한 주, 내가 부인해야 할 ‘나의 자아와 고집’은 무엇인가?',
+                    '결단 기도: 나를 위해 피 흘리신 그 값비싼 사랑 앞에 온전히 순종하게 하소서.'
+                ],
+                footerNote: '글/정리: @theology.notes · 저장 및 공유 환영'
+            }
+        ]
+    },
+    {
+        id: 'template-romans-justification',
+        title: '이신칭의(以信稱義): 오직 의인은 믿음으로 살리라',
+        seriesName: '조직신학 구원론 탐구 02',
+        category: '조직신학 (Systematic Theology)',
+        authorName: '바울신학 연구노트',
+        authorHandle: '@reformed.theology',
+        aspectRatio: '4:5',
+        theme: 'oxford-navy',
+        fontFamily: 'noto-serif',
+        fontSizeMultiplier: 1.0,
+        showWatermark: true,
+        showSlideNumber: true,
+        showCategoryBadge: true,
+        showSeriesHeader: true,
+        borderStyle: 'thin-rule',
+        createdAt: '2026-08-28',
+        updatedAt: '2026-08-28',
+        slides: [
+            {
+                id: 'slide-r1',
+                type: 'cover',
+                tagline: 'SYSTEMATIC THEOLOGY · SOTERIOLOGY',
+                slideTitle: '복음에 나타난\n하나님의 의(義)',
+                subtitle: '로마서 1:17과 종교개혁의 핵심 교리 이신칭의(Justification by Faith) 해설',
+                bodyText: '인간의 율법 행위가 아닌, 그리스도의 온전한 의가 우리에게 전가(Imputation)되는 구원의 신비.',
+                footerNote: '기독교 복음의 절대적 심장부'
+            },
+            {
+                id: 'slide-r2',
+                type: 'scripture-focus',
+                tagline: '핵심 구절 대조',
+                slideTitle: '하박국에서 로마서로 이어진 선언',
+                subtitle: '오직 의인은 믿음으로 말미암아 살리라',
+                bodyText: '바울은 구약 하박국 선지자의 고백을 인용하며, 구원의 유일한 근거가 오직 믿음에 있음을 선포합니다.',
+                scriptureVerse: {
+                    ref: '로마서 1:17',
+                    text: '복음에는 하나님의 의가 나타나서 믿음으로 믿음에 이르게 하나니 기록된 바 오직 의인은 믿음으로 말미암아 살리라 함과 같으니라',
+                    translation: '개역개정'
+                },
+                bulletPoints: [
+                    '하나님의 의: 심판하시는 공의이자 동시에 죄인을 구원하시는 신실하심',
+                    '믿음으로 믿음에: 시작부터 완성까지 인간의 공로가 개입할 틈이 없음',
+                    '영원한 생명: 믿음으로 의롭다 칭함을 받은 자는 영원한 생명을 누림'
+                ]
+            },
+            {
+                id: 'slide-r3',
+                type: 'exegesis-words',
+                tagline: '핵심 신학 개념',
+                slideTitle: '디카이오시네 & 피스티스',
+                subtitle: '헬라어 법정적 칭의의 개념',
+                bodyText: '칭의(Justification)는 우리가 실제로 완전무결해졌다는 뜻이 아니라, 법정에서 하나님께서 "무죄하며 의롭다"고 선언하시는 법적 행위입니다.',
+                originalWords: [
+                    {
+                        id: 'rw1',
+                        original: 'δικαιοσύνη',
+                        transliteration: 'dikaiosynē (디카이오시네)',
+                        language: 'greek',
+                        meaning: '의(Righteousness), 하나님의 거룩한 기준에 부합함',
+                        note: '우리의 행위가 아닌 그리스도의 십자가 순종의 의가 덧입혀짐 (칭의)'
+                    },
+                    {
+                        id: 'rw2',
+                        original: 'πίσ티스',
+                        transliteration: 'pistis (피스티스)',
+                        language: 'greek',
+                        meaning: '신뢰, 충성, 인격적 맡김',
+                        note: '믿음은 구원의 원인이 아니라 구원을 받아들이는 ‘빈손의 통로’임'
+                    }
+                ]
+            },
+            {
+                id: 'slide-r4',
+                type: 'summary-outro',
+                tagline: '복음이 주는 평안',
+                slideTitle: '더 이상 정죄함이 없나니',
+                subtitle: '로마서 8:1의 확신 위에 굳게 서십시오',
+                bodyText: '우리의 구원은 오늘의 감정이나 성취도에 흔들리지 않습니다. 그리스도께서 십자가에서 완성하신 완전한 의 위에 서 있기 때문입니다.',
+                bulletPoints: [
+                    '스스로를 정죄하며 무거운 짐을 지고 계신가요?',
+                    '오늘도 온전한 십자가의 전가된 의를 신뢰하십시오.',
+                    '감사의 마음으로 자발적인 거룩을 향해 걸어가십시오.'
+                ],
+                footerNote: '기록/연구: @reformed.theology'
+            }
+        ]
+    },
+    {
+        id: 'template-psalm-chesed',
+        title: '시편 23편 히브리어 원어묵상: 여호와는 나의 목자',
+        seriesName: '히브리어 성경 원어 묵상 노트',
+        category: '성경신학 · 원어묵상',
+        authorName: '히브리어 묵상실',
+        authorHandle: '@hebrew.meditation',
+        aspectRatio: '1:1',
+        theme: 'linen-cream',
+        fontFamily: 'gowun-batang',
+        fontSizeMultiplier: 1.0,
+        showWatermark: true,
+        showSlideNumber: true,
+        showCategoryBadge: true,
+        showSeriesHeader: true,
+        borderStyle: 'classic-corner',
+        createdAt: '2026-08-28',
+        updatedAt: '2026-08-28',
+        slides: [
+            {
+                id: 'slide-p1',
+                type: 'cover',
+                tagline: 'HEBREW EXEGESIS · PSALMS 23',
+                slideTitle: '내 영혼을\n소생시키시는 목자',
+                subtitle: '히브리어 원어 단어로 깊이 읽는 시편 23편 1-3절 묵상',
+                bodyText: '‘부족함이 없다’와 ‘소생시키시다’에 담긴 히브리적 영성과 언약적 위로를 나눕니다.',
+                footerNote: '다윗의 목가적 신앙 고백'
+            },
+            {
+                id: 'slide-p2',
+                type: 'exegesis-words',
+                tagline: '히브리어 어휘 분석 01',
+                slideTitle: '여호와 로이 (יְהוָה רֹעִי)',
+                subtitle: '나를 돌보시고 동행하시는 하나님',
+                bodyText: '다윗은 하나님을 거대한 제국의 군주가 아닌, 양 한 마리의 연약함과 필요를 온전히 아시는 목자로 불렀습니다.',
+                originalWords: [
+                    {
+                        id: 'pw1',
+                        original: 'יְהוָה רֹעִי',
+                        transliteration: 'Adonai Roi (여호와 로이)',
+                        language: 'hebrew',
+                        meaning: '여호와는 나의 목자이시니',
+                        note: '동사 ‘라아’(친밀히 먹이고 인도하다)의 능동 분사형'
+                    },
+                    {
+                        id: 'pw2',
+                        original: 'לֹא אֶחְסָר',
+                        transliteration: 'lo echsar (로 에흐사르)',
+                        language: 'hebrew',
+                        meaning: '내게 결핍이나 부족함이 결코 없으리로다',
+                        note: '물질적 풍요를 넘어 목자의 임재 자체로 말미암는 영혼의 족함'
+                    }
+                ]
+            },
+            {
+                id: 'slide-p3',
+                type: 'exegesis-words',
+                tagline: '히브리어 어휘 분석 02',
+                slideTitle: '영혼을 회복시키심 (나프시 예쇼베브)',
+                subtitle: '길 잃은 양을 되돌리시는 은혜',
+                bodyText: '소생시키신다는 히브리어 ‘슈브’는 회개하고 본래의 자리로 되돌아오게 하심을 뜻합니다.',
+                originalWords: [
+                    {
+                        id: 'pw3',
+                        original: 'נַפְשִׁי יְשׁוֹבֵב',
+                        transliteration: 'nafshi yeshovev (나프시 예쇼베브)',
+                        language: 'hebrew',
+                        meaning: '내 생명/영혼을 원래의 상태로 되돌려 회복시키시며',
+                        note: '지친 영혼에 하나님의 호흡(숨)을 불어넣어 다시 살리심'
+                    }
+                ]
+            },
+            {
+                id: 'slide-p4',
+                type: 'summary-outro',
+                tagline: '오늘의 묵상',
+                slideTitle: '선하심과 인자하심이 따르리니',
+                subtitle: '변함없는 주의 헤세드(חֶסֶד)를 신뢰합니다',
+                bodyText: '사망의 음침한 골짜기를 지날 때에도 목자의 지팡이와 막대기가 우리를 안위하십니다. 오늘도 주 안에서 참된 평안을 누리십시오.',
+                footerNote: '기록: @hebrew.meditation'
+            }
+        ]
+    },
+    {
+        id: 'template-threads-minimal',
+        title: '스레드용 숏폼 신학 에세이: 고난과 섭리',
+        seriesName: '스레드 신학 한입 노트',
+        category: '기독교 세계관 · 스레드 에디토리얼',
+        authorName: '크리스천 씽커',
+        authorHandle: '@christian.thinker',
+        aspectRatio: 'threads-card',
+        theme: 'pages-pure',
+        fontFamily: 'jakarta-modern',
+        fontSizeMultiplier: 1.05,
+        showWatermark: true,
+        showSlideNumber: true,
+        showCategoryBadge: true,
+        showSeriesHeader: false,
+        borderStyle: 'none',
+        createdAt: '2026-08-28',
+        updatedAt: '2026-08-28',
+        slides: [
+            {
+                id: 'slide-t1',
+                type: 'content-body',
+                tagline: 'THREADS THEOLOGY ESSAY',
+                slideTitle: '고난은 하나님의 메가폰이다',
+                subtitle: 'C. S. 루이스가 말하는 고통의 신비',
+                bodyText: '하나님은 우리의 쾌락 속에서는 속삭이시고, 우리의 양심 속에서는 말씀하시지만, 우리의 고통 속에서는 소리치십니다.\n\n고난은 귀먹은 세상을 깨우시는 그분의 거룩한 메가폰입니다.\n\n우리가 모든 일이 잘 풀릴 때는 스스로 신이 된 착각에 빠지지만, 고통을 마주할 때 비로소 피조물의 한계를 깨닫고 창조주를 올려다봅니다.',
+                theologyQuote: {
+                    author: 'C. S. 루이스 (C.S. Lewis)',
+                    work: '『고통의 문제 (The Problem of Pain)』',
+                    quote: '고통은 하나님께서 인간의 굳은 귀를 열어 그분의 음성을 듣게 하시는 강력한 도구이다.'
+                },
+                footerNote: 'Threads & Instagram 전용 에디토리얼 카드'
+            }
+        ]
+    }
+];
+
+// ==== dist/utils/exportUtils.js ====
+
+/**
+ * Robust helper to trigger file downloads in all browser and iframe environments.
+ * Appends link to document.body before click and cleans up asynchronously.
+ */
+function triggerBlobDownload(blob, fileName) {
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = fileName;
+    link.style.position = 'fixed';
+    link.style.left = '-9999px';
+    link.style.top = '-9999px';
+    link.style.opacity = '0';
+    document.body.appendChild(link);
+    try {
+        link.click();
+    }
+    catch (e) {
+        console.error('Link click failed, attempting window.open as fallback:', e);
+        window.open(url, '_blank');
+    }
+    setTimeout(() => {
+        try {
+            if (document.body.contains(link)) {
+                document.body.removeChild(link);
+            }
+            URL.revokeObjectURL(url);
+        }
+        catch (e) {
+            // ignore
+        }
+    }, 2000);
+}
+/**
+ * Robust helper to trigger Base64 Data URL downloads.
+ */
+function triggerDataUrlDownload(dataUrl, fileName) {
+    const link = document.createElement('a');
+    link.href = dataUrl;
+    link.download = fileName.endsWith('.png') ? fileName : `${fileName}.png`;
+    link.style.position = 'fixed';
+    link.style.left = '-9999px';
+    link.style.top = '-9999px';
+    link.style.opacity = '0';
+    document.body.appendChild(link);
+    try {
+        link.click();
+    }
+    catch (e) {
+        console.error('DataURL link click failed:', e);
+    }
+    setTimeout(() => {
+        try {
+            if (document.body.contains(link)) {
+                document.body.removeChild(link);
+            }
+        }
+        catch (e) {
+            // ignore
+        }
+    }, 1000);
+}
+/**
+ * Downloads a single slide DOM element as high-resolution PNG (2x scale for Retina)
+ * Skips font network crawling to ensure instant rendering (sub-100ms) and prevents hangs/timeouts.
+ */
+async function downloadSlideAsImage(element, fileName) {
+    const safeFileName = fileName.endsWith('.png') ? fileName : `${fileName}.png`;
+    const width = element.offsetWidth || 540;
+    const height = element.offsetHeight || 675;
+    try {
+        // Attempt 1: Fast direct Blob export with skipFonts (instant & memory efficient)
+        const blob = await toBlob(element, {
+            pixelRatio: 2.0,
+            quality: 0.98,
+            cacheBust: false,
+            skipFonts: true,
+            fontEmbedCSS: '',
+            width,
+            height,
+            style: {
+                transform: 'none',
+                margin: '0',
+            }
+        });
+        if (blob) {
+            triggerBlobDownload(blob, safeFileName);
+            return true;
+        }
+    }
+    catch (err1) {
+        console.warn('Fast toBlob failed, attempting toPng fallback:', err1);
+    }
+    try {
+        // Attempt 2: toPng DataURL fallback
+        const dataUrl = await toPng(element, {
+            pixelRatio: 2.0,
+            quality: 0.98,
+            cacheBust: false,
+            skipFonts: true,
+            fontEmbedCSS: '',
+            width,
+            height,
+            style: {
+                transform: 'none',
+                margin: '0',
+            }
+        });
+        if (dataUrl) {
+            triggerDataUrlDownload(dataUrl, safeFileName);
+            return true;
+        }
+    }
+    catch (err2) {
+        console.error('All PNG export methods failed:', err2);
+        throw new Error('이미지 렌더링에 실패했습니다. 브라우저 설정을 확인해 주세요.');
+    }
+    return false;
+}
+/**
+ * Copies the rendered slide directly into clipboard as image/png
+ */
+async function copySlideImageToClipboard(element) {
+    const width = element.offsetWidth || 540;
+    const height = element.offsetHeight || 675;
+    try {
+        const blob = await toBlob(element, {
+            pixelRatio: 2.0,
+            quality: 0.95,
+            cacheBust: false,
+            skipFonts: true,
+            fontEmbedCSS: '',
+            width,
+            height,
+            style: {
+                transform: 'none',
+                margin: '0',
+            }
+        });
+        if (blob && navigator.clipboard && typeof navigator.clipboard.write === 'function') {
+            await navigator.clipboard.write([
+                new ClipboardItem({ 'image/png': blob })
+            ]);
+            return true;
+        }
+    }
+    catch (err) {
+        console.warn('Clipboard write failed:', err);
+    }
+    return false;
+}
+/**
+ * Generates PNG data URL for a slide DOM element with safety fallbacks
+ */
+async function getSlideDataUrl(element) {
+    const width = element.offsetWidth || 540;
+    const height = element.offsetHeight || 675;
+    return await toPng(element, {
+        pixelRatio: 2.0,
+        quality: 0.98,
+        cacheBust: false,
+        skipFonts: true,
+        fontEmbedCSS: '',
+        width,
+        height,
+        style: {
+            transform: 'none',
+            margin: '0',
+        }
+    });
+}
+/**
+ * Batch renders all slides into a ZIP archive for easy Instagram carousel upload
+ */
+async function exportAllSlidesAsZip(doc, renderSlideCallback, onProgress) {
+    const zip = new JSZip();
+    const total = doc.slides.length;
+    const folderName = (doc.title || 'Theology_Notes').replace(/[\\/:*?"<>|]/g, '_').substring(0, 30);
+    const folder = zip.folder(folderName) || zip;
+    for (let i = 0; i < total; i++) {
+        if (onProgress)
+            onProgress(i + 1, total);
+        const slideElement = await renderSlideCallback(i);
+        if (!slideElement)
+            continue;
+        // Small delay to ensure React DOM state has flushed
+        await new Promise((res) => setTimeout(res, 80));
+        const width = slideElement.offsetWidth || 540;
+        const height = slideElement.offsetHeight || 675;
+        let blob = null;
+        try {
+            blob = await toBlob(slideElement, {
+                pixelRatio: 2.0,
+                quality: 0.95,
+                cacheBust: false,
+                skipFonts: true,
+                fontEmbedCSS: '',
+                width,
+                height,
+                style: {
+                    transform: 'none',
+                    margin: '0',
+                }
+            });
+        }
+        catch (e) {
+            console.warn(`Slide ${i + 1} capture error:`, e);
+        }
+        if (blob) {
+            const slideNum = String(i + 1).padStart(2, '0');
+            const slideType = doc.slides[i].type;
+            folder.file(`slide_${slideNum}_${slideType}.png`, blob);
+        }
+    }
+    // Also include a text file with formatted Instagram/Threads captions
+    const captionText = generateSocialCaption(doc);
+    folder.file('instagram_threads_caption.txt', captionText);
+    // Also include full JSON source document
+    folder.file('doc_backup.json', JSON.stringify(doc, null, 2));
+    const content = await zip.generateAsync({ type: 'blob' });
+    triggerBlobDownload(content, `${folderName}_carousel_pack.zip`);
+}
+/**
+ * Creates formatted caption text tailored for Instagram & Threads
+ */
+function generateSocialCaption(doc) {
+    const lines = [];
+    // Header & Title
+    lines.push(`📖 ${doc.title}`);
+    if (doc.seriesName)
+        lines.push(`[${doc.seriesName}]`);
+    lines.push('');
+    // Slides Summary
+    doc.slides.forEach((slide, idx) => {
+        lines.push(`──────── ${idx + 1}/${doc.slides.length} ────────`);
+        if (slide.slideTitle)
+            lines.push(`■ ${slide.slideTitle}`);
+        if (slide.subtitle)
+            lines.push(`- ${slide.subtitle}`);
+        if (slide.scriptureVerse) {
+            lines.push(`\n📜 "${slide.scriptureVerse.text}" (${slide.scriptureVerse.ref} ${slide.scriptureVerse.translation})`);
+        }
+        if (slide.theologyQuote) {
+            lines.push(`\n💬 "${slide.theologyQuote.quote}"`);
+            lines.push(`  — ${slide.theologyQuote.author}${slide.theologyQuote.work ? ` (${slide.theologyQuote.work})` : ''}`);
+        }
+        if (slide.originalWords && slide.originalWords.length > 0) {
+            lines.push('\n🔍 [원어 묵상]');
+            slide.originalWords.forEach(w => {
+                lines.push(`• ${w.original} (${w.transliteration}): ${w.meaning}`);
+            });
+        }
+        if (slide.bodyText) {
+            lines.push(`\n${slide.bodyText}`);
+        }
+        if (slide.bulletPoints && slide.bulletPoints.length > 0) {
+            lines.push('\n[핵심 요약]');
+            slide.bulletPoints.forEach(p => lines.push(`• ${p}`));
+        }
+        lines.push('');
+    });
+    // Footer & Hashtags
+    lines.push('───────────────────────');
+    lines.push(`✍️ 작성: ${doc.authorName} (${doc.authorHandle})`);
+    lines.push('📌 슬라이드를 넘겨 전체 내용을 확인해 보세요.');
+    lines.push('');
+    lines.push('#신학 #신학노트 #기독교 #성경묵상 #QT #신학생 #말씀묵상 #조직신학 #성경주해 #기독교고전 #인스타카드뉴스 #스레드 #Theology #ReformedTheology');
+    return lines.join('\n');
+}
+/**
+ * Generates a clean, interactive standalone HTML file with Natural Tones & Apple Pages typography styling.
+ * The resulting file includes both an interactive Slide Presentation mode and a Document / Reading mode.
+ */
+function generateStandaloneHtml(doc) {
+    const theme = THEMES[doc.theme] || THEMES['natural-tones'];
+    const slideCount = doc.slides.length;
+    return `<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${escapeHtml(doc.title)} - ${escapeHtml(doc.authorName)}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@300;400;500;600&family=Noto+Serif+KR:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: ${theme.bgColor};
+      --text-color: ${theme.textColor};
+      --muted-text: ${theme.mutedTextColor};
+      --accent-color: ${theme.accentColor};
+      --border-color: ${theme.borderColor};
+      --card-bg: ${theme.cardBg};
+      --badge-bg: ${theme.badgeBg};
+      --badge-text: ${theme.badgeText};
+      --quote-border: ${theme.quoteBorder};
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #EBE9E1;
+      color: #2D2D2D;
+      font-family: 'Gowun Batang', 'Noto Serif KR', serif;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Fixed Top App Navigation Bar */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: #F4F2EB;
+      border-bottom: 1px solid #D6D3C8;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      font-family: 'Noto Sans KR', sans-serif;
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .mac-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .dot-red { background: #E74C3C; }
+    .dot-yellow { background: #F1C40F; }
+    .dot-green { background: #2ECC71; }
+
+    .doc-headline {
+      font-size: 13px;
+      font-weight: 600;
+      color: #2D2D2D;
+      max-width: 320px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .doc-subinfo {
+      font-size: 11px;
+      color: #7A786F;
+    }
+
+    .view-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-toggle-view {
+      background: #FFFFFF;
+      border: 1px solid #D6D3C8;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      color: #2D2D2D;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .btn-toggle-view:hover {
+      background: #EDEBE3;
+    }
+
+    .btn-toggle-view.active {
+      background: #5C5A4E;
+      color: #FFFFFF;
+      border-color: #5C5A4E;
+    }
+
+    .btn-print {
+      background: #FFFFFF;
+      border: 1px solid #D6D3C8;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      color: #2D2D2D;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .btn-print:hover {
+      background: #EDEBE3;
+    }
+
+    /* Main Container */
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 16px 64px 16px;
+    }
+
+    /* ====================================================
+       VIEW 1: SLIDE CAROUSEL / PRESENTATION MODE
+       ==================================================== */
+    .slide-view-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .slide-stage-card {
+      width: 100%;
+      aspect-ratio: 4 / 5;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      border-radius: 4px;
+      box-shadow: 0 16px 40px rgba(45, 45, 45, 0.12);
+      border: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 40px 36px;
+      position: relative;
+      overflow: hidden;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    @media (max-width: 600px) {
+      .slide-stage-card {
+        padding: 24px 20px;
+      }
+    }
+
+    .slide-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 16px;
+      margin-bottom: 16px;
+    }
+
+    .slide-header-series {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      font-weight: bold;
+      color: var(--accent-color);
+    }
+
+    .slide-header-badge {
+      display: inline-block;
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 500;
+      background-color: var(--badge-bg);
+      color: var(--badge-text);
+      margin-top: 4px;
+    }
+
+    .slide-header-num {
+      font-family: monospace;
+      font-size: 11px;
+      font-weight: bold;
+      letter-spacing: 0.1em;
+      color: var(--accent-color);
+    }
+
+    .slide-body-center {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin: auto 0;
+      overflow: hidden;
+    }
+
+    .slide-title-cover {
+      font-size: 32px;
+      font-weight: 700;
+      font-style: italic;
+      line-height: 1.25;
+      margin-bottom: 12px;
+      color: var(--text-color);
+    }
+
+    .slide-title-standard {
+      font-size: 23px;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 10px;
+      color: var(--text-color);
+    }
+
+    .slide-subtitle {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--accent-color);
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+
+    .slide-accent-divider {
+      width: 48px;
+      height: 2px;
+      background-color: var(--accent-color);
+      margin-bottom: 18px;
+    }
+
+    .slide-verse-box {
+      background-color: var(--card-bg);
+      border-left: 3px solid var(--quote-border);
+      padding: 16px 20px;
+      margin: 12px 0;
+      border-radius: 0 4px 4px 0;
+      font-style: italic;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .slide-verse-ref {
+      text-align: right;
+      font-size: 11px;
+      font-style: normal;
+      font-weight: 600;
+      color: var(--accent-color);
+      margin-top: 8px;
+    }
+
+    .slide-quote-box {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      padding: 16px 20px;
+      margin: 12px 0;
+      border-radius: 4px;
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .slide-quote-author {
+      font-size: 11px;
+      font-weight: bold;
+      color: var(--accent-color);
+      border-top: 1px solid var(--border-color);
+      padding-top: 8px;
+      margin-top: 8px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .slide-word-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+      margin: 12px 0;
+    }
+
+    .slide-word-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      padding: 12px 16px;
+      border-radius: 4px;
+    }
+
+    .slide-word-orig {
+      font-size: 20px;
+      font-weight: bold;
+      color: var(--accent-color);
+    }
+
+    .slide-word-lang {
+      font-size: 9px;
+      text-transform: uppercase;
+      font-family: monospace;
+      padding: 2px 6px;
+      border-radius: 3px;
+      background-color: var(--badge-bg);
+      color: var(--badge-text);
+      display: inline-block;
+      margin-top: 4px;
+    }
+
+    .slide-word-mean {
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 6px;
+    }
+
+    .slide-body-paragraph {
+      font-size: 13.5px;
+      line-height: 1.8;
+      margin: 10px 0;
+      white-space: pre-line;
+    }
+
+    .slide-bullets {
+      margin: 10px 0;
+      padding-left: 20px;
+      font-size: 12.5px;
+      line-height: 1.7;
+    }
+
+    .slide-bullets li {
+      margin-bottom: 4px;
+    }
+
+    .slide-reflection {
+      background-color: var(--badge-bg);
+      border: 1px solid var(--border-color);
+      padding: 12px 16px;
+      border-radius: 4px;
+      font-size: 12px;
+      line-height: 1.6;
+      margin-top: 10px;
+    }
+
+    .slide-footer {
+      margin-top: auto;
+      border-top: 1px solid var(--border-color);
+      padding-top: 14px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+
+    .slide-footer-label {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--muted-text);
+      margin-bottom: 2px;
+    }
+
+    .slide-footer-val {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-color);
+    }
+
+    /* Carousel Pagination Dock */
+    .carousel-dock {
+      margin-top: 20px;
+      background: #FFFFFF;
+      border: 1px solid #D6D3C8;
+      padding: 8px 16px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      font-family: 'Noto Sans KR', sans-serif;
+    }
+
+    .btn-nav-arrow {
+      background: none;
+      border: 1px solid #D6D3C8;
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: bold;
+      color: #2D2D2D;
+      transition: all 0.15s ease;
+    }
+
+    .btn-nav-arrow:hover:not(:disabled) {
+      background: #EDEBE3;
+    }
+
+    .btn-nav-arrow:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .dock-indicator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dock-dot {
+      height: 8px;
+      border-radius: 4px;
+      background: #D6D3C8;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .dock-dot.active {
+      width: 24px;
+      background: #5C5A4E;
+    }
+
+    .dock-dot:not(.active) {
+      width: 8px;
+    }
+
+    .dock-counter {
+      font-size: 12px;
+      font-weight: 600;
+      color: #5C5A4E;
+      min-width: 48px;
+      text-align: center;
+    }
+
+    /* ====================================================
+       VIEW 2: CONTINUOUS DOCUMENT (READING/PRINT) MODE
+       ==================================================== */
+    .doc-view-wrapper {
+      max-width: 760px;
+      width: 100%;
+      background: #FFFFFF;
+      padding: 64px 56px;
+      box-shadow: 0 12px 36px rgba(45,45,45,0.06);
+      border-radius: 4px;
+      border: 1px solid #D6D3C8;
+      display: none;
+    }
+
+    @media (max-width: 600px) {
+      .doc-view-wrapper {
+        padding: 36px 24px;
+      }
+    }
+
+    .doc-series {
+      font-size: 11px;
+      color: #A39171;
+      letter-spacing: 0.15em;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .doc-title {
+      font-size: 34px;
+      font-weight: 700;
+      color: #2D2D2D;
+      margin: 0 0 12px 0;
+      line-height: 1.3;
+    }
+
+    .doc-gold-line {
+      width: 48px;
+      height: 2px;
+      background-color: #A39171;
+      margin: 20px 0;
+    }
+
+    .doc-author-meta {
+      font-size: 13px;
+      color: #7A786F;
+      border-bottom: 1px solid #D6D3C8;
+      padding-bottom: 24px;
+      margin-bottom: 40px;
+      display: flex;
+      justify-content: space-between;
+      font-family: 'Noto Sans KR', sans-serif;
+    }
+
+    .doc-slide-section {
+      margin-bottom: 48px;
+      padding-bottom: 40px;
+      border-bottom: 1px dashed #D6D3C8;
+    }
+
+    .doc-slide-section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .doc-slide-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: bold;
+      letter-spacing: 0.1em;
+      background: #EDEBE3;
+      color: #5C5A4E;
+      padding: 3px 10px;
+      border-radius: 4px;
+      margin-bottom: 14px;
+      text-transform: uppercase;
+      font-family: 'Noto Sans KR', sans-serif;
+    }
+
+    .doc-slide-h2 {
+      font-size: 24px;
+      font-weight: 700;
+      margin: 0 0 10px 0;
+      color: #2D2D2D;
+      line-height: 1.35;
+    }
+
+    .doc-slide-sub {
+      font-size: 14px;
+      color: #A39171;
+      font-weight: 500;
+      margin-bottom: 20px;
+    }
+
+    .doc-verse-box {
+      background: #FAF9F6;
+      border-left: 3px solid #A39171;
+      padding: 20px 24px;
+      margin: 24px 0;
+      font-style: italic;
+      border-radius: 0 4px 4px 0;
+    }
+
+    .doc-quote-box {
+      background: #FAF9F6;
+      border: 1px solid #D6D3C8;
+      padding: 20px 24px;
+      margin: 24px 0;
+      border-radius: 4px;
+    }
+
+    .doc-word-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px;
+      margin: 24px 0;
+    }
+
+    .doc-word-card {
+      background: #FAF9F6;
+      padding: 16px 20px;
+      border-radius: 4px;
+      border: 1px solid #D6D3C8;
+    }
+
+    .doc-word-orig {
+      font-size: 22px;
+      font-weight: bold;
+      color: #5C5A4E;
+    }
+
+    .doc-footer-stamp {
+      text-align: center;
+      margin-top: 48px;
+      font-size: 12px;
+      color: #9A988E;
+      font-family: 'Noto Sans KR', sans-serif;
+    }
+
+    /* Print Styles */
+    @media print {
+      .top-nav, .carousel-dock {
+        display: none !important;
+      }
+      body {
+        background: #FFFFFF !important;
+        padding: 0 !important;
+      }
+      .slide-view-wrapper {
+        display: none !important;
+      }
+      .doc-view-wrapper {
+        display: block !important;
+        box-shadow: none !important;
+        border: none !important;
+        padding: 0 !important;
+        max-width: 100% !important;
+      }
+      .doc-slide-section {
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Fixed Toolbar -->
+  <nav class="top-nav">
+    <div class="brand-section">
+      <div class="mac-dots">
+        <div class="dot dot-red"></div>
+        <div class="dot dot-yellow"></div>
+        <div class="dot dot-green"></div>
+      </div>
+      <div>
+        <div class="doc-headline">${escapeHtml(doc.title)}</div>
+        <div class="doc-subinfo">${escapeHtml(doc.authorName)} · ${escapeHtml(doc.category || '신학 노트')} (${slideCount} 슬라이드)</div>
+      </div>
+    </div>
+
+    <div class="view-controls">
+      <button id="btn-mode-slide" class="btn-toggle-view active" onclick="switchView('slide')">
+        <span>🖼️ 슬라이드 모드</span>
+      </button>
+      <button id="btn-mode-doc" class="btn-toggle-view" onclick="switchView('doc')">
+        <span>📑 문서 읽기 모드</span>
+      </button>
+      <button class="btn-print" onclick="window.print()">
+        <span>🖨️ 인쇄 / PDF</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main Content Area -->
+  <main class="main-content">
+
+    <!-- 1. Interactive Slide Carousel Mode -->
+    <section id="slide-carousel-section" class="slide-view-wrapper">
+      <div id="slide-stage" class="slide-stage-card">
+        <!-- Rendered dynamically by JavaScript -->
+      </div>
+
+      <!-- Bottom Carousel Controls -->
+      <div class="carousel-dock">
+        <button id="btn-prev" class="btn-nav-arrow" onclick="prevSlide()" title="이전 (← 키)">◀</button>
+        <div id="dock-dots-container" class="dock-indicator">
+          <!-- Dots rendered dynamically -->
+        </div>
+        <span id="dock-counter" class="dock-counter">1 / ${slideCount}</span>
+        <button id="btn-next" class="btn-nav-arrow" onclick="nextSlide()" title="다음 (→ 키)">▶</button>
+      </div>
+    </section>
+
+    <!-- 2. Continuous Document Reading / Print Mode -->
+    <section id="doc-reading-section" class="doc-view-wrapper">
+      <div class="doc-series">${escapeHtml(doc.seriesName || 'THEOLOGY NOTES')}</div>
+      <h1 class="doc-title">${escapeHtml(doc.title)}</h1>
+      <div class="doc-gold-line"></div>
+      <div class="doc-author-meta">
+        <span>작성: ${escapeHtml(doc.authorName)} (${escapeHtml(doc.authorHandle)})</span>
+        <span>분류: ${escapeHtml(doc.category || '신학')} · 최종 갱신: ${escapeHtml(doc.updatedAt || '')}</span>
+      </div>
+
+      ${doc.slides.map((s, i) => `
+        <article class="doc-slide-section">
+          <span class="doc-slide-badge">NO. ${String(i + 1).padStart(2, '0')} · ${s.type.toUpperCase()}</span>
+          <h2 class="doc-slide-h2">${escapeHtml(s.slideTitle)}</h2>
+          ${s.subtitle ? `<div class="doc-slide-sub">${escapeHtml(s.subtitle)}</div>` : ''}
+
+          ${s.scriptureVerse ? `
+            <div class="doc-verse-box">
+              "${escapeHtml(s.scriptureVerse.text)}"
+              <div style="text-align: right; font-size: 12px; font-style: normal; font-weight: 600; margin-top: 10px; color: #A39171;">
+                — ${escapeHtml(s.scriptureVerse.ref)} (${escapeHtml(s.scriptureVerse.translation)})
+              </div>
+            </div>
+          ` : ''}
+
+          ${s.theologyQuote ? `
+            <div class="doc-quote-box">
+              <div style="font-size: 15px; line-height: 1.6; margin-bottom: 10px;">"${escapeHtml(s.theologyQuote.quote)}"</div>
+              <div style="font-size: 13px; color: #5C5A4E; font-weight: bold;">
+                — ${escapeHtml(s.theologyQuote.author)} ${s.theologyQuote.work ? `『${escapeHtml(s.theologyQuote.work)}』` : ''}
+              </div>
+            </div>
+          ` : ''}
+
+          ${s.originalWords && s.originalWords.length > 0 ? `
+            <div class="doc-word-grid">
+              ${s.originalWords.map(w => `
+                <div class="doc-word-card">
+                  <div class="doc-word-orig">${escapeHtml(w.original)}</div>
+                  <div style="font-size: 12px; color: #7A786F; margin-bottom: 6px;">${escapeHtml(w.transliteration)} [${w.language === 'greek' ? '신약 헬라어' : w.language === 'hebrew' ? '구약 히브리어' : '라틴어'}]</div>
+                  <div style="font-size: 13px; font-weight: 600;">${escapeHtml(w.meaning)}</div>
+                  ${w.note ? `<div style="font-size: 11px; color: #9A988E; margin-top: 6px;">* ${escapeHtml(w.note)}</div>` : ''}
+                </div>
+              `).join('')}
+            </div>
+          ` : ''}
+
+          ${s.bodyText ? `<p style="line-height: 1.85; font-size: 15px; margin: 18px 0; white-space: pre-line;">${escapeHtml(s.bodyText)}</p>` : ''}
+
+          ${s.bulletPoints && s.bulletPoints.length > 0 ? `
+            <ul style="padding-left: 24px; line-height: 1.8; margin: 16px 0;">
+              ${s.bulletPoints.map(bp => `<li style="margin-bottom: 6px;">${escapeHtml(bp)}</li>`).join('')}
+            </ul>
+          ` : ''}
+
+          ${s.reflectionPrompt ? `
+            <div style="background: #FAF9F6; border: 1px solid #D6D3C8; padding: 16px 20px; border-radius: 4px; font-size: 13.5px; line-height: 1.7; margin-top: 18px;">
+              <strong>묵상과 적용 질문:</strong><br/>
+              ${escapeHtml(s.reflectionPrompt)}
+            </div>
+          ` : ''}
+        </article>
+      `).join('')}
+
+      <div class="doc-footer-stamp">
+        ${escapeHtml(doc.authorName)} (${escapeHtml(doc.authorHandle)}) · Natural Tones Theology Notes Studio
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Embedded Document State
+    const docData = ${JSON.stringify(doc)};
+    let currentIndex = 0;
+    const totalSlides = docData.slides.length;
+
+    function renderSlide(index) {
+      const slide = docData.slides[index];
+      if (!slide) return;
+
+      const stage = document.getElementById('slide-stage');
+      const isCover = slide.type === 'cover';
+
+      let innerHtml = \`
+        <div class="slide-header">
+          <div>
+            <div class="slide-header-series">\${slide.tagline || (docData.seriesName ? docData.seriesName + ' · NO. ' + String(index + 1).padStart(2, '0') : 'THEOLOGY NOTE')}</div>
+            \${docData.category ? \`<span class="slide-header-badge">\${docData.category}</span>\` : ''}
+          </div>
+          <div class="slide-header-num">NO. \${String(index + 1).padStart(2, '0')} / \${String(totalSlides).padStart(2, '0')}</div>
+        </div>
+
+        <div class="slide-body-center">
+          <h2 class="\${isCover ? 'slide-title-cover' : 'slide-title-standard'}">\${slide.slideTitle || ''}</h2>
+          \${slide.subtitle ? \`<div class="slide-subtitle">\${slide.subtitle}</div>\` : ''}
+          \${isCover || slide.type === 'scripture-focus' || slide.type === 'quote-focus' ? '<div class="slide-accent-divider"></div>' : ''}
+
+          \${slide.scriptureVerse ? \`
+            <div class="slide-verse-box">
+              "\${slide.scriptureVerse.text}"
+              <div class="slide-verse-ref">— \${slide.scriptureVerse.ref} (\${slide.scriptureVerse.translation || ''})</div>
+            </div>
+          \` : ''}
+
+          \${slide.theologyQuote ? \`
+            <div class="slide-quote-box">
+              "\${slide.theologyQuote.quote}"
+              <div class="slide-quote-author">
+                <span>\${slide.theologyQuote.author}</span>
+                \${slide.theologyQuote.work ? \`<span>『\${slide.theologyQuote.work}』</span>\` : ''}
+              </div>
+            </div>
+          \` : ''}
+
+          \${slide.originalWords && slide.originalWords.length > 0 ? \`
+            <div class="slide-word-grid">
+              \${slide.originalWords.map(w => \`
+                <div class="slide-word-card">
+                  <div class="slide-word-orig">\${w.original}</div>
+                  <span class="slide-word-lang">\${w.transliteration} [\${w.language === 'greek' ? '헬라어' : '히브리어'}]</span>
+                  <div class="slide-word-mean">\${w.meaning}</div>
+                  \${w.note ? \`<div style="font-size: 10px; color: var(--muted-text); margin-top: 4px;">* \${w.note}</div>\` : ''}
+                </div>
+              \`).join('')}
+            </div>
+          \` : ''}
+
+          \${slide.bodyText ? \`<p class="slide-body-paragraph">\${slide.bodyText}</p>\` : ''}
+
+          \${slide.bulletPoints && slide.bulletPoints.length > 0 ? \`
+            <ul class="slide-bullets">
+              \${slide.bulletPoints.map(bp => \`<li>\${bp}</li>\`).join('')}
+            </ul>
+          \` : ''}
+
+          \${slide.reflectionPrompt ? \`
+            <div class="slide-reflection">
+              <strong>묵상 질문:</strong> \${slide.reflectionPrompt}
+            </div>
+          \` : ''}
+        </div>
+
+        <div class="slide-footer">
+          <div>
+            <div class="slide-footer-label">Date</div>
+            <div class="slide-footer-val">\${docData.updatedAt || '2024. 05. 24'}</div>
+          </div>
+          <div style="text-align: right;">
+            <div class="slide-footer-label">Series</div>
+            <div class="slide-footer-val">\${docData.seriesName || docData.authorHandle || 'Meditations on Scripture'}</div>
+          </div>
+        </div>
+      \`;
+
+      stage.innerHTML = innerHtml;
+
+      // Update counter and buttons
+      document.getElementById('dock-counter').innerText = (index + 1) + ' / ' + totalSlides;
+      document.getElementById('btn-prev').disabled = (index === 0);
+      document.getElementById('btn-next').disabled = (index === totalSlides - 1);
+
+      // Render Dots
+      const dotsContainer = document.getElementById('dock-dots-container');
+      dotsContainer.innerHTML = '';
+      for (let i = 0; i < totalSlides; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'dock-dot ' + (i === index ? 'active' : '');
+        dot.onclick = () => goToSlide(i);
+        dotsContainer.appendChild(dot);
+      }
+    }
+
+    function goToSlide(index) {
+      if (index >= 0 && index < totalSlides) {
+        currentIndex = index;
+        renderSlide(currentIndex);
+      }
+    }
+
+    function nextSlide() {
+      if (currentIndex < totalSlides - 1) {
+        goToSlide(currentIndex + 1);
+      }
+    }
+
+    function prevSlide() {
+      if (currentIndex > 0) {
+        goToSlide(currentIndex - 1);
+      }
+    }
+
+    function switchView(mode) {
+      const carouselSec = document.getElementById('slide-carousel-section');
+      const docSec = document.getElementById('doc-reading-section');
+      const btnSlide = document.getElementById('btn-mode-slide');
+      const btnDoc = document.getElementById('btn-mode-doc');
+
+      if (mode === 'slide') {
+        carouselSec.style.display = 'flex';
+        docSec.style.display = 'none';
+        btnSlide.classList.add('active');
+        btnDoc.classList.remove('active');
+      } else {
+        carouselSec.style.display = 'none';
+        docSec.style.display = 'block';
+        btnSlide.classList.remove('active');
+        btnDoc.classList.add('active');
+      }
+    }
+
+    // Keyboard Arrow navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        nextSlide();
+      } else if (e.key === 'ArrowLeft') {
+        prevSlide();
+      }
+    });
+
+    // Touch swipe navigation for mobile
+    let touchStartX = 0;
+    let touchEndX = 0;
+    const stageCard = document.getElementById('slide-stage');
+    stageCard.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+    stageCard.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      if (touchStartX - touchEndX > 50) {
+        nextSlide(); // swipe left -> next
+      } else if (touchEndX - touchStartX > 50) {
+        prevSlide(); // swipe right -> prev
+      }
+    }, { passive: true });
+
+    // Initial render
+    renderSlide(0);
+  <\/script>
+</body>
+</html>`;
+}
+function escapeHtml(str) {
+    if (!str)
+        return '';
+    return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+// ==== dist/components/SlideCanvas.js ====
+
+const SlideCanvas = ({ doc, activeSlideIndex, onSelectSlide, onUpdateActiveSlide, zoom, onDownloadCurrentSlide, onDownloadHtml, onOpenExportModal, isExportingPng = false, }) => {
+    const slideRef = useRef(null);
+    const slide = doc.slides[activeSlideIndex] || doc.slides[0];
+    const theme = THEMES[doc.theme] || THEMES['pages-ivory'];
+    // Font family class resolver
+    const getFontFamilyStyle = () => {
+        switch (doc.fontFamily) {
+            case 'gowun-batang':
+                return { fontFamily: "'Gowun Batang', 'Noto Serif KR', serif" };
+            case 'noto-serif':
+                return { fontFamily: "'Noto Serif KR', 'Song Myung', serif" };
+            case 'song-myung':
+                return { fontFamily: "'Song Myung', 'Noto Serif KR', serif" };
+            case 'noto-sans':
+                return { fontFamily: "'Noto Sans KR', sans-serif" };
+            case 'jakarta-modern':
+                return { fontFamily: "'Plus Jakarta Sans', 'Noto Sans KR', sans-serif" };
+            default:
+                return { fontFamily: "'Gowun Batang', serif" };
+        }
+    };
+    // Dimensions based on aspect ratio
+    const getDimensions = (ar) => {
+        switch (ar) {
+            case '4:5':
+                return { width: 540, height: 675, label: '1080 × 1350 (4:5)' };
+            case '1:1':
+                return { width: 560, height: 560, label: '1080 × 1080 (1:1)' };
+            case '9:16':
+                return { width: 420, height: 746, label: '1080 × 1920 (9:16)' };
+            case 'threads-card':
+                return { width: 560, height: 680, label: '스레드 에디토리얼 카드' };
+            default:
+                return { width: 540, height: 675, label: '4:5' };
+        }
+    };
+    const dim = getDimensions(doc.aspectRatio);
+    const getBorderClass = () => {
+        switch (doc.borderStyle) {
+            case 'thin-rule':
+                return 'border border-stone-300/80 m-3';
+            case 'double-frame':
+                return 'border-4 border-double border-stone-300/90 m-4';
+            case 'classic-corner':
+                return 'border border-stone-300/80 m-4 relative before:absolute before:top-2 before:left-2 before:right-2 before:bottom-2 before:border before:border-stone-200/60';
+            case 'book-edge':
+                return 'border-l-8 border-r border-t border-b border-amber-900/20 m-2';
+            default:
+                return '';
+        }
+    };
+    return (React.createElement("main", { className: "flex-1 flex flex-col items-center justify-between bg-[#EBE9E1] p-4 md:p-8 overflow-auto select-none relative min-h-[calc(100vh-3.5rem)]" },
+        React.createElement("div", { className: "w-full max-w-2xl flex flex-wrap items-center justify-between gap-2 text-xs text-[#7A786F] mb-3 px-2" },
+            React.createElement("div", { className: "flex items-center gap-2" },
+                React.createElement("span", { className: "font-semibold text-[#2D2D2D]" },
+                    activeSlideIndex + 1,
+                    " / ",
+                    doc.slides.length,
+                    " Slide"),
+                React.createElement("span", null, "\u00B7"),
+                React.createElement("span", { className: "text-[#7A786F] font-mono text-[11px]" }, dim.label),
+                React.createElement("span", null, "\u00B7"),
+                React.createElement("span", { className: "text-[#A39171] font-semibold" }, theme.name)),
+            React.createElement("div", { className: "flex items-center gap-1.5" },
+                React.createElement("button", { id: "canvas-btn-download-html", onClick: onDownloadHtml, title: "\uBAA8\uB4E0 \uC2AC\uB77C\uC774\uB4DC\uAC00 \uD3EC\uD568\uB41C \uB2E8\uC77C \uB3C5\uB9BD \uC2E4\uD589\uD615 HTML \uD30C\uC77C\uB85C \uC989\uC2DC \uB2E4\uC6B4\uB85C\uB4DC", className: "flex items-center gap-1.5 px-2.5 py-1 bg-[#FFFFFF] hover:bg-[#EDEBE3] text-[#2D2D2D] rounded-md shadow-2xs border border-[#D6D3C8] text-xs font-semibold transition-all" },
+                    React.createElement(FileCode, { className: "w-3.5 h-3.5 text-[#5C5A4E]" }),
+                    React.createElement("span", null, "HTML \uC800\uC7A5")),
+                React.createElement("button", { id: "canvas-btn-download-png", disabled: isExportingPng, onClick: onDownloadCurrentSlide, title: "\uD604\uC7AC \uC2AC\uB77C\uC774\uB4DC\uB97C \uACE0\uD654\uC9C8 PNG \uC774\uBBF8\uC9C0\uB85C \uB2E4\uC6B4\uB85C\uB4DC", className: "flex items-center gap-1.5 px-2.5 py-1 bg-[#FFFFFF] hover:bg-[#EDEBE3] disabled:opacity-60 text-[#2D2D2D] rounded-md shadow-2xs border border-[#D6D3C8] text-xs font-semibold transition-all" },
+                    isExportingPng ? (React.createElement(Loader2, { className: "w-3.5 h-3.5 animate-spin text-[#5C5A4E]" })) : (React.createElement(Download, { className: "w-3.5 h-3.5 text-[#5C5A4E]" })),
+                    React.createElement("span", null, isExportingPng ? '저장 중...' : 'PNG 저장')),
+                React.createElement("button", { id: "canvas-btn-open-export", onClick: onOpenExportModal, title: "\uC778\uC2A4\uD0C0 ZIP, \uCEA1\uC158 \uBCF5\uC0AC, HTML \uB4F1 \uC804\uCCB4 \uB0B4\uBCF4\uB0B4\uAE30 \uCC3D \uC5F4\uAE30", className: "flex items-center gap-1.5 px-2.5 py-1 bg-[#5C5A4E] hover:bg-[#4B493E] text-white rounded-md shadow-xs text-xs font-semibold transition-all" },
+                    React.createElement(Share2, { className: "w-3.5 h-3.5" }),
+                    React.createElement("span", null, "\uB0B4\uBCF4\uB0B4\uAE30")))),
+        React.createElement("div", { className: "flex-1 flex items-center justify-center my-auto transition-transform duration-200 ease-out", style: { transform: `scale(${zoom})`, transformOrigin: 'center center' } },
+            React.createElement("div", { id: "slide-render-target", ref: slideRef, className: "relative bg-white text-[#2D2D2D] shadow-2xl rounded-sm overflow-hidden flex flex-col justify-between", style: {
+                    width: `${dim.width}px`,
+                    height: `${dim.height}px`,
+                    backgroundColor: theme.bgColor,
+                    color: theme.textColor,
+                    ...getFontFamilyStyle(),
+                } },
+                React.createElement("div", { className: `flex-1 flex flex-col justify-between p-8 md:p-12 ${getBorderClass()}` },
+                    React.createElement("header", { className: "flex items-start justify-between border-b pb-4 mb-4", style: { borderColor: theme.borderColor } },
+                        React.createElement("div", { className: "flex flex-col gap-1" },
+                            doc.showSeriesHeader && (React.createElement("span", { className: "text-[10px] tracking-[0.2em] uppercase font-bold", style: { color: theme.accentColor } }, slide.tagline || (doc.seriesName ? `${doc.seriesName} · NO. ${String(activeSlideIndex + 1).padStart(2, '0')}` : 'THEOLOGY NOTE'))),
+                            doc.showCategoryBadge && doc.category && (React.createElement("span", { className: "inline-block self-start text-[10px] px-2 py-0.5 rounded font-medium mt-0.5 tracking-wide", style: { backgroundColor: theme.badgeBg, color: theme.badgeText } }, doc.category))),
+                        doc.showSlideNumber && (React.createElement("div", { className: "text-right" },
+                            React.createElement("span", { className: "font-mono text-[10px] font-bold tracking-widest uppercase", style: { color: theme.accentColor } },
+                                "No. ",
+                                String(activeSlideIndex + 1).padStart(2, '0'),
+                                " / ",
+                                String(doc.slides.length).padStart(2, '0'))))),
+                    React.createElement("div", { className: "flex-1 flex flex-col justify-center my-auto overflow-hidden py-2" },
+                        slide.slideTitle && (React.createElement("h2", { className: `font-serif leading-[1.25] mb-3 tracking-tight ${slide.type === 'cover'
+                                ? 'text-3xl md:text-[34px] italic'
+                                : 'text-xl md:text-[24px] font-bold'}`, style: { color: theme.textColor } }, slide.slideTitle)),
+                        slide.subtitle && (React.createElement("h3", { className: "text-xs md:text-sm font-medium mb-3 leading-snug tracking-wide", style: { color: theme.accentColor } }, slide.subtitle)),
+                        (slide.type === 'cover' || slide.type === 'scripture-focus' || slide.type === 'quote-focus') && (React.createElement("div", { className: "w-12 h-[2px] mb-5", style: { backgroundColor: theme.accentColor } })),
+                        slide.scriptureVerse && (React.createElement("div", { className: "my-3 p-4 rounded-md border-l-3 relative font-serif", style: {
+                                backgroundColor: theme.cardBg,
+                                borderColor: theme.quoteBorder,
+                                boxShadow: '0 1px 2px rgba(0,0,0,0.02)'
+                            } },
+                            React.createElement(QuoteIcon, { className: "w-4 h-4 absolute top-2.5 right-3 opacity-20", style: { color: theme.accentColor } }),
+                            React.createElement("p", { className: "text-xs md:text-[13.5px] leading-relaxed italic pr-4", style: { color: theme.textColor } }, slide.scriptureVerse.text),
+                            React.createElement("div", { className: "text-right mt-2 flex items-center justify-end gap-1.5 text-[11px] font-semibold", style: { color: theme.accentColor } },
+                                React.createElement("span", null,
+                                    "\u2014 ",
+                                    slide.scriptureVerse.ref),
+                                slide.scriptureVerse.translation && (React.createElement("span", { className: "text-[9px] px-1.5 py-0.5 rounded opacity-80", style: { backgroundColor: theme.badgeBg, color: theme.badgeText } }, slide.scriptureVerse.translation))))),
+                        slide.theologyQuote && (React.createElement("div", { className: "my-3 p-4 rounded-md border relative", style: {
+                                backgroundColor: theme.cardBg,
+                                borderColor: theme.borderColor,
+                            } },
+                            React.createElement("p", { className: "text-xs md:text-[13.5px] leading-relaxed font-serif mb-2.5", style: { color: theme.textColor } },
+                                "\"",
+                                slide.theologyQuote.quote,
+                                "\""),
+                            React.createElement("div", { className: "flex items-center justify-between text-[11px] border-t pt-2", style: { borderColor: theme.borderColor } },
+                                React.createElement("span", { className: "font-semibold", style: { color: theme.accentColor } }, slide.theologyQuote.author),
+                                slide.theologyQuote.work && (React.createElement("span", { className: "italic text-[10px]", style: { color: theme.mutedTextColor } },
+                                    "\u300E",
+                                    slide.theologyQuote.work,
+                                    "\u300F"))))),
+                        slide.originalWords && slide.originalWords.length > 0 && (React.createElement("div", { className: "my-2.5 space-y-2" }, slide.originalWords.map((word) => (React.createElement("div", { key: word.id, className: "p-3 rounded-md border flex flex-col gap-1", style: {
+                                backgroundColor: theme.cardBg,
+                                borderColor: theme.borderColor,
+                            } },
+                            React.createElement("div", { className: "flex items-center justify-between" },
+                                React.createElement("span", { className: "text-lg md:text-xl font-bold font-serif", style: { color: theme.accentColor } }, word.original),
+                                React.createElement("span", { className: "text-[9px] uppercase font-mono px-2 py-0.5 rounded", style: { backgroundColor: theme.badgeBg, color: theme.badgeText } }, word.language === 'greek' ? '신약 헬라어' : word.language === 'hebrew' ? '구약 히브리어' : '라틴어')),
+                            React.createElement("div", { className: "text-[11px] font-medium", style: { color: theme.mutedTextColor } },
+                                "\uBC1C\uC74C: ",
+                                word.transliteration),
+                            React.createElement("div", { className: "text-xs md:text-[12px] font-medium leading-snug", style: { color: theme.textColor } }, word.meaning),
+                            word.note && (React.createElement("div", { className: "text-[10px] leading-tight opacity-75 mt-0.5", style: { color: theme.mutedTextColor } },
+                                "* ",
+                                word.note))))))),
+                        slide.bodyText && (React.createElement("p", { className: "text-xs md:text-[13.5px] leading-relaxed my-2 whitespace-pre-line font-serif", style: {
+                                color: theme.textColor,
+                                fontSize: `${13.5 * doc.fontSizeMultiplier}px`
+                            } }, slide.bodyText)),
+                        slide.bulletPoints && slide.bulletPoints.length > 0 && (React.createElement("ul", { className: "my-2.5 space-y-1.5" }, slide.bulletPoints.map((point, pIdx) => (React.createElement("li", { key: pIdx, className: "flex items-start gap-2 text-xs md:text-[12.5px] leading-snug" },
+                            React.createElement("span", { className: "w-1.5 h-1.5 rounded-full mt-1.5 shrink-0", style: { backgroundColor: theme.accentColor } }),
+                            React.createElement("span", { style: { color: theme.textColor } }, point)))))),
+                        slide.reflectionPrompt && (React.createElement("div", { className: "my-2 p-3 rounded-md border text-xs leading-relaxed", style: {
+                                backgroundColor: theme.badgeBg,
+                                borderColor: theme.borderColor,
+                                color: theme.badgeText
+                            } },
+                            React.createElement("span", { className: "font-bold mr-1.5" }, "\uD83D\uDCA1 \uBB35\uC0C1 \uC9C8\uBB38:"),
+                            React.createElement("span", null, slide.reflectionPrompt)))),
+                    React.createElement("footer", { className: "mt-auto pt-4 border-t flex items-end justify-between", style: { borderColor: theme.borderColor } },
+                        React.createElement("div", null,
+                            React.createElement("p", { className: "text-[9px] uppercase tracking-widest mb-0.5", style: { color: theme.mutedTextColor } }, "Date"),
+                            React.createElement("p", { className: "text-[11px] font-medium", style: { color: theme.textColor } }, doc.updatedAt || '2024. 05. 24')),
+                        React.createElement("div", { className: "text-right" },
+                            React.createElement("p", { className: "text-[9px] uppercase tracking-widest mb-0.5", style: { color: theme.mutedTextColor } }, "Series"),
+                            React.createElement("p", { className: "text-[11px] font-medium", style: { color: theme.textColor } }, doc.seriesName || doc.authorHandle || 'Meditations on Scripture')))))),
+        React.createElement("div", { className: "w-full max-w-md flex items-center justify-between bg-[#FFFFFF] px-4 py-2 rounded-md shadow-2xs border border-[#D6D3C8] mt-3 select-none" },
+            React.createElement("button", { id: "btn-prev-slide", disabled: activeSlideIndex === 0, onClick: () => onSelectSlide(Math.max(0, activeSlideIndex - 1)), className: "p-1.5 rounded text-[#2D2D2D] hover:bg-[#EDEBE3] disabled:opacity-30 disabled:pointer-events-none transition-colors flex items-center gap-1 text-xs font-semibold" },
+                React.createElement(ChevronLeft, { className: "w-4 h-4" }),
+                React.createElement("span", { className: "hidden sm:inline" }, "\uC774\uC804")),
+            React.createElement("div", { className: "flex items-center gap-1.5" }, doc.slides.map((_, idx) => (React.createElement("button", { key: idx, onClick: () => onSelectSlide(idx), title: `${idx + 1}번 슬라이드`, className: `h-2 rounded-full transition-all ${idx === activeSlideIndex
+                    ? 'w-6 bg-[#5C5A4E]'
+                    : 'w-2 bg-[#D6D3C8] hover:bg-[#9A988E]'}` })))),
+            React.createElement("button", { id: "btn-next-slide", disabled: activeSlideIndex === doc.slides.length - 1, onClick: () => onSelectSlide(Math.min(doc.slides.length - 1, activeSlideIndex + 1)), className: "p-1.5 rounded text-[#2D2D2D] hover:bg-[#EDEBE3] disabled:opacity-30 disabled:pointer-events-none transition-colors flex items-center gap-1 text-xs font-semibold" },
+                React.createElement("span", { className: "hidden sm:inline" }, "\uB2E4\uC74C"),
+                React.createElement(ChevronRight, { className: "w-4 h-4" })))));
+};
+
+// ==== dist/components/SlideNavigator.js ====
+
+const SlideNavigator = ({ doc, activeSlideIndex, onSelectSlide, onAddSlide, onDuplicateSlide, onDeleteSlide, onMoveSlide, }) => {
+    const currentTheme = THEMES[doc.theme] || THEMES['pages-ivory'];
+    const getSlideTypeIcon = (type) => {
+        switch (type) {
+            case 'cover': return React.createElement(Layout, { className: "w-3.5 h-3.5 text-amber-700" });
+            case 'scripture-focus': return React.createElement(BookMarked, { className: "w-3.5 h-3.5 text-blue-700" });
+            case 'quote-focus': return React.createElement(Quote, { className: "w-3.5 h-3.5 text-rose-700" });
+            case 'exegesis-words': return React.createElement(Languages, { className: "w-3.5 h-3.5 text-emerald-700" });
+            case 'dialogue-qa': return React.createElement(Scroll, { className: "w-3.5 h-3.5 text-purple-700" });
+            case 'summary-outro': return React.createElement(CheckCircle2, { className: "w-3.5 h-3.5 text-stone-700" });
+            default: return React.createElement(FileText, { className: "w-3.5 h-3.5 text-stone-700" });
+        }
+    };
+    const getSlideTypeName = (type) => {
+        switch (type) {
+            case 'cover': return '표지 커버';
+            case 'scripture-focus': return '성경 본문';
+            case 'quote-focus': return '신학자 인용';
+            case 'exegesis-words': return '원어 분석';
+            case 'dialogue-qa': return '문답/해설';
+            case 'summary-outro': return '요약 & 적용';
+            default: return '본문 해설';
+        }
+    };
+    return (React.createElement("aside", { className: "w-64 bg-[#F4F2EB] border-r border-[#D6D3C8] flex flex-col h-[calc(100vh-3.5rem)] select-none shrink-0" },
+        React.createElement("div", { className: "p-3.5 border-b border-[#D6D3C8] flex items-center justify-between bg-[#F4F2EB]" },
+            React.createElement("span", { className: "text-[10px] uppercase tracking-widest text-[#9A988E] font-bold flex items-center gap-1.5" },
+                React.createElement("span", null,
+                    "Slides (",
+                    doc.slides.length,
+                    ")")),
+            React.createElement("div", { className: "relative group" },
+                React.createElement("button", { id: "btn-add-slide-nav", onClick: () => onAddSlide('content-body'), className: "p-1 px-2.5 bg-[#FFFFFF] hover:bg-[#EDEBE3] text-[#2D2D2D] border border-[#D6D3C8] rounded-md text-xs font-semibold flex items-center gap-1 shadow-2xs transition-colors" },
+                    React.createElement(Plus, { className: "w-3.5 h-3.5 text-[#5C5A4E]" }),
+                    React.createElement("span", null, "\uCD94\uAC00")))),
+        React.createElement("div", { className: "flex-1 overflow-y-auto p-3 space-y-3" }, doc.slides.map((slide, index) => {
+            const isActive = index === activeSlideIndex;
+            return (React.createElement("div", { key: slide.id || index, id: `nav-slide-card-${index}`, onClick: () => onSelectSlide(index), className: `group relative rounded-lg transition-all cursor-pointer p-2.5 border ${isActive
+                    ? 'bg-[#FFFFFF] ring-2 ring-[#5C5A4E] border-[#5C5A4E] shadow-sm'
+                    : 'bg-[#FAF9F6] hover:bg-[#FFFFFF] hover:border-[#D6D3C8] border-[#EAE8E0]'}` },
+                React.createElement("div", { className: "flex items-center justify-between mb-1.5" },
+                    React.createElement("div", { className: "flex items-center gap-1.5" },
+                        React.createElement("span", { className: `text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded ${isActive ? 'bg-[#5C5A4E] text-white' : 'bg-[#EDEBE3] text-[#7A786F]'}` }, String(index + 1).padStart(2, '0')),
+                        React.createElement("div", { className: "flex items-center gap-1 text-[11px] text-[#5C5A4E] font-medium" },
+                            getSlideTypeIcon(slide.type),
+                            React.createElement("span", null, getSlideTypeName(slide.type)))),
+                    React.createElement("div", { className: `flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity ${isActive ? 'opacity-100' : ''}` },
+                        index > 0 && (React.createElement("button", { onClick: (e) => { e.stopPropagation(); onMoveSlide(index, index - 1); }, title: "\uC704\uB85C \uC774\uB3D9", className: "p-1 hover:bg-[#EDEBE3] text-[#7A786F] hover:text-[#2D2D2D] rounded" },
+                            React.createElement(ChevronUp, { className: "w-3 h-3" }))),
+                        index < doc.slides.length - 1 && (React.createElement("button", { onClick: (e) => { e.stopPropagation(); onMoveSlide(index, index + 1); }, title: "\uC544\uB798\uB85C \uC774\uB3D9", className: "p-1 hover:bg-[#EDEBE3] text-[#7A786F] hover:text-[#2D2D2D] rounded" },
+                            React.createElement(ChevronDown, { className: "w-3 h-3" }))),
+                        React.createElement("button", { onClick: (e) => { e.stopPropagation(); onDuplicateSlide(index); }, title: "\uC2AC\uB77C\uC774\uB4DC \uBCF5\uC81C", className: "p-1 hover:bg-[#EDEBE3] text-[#7A786F] hover:text-[#2D2D2D] rounded" },
+                            React.createElement(Copy, { className: "w-3 h-3" })),
+                        doc.slides.length > 1 && (React.createElement("button", { onClick: (e) => { e.stopPropagation(); onDeleteSlide(index); }, title: "\uC2AC\uB77C\uC774\uB4DC \uC0AD\uC81C", className: "p-1 hover:bg-rose-50 text-[#7A786F] hover:text-rose-600 rounded" },
+                            React.createElement(Trash2, { className: "w-3 h-3" }))))),
+                React.createElement("div", { className: "w-full rounded border border-[#D6D3C8] p-2.5 text-left overflow-hidden relative shadow-2xs", style: {
+                        backgroundColor: currentTheme.bgColor,
+                        color: currentTheme.textColor,
+                        minHeight: '76px'
+                    } },
+                    React.createElement("div", { className: "text-[9px] text-[#A39171] uppercase font-serif truncate mb-1" }, slide.tagline || doc.seriesName || 'THEOLOGY NOTE'),
+                    React.createElement("div", { className: "text-xs font-semibold font-serif line-clamp-2 leading-tight mb-1 text-[#2D2D2D]" }, slide.slideTitle || '제목 없는 슬라이드'),
+                    React.createElement("div", { className: "text-[10px] text-[#7A786F] line-clamp-2 leading-relaxed opacity-90" }, slide.scriptureVerse
+                        ? `"${slide.scriptureVerse.text}"`
+                        : slide.theologyQuote
+                            ? `"${slide.theologyQuote.quote}"`
+                            : slide.bodyText || '내용을 작성해주세요.'),
+                    React.createElement("div", { className: "mt-2 pt-1 border-t border-[#D6D3C8]/60 flex items-center justify-between text-[8px] text-[#9A988E]" },
+                        React.createElement("span", null, doc.authorHandle),
+                        React.createElement("span", null,
+                            index + 1,
+                            "/",
+                            doc.slides.length)))));
+        })),
+        React.createElement("div", { className: "p-3 border-t border-[#D6D3C8] bg-[#F4F2EB] text-xs" },
+            React.createElement("span", { className: "block text-[10px] uppercase tracking-widest text-[#9A988E] font-bold mb-2" }, "Paper Formats"),
+            React.createElement("div", { className: "grid grid-cols-2 gap-1.5" },
+                React.createElement("button", { onClick: () => onAddSlide('cover'), className: "p-1.5 bg-[#FFFFFF] hover:bg-[#EDEBE3] border border-[#D6D3C8] rounded text-left flex items-center gap-1.5 text-[11px] text-[#2D2D2D] shadow-2xs font-medium" },
+                    React.createElement(Layout, { className: "w-3 h-3 text-[#A39171]" }),
+                    React.createElement("span", null, "\uD45C\uC9C0 \uCEE4\uBC84")),
+                React.createElement("button", { onClick: () => onAddSlide('scripture-focus'), className: "p-1.5 bg-[#FFFFFF] hover:bg-[#EDEBE3] border border-[#D6D3C8] rounded text-left flex items-center gap-1.5 text-[11px] text-[#2D2D2D] shadow-2xs font-medium" },
+                    React.createElement(BookMarked, { className: "w-3 h-3 text-[#5C5A4E]" }),
+                    React.createElement("span", null, "\uC131\uACBD \uBCF8\uBB38")),
+                React.createElement("button", { onClick: () => onAddSlide('quote-focus'), className: "p-1.5 bg-[#FFFFFF] hover:bg-[#EDEBE3] border border-[#D6D3C8] rounded text-left flex items-center gap-1.5 text-[11px] text-[#2D2D2D] shadow-2xs font-medium" },
+                    React.createElement(Quote, { className: "w-3 h-3 text-[#8E9A82]" }),
+                    React.createElement("span", null, "\uC2E0\uD559\uC790 \uBA85\uC5B8")),
+                React.createElement("button", { onClick: () => onAddSlide('exegesis-words'), className: "p-1.5 bg-[#FFFFFF] hover:bg-[#EDEBE3] border border-[#D6D3C8] rounded text-left flex items-center gap-1.5 text-[11px] text-[#2D2D2D] shadow-2xs font-medium" },
+                    React.createElement(Languages, { className: "w-3 h-3 text-[#7B8D9E]" }),
+                    React.createElement("span", null, "\uC6D0\uC5B4 \uBB35\uC0C1"))))));
+};
+
+// ==== dist/components/PagesInspector.js ====
+
+const PagesInspector = ({ doc, activeSlideIndex, onUpdateDoc, onUpdateActiveSlide, onOpenWordPicker, onOpenQuotePicker, }) => {
+    const [activeTab, setActiveTab] = useState('content');
+    const slide = doc.slides[activeSlideIndex] || doc.slides[0];
+    const slideTypes = [
+        { value: 'cover', label: '표지 커버' },
+        { value: 'scripture-focus', label: '성경 본문 집중' },
+        { value: 'content-body', label: '본문 해설/강해' },
+        { value: 'exegesis-words', label: '원어(헬라어/히브리어) 분석' },
+        { value: 'quote-focus', label: '신학자 명언 인용' },
+        { value: 'summary-outro', label: '요약 & 적용 질문' },
+    ];
+    const typographyList = [
+        { value: 'gowun-batang', label: '고운 바탕체 (전통 서책/Pages 감성)', fontClass: 'font-serif' },
+        { value: 'noto-serif', label: '본명조 Noto Serif (학술/신학 강해)', fontClass: 'font-serif' },
+        { value: 'song-myung', label: '송명체 Song Myung (고전/앤틱)', fontClass: 'font-serif' },
+        { value: 'noto-sans', label: '본고딕 Noto Sans (모던/깔끔)', fontClass: 'font-sans' },
+        { value: 'jakarta-modern', label: '플러스 자카르타 (스레드/인스타 모던)', fontClass: 'font-sans' },
+    ];
+    // Helper to add empty bullet point
+    const handleAddBulletPoint = () => {
+        const current = slide.bulletPoints || [];
+        onUpdateActiveSlide({ bulletPoints: [...current, '새로운 핵심 요점/묵상 포인트'] });
+    };
+    const handleUpdateBulletPoint = (index, val) => {
+        const current = [...(slide.bulletPoints || [])];
+        current[index] = val;
+        onUpdateActiveSlide({ bulletPoints: current });
+    };
+    const handleRemoveBulletPoint = (index) => {
+        const current = [...(slide.bulletPoints || [])];
+        current.splice(index, 1);
+        onUpdateActiveSlide({ bulletPoints: current });
+    };
+    // Helper to add custom original word
+    const handleAddCustomWord = () => {
+        const current = slide.originalWords || [];
+        const newWord = {
+            id: `word-${Date.now()}`,
+            original: 'χάρι스',
+            transliteration: 'charis (카리스)',
+            language: 'greek',
+            meaning: '자격 없는 자에게 주어지는 하나님의 은혜',
+            note: '신약 주요 신학 용어'
+        };
+        onUpdateActiveSlide({ originalWords: [...current, newWord] });
+    };
+    const handleUpdateWord = (id, updated) => {
+        const current = (slide.originalWords || []).map(w => w.id === id ? { ...w, ...updated } : w);
+        onUpdateActiveSlide({ originalWords: current });
+    };
+    const handleRemoveWord = (id) => {
+        const current = (slide.originalWords || []).filter(w => w.id !== id);
+        onUpdateActiveSlide({ originalWords: current });
+    };
+    return (React.createElement("aside", { className: "w-80 bg-[#F4F2EB] border-l border-[#D6D3C8] flex flex-col h-[calc(100vh-3.5rem)] select-none shrink-0 shadow-2xs" },
+        React.createElement("div", { className: "flex border-b border-[#D6D3C8] bg-[#EAE8E0] p-1.5 gap-1 text-xs" },
+            React.createElement("button", { id: "tab-content", onClick: () => setActiveTab('content'), className: `flex-1 py-1.5 rounded-md font-medium transition-all flex items-center justify-center gap-1.5 ${activeTab === 'content'
+                    ? 'bg-[#FFFFFF] text-[#2D2D2D] shadow-2xs font-semibold border border-[#D6D3C8]'
+                    : 'text-[#7A786F] hover:text-[#2D2D2D]'}` },
+                React.createElement(Type, { className: "w-3.5 h-3.5 text-[#5C5A4E]" }),
+                React.createElement("span", null, "\uB0B4\uC6A9 \uD3B8\uC9D1")),
+            React.createElement("button", { id: "tab-style", onClick: () => setActiveTab('style'), className: `flex-1 py-1.5 rounded-md font-medium transition-all flex items-center justify-center gap-1.5 ${activeTab === 'style'
+                    ? 'bg-[#FFFFFF] text-[#2D2D2D] shadow-2xs font-semibold border border-[#D6D3C8]'
+                    : 'text-[#7A786F] hover:text-[#2D2D2D]'}` },
+                React.createElement(Palette, { className: "w-3.5 h-3.5 text-[#5C5A4E]" }),
+                React.createElement("span", null, "\uC2A4\uD0C0\uC77C & \uC11C\uC2DD")),
+            React.createElement("button", { id: "tab-author", onClick: () => setActiveTab('author'), className: `flex-1 py-1.5 rounded-md font-medium transition-all flex items-center justify-center gap-1.5 ${activeTab === 'author'
+                    ? 'bg-[#FFFFFF] text-[#2D2D2D] shadow-2xs font-semibold border border-[#D6D3C8]'
+                    : 'text-[#7A786F] hover:text-[#2D2D2D]'}` },
+                React.createElement(User, { className: "w-3.5 h-3.5 text-[#5C5A4E]" }),
+                React.createElement("span", null, "\uC791\uC131\uC790/\uC124\uC815"))),
+        React.createElement("div", { className: "flex-1 overflow-y-auto p-4 space-y-5 text-xs text-[#2D2D2D]" },
+            activeTab === 'content' && (React.createElement(React.Fragment, null,
+                React.createElement("div", null,
+                    React.createElement("label", { className: "block text-[11px] font-semibold text-stone-500 uppercase tracking-wider mb-1.5" }, "\uC2AC\uB77C\uC774\uB4DC \uC11C\uC2DD \uC720\uD615"),
+                    React.createElement("select", { id: "select-slide-type", value: slide.type, onChange: (e) => onUpdateActiveSlide({ type: e.target.value }), className: "w-full px-2.5 py-1.5 bg-stone-50 border border-stone-200 rounded-lg text-stone-800 text-xs focus:border-amber-600 focus:outline-none" }, slideTypes.map(t => (React.createElement("option", { key: t.value, value: t.value }, t.label))))),
+                React.createElement("div", { className: "space-y-2" },
+                    React.createElement("div", null,
+                        React.createElement("label", { className: "block text-[11px] font-medium text-stone-600 mb-1" }, "\uC0C1\uB2E8 \uD0DC\uADF8\uB77C\uC778 (\uD30C\uD2B8/\uC2DC\uB9AC\uC988)"),
+                        React.createElement("input", { type: "text", value: slide.tagline || '', onChange: (e) => onUpdateActiveSlide({ tagline: e.target.value }), placeholder: "\uC608: PART 01 \u00B7 \uC131\uACBD\uC2E0\uD559", className: "w-full px-2.5 py-1.5 bg-stone-50 border border-stone-200 rounded-lg text-xs focus:border-amber-600 focus:outline-none" })),
+                    React.createElement("div", null,
+                        React.createElement("label", { className: "block text-[11px] font-medium text-stone-600 mb-1" }, "\uC2AC\uB77C\uC774\uB4DC \uC81C\uBAA9"),
+                        React.createElement("textarea", { rows: 2, value: slide.slideTitle || '', onChange: (e) => onUpdateActiveSlide({ slideTitle: e.target.value }), placeholder: "\uC2AC\uB77C\uC774\uB4DC \uC81C\uBAA9\uC744 \uC785\uB825\uD558\uC138\uC694...", className: "w-full px-2.5 py-1.5 bg-stone-50 border border-stone-200 rounded-lg text-xs font-semibold focus:border-amber-600 focus:outline-none resize-none" })),
+                    React.createElement("div", null,
+                        React.createElement("label", { className: "block text-[11px] font-medium text-stone-600 mb-1" }, "\uC18C\uC81C\uBAA9 / \uBD80\uC81C"),
+                        React.createElement("input", { type: "text", value: slide.subtitle || '', onChange: (e) => onUpdateActiveSlide({ subtitle: e.target.value }), placeholder: "\uC608: \uB9C8\uD0DC\uBCF5\uC74C 16\uC7A5 24-25\uC808 \uD574\uC124", className: "w-full px-2.5 py-1.5 bg-stone-50 border border-stone-200 rounded-lg text-xs focus:border-amber-600 focus:outline-none" }))),
+                React.createElement("div", { className: "p-3 bg-stone-50 rounded-xl border border-stone-200/80 space-y-2.5" },
+                    React.createElement("div", { className: "flex items-center justify-between" },
+                        React.createElement("span", { className: "text-xs font-semibold text-blue-950 flex items-center gap-1.5" },
+                            React.createElement(BookMarked, { className: "w-3.5 h-3.5 text-blue-700" }),
+                            React.createElement("span", null, "\uC131\uACBD \uAD6C\uC808 \uC778\uC6A9\uAD6C")),
+                        slide.scriptureVerse ? (React.createElement("button", { onClick: () => onUpdateActiveSlide({ scriptureVerse: undefined }), className: "text-[11px] text-rose-600 hover:underline" }, "\uC0AD\uC81C")) : (React.createElement("button", { onClick: () => onUpdateActiveSlide({
+                                scriptureVerse: { ref: '로마서 1:17', text: '복음에는 하나님의 의가 나타나서 믿음으로 믿음에 이르게 하나니', translation: '개역개정' }
+                            }), className: "text-[11px] text-blue-700 font-medium hover:underline" }, "+ \uAD6C\uC808 \uCD94\uAC00"))),
+                    slide.scriptureVerse && (React.createElement("div", { className: "space-y-2" },
+                        React.createElement("div", { className: "flex gap-2" },
+                            React.createElement("input", { type: "text", value: slide.scriptureVerse.ref, onChange: (e) => onUpdateActiveSlide({
+                                    scriptureVerse: { ...slide.scriptureVerse, ref: e.target.value }
+                                }), placeholder: "\uAD6C\uC808 \uCC38\uC870 (\uC608: \uB86C 1:17)", className: "flex-1 px-2 py-1 bg-white border border-stone-200 rounded text-xs" }),
+                            React.createElement("select", { value: slide.scriptureVerse.translation, onChange: (e) => onUpdateActiveSlide({
+                                    scriptureVerse: { ...slide.scriptureVerse, translation: e.target.value }
+                                }), className: "w-24 px-2 py-1 bg-white border border-stone-200 rounded text-xs" },
+                                React.createElement("option", { value: "\uAC1C\uC5ED\uAC1C\uC815" }, "\uAC1C\uC5ED\uAC1C\uC815"),
+                                React.createElement("option", { value: "\uC0C8\uBC88\uC5ED" }, "\uC0C8\uBC88\uC5ED"),
+                                React.createElement("option", { value: "\uACF5\uB3D9\uBC88\uC5ED" }, "\uACF5\uB3D9\uBC88\uC5ED"),
+                                React.createElement("option", { value: "ESV" }, "ESV"),
+                                React.createElement("option", { value: "NIV" }, "NIV"),
+                                React.createElement("option", { value: "NASB" }, "NASB"),
+                                React.createElement("option", { value: "\uC6D0\uC5B4 NA28" }, "\uC6D0\uC5B4 NA28"),
+                                React.createElement("option", { value: "\uD788\uBE0C\uB9AC\uC5B4 BHS" }, "\uD788\uBE0C\uB9AC\uC5B4 BHS"))),
+                        React.createElement("textarea", { rows: 2, value: slide.scriptureVerse.text, onChange: (e) => onUpdateActiveSlide({
+                                scriptureVerse: { ...slide.scriptureVerse, text: e.target.value }
+                            }), placeholder: "\uC131\uACBD \uBCF8\uBB38 \uB9D0\uC500\uC744 \uC785\uB825\uD558\uC138\uC694...", className: "w-full px-2 py-1.5 bg-white border border-stone-200 rounded text-xs resize-none" })))),
+                React.createElement("div", { className: "p-3 bg-stone-50 rounded-xl border border-stone-200/80 space-y-2.5" },
+                    React.createElement("div", { className: "flex items-center justify-between" },
+                        React.createElement("span", { className: "text-xs font-semibold text-amber-950 flex items-center gap-1.5" },
+                            React.createElement(Quote, { className: "w-3.5 h-3.5 text-amber-700" }),
+                            React.createElement("span", null, "\uC2E0\uD559\uC790 \uBA85\uC5B8 \uC778\uC6A9")),
+                        React.createElement("div", { className: "flex items-center gap-2" },
+                            React.createElement("button", { onClick: onOpenQuotePicker, className: "text-[11px] text-amber-800 font-medium hover:underline" }, "\uC0AC\uC804\uC5D0\uC11C \uC120\uD0DD"),
+                            slide.theologyQuote && (React.createElement("button", { onClick: () => onUpdateActiveSlide({ theologyQuote: undefined }), className: "text-[11px] text-rose-600 hover:underline" }, "\uC0AD\uC81C")))),
+                    slide.theologyQuote ? (React.createElement("div", { className: "space-y-2" },
+                        React.createElement("div", { className: "flex gap-2" },
+                            React.createElement("input", { type: "text", value: slide.theologyQuote.author, onChange: (e) => onUpdateActiveSlide({
+                                    theologyQuote: { ...slide.theologyQuote, author: e.target.value }
+                                }), placeholder: "\uC2E0\uD559\uC790 / \uAD50\uBD80 \uC774\uB984", className: "flex-1 px-2 py-1 bg-white border border-stone-200 rounded text-xs" }),
+                            React.createElement("input", { type: "text", value: slide.theologyQuote.work || '', onChange: (e) => onUpdateActiveSlide({
+                                    theologyQuote: { ...slide.theologyQuote, work: e.target.value }
+                                }), placeholder: "\uC800\uC791\uBA85 (\uC608: \uAE30\uB3C5\uAD50\uAC15\uC694)", className: "w-32 px-2 py-1 bg-white border border-stone-200 rounded text-xs" })),
+                        React.createElement("textarea", { rows: 2, value: slide.theologyQuote.quote, onChange: (e) => onUpdateActiveSlide({
+                                theologyQuote: { ...slide.theologyQuote, quote: e.target.value }
+                            }), placeholder: "\uC778\uC6A9 \uBB38\uC7A5\uC744 \uC785\uB825\uD558\uC138\uC694...", className: "w-full px-2 py-1.5 bg-white border border-stone-200 rounded text-xs resize-none" }))) : (React.createElement("button", { onClick: () => onUpdateActiveSlide({
+                            theologyQuote: {
+                                author: '장 칼뱅 (John Calvin)',
+                                work: '기독교 강요',
+                                quote: '참된 지혜는 하나님을 아는 지식과 우리 자신을 아는 지식으로 이루어져 있다.'
+                            }
+                        }), className: "w-full py-1.5 bg-white hover:bg-amber-50 text-stone-700 border border-stone-200 rounded-lg text-xs font-medium text-center transition-colors" }, "+ \uC2E0\uD559\uC790 \uC778\uC6A9\uAD6C \uCD94\uAC00"))),
+                React.createElement("div", { className: "p-3 bg-stone-50 rounded-xl border border-stone-200/80 space-y-2.5" },
+                    React.createElement("div", { className: "flex items-center justify-between" },
+                        React.createElement("span", { className: "text-xs font-semibold text-emerald-950 flex items-center gap-1.5" },
+                            React.createElement(Languages, { className: "w-3.5 h-3.5 text-emerald-700" }),
+                            React.createElement("span", null, "\uC6D0\uC5B4 \uBB35\uC0C1 \uB2E8\uC5B4")),
+                        React.createElement("div", { className: "flex items-center gap-2" },
+                            React.createElement("button", { onClick: onOpenWordPicker, className: "text-[11px] text-emerald-800 font-medium hover:underline" }, "\uB2E8\uC5B4 \uC0AC\uC804 \uC5F4\uAE30"))),
+                    slide.originalWords && slide.originalWords.length > 0 ? (React.createElement("div", { className: "space-y-2" },
+                        slide.originalWords.map((w, wIdx) => (React.createElement("div", { key: w.id || wIdx, className: "p-2.5 bg-white border border-stone-200 rounded-lg space-y-1.5" },
+                            React.createElement("div", { className: "flex items-center justify-between gap-2" },
+                                React.createElement("input", { type: "text", value: w.original, onChange: (e) => handleUpdateWord(w.id, { original: e.target.value }), placeholder: "\uC6D0\uC5B4 (\uC608: \u03C7\u03AC\u03C1\u03B9\u03C2)", className: "font-bold text-sm text-amber-900 w-24 px-1.5 py-0.5 border-b border-stone-200" }),
+                                React.createElement("input", { type: "text", value: w.transliteration, onChange: (e) => handleUpdateWord(w.id, { transliteration: e.target.value }), placeholder: "\uBC1C\uC74C (charis)", className: "text-xs text-stone-600 flex-1 px-1.5 py-0.5 border-b border-stone-200" }),
+                                React.createElement("button", { onClick: () => handleRemoveWord(w.id), className: "p-1 text-stone-400 hover:text-rose-600", title: "\uC0AD\uC81C" },
+                                    React.createElement(Trash2, { className: "w-3 h-3" }))),
+                            React.createElement("input", { type: "text", value: w.meaning, onChange: (e) => handleUpdateWord(w.id, { meaning: e.target.value }), placeholder: "\uC2E0\uD559\uC801 \uC815\uC758\uC640 \uC758\uBBF8", className: "w-full text-xs px-1.5 py-1 bg-stone-50 border border-stone-200 rounded" })))),
+                        React.createElement("button", { onClick: handleAddCustomWord, className: "w-full py-1 text-xs text-stone-600 bg-white hover:bg-stone-100 border border-stone-200 rounded" }, "+ \uC6D0\uC5B4 \uB2E8\uC5B4 \uC9C1\uC811 \uCD94\uAC00"))) : (React.createElement("button", { onClick: handleAddCustomWord, className: "w-full py-1.5 bg-white hover:bg-emerald-50 text-stone-700 border border-stone-200 rounded-lg text-xs font-medium text-center transition-colors" }, "+ \uC6D0\uC5B4 \uBB35\uC0C1 \uB2E8\uC5B4 \uCD94\uAC00"))),
+                React.createElement("div", null,
+                    React.createElement("label", { className: "block text-[11px] font-medium text-stone-600 mb-1" }, "\uBCF8\uBB38 \uC124\uBA85 \uBC0F \uD574\uC124"),
+                    React.createElement("textarea", { rows: 4, value: slide.bodyText || '', onChange: (e) => onUpdateActiveSlide({ bodyText: e.target.value }), placeholder: "\uBCF8\uBB38 \uC2E0\uD559 \uD574\uC124\uC774\uB098 \uBB35\uC0C1 \uB098\uB214\uC744 \uC791\uC131\uD558\uC138\uC694...", className: "w-full px-2.5 py-2 bg-stone-50 border border-stone-200 rounded-lg text-xs leading-relaxed focus:border-amber-600 focus:outline-none" })),
+                React.createElement("div", { className: "space-y-1.5" },
+                    React.createElement("div", { className: "flex items-center justify-between" },
+                        React.createElement("label", { className: "text-[11px] font-medium text-stone-600" }, "\uD575\uC2EC \uC694\uC57D \uD3EC\uC778\uD2B8"),
+                        React.createElement("button", { onClick: handleAddBulletPoint, className: "text-[11px] text-amber-800 font-medium hover:underline" }, "+ \uC694\uC810 \uCD94\uAC00")),
+                    (slide.bulletPoints || []).map((bp, bpIdx) => (React.createElement("div", { key: bpIdx, className: "flex items-center gap-1.5" },
+                        React.createElement("input", { type: "text", value: bp, onChange: (e) => handleUpdateBulletPoint(bpIdx, e.target.value), className: "flex-1 px-2 py-1 bg-stone-50 border border-stone-200 rounded text-xs" }),
+                        React.createElement("button", { onClick: () => handleRemoveBulletPoint(bpIdx), className: "p-1 text-stone-400 hover:text-rose-600" },
+                            React.createElement(Trash2, { className: "w-3 h-3" })))))),
+                React.createElement("div", null,
+                    React.createElement("label", { className: "block text-[11px] font-medium text-stone-600 mb-1" }, "\uD83D\uDCA1 \uC801\uC6A9 \uBC0F \uBB35\uC0C1 \uC9C8\uBB38"),
+                    React.createElement("input", { type: "text", value: slide.reflectionPrompt || '', onChange: (e) => onUpdateActiveSlide({ reflectionPrompt: e.target.value }), placeholder: "\uC608: \uC624\uB298 \uB0B4 \uC0B6\uC5D0\uC11C \uBC84\uB824\uC57C \uD560 \uAC12\uC2FC \uC548\uC8FC\uB294 \uBB34\uC5C7\uC778\uAC00?", className: "w-full px-2.5 py-1.5 bg-stone-50 border border-stone-200 rounded-lg text-xs focus:border-amber-600 focus:outline-none" })),
+                React.createElement("div", null,
+                    React.createElement("label", { className: "block text-[11px] font-medium text-stone-600 mb-1" }, "\uD558\uB2E8 \uAC01\uC8FC / \uC548\uB0B4 \uBB38\uAD6C"),
+                    React.createElement("input", { type: "text", value: slide.footerNote || '', onChange: (e) => onUpdateActiveSlide({ footerNote: e.target.value }), placeholder: "\uC608: \uC800\uC7A5 \uBC0F \uACF5\uC720 \uD658\uC601 \u00B7 @theology.notes", className: "w-full px-2.5 py-1.5 bg-stone-50 border border-stone-200 rounded-lg text-xs focus:border-amber-600 focus:outline-none" })))),
+            activeTab === 'style' && (React.createElement(React.Fragment, null,
+                React.createElement("div", null,
+                    React.createElement("label", { className: "block text-[11px] font-semibold text-stone-500 uppercase tracking-wider mb-2" }, "\uD14C\uB9C8 \uBC0F \uC0C9\uC0C1 \uD314\uB808\uD2B8"),
+                    React.createElement("div", { className: "grid grid-cols-2 gap-2" }, Object.values(THEMES).map((th) => {
+                        const isSelected = doc.theme === th.id;
+                        return (React.createElement("button", { key: th.id, onClick: () => onUpdateDoc({ theme: th.id }), className: `p-2.5 rounded-xl border text-left flex flex-col gap-1.5 transition-all ${isSelected
+                                ? 'border-amber-600 ring-2 ring-amber-600/30 bg-amber-50/40 shadow-xs'
+                                : 'border-stone-200 hover:border-stone-300 bg-white'}` },
+                            React.createElement("div", { className: "flex items-center gap-2" },
+                                React.createElement("span", { className: "w-4 h-4 rounded-full border border-stone-300 shadow-2xs", style: { backgroundColor: th.previewColor } }),
+                                React.createElement("span", { className: "font-medium text-stone-800 text-xs truncate" }, th.name)),
+                            React.createElement("span", { className: "text-[10px] text-stone-500 truncate" }, th.nameEn)));
+                    }))),
+                React.createElement("div", null,
+                    React.createElement("label", { className: "block text-[11px] font-semibold text-stone-500 uppercase tracking-wider mb-2" }, "\uD0C0\uC774\uD3EC\uADF8\uB798\uD53C \uC11C\uCCB4"),
+                    React.createElement("div", { className: "space-y-1.5" }, typographyList.map((tf) => (React.createElement("button", { key: tf.value, onClick: () => onUpdateDoc({ fontFamily: tf.value }), className: `w-full p-2.5 rounded-xl border text-left transition-all ${doc.fontFamily === tf.value
+                            ? 'border-amber-600 bg-amber-50/50 ring-1 ring-amber-600 font-semibold'
+                            : 'border-stone-200 hover:border-stone-300 bg-white text-stone-700'}` },
+                        React.createElement("div", { className: "text-xs" }, tf.label)))))),
+                React.createElement("div", null,
+                    React.createElement("div", { className: "flex items-center justify-between mb-1.5" },
+                        React.createElement("label", { className: "text-[11px] font-semibold text-stone-500 uppercase tracking-wider" }, "\uAE00\uC790 \uD06C\uAE30 \uBE44\uC728"),
+                        React.createElement("span", { className: "font-mono text-xs font-semibold text-amber-900" },
+                            Math.round(doc.fontSizeMultiplier * 100),
+                            "%")),
+                    React.createElement("input", { type: "range", min: "0.85", max: "1.25", step: "0.05", value: doc.fontSizeMultiplier, onChange: (e) => onUpdateDoc({ fontSizeMultiplier: parseFloat(e.target.value) }), className: "w-full accent-amber-700" })),
+                React.createElement("div", null,
+                    React.createElement("label", { className: "block text-[11px] font-semibold text-stone-500 uppercase tracking-wider mb-2" }, "\uD398\uC774\uC9C0 \uC678\uACFD \uD504\uB808\uC784 \uC2A4\uD0C0\uC77C"),
+                    React.createElement("div", { className: "grid grid-cols-2 gap-2" }, [
+                        { value: 'none', label: '프레임 없음' },
+                        { value: 'thin-rule', label: '모던 씬 라인' },
+                        { value: 'double-frame', label: '앤틱 이중 프레임' },
+                        { value: 'classic-corner', label: '클래식 코너' },
+                        { value: 'book-edge', label: '양장본 제본' },
+                    ].map((b) => (React.createElement("button", { key: b.value, onClick: () => onUpdateDoc({ borderStyle: b.value }), className: `p-2 rounded-lg border text-xs text-center transition-all ${doc.borderStyle === b.value
+                            ? 'border-amber-600 bg-amber-50 font-semibold text-amber-950'
+                            : 'border-stone-200 hover:bg-stone-50 text-stone-700'}` }, b.label))))),
+                React.createElement("div", { className: "pt-2 border-t border-stone-200 space-y-2.5" },
+                    React.createElement("label", { className: "block text-[11px] font-semibold text-stone-500 uppercase tracking-wider" }, "\uD45C\uC2DC \uD56D\uBAA9 \uC124\uC815"),
+                    React.createElement("label", { className: "flex items-center justify-between p-2 rounded-lg bg-stone-50 border border-stone-200 cursor-pointer" },
+                        React.createElement("span", null, "\uD398\uC774\uC9C0 \uBC88\uD638 \uD45C\uC2DC (01/05)"),
+                        React.createElement("input", { type: "checkbox", checked: doc.showSlideNumber, onChange: (e) => onUpdateDoc({ showSlideNumber: e.target.checked }), className: "rounded accent-amber-700 w-4 h-4" })),
+                    React.createElement("label", { className: "flex items-center justify-between p-2 rounded-lg bg-stone-50 border border-stone-200 cursor-pointer" },
+                        React.createElement("span", null, "\uCE74\uD14C\uACE0\uB9AC \uBC43\uC9C0 \uD45C\uC2DC"),
+                        React.createElement("input", { type: "checkbox", checked: doc.showCategoryBadge, onChange: (e) => onUpdateDoc({ showCategoryBadge: e.target.checked }), className: "rounded accent-amber-700 w-4 h-4" })),
+                    React.createElement("label", { className: "flex items-center justify-between p-2 rounded-lg bg-stone-50 border border-stone-200 cursor-pointer" },
+                        React.createElement("span", null, "\uC0C1\uB2E8 \uC2DC\uB9AC\uC988\uBA85 \uD5E4\uB354 \uD45C\uC2DC"),
+                        React.createElement("input", { type: "checkbox", checked: doc.showSeriesHeader, onChange: (e) => onUpdateDoc({ showSeriesHeader: e.target.checked }), className: "rounded accent-amber-700 w-4 h-4" })),
+                    React.createElement("label", { className: "flex items-center justify-between p-2 rounded-lg bg-stone-50 border border-stone-200 cursor-pointer" },
+                        React.createElement("span", null, "\uD558\uB2E8 \uC778\uC2A4\uD0C0/\uC2A4\uB808\uB4DC \uC6CC\uD130\uB9C8\uD06C"),
+                        React.createElement("input", { type: "checkbox", checked: doc.showWatermark, onChange: (e) => onUpdateDoc({ showWatermark: e.target.checked }), className: "rounded accent-amber-700 w-4 h-4" }))))),
+            activeTab === 'author' && (React.createElement(React.Fragment, null,
+                React.createElement("div", { className: "space-y-3" },
+                    React.createElement("div", null,
+                        React.createElement("label", { className: "block text-[11px] font-medium text-stone-600 mb-1" }, "\uBB38\uC11C \uB300\uBD84\uB958 \uCE74\uD14C\uACE0\uB9AC"),
+                        React.createElement("input", { type: "text", value: doc.category, onChange: (e) => onUpdateDoc({ category: e.target.value }), placeholder: "\uC608: \uC870\uC9C1\uC2E0\uD559, \uC131\uACBD\uC8FC\uD574, \uAE30\uB3C5\uAD50\uACE0\uC804, \uBB35\uC0C1/QT", className: "w-full px-2.5 py-1.5 bg-stone-50 border border-stone-200 rounded-lg text-xs" })),
+                    React.createElement("div", null,
+                        React.createElement("label", { className: "block text-[11px] font-medium text-stone-600 mb-1" }, "\uC2DC\uB9AC\uC988 \uC774\uB984"),
+                        React.createElement("input", { type: "text", value: doc.seriesName, onChange: (e) => onUpdateDoc({ seriesName: e.target.value }), placeholder: "\uC608: \uACE0\uC804 \uC2E0\uD559 \uBB35\uC0C1 \uC2DC\uB9AC\uC988 01", className: "w-full px-2.5 py-1.5 bg-stone-50 border border-stone-200 rounded-lg text-xs" })),
+                    React.createElement("div", { className: "pt-2 border-t border-stone-200" },
+                        React.createElement("label", { className: "block text-[11px] font-medium text-stone-600 mb-1" }, "\uC791\uC131\uC790 / \uD398\uC774\uC9C0 \uBA85"),
+                        React.createElement("input", { type: "text", value: doc.authorName, onChange: (e) => onUpdateDoc({ authorName: e.target.value }), placeholder: "\uC608: \uC2E0\uD559\uB178\uD2B8 \uC544\uCE74\uC774\uBE0C", className: "w-full px-2.5 py-1.5 bg-stone-50 border border-stone-200 rounded-lg text-xs" })),
+                    React.createElement("div", null,
+                        React.createElement("label", { className: "block text-[11px] font-medium text-stone-600 mb-1" }, "\uC778\uC2A4\uD0C0\uADF8\uB7A8 / \uC2A4\uB808\uB4DC \uD578\uB4E4 ID"),
+                        React.createElement("div", { className: "flex items-center" },
+                            React.createElement("span", { className: "px-2 py-1.5 bg-stone-100 border border-r-0 border-stone-200 rounded-l-lg text-stone-500 font-mono text-xs" }, "@"),
+                            React.createElement("input", { type: "text", value: doc.authorHandle.replace(/^@/, ''), onChange: (e) => onUpdateDoc({ authorHandle: `@${e.target.value.replace(/^@/, '')}` }), placeholder: "theology.notes", className: "w-full px-2.5 py-1.5 bg-stone-50 border border-stone-200 rounded-r-lg text-xs font-mono" })))),
+                React.createElement("div", { className: "p-3 bg-amber-50/70 border border-amber-200/80 rounded-xl space-y-1.5" },
+                    React.createElement("span", { className: "font-semibold text-amber-900 text-xs block" }, "\uD83D\uDCA1 \uC5C5\uB85C\uB4DC \uAFC0\uD301"),
+                    React.createElement("p", { className: "text-[11px] text-amber-800/90 leading-relaxed" },
+                        "\uC778\uC2A4\uD0C0\uADF8\uB7A8 \uCE90\uB7EC\uC140\uC740 ",
+                        React.createElement("strong", null, "4:5 \uC138\uB85C \uBE44\uC728"),
+                        "\uC774 \uC2A4\uB9C8\uD2B8\uD3F0 \uD53C\uB4DC\uC5D0\uC11C \uAC00\uC7A5 \uB192\uC740 \uAC00\uB3C5\uC131\uACFC \uBC18\uC751\uB960\uC744 \uC81C\uACF5\uD569\uB2C8\uB2E4. \uC2A4\uB808\uB4DC \uB2E8\uC77C \uD3EC\uC2A4\uD305 \uC2DC\uC5D0\uB294 ",
+                        React.createElement("strong", null, "\uC2A4\uB808\uB4DC \uD14D\uC2A4\uD2B8 \uCE74\uB4DC"),
+                        " \uBE44\uC728\uC744 \uCD94\uCC9C\uD569\uB2C8\uB2E4.")))))));
+};
+
+// ==== dist/components/PagesToolbar.js ====
+
+const PagesToolbar = ({ doc, onUpdateDoc, showInspector, onToggleInspector, showNavigator, onToggleNavigator, zoom, onChangeZoom, onOpenExportModal, onOpenTemplateModal, onOpenWordPicker, onOpenQuotePicker, onAddSlide, onDownloadHtml, onSaveDoc, isSaved = true, currentSlideIndex, totalSlides }) => {
+    const aspectRatios = [
+        { value: '4:5', label: '4:5', sub: '피드' },
+        { value: '1:1', label: '1:1', sub: '정방형' },
+        { value: 'threads-card', label: 'Threads', sub: '카드' },
+        { value: '9:16', label: '9:16', sub: '스토리' },
+    ];
+    return (React.createElement("header", { className: "h-14 bg-[#F4F2EB] border-b border-[#D6D3C8] sticky top-0 z-40 px-3 md:px-5 flex items-center justify-between gap-2 md:gap-4 shadow-2xs select-none" },
+        React.createElement("div", { className: "flex items-center gap-2.5 min-w-0 shrink-0" },
+            React.createElement("div", { className: "hidden sm:flex items-center space-x-1.5 pr-1" },
+                React.createElement("div", { className: "w-2.5 h-2.5 rounded-full bg-[#E74C3C]/80" }),
+                React.createElement("div", { className: "w-2.5 h-2.5 rounded-full bg-[#F1C40F]/80" }),
+                React.createElement("div", { className: "w-2.5 h-2.5 rounded-full bg-[#2ECC71]/80" })),
+            React.createElement("button", { id: "toggle-navigator-btn", onClick: onToggleNavigator, title: showNavigator ? "슬라이드 목록 접기" : "슬라이드 목록 펼치기", className: `px-2.5 py-1.5 rounded-md transition-all flex items-center gap-1.5 text-xs font-medium border ${showNavigator
+                    ? 'bg-[#FFFFFF] text-[#2D2D2D] border-[#D6D3C8] shadow-2xs'
+                    : 'bg-transparent text-[#7A786F] hover:bg-[#EDEBE3] border-transparent'}` },
+                React.createElement(Layers, { className: "w-3.5 h-3.5 text-[#5C5A4E]" }),
+                React.createElement("span", { className: "hidden md:inline font-semibold" }, "\uBAA9\uB85D"),
+                React.createElement("span", { className: "px-1.5 py-0.5 text-[10px] bg-[#EDEBE3] rounded font-mono font-bold text-[#5C5A4E]" },
+                    currentSlideIndex + 1,
+                    "/",
+                    totalSlides)),
+            React.createElement("div", { className: "h-4 w-px bg-[#D6D3C8] hidden sm:block" }),
+            React.createElement("div", { className: "flex flex-col min-w-0 max-w-[120px] sm:max-w-[170px] md:max-w-[210px]" },
+                React.createElement("input", { id: "doc-title-input", type: "text", value: doc.title, onChange: (e) => onUpdateDoc({ title: e.target.value }), placeholder: "My Theology Notes", className: "text-xs font-bold text-[#2D2D2D] bg-transparent border-b border-transparent hover:border-[#D6D3C8] focus:border-[#5C5A4E] focus:outline-none transition-colors truncate px-1 py-0" }),
+                React.createElement("div", { className: "flex items-center gap-1.5 px-1 text-[10px] text-[#7A786F] truncate" },
+                    React.createElement("span", { className: "text-[#A39171] font-semibold uppercase tracking-wider" }, doc.category || 'THEOLOGY'),
+                    React.createElement("span", null, "\u00B7"),
+                    React.createElement("span", { className: "truncate" }, doc.seriesName || '신학 노트'))),
+            onSaveDoc && (React.createElement("button", { id: "btn-manual-save-toolbar", onClick: onSaveDoc, title: "\uBE0C\uB77C\uC6B0\uC800 \uB85C\uCEEC \uC800\uC7A5\uC18C\uC5D0 \uC989\uC2DC \uC218\uB3D9 \uC800\uC7A5 (\uC790\uB3D9 \uC800\uC7A5\uB3C4 \uD65C\uC131\uD654\uB428)", className: "hidden sm:flex items-center gap-1 px-2 py-1 text-[11px] font-semibold text-[#5C5A4E] hover:text-[#2D2D2D] bg-[#FFFFFF] hover:bg-[#EDEBE3] border border-[#D6D3C8] rounded-md shadow-2xs transition-all" },
+                isSaved ? React.createElement(Check, { className: "w-3 h-3 text-[#2ECC71]" }) : React.createElement(Save, { className: "w-3 h-3 text-[#5C5A4E]" }),
+                React.createElement("span", { className: "hidden md:inline" }, isSaved ? '저장됨' : '저장')))),
+        React.createElement("div", { className: "hidden lg:flex items-center bg-[#EAE8E0] p-0.5 rounded-lg border border-[#D6D3C8] shadow-2xs" },
+            React.createElement("button", { id: "btn-add-slide-toolbar", onClick: onAddSlide, title: "\uC0C8 \uC2AC\uB77C\uC774\uB4DC \uCD94\uAC00", className: "px-2.5 py-1.5 text-xs font-semibold text-[#2D2D2D] hover:bg-[#FFFFFF] rounded-md transition-all flex items-center gap-1.5" },
+                React.createElement(Plus, { className: "w-3.5 h-3.5 text-[#5C5A4E]" }),
+                React.createElement("span", null, "\uD398\uC774\uC9C0 \uCD94\uAC00")),
+            React.createElement("div", { className: "h-3.5 w-px bg-[#D6D3C8] my-auto" }),
+            React.createElement("button", { id: "btn-open-template-picker", onClick: onOpenTemplateModal, title: "\uC2E0\uD559 \uB178\uD2B8 \uC644\uC131\uD615 \uD15C\uD50C\uB9BF \uBD88\uB7EC\uC624\uAE30", className: "px-2.5 py-1.5 text-xs font-medium text-[#2D2D2D] hover:bg-[#FFFFFF] rounded-md transition-all flex items-center gap-1.5" },
+                React.createElement(Sparkles, { className: "w-3.5 h-3.5 text-[#A39171]" }),
+                React.createElement("span", null, "\uD15C\uD50C\uB9BF")),
+            React.createElement("button", { id: "btn-open-word-picker", onClick: onOpenWordPicker, title: "\uC6D0\uC5B4(\uD5EC\uB77C\uC5B4/\uD788\uBE0C\uB9AC\uC5B4) \uC2E0\uD559 \uB2E8\uC5B4 \uC0AC\uC804", className: "px-2.5 py-1.5 text-xs font-medium text-[#2D2D2D] hover:bg-[#FFFFFF] rounded-md transition-all flex items-center gap-1.5" },
+                React.createElement(BookOpen, { className: "w-3.5 h-3.5 text-[#5C5A4E]" }),
+                React.createElement("span", null, "\uC6D0\uC5B4 \uC0AC\uC804")),
+            React.createElement("button", { id: "btn-open-quote-picker", onClick: onOpenQuotePicker, title: "\uAD50\uBD80 \uBC0F \uAC1C\uD601 \uC2E0\uD559\uC790 \uBA85\uC5B8 \uC778\uC6A9 \uB77C\uC774\uBE0C\uB7EC\uB9AC", className: "px-2.5 py-1.5 text-xs font-medium text-[#2D2D2D] hover:bg-[#FFFFFF] rounded-md transition-all flex items-center gap-1.5" },
+                React.createElement(Quote, { className: "w-3.5 h-3.5 text-[#5C5A4E]" }),
+                React.createElement("span", null, "\uC2E0\uD559\uC790 \uBA85\uC5B8"))),
+        React.createElement("div", { className: "flex items-center gap-1.5 md:gap-2 shrink-0" },
+            React.createElement("div", { className: "hidden xl:flex items-center bg-[#EAE8E0] p-0.5 rounded-lg border border-[#D6D3C8]" }, aspectRatios.map((ar) => (React.createElement("button", { key: ar.value, id: `aspect-ratio-${ar.value}`, onClick: () => onUpdateDoc({ aspectRatio: ar.value }), title: `${ar.label} (${ar.sub})`, className: `px-2 py-1 text-xs font-medium rounded transition-all flex items-center gap-1 ${doc.aspectRatio === ar.value
+                    ? 'bg-[#FFFFFF] text-[#2D2D2D] shadow-2xs font-bold border border-[#D6D3C8]'
+                    : 'text-[#7A786F] hover:text-[#2D2D2D] hover:bg-[#FFFFFF]/50'}` },
+                React.createElement("span", null, ar.label))))),
+            React.createElement("div", { className: "flex xl:hidden relative" },
+                React.createElement("select", { id: "aspect-ratio-select", value: doc.aspectRatio, onChange: (e) => onUpdateDoc({ aspectRatio: e.target.value }), className: "text-xs font-semibold text-[#2D2D2D] bg-[#FFFFFF] border border-[#D6D3C8] rounded-md px-2 py-1.5 appearance-none pr-6 shadow-2xs focus:outline-none" }, aspectRatios.map((ar) => (React.createElement("option", { key: ar.value, value: ar.value },
+                    ar.label,
+                    " (",
+                    ar.sub,
+                    ")")))),
+                React.createElement(ChevronDown, { className: "w-3 h-3 text-[#7A786F] absolute right-2 top-2.5 pointer-events-none" })),
+            React.createElement("div", { className: "flex lg:hidden items-center gap-1" },
+                React.createElement("button", { id: "btn-add-slide-toolbar-mobile", onClick: onAddSlide, title: "\uC0C8 \uC2AC\uB77C\uC774\uB4DC \uCD94\uAC00", className: "p-1.5 bg-[#FFFFFF] hover:bg-[#EDEBE3] text-[#2D2D2D] border border-[#D6D3C8] rounded-md text-xs transition-colors flex items-center shadow-2xs" },
+                    React.createElement(Plus, { className: "w-3.5 h-3.5 text-[#5C5A4E]" })),
+                React.createElement("button", { id: "btn-open-template-picker-mobile", onClick: onOpenTemplateModal, title: "\uD15C\uD50C\uB9BF", className: "p-1.5 bg-[#FFFFFF] hover:bg-[#EDEBE3] text-[#2D2D2D] border border-[#D6D3C8] rounded-md text-xs transition-colors flex items-center shadow-2xs" },
+                    React.createElement(Sparkles, { className: "w-3.5 h-3.5 text-[#A39171]" }))),
+            React.createElement("div", { className: "hidden 2xl:flex items-center gap-1 bg-[#FFFFFF] border border-[#D6D3C8] px-2 py-1 rounded-md text-xs text-[#5C5A4E] shadow-2xs" },
+                React.createElement("button", { onClick: () => onChangeZoom(Math.max(0.6, zoom - 0.1)), className: "p-0.5 hover:text-[#2D2D2D]", title: "\uCD95\uC18C" },
+                    React.createElement(Minimize2, { className: "w-3 h-3" })),
+                React.createElement("span", { className: "font-mono text-[11px] w-8 text-center text-[#2D2D2D] font-bold" },
+                    Math.round(zoom * 100),
+                    "%"),
+                React.createElement("button", { onClick: () => onChangeZoom(Math.min(1.4, zoom + 0.1)), className: "p-0.5 hover:text-[#2D2D2D]", title: "\uD655\uB300" },
+                    React.createElement(Maximize2, { className: "w-3 h-3" }))),
+            React.createElement("div", { className: "h-4 w-px bg-[#D6D3C8]" }),
+            React.createElement("button", { id: "toggle-inspector-btn", onClick: onToggleInspector, title: showInspector ? "포맷 패널 숨기기" : "포맷 패널 열기", className: `px-2.5 py-1.5 rounded-md transition-all flex items-center gap-1.5 text-xs font-semibold border ${showInspector
+                    ? 'bg-[#5C5A4E] text-white border-[#5C5A4E] shadow-xs'
+                    : 'bg-[#FFFFFF] text-[#2D2D2D] hover:bg-[#EDEBE3] border-[#D6D3C8] shadow-2xs'}` },
+                React.createElement(Sliders, { className: "w-3.5 h-3.5" }),
+                React.createElement("span", { className: "hidden sm:inline" }, "\uD3EC\uB9F7")),
+            React.createElement("button", { id: "btn-quick-download-html", onClick: onDownloadHtml, title: "\uB2E8\uC77C \uB3C5\uB9BD \uC2E4\uD589\uD615 HTML \uD30C\uC77C\uB85C \uC989\uC2DC \uC800\uC7A5", className: "px-2.5 py-1.5 bg-[#FFFFFF] hover:bg-[#EDEBE3] text-[#2D2D2D] border border-[#D6D3C8] rounded-md text-xs font-semibold transition-all flex items-center gap-1.5 shadow-2xs whitespace-nowrap" },
+                React.createElement(FileCode, { className: "w-3.5 h-3.5 text-[#5C5A4E]" }),
+                React.createElement("span", { className: "hidden md:inline" }, "HTML \uC800\uC7A5")),
+            React.createElement("button", { id: "btn-open-export-modal", onClick: onOpenExportModal, title: "\uC778\uC2A4\uD0C0 ZIP, \uCEA1\uC158, HTML \uB4F1 \uC804\uCCB4 \uB0B4\uBCF4\uB0B4\uAE30", className: "px-3 py-1.5 bg-[#2D2D2D] hover:bg-[#1A1A1A] text-white rounded-md text-xs font-bold shadow-xs transition-all flex items-center gap-1.5 whitespace-nowrap" },
+                React.createElement(Download, { className: "w-3.5 h-3.5" }),
+                React.createElement("span", null, "\uB0B4\uBCF4\uB0B4\uAE30")))));
+};
+
+// ==== dist/components/TemplatePickerModal.js ====
+
+const TemplatePickerModal = ({ isOpen, onClose, onSelectTemplate, }) => {
+    if (!isOpen)
+        return null;
+    const handleApply = (tpl) => {
+        if (window.confirm(`'${tpl.title}' 템플릿을 불러오시겠습니까? 현재 작성 중인 내용은 덮어씌워집니다.`)) {
+            onSelectTemplate(JSON.parse(JSON.stringify(tpl)));
+            onClose();
+        }
+    };
+    return (React.createElement("div", { className: "fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-xs flex items-center justify-center p-4" },
+        React.createElement("div", { className: "bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-stone-200 overflow-hidden flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 duration-150" },
+            React.createElement("div", { className: "p-4 px-6 border-b border-stone-200 flex items-center justify-between bg-stone-50" },
+                React.createElement("div", { className: "flex items-center gap-2" },
+                    React.createElement("div", { className: "p-1.5 bg-amber-100 rounded-lg text-amber-800" },
+                        React.createElement(Sparkles, { className: "w-5 h-5" })),
+                    React.createElement("div", null,
+                        React.createElement("h3", { className: "text-base font-bold text-stone-900" }, "\uC2E0\uD559 \uB178\uD2B8 \uD15C\uD50C\uB9BF \uAC24\uB7EC\uB9AC"),
+                        React.createElement("p", { className: "text-xs text-stone-500" }, "\uC778\uC2A4\uD0C0\uADF8\uB7A8 \uBC0F \uC2A4\uB808\uB4DC \uC5C5\uB85C\uB4DC\uC5D0 \uCD5C\uC801\uD654\uB41C \uACE0\uD488\uC9C8 \uC2E0\uD559 \uCE74\uB4DC\uB274\uC2A4 \uD15C\uD50C\uB9BF"))),
+                React.createElement("button", { onClick: onClose, className: "p-1.5 text-stone-400 hover:text-stone-700 rounded-lg" },
+                    React.createElement(X, { className: "w-5 h-5" }))),
+            React.createElement("div", { className: "p-6 overflow-y-auto flex-1 grid grid-cols-1 md:grid-cols-2 gap-4" }, PRESET_TEMPLATES.map((tpl) => {
+                const theme = THEMES[tpl.theme] || THEMES['pages-ivory'];
+                return (React.createElement("div", { key: tpl.id, className: "p-4 rounded-2xl border border-stone-200 hover:border-amber-400 bg-stone-50 hover:bg-white transition-all flex flex-col justify-between shadow-2xs hover:shadow-md group" },
+                    React.createElement("div", null,
+                        React.createElement("div", { className: "flex items-center justify-between text-[11px] mb-2" },
+                            React.createElement("span", { className: "px-2 py-0.5 rounded-full bg-amber-100/70 text-amber-900 font-medium" }, tpl.category),
+                            React.createElement("span", { className: "text-stone-500 font-mono flex items-center gap-1" },
+                                React.createElement(Layers, { className: "w-3 h-3 text-stone-400" }),
+                                tpl.slides.length,
+                                "\uC7A5 \uC2AC\uB77C\uC774\uB4DC")),
+                        React.createElement("h4", { className: "text-sm font-bold text-stone-900 mb-1 group-hover:text-amber-900 transition-colors" }, tpl.title),
+                        React.createElement("p", { className: "text-xs text-stone-600 line-clamp-2 leading-relaxed mb-3" }, tpl.slides[0]?.subtitle || tpl.seriesName),
+                        React.createElement("div", { className: "p-3 rounded-lg border border-stone-200/80 mb-3 space-y-1", style: { backgroundColor: theme.bgColor, color: theme.textColor } },
+                            React.createElement("div", { className: "text-[10px] font-semibold tracking-wider uppercase opacity-70" }, tpl.slides[0]?.tagline || 'PREVIEW'),
+                            React.createElement("div", { className: "text-xs font-bold font-serif line-clamp-1" }, tpl.slides[0]?.slideTitle))),
+                    React.createElement("button", { onClick: () => handleApply(tpl), className: "w-full py-2 bg-stone-900 group-hover:bg-amber-700 text-white rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-1.5 shadow-2xs" },
+                        React.createElement("span", null, "\uC774 \uD15C\uD50C\uB9BF \uC0AC\uC6A9\uD558\uAE30"),
+                        React.createElement(ArrowRight, { className: "w-3.5 h-3.5" }))));
+            })),
+            React.createElement("div", { className: "p-3 px-6 bg-stone-50 border-t border-stone-200 flex justify-end" },
+                React.createElement("button", { onClick: onClose, className: "px-4 py-2 bg-stone-200 hover:bg-stone-300 rounded-xl text-xs font-medium" }, "\uB2EB\uAE30")))));
+};
+
+// ==== dist/components/TheologianQuoteModal.js ====
+
+const TheologianQuoteModal = ({ isOpen, onClose, onSelectQuote, }) => {
+    const [searchTerm, setSearchTerm] = useState('');
+    const [insertedAuthor, setInsertedAuthor] = useState(null);
+    if (!isOpen)
+        return null;
+    const filteredQuotes = THEOLOGY_QUOTES.filter((q) => {
+        return (q.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (q.work && q.work.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            q.quote.toLowerCase().includes(searchTerm.toLowerCase()));
+    });
+    const handlePick = (q) => {
+        onSelectQuote(q);
+        setInsertedAuthor(q.author);
+        setTimeout(() => setInsertedAuthor(null), 1500);
+    };
+    return (React.createElement("div", { className: "fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-xs flex items-center justify-center p-4" },
+        React.createElement("div", { className: "bg-white rounded-2xl max-w-xl w-full shadow-2xl border border-stone-200 overflow-hidden flex flex-col max-h-[85vh] animate-in fade-in zoom-in-95 duration-150" },
+            React.createElement("div", { className: "p-4 px-6 border-b border-stone-200 flex items-center justify-between bg-stone-50" },
+                React.createElement("div", { className: "flex items-center gap-2" },
+                    React.createElement("div", { className: "p-1.5 bg-amber-100 rounded-lg text-amber-800" },
+                        React.createElement(QuoteIcon, { className: "w-5 h-5" })),
+                    React.createElement("div", null,
+                        React.createElement("h3", { className: "text-base font-bold text-stone-900" }, "\uAD50\uBD80 \uBC0F \uC2E0\uD559\uC790 \uBA85\uC5B8 \uC778\uC6A9 \uB77C\uC774\uBE0C\uB7EC\uB9AC"),
+                        React.createElement("p", { className: "text-xs text-stone-500" }, "\uCE7C\uBC45, \uB8E8\uD130, \uC544\uC6B0\uAD6C\uC2A4\uD2F0\uB204\uC2A4, \uBCF8\uD68C\uD37C, C.S. \uB8E8\uC774\uC2A4, \uD300 \uCF08\uB7EC \uB4F1"))),
+                React.createElement("button", { onClick: onClose, className: "p-1.5 text-stone-400 hover:text-stone-700 rounded-lg" },
+                    React.createElement(X, { className: "w-5 h-5" }))),
+            React.createElement("div", { className: "p-4 border-b border-stone-200 bg-stone-50/50" },
+                React.createElement("div", { className: "relative" },
+                    React.createElement(Search, { className: "w-4 h-4 absolute left-3 top-2.5 text-stone-400" }),
+                    React.createElement("input", { type: "text", value: searchTerm, onChange: (e) => setSearchTerm(e.target.value), placeholder: "\uC2E0\uD559\uC790 \uC774\uB984(\uCE7C\uBC45, \uB8E8\uD130, \uBCF8\uD68C\uD37C), \uC800\uC791\uBA85, \uD0A4\uC6CC\uB4DC \uAC80\uC0C9...", className: "w-full pl-9 pr-3 py-1.5 bg-white border border-stone-200 rounded-lg text-xs focus:border-amber-600 focus:outline-none" }))),
+            React.createElement("div", { className: "p-4 overflow-y-auto flex-1 space-y-3" }, filteredQuotes.map((q, idx) => {
+                const isJustInserted = insertedAuthor === q.author;
+                return (React.createElement("div", { key: idx, className: "p-3.5 bg-stone-50 hover:bg-amber-50/40 border border-stone-200 hover:border-amber-300 rounded-xl transition-all space-y-2" },
+                    React.createElement("p", { className: "text-xs text-stone-800 font-serif leading-relaxed italic" },
+                        "\"",
+                        q.quote,
+                        "\""),
+                    React.createElement("div", { className: "flex items-center justify-between pt-2 border-t border-stone-200/60" },
+                        React.createElement("div", { className: "text-xs" },
+                            React.createElement("span", { className: "font-bold text-amber-950" }, q.author),
+                            q.work && React.createElement("span", { className: "text-stone-500 ml-1.5" },
+                                "\u300E",
+                                q.work,
+                                "\u300F"),
+                            q.era && React.createElement("span", { className: "text-[10px] text-stone-400 ml-2" },
+                                "(",
+                                q.era,
+                                ")")),
+                        React.createElement("button", { onClick: () => handlePick(q), className: `px-3 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 flex items-center gap-1 ${isJustInserted
+                                ? 'bg-amber-700 text-white'
+                                : 'bg-white hover:bg-amber-700 hover:text-white border border-stone-300 text-stone-700'}` },
+                            isJustInserted ? React.createElement(Check, { className: "w-3.5 h-3.5" }) : React.createElement(Plus, { className: "w-3.5 h-3.5" }),
+                            React.createElement("span", null, isJustInserted ? '삽입됨' : '슬라이드에 삽입')))));
+            })),
+            React.createElement("div", { className: "p-3 px-6 bg-stone-50 border-t border-stone-200 flex justify-end" },
+                React.createElement("button", { onClick: onClose, className: "px-4 py-2 bg-stone-200 hover:bg-stone-300 rounded-xl text-xs font-medium" }, "\uB2EB\uAE30")))));
+};
+
+// ==== dist/components/TheologyWordPickerModal.js ====
+
+const TheologyWordPickerModal = ({ isOpen, onClose, onSelectWord, }) => {
+    const [searchTerm, setSearchTerm] = useState('');
+    const [languageFilter, setLanguageFilter] = useState('all');
+    const [insertedId, setInsertedId] = useState(null);
+    if (!isOpen)
+        return null;
+    const filteredWords = GREEK_HEBREW_DICTIONARY.filter((w) => {
+        const matchesLang = languageFilter === 'all' || w.language === languageFilter;
+        const matchesSearch = w.original.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            w.transliteration.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            w.meaning.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (w.note && w.note.toLowerCase().includes(searchTerm.toLowerCase()));
+        return matchesLang && matchesSearch;
+    });
+    const handlePick = (w) => {
+        onSelectWord({
+            ...w,
+            id: `word-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`
+        });
+        setInsertedId(w.id);
+        setTimeout(() => setInsertedId(null), 1500);
+    };
+    return (React.createElement("div", { className: "fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-xs flex items-center justify-center p-4" },
+        React.createElement("div", { className: "bg-white rounded-2xl max-w-xl w-full shadow-2xl border border-stone-200 overflow-hidden flex flex-col max-h-[85vh] animate-in fade-in zoom-in-95 duration-150" },
+            React.createElement("div", { className: "p-4 px-6 border-b border-stone-200 flex items-center justify-between bg-stone-50" },
+                React.createElement("div", { className: "flex items-center gap-2" },
+                    React.createElement("div", { className: "p-1.5 bg-emerald-100 rounded-lg text-emerald-800" },
+                        React.createElement(BookOpen, { className: "w-5 h-5" })),
+                    React.createElement("div", null,
+                        React.createElement("h3", { className: "text-base font-bold text-stone-900" }, "\uC2E0\uD559 \uC6D0\uC5B4 \uC0AC\uC804 (\uD5EC\uB77C\uC5B4\u00B7\uD788\uBE0C\uB9AC\uC5B4)"),
+                        React.createElement("p", { className: "text-xs text-stone-500" }, "\uD575\uC2EC \uC2E0\uD559 \uAC1C\uB150 \uB2E8\uC5B4\uB97C \uD074\uB9AD\uD558\uC5EC \uD604\uC7AC \uC2AC\uB77C\uC774\uB4DC\uC5D0 \uC0BD\uC785\uD569\uB2C8\uB2E4."))),
+                React.createElement("button", { onClick: onClose, className: "p-1.5 text-stone-400 hover:text-stone-700 rounded-lg" },
+                    React.createElement(X, { className: "w-5 h-5" }))),
+            React.createElement("div", { className: "p-4 border-b border-stone-200 bg-stone-50/50 flex flex-col sm:flex-row gap-2" },
+                React.createElement("div", { className: "relative flex-1" },
+                    React.createElement(Search, { className: "w-4 h-4 absolute left-3 top-2.5 text-stone-400" }),
+                    React.createElement("input", { type: "text", value: searchTerm, onChange: (e) => setSearchTerm(e.target.value), placeholder: "\uC6D0\uC5B4, \uBC1C\uC74C(\uCE74\uB9AC\uC2A4, \uD5E4\uC138\uB4DC), \uB73B \uAC80\uC0C9...", className: "w-full pl-9 pr-3 py-1.5 bg-white border border-stone-200 rounded-lg text-xs focus:border-emerald-600 focus:outline-none" })),
+                React.createElement("div", { className: "flex gap-1 bg-stone-200/60 p-1 rounded-lg self-start text-xs" },
+                    React.createElement("button", { onClick: () => setLanguageFilter('all'), className: `px-2.5 py-1 rounded-md font-medium transition-all ${languageFilter === 'all' ? 'bg-white text-stone-900 shadow-2xs' : 'text-stone-600 hover:text-stone-900'}` }, "\uC804\uCCB4"),
+                    React.createElement("button", { onClick: () => setLanguageFilter('greek'), className: `px-2.5 py-1 rounded-md font-medium transition-all ${languageFilter === 'greek' ? 'bg-white text-stone-900 shadow-2xs' : 'text-stone-600 hover:text-stone-900'}` }, "\uD5EC\uB77C\uC5B4(\uC2E0\uC57D)"),
+                    React.createElement("button", { onClick: () => setLanguageFilter('hebrew'), className: `px-2.5 py-1 rounded-md font-medium transition-all ${languageFilter === 'hebrew' ? 'bg-white text-stone-900 shadow-2xs' : 'text-stone-600 hover:text-stone-900'}` }, "\uD788\uBE0C\uB9AC\uC5B4(\uAD6C\uC57D)"))),
+            React.createElement("div", { className: "p-4 overflow-y-auto flex-1 space-y-2.5" }, filteredWords.map((w) => {
+                const isJustInserted = insertedId === w.id;
+                return (React.createElement("div", { key: w.id, className: "p-3 bg-stone-50 hover:bg-emerald-50/40 border border-stone-200 hover:border-emerald-300 rounded-xl transition-all flex items-start justify-between gap-3" },
+                    React.createElement("div", { className: "space-y-1 flex-1" },
+                        React.createElement("div", { className: "flex items-center gap-2" },
+                            React.createElement("span", { className: "text-xl font-bold font-serif text-emerald-950" }, w.original),
+                            React.createElement("span", { className: "text-xs font-mono font-medium text-stone-600" },
+                                "(",
+                                w.transliteration,
+                                ")"),
+                            React.createElement("span", { className: "text-[10px] px-2 py-0.5 rounded-full bg-stone-200 text-stone-700 font-medium" }, w.language === 'greek' ? '신약 헬라어' : '구약 히브리어')),
+                        React.createElement("p", { className: "text-xs text-stone-800 font-medium leading-relaxed" }, w.meaning),
+                        w.note && (React.createElement("div", { className: "text-[11px] text-stone-500" },
+                            "\uCC38\uC870 \uAD6C\uC808: ",
+                            w.note))),
+                    React.createElement("button", { onClick: () => handlePick(w), className: `px-3 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 flex items-center gap-1 ${isJustInserted
+                            ? 'bg-emerald-600 text-white'
+                            : 'bg-white hover:bg-emerald-700 hover:text-white border border-stone-300 text-stone-700'}` },
+                        isJustInserted ? React.createElement(Check, { className: "w-3.5 h-3.5" }) : React.createElement(Plus, { className: "w-3.5 h-3.5" }),
+                        React.createElement("span", null, isJustInserted ? '삽입됨' : '슬라이드에 삽입'))));
+            })),
+            React.createElement("div", { className: "p-3 px-6 bg-stone-50 border-t border-stone-200 flex justify-end" },
+                React.createElement("button", { onClick: onClose, className: "px-4 py-2 bg-stone-200 hover:bg-stone-300 rounded-xl text-xs font-medium" }, "\uB2EB\uAE30")))));
+};
+
+// ==== dist/components/ExportModal.js ====
+
+const ExportModal = ({ isOpen, onClose, doc, activeSlideIndex, onSelectSlide, onImportDoc }) => {
+    const [copiedCaption, setCopiedCaption] = useState(false);
+    const [copiedHtmlCode, setCopiedHtmlCode] = useState(false);
+    const [copiedImage, setCopiedImage] = useState(false);
+    const [isExportingZip, setIsExportingZip] = useState(false);
+    const [isExportingPng, setIsExportingPng] = useState(false);
+    const [zipProgress, setZipProgress] = useState(null);
+    const [activeTab, setActiveTab] = useState('image');
+    const [feedbackMsg, setFeedbackMsg] = useState(null);
+    if (!isOpen)
+        return null;
+    const showFeedback = (msg) => {
+        setFeedbackMsg(msg);
+        setTimeout(() => setFeedbackMsg(null), 3000);
+    };
+    const captionText = generateSocialCaption(doc);
+    // Copy caption to clipboard
+    const handleCopyCaption = async () => {
+        try {
+            await navigator.clipboard.writeText(captionText);
+            setCopiedCaption(true);
+            showFeedback('캡션이 클립보드에 복사되었습니다.');
+            setTimeout(() => setCopiedCaption(false), 2500);
+        }
+        catch (err) {
+            console.error('Failed to copy caption:', err);
+        }
+    };
+    // Download Current Slide as High-Res PNG
+    const handleDownloadCurrent = async () => {
+        const el = document.getElementById('slide-render-target');
+        if (!el) {
+            alert('슬라이드 렌더 요소를 찾을 수 없습니다.');
+            return;
+        }
+        try {
+            setIsExportingPng(true);
+            const slideNum = String(activeSlideIndex + 1).padStart(2, '0');
+            const safeTitle = (doc.title || 'theology_note').replace(/[\\/:*?"<>|]/g, '_').substring(0, 20);
+            await downloadSlideAsImage(el, `${safeTitle}_slide_${slideNum}`);
+            showFeedback(`슬라이드 ${activeSlideIndex + 1} PNG 이미지가 저장되었습니다.`);
+        }
+        catch (err) {
+            console.error('PNG download error:', err);
+            alert('PNG 이미지 저장 중 문제가 발생했습니다.');
+        }
+        finally {
+            setIsExportingPng(false);
+        }
+    };
+    // Copy current slide image directly to clipboard
+    const handleCopyCurrentSlideImage = async () => {
+        const el = document.getElementById('slide-render-target');
+        if (!el)
+            return;
+        try {
+            const success = await copySlideImageToClipboard(el);
+            if (success) {
+                setCopiedImage(true);
+                showFeedback('슬라이드 이미지가 클립보드에 복사되었습니다. (Ctrl+V로 붙여넣기 가능)');
+                setTimeout(() => setCopiedImage(false), 2500);
+            }
+            else {
+                alert('브라우저에서 이미지 클립보드 복사를 지원하지 않거나 권한이 필요합니다. [PNG 저장]을 이용해주세요.');
+            }
+        }
+        catch (err) {
+            console.error('Copy image error:', err);
+        }
+    };
+    // Batch Export All Slides as ZIP Carousel
+    const handleDownloadAllZip = async () => {
+        try {
+            setIsExportingZip(true);
+            const originalIndex = activeSlideIndex;
+            await exportAllSlidesAsZip(doc, async (index) => {
+                await onSelectSlide(index);
+                await new Promise((resolve) => setTimeout(resolve, 150));
+                return document.getElementById('slide-render-target');
+            }, (current, total) => {
+                setZipProgress({ current, total });
+            });
+            // Restore original slide index
+            await onSelectSlide(originalIndex);
+            showFeedback('전체 슬라이드 ZIP 파일이 다운로드되었습니다.');
+        }
+        catch (err) {
+            console.error('Failed to export zip:', err);
+            alert('ZIP 내보내기 중 문제가 발생했습니다. 개별 슬라이드 저장을 이용해 보세요.');
+        }
+        finally {
+            setIsExportingZip(false);
+            setZipProgress(null);
+        }
+    };
+    // Download Standalone HTML file
+    const handleDownloadHtml = () => {
+        const htmlContent = generateStandaloneHtml(doc);
+        const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+        const safeTitle = (doc.title || 'theology_note').replace(/[\\/:*?"<>|]/g, '_').substring(0, 20);
+        triggerBlobDownload(blob, `${safeTitle}_pages_note.html`);
+        showFeedback('단일 HTML 파일 다운로드가 시작되었습니다.');
+    };
+    // Copy HTML code
+    const handleCopyHtmlCode = async () => {
+        try {
+            const htmlContent = generateStandaloneHtml(doc);
+            await navigator.clipboard.writeText(htmlContent);
+            setCopiedHtmlCode(true);
+            showFeedback('HTML 코드가 클립보드에 복사되었습니다.');
+            setTimeout(() => setCopiedHtmlCode(false), 2500);
+        }
+        catch (e) {
+            console.error('Failed to copy HTML code:', e);
+        }
+    };
+    // Open Standalone HTML in new window/tab
+    const handleOpenHtmlPreview = () => {
+        const htmlContent = generateStandaloneHtml(doc);
+        const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+    };
+    // Export JSON backup
+    const handleExportJson = () => {
+        const jsonStr = JSON.stringify(doc, null, 2);
+        const blob = new Blob([jsonStr], { type: 'application/json;charset=utf-8' });
+        const safeTitle = (doc.title || 'theology_note').replace(/[\\/:*?"<>|]/g, '_').substring(0, 20);
+        triggerBlobDownload(blob, `${safeTitle}_backup.json`);
+        showFeedback('JSON 백업 파일이 다운로드되었습니다.');
+    };
+    // Import JSON backup
+    const handleImportJsonFile = (e) => {
+        const file = e.target.files?.[0];
+        if (!file)
+            return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            try {
+                const data = JSON.parse(event.target?.result);
+                if (data && data.slides && Array.isArray(data.slides)) {
+                    onImportDoc(data);
+                    onClose();
+                }
+                else {
+                    alert('올바른 신학 노트 JSON 파일 형식이 아닙니다.');
+                }
+            }
+            catch (err) {
+                alert('JSON 파일을 불러오는데 실패했습니다.');
+            }
+        };
+        reader.readAsText(file);
+    };
+    return (React.createElement("div", { className: "fixed inset-0 z-50 bg-[#2D2D2D]/60 backdrop-blur-xs flex items-center justify-center p-4" },
+        React.createElement("div", { className: "bg-[#FFFFFF] rounded-xl max-w-xl w-full shadow-2xl border border-[#D6D3C8] overflow-hidden flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 duration-150" },
+            React.createElement("div", { className: "p-4 px-6 border-b border-[#D6D3C8] flex items-center justify-between bg-[#F4F2EB]" },
+                React.createElement("div", { className: "flex items-center gap-2.5" },
+                    React.createElement("div", { className: "p-2 bg-[#EDEBE3] rounded-md text-[#5C5A4E]" },
+                        React.createElement(Share2, { className: "w-4 h-4" })),
+                    React.createElement("div", null,
+                        React.createElement("h3", { className: "text-sm font-bold text-[#2D2D2D]" }, "\uC2E0\uD559 \uB178\uD2B8 \uB0B4\uBCF4\uB0B4\uAE30 & \uACF5\uC720"),
+                        React.createElement("p", { className: "text-xs text-[#7A786F]" }, "\uC778\uC2A4\uD0C0, \uC2A4\uB808\uB4DC, \uBE14\uB85C\uADF8, \uB3C5\uB9BD \uC2E4\uD589\uD615 HTML \uD30C\uC77C\uB85C \uB0B4\uBCF4\uB0B4\uAE30"))),
+                React.createElement("button", { onClick: onClose, className: "p-1.5 text-[#7A786F] hover:text-[#2D2D2D] rounded-md hover:bg-[#EDEBE3] transition-colors" },
+                    React.createElement(X, { className: "w-4 h-4" }))),
+            React.createElement("div", { className: "flex border-b border-[#D6D3C8] bg-[#F4F2EB] px-6 gap-2 text-xs font-medium" },
+                React.createElement("button", { onClick: () => setActiveTab('image'), className: `py-3 px-3 border-b-2 transition-all flex items-center gap-1.5 ${activeTab === 'image'
+                        ? 'border-[#5C5A4E] text-[#2D2D2D] font-bold'
+                        : 'border-transparent text-[#7A786F] hover:text-[#2D2D2D]'}` },
+                    React.createElement(Download, { className: "w-3.5 h-3.5" }),
+                    React.createElement("span", null, "\uC774\uBBF8\uC9C0 (PNG/ZIP)")),
+                React.createElement("button", { onClick: () => setActiveTab('caption'), className: `py-3 px-3 border-b-2 transition-all flex items-center gap-1.5 ${activeTab === 'caption'
+                        ? 'border-[#5C5A4E] text-[#2D2D2D] font-bold'
+                        : 'border-transparent text-[#7A786F] hover:text-[#2D2D2D]'}` },
+                    React.createElement(Copy, { className: "w-3.5 h-3.5" }),
+                    React.createElement("span", null, "\uCEA1\uC158 \uBCF5\uC0AC")),
+                React.createElement("button", { onClick: () => setActiveTab('html'), className: `py-3 px-3 border-b-2 transition-all flex items-center gap-1.5 ${activeTab === 'html'
+                        ? 'border-[#5C5A4E] text-[#2D2D2D] font-bold'
+                        : 'border-transparent text-[#7A786F] hover:text-[#2D2D2D]'}` },
+                    React.createElement(FileCode, { className: "w-3.5 h-3.5" }),
+                    React.createElement("span", null, "\uB2E8\uC77C HTML \uD30C\uC77C")),
+                React.createElement("button", { onClick: () => setActiveTab('json'), className: `py-3 px-3 border-b-2 transition-all flex items-center gap-1.5 ${activeTab === 'json'
+                        ? 'border-[#5C5A4E] text-[#2D2D2D] font-bold'
+                        : 'border-transparent text-[#7A786F] hover:text-[#2D2D2D]'}` },
+                    React.createElement(FolderDown, { className: "w-3.5 h-3.5" }),
+                    React.createElement("span", null, "\uBC31\uC5C5/\uBCF5\uC6D0"))),
+            React.createElement("div", { className: "p-6 overflow-y-auto space-y-4 flex-1 text-[#2D2D2D]" },
+                feedbackMsg && (React.createElement("div", { className: "p-2.5 bg-[#5C5A4E] text-white text-xs font-semibold rounded-md flex items-center justify-between animate-in fade-in slide-in-from-top-1" },
+                    React.createElement("span", { className: "flex items-center gap-1.5" },
+                        React.createElement(Check, { className: "w-3.5 h-3.5" }),
+                        feedbackMsg))),
+                activeTab === 'image' && (React.createElement("div", { className: "space-y-4" },
+                    React.createElement("div", { className: "p-4 rounded-lg bg-[#FAF9F6] border border-[#D6D3C8] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3" },
+                        React.createElement("div", null,
+                            React.createElement("h4", { className: "text-xs font-bold text-[#2D2D2D] mb-1" },
+                                "\uD604\uC7AC \uC2AC\uB77C\uC774\uB4DC \uC800\uC7A5 (\uC2AC\uB77C\uC774\uB4DC ",
+                                activeSlideIndex + 1,
+                                " / ",
+                                doc.slides.length,
+                                ")"),
+                            React.createElement("p", { className: "text-[11px] text-[#7A786F] leading-relaxed" }, "\uC120\uBA85\uD55C \uB808\uD2F0\uB098 \uACE0\uD574\uC0C1\uB3C4(PNG) \uC774\uBBF8\uC9C0\uB85C \uC800\uC7A5\uD558\uAC70\uB098 \uD074\uB9BD\uBCF4\uB4DC\uC5D0 \uBCF5\uC0AC\uD569\uB2C8\uB2E4.")),
+                        React.createElement("div", { className: "flex items-center gap-2 shrink-0" },
+                            React.createElement("button", { id: "btn-copy-slide-image", onClick: handleCopyCurrentSlideImage, title: "\uC774\uBBF8\uC9C0\uB97C \uD074\uB9BD\uBCF4\uB4DC\uC5D0 \uBCF5\uC0AC\uD558\uC5EC \uB2E4\uB978 \uC571\uC5D0 \uBC14\uB85C \uBD99\uC5EC\uB123\uAE30", className: "px-3 py-2 bg-[#FFFFFF] hover:bg-[#EDEBE3] text-[#2D2D2D] border border-[#D6D3C8] rounded-md text-xs font-bold transition-all shadow-2xs flex items-center gap-1.5" },
+                                copiedImage ? React.createElement(Check, { className: "w-3.5 h-3.5 text-[#2ECC71]" }) : React.createElement(Clipboard, { className: "w-3.5 h-3.5" }),
+                                React.createElement("span", null, copiedImage ? '복사됨' : '이미지 복사')),
+                            React.createElement("button", { id: "btn-download-single-png", disabled: isExportingPng, onClick: handleDownloadCurrent, className: "px-3.5 py-2 bg-[#5C5A4E] hover:bg-[#4B493E] text-white rounded-md text-xs font-bold transition-all shadow-2xs flex items-center gap-1.5" },
+                                isExportingPng ? React.createElement(Loader2, { className: "w-3.5 h-3.5 animate-spin" }) : React.createElement(Download, { className: "w-3.5 h-3.5" }),
+                                React.createElement("span", null, "\uB2E8\uC77C PNG \uC800\uC7A5")))),
+                    React.createElement("div", { className: "p-4 rounded-lg bg-[#FAF9F6] border border-[#D6D3C8] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3" },
+                        React.createElement("div", null,
+                            React.createElement("h4", { className: "text-xs font-bold text-[#2D2D2D] mb-1 flex items-center gap-1.5" },
+                                React.createElement(Archive, { className: "w-3.5 h-3.5 text-[#5C5A4E]" }),
+                                React.createElement("span", null,
+                                    "\uC804\uCCB4 \uC2AC\uB77C\uC774\uB4DC \uCE90\uB7EC\uC140 ZIP \uB2E4\uC6B4\uB85C\uB4DC (\uCD1D ",
+                                    doc.slides.length,
+                                    "\uC7A5)")),
+                            React.createElement("p", { className: "text-[11px] text-[#7A786F] leading-relaxed" },
+                                "\uBAA8\uB4E0 \uD398\uC774\uC9C0\uB97C \uC21C\uC11C\uB300\uB85C \uB118\uBC84\uB9C1\uD55C \uC774\uBBF8\uC9C0 \uD30C\uC77C(",
+                                React.createElement("code", null, "slide_01.png"),
+                                "...)\uACFC \uD3EC\uC2A4\uD305 \uCEA1\uC158 \uD14D\uC2A4\uD2B8\uB97C \uC555\uCD95 \uD30C\uC77C\uB85C \uD55C \uBC88\uC5D0 \uB2E4\uC6B4\uB85C\uB4DC\uD569\uB2C8\uB2E4."),
+                            zipProgress && (React.createElement("div", { className: "mt-2 text-xs font-bold text-[#5C5A4E] flex items-center gap-2" },
+                                React.createElement(Loader2, { className: "w-3.5 h-3.5 animate-spin" }),
+                                React.createElement("span", null,
+                                    "\uC2AC\uB77C\uC774\uB4DC \uB80C\uB354\uB9C1 \uC911... (",
+                                    zipProgress.current,
+                                    " / ",
+                                    zipProgress.total,
+                                    ")")))),
+                        React.createElement("button", { id: "btn-download-all-zip", disabled: isExportingZip, onClick: handleDownloadAllZip, className: "px-3.5 py-2 bg-[#2D2D2D] hover:bg-[#1A1A1A] disabled:opacity-50 text-white rounded-md text-xs font-bold transition-all shadow-2xs shrink-0 flex items-center gap-1.5" },
+                            isExportingZip ? React.createElement(Loader2, { className: "w-3.5 h-3.5 animate-spin" }) : React.createElement(FolderDown, { className: "w-3.5 h-3.5" }),
+                            React.createElement("span", null, "\uC804\uCCB4 ZIP \uC800\uC7A5"))),
+                    React.createElement("div", { className: "text-[11px] text-[#7A786F] bg-[#F4F2EB] border border-[#D6D3C8] p-3 rounded-md flex items-center gap-2" },
+                        React.createElement("span", { className: "font-semibold text-[#5C5A4E]" }, "\uC548\uB0B4:"),
+                        React.createElement("span", null, "\uC778\uC2A4\uD0C0\uADF8\uB7A8 \uC5C5\uB85C\uB4DC \uC2DC ZIP \uD30C\uC77C \uC555\uCD95 \uD574\uC81C \uD6C4 \uC5EC\uB7EC \uC7A5\uC744 \uC21C\uC11C\uB300\uB85C \uC120\uD0DD\uD558\uC5EC \uCE90\uB7EC\uC140 \uD3EC\uC2A4\uD305\uC744 \uC0DD\uC131\uD560 \uC218 \uC788\uC2B5\uB2C8\uB2E4.")))),
+                activeTab === 'caption' && (React.createElement("div", { className: "space-y-3" },
+                    React.createElement("div", { className: "flex items-center justify-between" },
+                        React.createElement("span", { className: "text-xs font-semibold text-[#2D2D2D]" }, "\uC778\uC2A4\uD0C0\uADF8\uB7A8 / \uC2A4\uB808\uB4DC \uBCF8\uBB38 \uCEA1\uC158 \uBBF8\uB9AC\uBCF4\uAE30"),
+                        React.createElement("button", { id: "btn-copy-caption", onClick: handleCopyCaption, className: `px-3 py-1.5 rounded-md text-xs font-bold transition-all flex items-center gap-1.5 ${copiedCaption
+                                ? 'bg-[#5C5A4E] text-white'
+                                : 'bg-[#FFFFFF] text-[#2D2D2D] hover:bg-[#EDEBE3] border border-[#D6D3C8] shadow-2xs'}` },
+                            copiedCaption ? React.createElement(Check, { className: "w-3.5 h-3.5" }) : React.createElement(Copy, { className: "w-3.5 h-3.5" }),
+                            React.createElement("span", null, copiedCaption ? '복사 완료!' : '전체 캡션 복사'))),
+                    React.createElement("textarea", { readOnly: true, rows: 12, value: captionText, className: "w-full p-3 bg-[#FAF9F6] border border-[#D6D3C8] rounded-md text-xs font-mono leading-relaxed text-[#2D2D2D] focus:outline-none select-all" }))),
+                activeTab === 'html' && (React.createElement("div", { className: "space-y-4" },
+                    React.createElement("div", { className: "p-5 rounded-lg bg-[#FAF9F6] border border-[#D6D3C8] space-y-3.5" },
+                        React.createElement("div", { className: "flex items-center justify-between" },
+                            React.createElement("h4", { className: "text-sm font-bold text-[#2D2D2D] flex items-center gap-2" },
+                                React.createElement(FileCode, { className: "w-4 h-4 text-[#5C5A4E]" }),
+                                React.createElement("span", null, "\uB3C5\uB9BD \uC2E4\uD589\uD615 \uB2E8\uC77C HTML \uC6F9 \uBB38\uC11C (Standalone HTML)")),
+                            React.createElement("span", { className: "text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-[#EDEBE3] text-[#5C5A4E] rounded" }, "\uB2E8\uC77C \uD30C\uC77C")),
+                        React.createElement("p", { className: "text-xs text-[#5C5A4E] leading-relaxed" },
+                            "\uC791\uC131\uD558\uC2E0 \uBAA8\uB4E0 \uC2E0\uD559 \uC2AC\uB77C\uC774\uB4DC\uC640 \uACE0\uC11C\uCCB4, \uB0B4\uCD94\uB7F4 \uD1A4\uC988 \uCEEC\uB7EC \uD314\uB808\uD2B8, \uC131\uACBD \uAD6C\uC808 \uBC0F \uC6D0\uC5B4 \uCE74\uB4DC\uAC00 \uC644\uC804\uD788 \uB0B4\uC7A5\uB41C \uB2E8\uC77C ",
+                            React.createElement("code", null, ".html"),
+                            " \uD30C\uC77C\uB85C \uB2E4\uC6B4\uB85C\uB4DC\uD569\uB2C8\uB2E4."),
+                        React.createElement("div", { className: "grid grid-cols-2 gap-2.5 pt-1 text-[11px]" },
+                            React.createElement("div", { className: "p-2.5 bg-[#FFFFFF] border border-[#D6D3C8] rounded-md" },
+                                React.createElement("div", { className: "font-semibold text-[#2D2D2D] mb-0.5" }, "\uD83D\uDDBC\uFE0F \uB300\uD654\uD615 \uC2AC\uB77C\uC774\uB4DC \uBAA8\uB4DC"),
+                                React.createElement("div", { className: "text-[#7A786F]" }, "\uD0A4\uBCF4\uB4DC \uBC29\uD5A5\uD0A4 \uBC0F \uBAA8\uBC14\uC77C \uC2A4\uC640\uC774\uD504\uB85C \uC2AC\uB77C\uC774\uB4DC\uB97C \uB118\uACA8\uBCF4\uB294 \uD504\uB808\uC820\uD14C\uC774\uC158 \uBDF0")),
+                            React.createElement("div", { className: "p-2.5 bg-[#FFFFFF] border border-[#D6D3C8] rounded-md" },
+                                React.createElement("div", { className: "font-semibold text-[#2D2D2D] mb-0.5" }, "\uD83D\uDCD1 \uC5F0\uC18D \uBB38\uC11C & \uC778\uC1C4 \uBAA8\uB4DC"),
+                                React.createElement("div", { className: "text-[#7A786F]" }, "Apple Pages \uC544\uD2F0\uD074 \uC2A4\uD0C0\uC77C\uC758 \uC5F0\uC18D \uC77D\uAE30 \uBC0F \uC6D0\uD074\uB9AD PDF \uC778\uC1C4 \uCD5C\uC801\uD654"))),
+                        React.createElement("div", { className: "pt-3 flex flex-wrap items-center justify-between gap-2 border-t border-[#D6D3C8]/60" },
+                            React.createElement("div", { className: "text-[11px] text-[#7A786F]" },
+                                "\uD30C\uC77C\uBA85: ",
+                                React.createElement("span", { className: "font-mono text-[#2D2D2D]" },
+                                    (doc.title || 'theology_note').replace(/[\\/:*?"<>|]/g, '_').substring(0, 16),
+                                    "_pages_note.html")),
+                            React.createElement("div", { className: "flex items-center gap-2" },
+                                React.createElement("button", { id: "btn-preview-html-newtab", onClick: handleOpenHtmlPreview, title: "\uC0C8 \uBE0C\uB77C\uC6B0\uC800 \uD0ED\uC5D0\uC11C \uBC14\uB85C \uC2E4\uD589 \uBC0F \uD655\uC778", className: "px-3 py-2 bg-[#FFFFFF] hover:bg-[#EDEBE3] text-[#2D2D2D] border border-[#D6D3C8] rounded-md text-xs font-bold transition-all shadow-2xs flex items-center gap-1.5" },
+                                    React.createElement(ExternalLink, { className: "w-3.5 h-3.5 text-[#5C5A4E]" }),
+                                    React.createElement("span", null, "\uC0C8 \uD0ED\uC5D0\uC11C \uC5F4\uAE30")),
+                                React.createElement("button", { id: "btn-copy-html-code", onClick: handleCopyHtmlCode, title: "HTML \uC18C\uC2A4\uCF54\uB4DC\uB97C \uD074\uB9BD\uBCF4\uB4DC\uC5D0 \uBCF5\uC0AC", className: "px-3 py-2 bg-[#FFFFFF] hover:bg-[#EDEBE3] text-[#2D2D2D] border border-[#D6D3C8] rounded-md text-xs font-bold transition-all shadow-2xs flex items-center gap-1.5" },
+                                    copiedHtmlCode ? React.createElement(Check, { className: "w-3.5 h-3.5 text-[#2ECC71]" }) : React.createElement(Copy, { className: "w-3.5 h-3.5 text-[#5C5A4E]" }),
+                                    React.createElement("span", null, copiedHtmlCode ? '코드 복사됨' : '코드 복사')),
+                                React.createElement("button", { id: "btn-download-html", onClick: handleDownloadHtml, className: "px-3.5 py-2 bg-[#5C5A4E] hover:bg-[#4B493E] text-white rounded-md text-xs font-bold transition-all shadow-2xs flex items-center gap-1.5" },
+                                    React.createElement(Download, { className: "w-3.5 h-3.5" }),
+                                    React.createElement("span", null, "HTML \uB2E4\uC6B4\uB85C\uB4DC"))))))),
+                activeTab === 'json' && (React.createElement("div", { className: "space-y-4" },
+                    React.createElement("div", { className: "p-4 rounded-lg bg-[#FAF9F6] border border-[#D6D3C8] space-y-2" },
+                        React.createElement("h4", { className: "text-xs font-bold text-[#2D2D2D]" }, "\uB178\uD2B8 \uB370\uC774\uD130 \uBC31\uC5C5 (JSON)"),
+                        React.createElement("p", { className: "text-[11px] text-[#7A786F] leading-relaxed" }, "\uC791\uC131 \uC911\uC778 \uC2E0\uD559 \uB178\uD2B8\uC758 \uBAA8\uB4E0 \uC2AC\uB77C\uC774\uB4DC \uBC0F \uBA54\uD0C0\uB370\uC774\uD130\uB97C JSON \uD30C\uC77C\uB85C \uC800\uC7A5\uD569\uB2C8\uB2E4."),
+                        React.createElement("button", { onClick: handleExportJson, className: "px-3 py-1.5 bg-[#5C5A4E] hover:bg-[#4B493E] text-white rounded-md text-xs font-medium flex items-center gap-1.5" },
+                            React.createElement(Download, { className: "w-3.5 h-3.5" }),
+                            React.createElement("span", null, "JSON \uBC31\uC5C5 \uD30C\uC77C \uC800\uC7A5"))),
+                    React.createElement("div", { className: "p-4 rounded-lg bg-[#FAF9F6] border border-[#D6D3C8] space-y-2" },
+                        React.createElement("h4", { className: "text-xs font-bold text-[#2D2D2D]" }, "\uBC31\uC5C5 \uD30C\uC77C \uBD88\uB7EC\uC624\uAE30 (JSON)"),
+                        React.createElement("p", { className: "text-[11px] text-[#7A786F] leading-relaxed" }, "\uC774\uC804\uC5D0 \uC800\uC7A5\uD574 \uB454 \uC2E0\uD559 \uB178\uD2B8 JSON \uD30C\uC77C\uC744 \uC5C5\uB85C\uB4DC\uD558\uC5EC \uACC4\uC18D \uD3B8\uC9D1\uD569\uB2C8\uB2E4."),
+                        React.createElement("label", { className: "inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#FFFFFF] hover:bg-[#EDEBE3] text-[#2D2D2D] border border-[#D6D3C8] rounded-md text-xs font-medium cursor-pointer" },
+                            React.createElement(Upload, { className: "w-3.5 h-3.5 text-[#5C5A4E]" }),
+                            React.createElement("span", null, "JSON \uD30C\uC77C \uC120\uD0DD"),
+                            React.createElement("input", { type: "file", accept: ".json", onChange: handleImportJsonFile, className: "hidden" })))))),
+            React.createElement("div", { className: "p-3 px-6 bg-[#F4F2EB] border-t border-[#D6D3C8] flex items-center justify-end" },
+                React.createElement("button", { onClick: onClose, className: "px-3.5 py-1.5 bg-[#FFFFFF] hover:bg-[#EDEBE3] text-[#2D2D2D] border border-[#D6D3C8] rounded-md text-xs font-medium transition-colors" }, "\uB2EB\uAE30")))));
+};
+
+// ==== dist/App.js ====
+
+const STORAGE_KEY = 'theology_notes_studio_doc_v1';
+function App() {
+    // Load saved state or default to Bonhoeffer template
+    const [doc, setDoc] = useState(() => {
+        try {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                return JSON.parse(saved);
+            }
+        }
+        catch (e) {
+            console.error('Failed to load saved doc from localStorage:', e);
+        }
+        return JSON.parse(JSON.stringify(PRESET_TEMPLATES[0]));
+    });
+    const [activeSlideIndex, setActiveSlideIndex] = useState(0);
+    const [showInspector, setShowInspector] = useState(true);
+    const [showNavigator, setShowNavigator] = useState(true);
+    const [zoom, setZoom] = useState(1.0);
+    const [isSaved, setIsSaved] = useState(true);
+    // Modals state
+    const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+    const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
+    const [isWordPickerOpen, setIsWordPickerOpen] = useState(false);
+    const [isQuotePickerOpen, setIsQuotePickerOpen] = useState(false);
+    const [isExportingPng, setIsExportingPng] = useState(false);
+    // Toast notification state
+    const [toasts, setToasts] = useState([]);
+    const showToast = (message, type = 'success') => {
+        const id = Date.now();
+        setToasts((prev) => [...prev, { id, message, type }]);
+        setTimeout(() => {
+            setToasts((prev) => prev.filter((t) => t.id !== id));
+        }, 3500);
+    };
+    // Auto-save to localStorage
+    useEffect(() => {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(doc));
+            setIsSaved(true);
+        }
+        catch (e) {
+            console.error('Failed to save to localStorage:', e);
+            setIsSaved(false);
+        }
+    }, [doc]);
+    // Keyboard navigation for slides (Left/Right arrow)
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            // Ignore if active element is an input or textarea
+            if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target?.tagName)) {
+                return;
+            }
+            if (e.key === 'ArrowLeft') {
+                setActiveSlideIndex((prev) => Math.max(0, prev - 1));
+            }
+            else if (e.key === 'ArrowRight') {
+                setActiveSlideIndex((prev) => Math.min(doc.slides.length - 1, prev + 1));
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [doc.slides.length]);
+    // Update doc top-level properties
+    const handleUpdateDoc = (updated) => {
+        setDoc((prev) => ({
+            ...prev,
+            ...updated,
+            updatedAt: new Date().toISOString().split('T')[0]
+        }));
+    };
+    // Update currently active slide
+    const handleUpdateActiveSlide = (updated) => {
+        setDoc((prev) => {
+            const slides = [...prev.slides];
+            slides[activeSlideIndex] = {
+                ...slides[activeSlideIndex],
+                ...updated,
+            };
+            return {
+                ...prev,
+                slides,
+                updatedAt: new Date().toISOString().split('T')[0]
+            };
+        });
+    };
+    // Add new slide
+    const handleAddSlide = (type = 'content-body') => {
+        const newSlide = {
+            id: `slide-${Date.now()}`,
+            type,
+            tagline: `PART ${String(doc.slides.length + 1).padStart(2, '0')}`,
+            slideTitle: type === 'cover' ? '새로운 신학 주제' : '슬라이드 소제목',
+            subtitle: type === 'scripture-focus' ? '성경 본문 해설' : '핵심 신학 통찰',
+            bodyText: '신학적 묵상과 강해 내용을 입력해 주세요. 인스타그램 및 스레드에서 읽기 좋은 문단 구조를 만듭니다.',
+            bulletPoints: type === 'summary-outro' ? ['첫 번째 핵심 요점', '두 번째 묵상 질문'] : undefined,
+            footerNote: `${doc.authorHandle} · 신학 노트`,
+        };
+        setDoc((prev) => ({
+            ...prev,
+            slides: [...prev.slides, newSlide],
+            updatedAt: new Date().toISOString().split('T')[0]
+        }));
+        setActiveSlideIndex(doc.slides.length);
+        showToast('새 슬라이드가 추가되었습니다.', 'info');
+    };
+    // Duplicate slide
+    const handleDuplicateSlide = (index) => {
+        const target = doc.slides[index];
+        if (!target)
+            return;
+        const duplicated = {
+            ...JSON.parse(JSON.stringify(target)),
+            id: `slide-${Date.now()}`,
+            slideTitle: `${target.slideTitle} (복사본)`
+        };
+        setDoc((prev) => {
+            const slides = [...prev.slides];
+            slides.splice(index + 1, 0, duplicated);
+            return { ...prev, slides };
+        });
+        setActiveSlideIndex(index + 1);
+        showToast('슬라이드가 복제되었습니다.', 'info');
+    };
+    // Delete slide
+    const handleDeleteSlide = (index) => {
+        if (doc.slides.length <= 1) {
+            alert('최소 1장의 슬라이드는 유지되어야 합니다.');
+            return;
+        }
+        setDoc((prev) => {
+            const slides = prev.slides.filter((_, i) => i !== index);
+            return { ...prev, slides };
+        });
+        setActiveSlideIndex((prev) => Math.min(prev, doc.slides.length - 2));
+        showToast('슬라이드가 삭제되었습니다.', 'info');
+    };
+    // Move slide up/down
+    const handleMoveSlide = (fromIndex, toIndex) => {
+        if (toIndex < 0 || toIndex >= doc.slides.length)
+            return;
+        setDoc((prev) => {
+            const slides = [...prev.slides];
+            const [moved] = slides.splice(fromIndex, 1);
+            slides.splice(toIndex, 0, moved);
+            return { ...prev, slides };
+        });
+        setActiveSlideIndex(toIndex);
+    };
+    // Insert original word from modal
+    const handleInsertWord = (word) => {
+        const currentSlide = doc.slides[activeSlideIndex];
+        const currentWords = currentSlide.originalWords || [];
+        handleUpdateActiveSlide({
+            originalWords: [...currentWords, word],
+            type: currentSlide.type === 'cover' ? 'exegesis-words' : currentSlide.type
+        });
+        showToast(`원어 '${word.original}' (${word.transliteration}) 삽입 완료`);
+    };
+    // Insert theologian quote from modal
+    const handleInsertQuote = (quote) => {
+        handleUpdateActiveSlide({
+            theologyQuote: quote,
+            type: 'quote-focus'
+        });
+        showToast(`${quote.author} 인용문 삽입 완료`);
+    };
+    // Manual save to localStorage
+    const handleManualSave = () => {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(doc));
+            setIsSaved(true);
+            showToast('신학 노트가 브라우저에 안전하게 저장되었습니다.');
+        }
+        catch (e) {
+            console.error('Failed to save to localStorage:', e);
+            showToast('저장에 실패했습니다.', 'error');
+        }
+    };
+    // Download current slide PNG directly
+    const handleDownloadCurrentSlide = async () => {
+        const el = document.getElementById('slide-render-target');
+        if (!el) {
+            showToast('슬라이드 렌더 요소를 찾을 수 없습니다.', 'error');
+            return;
+        }
+        try {
+            setIsExportingPng(true);
+            const slideNum = String(activeSlideIndex + 1).padStart(2, '0');
+            const safeTitle = (doc.title || 'theology_note').replace(/[\\/:*?"<>|]/g, '_').substring(0, 20);
+            await downloadSlideAsImage(el, `${safeTitle}_slide_${slideNum}`);
+            showToast(`슬라이드 ${activeSlideIndex + 1} PNG 이미지가 저장되었습니다.`);
+        }
+        catch (err) {
+            console.error('Failed to download PNG:', err);
+            showToast('PNG 저장에 실패했습니다. 다시 시도해 주세요.', 'error');
+        }
+        finally {
+            setIsExportingPng(false);
+        }
+    };
+    // Reset to default template
+    const handleResetDoc = () => {
+        if (window.confirm('기본 신학 노트 템플릿으로 초기화하시겠습니까?')) {
+            setDoc(JSON.parse(JSON.stringify(PRESET_TEMPLATES[0])));
+            setActiveSlideIndex(0);
+            showToast('기본 템플릿으로 초기화되었습니다.', 'info');
+        }
+    };
+    // Download Standalone HTML directly
+    const handleDownloadHtml = () => {
+        try {
+            const htmlContent = generateStandaloneHtml(doc);
+            const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+            const safeTitle = (doc.title || 'theology_note').replace(/[\\/:*?"<>|]/g, '_').substring(0, 25);
+            triggerBlobDownload(blob, `${safeTitle}_theology_notes.html`);
+            showToast('독립 실행형 HTML 파일이 다운로드되었습니다.');
+        }
+        catch (err) {
+            console.error('Failed to download HTML:', err);
+            showToast('HTML 파일 저장에 실패했습니다.', 'error');
+        }
+    };
+    return (React.createElement("div", { className: "min-h-screen bg-[#EBE9E1] flex flex-col font-sans antialiased text-[#2D2D2D] selection:bg-[#EAE8E0]" },
+        React.createElement(PagesToolbar, { doc: doc, onUpdateDoc: handleUpdateDoc, showInspector: showInspector, onToggleInspector: () => setShowInspector(!showInspector), showNavigator: showNavigator, onToggleNavigator: () => setShowNavigator(!showNavigator), zoom: zoom, onChangeZoom: setZoom, onOpenExportModal: () => setIsExportModalOpen(true), onOpenTemplateModal: () => setIsTemplateModalOpen(true), onOpenWordPicker: () => setIsWordPickerOpen(true), onOpenQuotePicker: () => setIsQuotePickerOpen(true), onAddSlide: () => handleAddSlide('content-body'), onResetDoc: handleResetDoc, onDownloadHtml: handleDownloadHtml, onSaveDoc: handleManualSave, isSaved: isSaved, currentSlideIndex: activeSlideIndex, totalSlides: doc.slides.length }),
+        React.createElement("div", { className: "flex-1 flex overflow-hidden" },
+            showNavigator && (React.createElement(SlideNavigator, { doc: doc, activeSlideIndex: activeSlideIndex, onSelectSlide: (idx) => setActiveSlideIndex(idx), onAddSlide: handleAddSlide, onDuplicateSlide: handleDuplicateSlide, onDeleteSlide: handleDeleteSlide, onMoveSlide: handleMoveSlide })),
+            React.createElement(SlideCanvas, { doc: doc, activeSlideIndex: activeSlideIndex, onSelectSlide: (idx) => setActiveSlideIndex(idx), onUpdateActiveSlide: handleUpdateActiveSlide, zoom: zoom, onDownloadCurrentSlide: handleDownloadCurrentSlide, onDownloadHtml: handleDownloadHtml, onOpenExportModal: () => setIsExportModalOpen(true), isExportingPng: isExportingPng }),
+            showInspector && (React.createElement(PagesInspector, { doc: doc, activeSlideIndex: activeSlideIndex, onUpdateDoc: handleUpdateDoc, onUpdateActiveSlide: handleUpdateActiveSlide, onOpenWordPicker: () => setIsWordPickerOpen(true), onOpenQuotePicker: () => setIsQuotePickerOpen(true) }))),
+        React.createElement("div", { className: "fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none max-w-sm" }, toasts.map((t) => (React.createElement("div", { key: t.id, className: `pointer-events-auto flex items-center gap-2.5 px-4 py-3 rounded-lg shadow-xl text-xs font-semibold border backdrop-blur-md transition-all animate-in slide-in-from-bottom-2 duration-200 ${t.type === 'error'
+                ? 'bg-[#E74C3C] text-white border-transparent'
+                : t.type === 'info'
+                    ? 'bg-[#2D2D2D] text-white border-transparent'
+                    : 'bg-[#5C5A4E] text-white border-[#4B493E]'}` },
+            t.type === 'error' ? (React.createElement(AlertCircle, { className: "w-4 h-4 shrink-0" })) : t.type === 'info' ? (React.createElement(Info, { className: "w-4 h-4 shrink-0" })) : (React.createElement(CheckCircle2, { className: "w-4 h-4 text-[#2ECC71] shrink-0" })),
+            React.createElement("span", { className: "flex-1" }, t.message),
+            React.createElement("button", { onClick: () => setToasts((prev) => prev.filter((item) => item.id !== t.id)), className: "p-0.5 hover:opacity-75 rounded" },
+                React.createElement(X, { className: "w-3.5 h-3.5" })))))),
+        React.createElement(ExportModal, { isOpen: isExportModalOpen, onClose: () => setIsExportModalOpen(false), doc: doc, activeSlideIndex: activeSlideIndex, onSelectSlide: async (idx) => {
+                setActiveSlideIndex(idx);
+            }, onImportDoc: (imported) => {
+                setDoc(imported);
+                setActiveSlideIndex(0);
+                showToast('신학 노트 데이터를 성공적으로 불러왔습니다.');
+            } }),
+        React.createElement(TheologyWordPickerModal, { isOpen: isWordPickerOpen, onClose: () => setIsWordPickerOpen(false), onSelectWord: handleInsertWord }),
+        React.createElement(TheologianQuoteModal, { isOpen: isQuotePickerOpen, onClose: () => setIsQuotePickerOpen(false), onSelectQuote: handleInsertQuote }),
+        React.createElement(TemplatePickerModal, { isOpen: isTemplateModalOpen, onClose: () => setIsTemplateModalOpen(false), onSelectTemplate: (tpl) => {
+                setDoc(tpl);
+                setActiveSlideIndex(0);
+                showToast(`'${tpl.title}' 템플릿을 불러왔습니다.`);
+            } })));
+}
+const rootEl = document.getElementById('root');
+rootEl.innerHTML = '';
+createRoot(rootEl).render(React.createElement(React.StrictMode, null, React.createElement(App)));
+</script>
+</body>
+</html>
