@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="WEST150DAILY 작업 도구 모음">
+  <title>WEST150DAILY | Workspace</title>
+  <link rel="stylesheet" href="fonts/fonts.css">
+  <style>
+    :root {
+      --ink: #17211b;
+      --muted: #68736b;
+      --paper: #f5f1e8;
+      --cream: #fffdf8;
+      --line: #d9d2c4;
+      --lime: #d9ed72;
+      --coral: #f47d65;
+      --blue: #b8d8e8;
+      --shadow: 5px 6px 0 rgba(23, 33, 27, 0.12);
+      --serif: Georgia, "Nanum Myeongjo", serif;
+      --sans: "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background-color: var(--paper);
+      background-image: radial-gradient(rgba(23, 33, 27, 0.07) .7px, transparent .7px);
+      background-size: 7px 7px;
+      font-family: var(--sans);
+    }
+    a { color: inherit; text-decoration: none; }
+    .shell { width: min(1180px, calc(100% - 40px)); margin: 0 auto; }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 24px 0 20px;
+      border-bottom: 2px solid var(--ink);
+    }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 800; letter-spacing: .02em; }
+    .brand-mark {
+      display: grid;
+      width: 38px;
+      height: 38px;
+      place-items: center;
+      border: 2px solid var(--ink);
+      background: var(--lime);
+      box-shadow: 3px 3px 0 var(--ink);
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 20px;
+    }
+    nav { display: flex; gap: 18px; color: var(--muted); font-size: 13px; font-weight: 700; }
+    nav a:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 4px; }
+
+    .intro { display: grid; grid-template-columns: 1.5fr 1fr; gap: 48px; align-items: end; padding: 72px 0 50px; }
+    .eyebrow { margin: 0 0 14px; color: var(--coral); font-size: 12px; font-weight: 800; letter-spacing: .14em; }
+    h1 { max-width: 700px; margin: 0; font-family: var(--serif); font-size: clamp(42px, 7vw, 84px); line-height: .98; letter-spacing: -.055em; }
+    .intro-copy { margin: 0 0 4px; color: var(--muted); font-size: 15px; line-height: 1.8; }
+    .intro-note { padding: 18px 20px; border-left: 5px solid var(--ink); background: var(--cream); box-shadow: var(--shadow); font-size: 14px; line-height: 1.7; }
+    .intro-note strong { display: block; margin-bottom: 5px; font-size: 16px; }
+
+    .section-heading { display: flex; align-items: baseline; gap: 14px; margin: 0 0 18px; }
+    .section-heading h2 { margin: 0; font-family: var(--serif); font-size: 28px; letter-spacing: -.03em; }
+    .section-heading span { color: var(--muted); font-size: 12px; font-weight: 700; }
+    .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 50px; }
+    .menu-card { position: relative; min-height: 174px; padding: 22px; border: 2px solid var(--ink); background: var(--cream); box-shadow: var(--shadow); transition: transform .18s ease, box-shadow .18s ease; }
+    .menu-card:hover { transform: translate(-3px, -3px); box-shadow: 8px 9px 0 rgba(23, 33, 27, .2); }
+    .menu-card:nth-child(3n + 1) .number { background: var(--lime); }
+    .menu-card:nth-child(3n + 2) .number { background: var(--blue); }
+    .menu-card:nth-child(3n) .number { background: var(--coral); }
+    .number { display: inline-grid; width: 30px; height: 30px; place-items: center; border: 2px solid var(--ink); font-family: monospace; font-size: 12px; font-weight: 800; }
+    .menu-card h3 { margin: 22px 0 7px; font-size: 20px; letter-spacing: -.04em; }
+    .menu-card p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.55; }
+    .arrow { position: absolute; right: 18px; bottom: 16px; font-size: 20px; }
+
+    footer { display: flex; justify-content: space-between; gap: 20px; padding: 22px 0 30px; border-top: 2px solid var(--ink); color: var(--muted); font-size: 12px; }
+    @media (max-width: 760px) {
+      .shell { width: min(100% - 28px, 560px); }
+      header { align-items: flex-start; flex-direction: column; }
+      nav { flex-wrap: wrap; gap: 10px 16px; }
+      .intro { grid-template-columns: 1fr; gap: 28px; padding: 48px 0 38px; }
+      .menu-grid { grid-template-columns: 1fr; gap: 14px; }
+      .menu-card { min-height: 148px; }
+      footer { flex-direction: column; gap: 6px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <a class="brand" href="index.html" aria-label="WEST150DAILY 홈">
+        <span class="brand-mark">W</span>
+        <span>WEST150DAILY</span>
+      </a>
+      <nav aria-label="빠른 메뉴">
+        <a href="#studio">Studio</a>
+        <a href="#boards">Boards</a>
+        <a href="#archive">Archive</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="intro" aria-labelledby="page-title">
+        <div>
+          <p class="eyebrow">EDITORIAL WORKSPACE / 2026</p>
+          <h1 id="page-title">Make it.<br>Keep it moving.</h1>
+        </div>
+        <div>
+          <p class="intro-copy">WEST150DAILY에서 사용하는 제작 도구와 보드를 한 곳에 모았습니다. 필요한 작업을 골라 바로 시작하세요.</p>
+          <div class="intro-note"><strong>오늘의 작업실</strong>모든 페이지는 별도 설치 없이 브라우저에서 열립니다.</div>
+        </div>
+      </section>
+
+      <section id="studio" aria-labelledby="studio-title">
+        <div class="section-heading"><h2 id="studio-title">01 / Studio</h2><span>제작 도구</span></div>
+        <div class="menu-grid">
+          <a class="menu-card" href="cardstudiomain.html"><span class="number">01</span><h3>카드뉴스 스튜디오</h3><p>카드뉴스 제작 메인 도구</p><span class="arrow" aria-hidden="true">↗</span></a>
+          <a class="menu-card" href="cardstudiover.html"><span class="number">02</span><h3>카드뉴스 스튜디오 Ver.2</h3><p>데스크톱 중심 카드뉴스 편집기</p><span class="arrow" aria-hidden="true">↗</span></a>
+          <a class="menu-card" href="cardsudioverr.html"><span class="number">03</span><h3>카드뉴스 스튜디오 Ver.R</h3><p>카드뉴스 슬라이드 편집기</p><span class="arrow" aria-hidden="true">↗</span></a>
+          <a class="menu-card" href="curation.html"><span class="number">04</span><h3>큐레이션 편집기</h3><p>뉴스 큐레이션 레이아웃 제작</p><span class="arrow" aria-hidden="true">↗</span></a>
+          <a class="menu-card" href="info.html"><span class="number">05</span><h3>인포그래픽</h3><p>정보를 시각적으로 정리하는 편집기</p><span class="arrow" aria-hidden="true">↗</span></a>
+          <a class="menu-card" href="infover.html"><span class="number">06</span><h3>카드뉴스 &amp; 인포그래픽 Ver.</h3><p>카드뉴스와 인포그래픽 통합 도구</p><span class="arrow" aria-hidden="true">↗</span></a>
+          <a class="menu-card" href="sns.html"><span class="number">07</span><h3>SNS 번역 카드</h3><p>SNS 콘텐츠 번역 카드 생성기</p><span class="arrow" aria-hidden="true">↗</span></a>
+        </div>
+      </section>
+
+      <section id="boards" aria-labelledby="boards-title">
+        <div class="section-heading"><h2 id="boards-title">02 / Boards</h2><span>아이디어와 작업판</span></div>
+        <div class="menu-grid">
+          <a class="menu-card" href="canvas.html"><span class="number">08</span><h3>화이트보드</h3><p>자유롭게 그리는 작업 캔버스</p><span class="arrow" aria-hidden="true">↗</span></a>
+          <a class="menu-card" href="canvasver.html"><span class="number">09</span><h3>화이트보드 Ver.2</h3><p>업데이트된 보드 작업 공간</p><span class="arrow" aria-hidden="true">↗</span></a>
+          <a class="menu-card" href="newsroomboard.html"><span class="number">10</span><h3>뉴스룸 보드</h3><p>뉴스룸 아이디어와 자료 정리</p><span class="arrow" aria-hidden="true">↗</span></a>
+          <a class="menu-card" href="postitboard.html"><span class="number">11</span><h3>포스트잇 보드</h3><p>메모를 붙이고 옮기는 작업판</p><span class="arrow" aria-hidden="true">↗</span></a>
+          <a class="menu-card" href="link.html"><span class="number">12</span><h3>Puzzle Connect</h3><p>링크와 자료를 연결하는 보드</p><span class="arrow" aria-hidden="true">↗</span></a>
+        </div>
+      </section>
+
+      <section id="archive" aria-labelledby="archive-title">
+        <div class="section-heading"><h2 id="archive-title">03 / Archive</h2><span>기록과 참고</span></div>
+        <div class="menu-grid">
+          <a class="menu-card" href="press.html"><span class="number">13</span><h3>Brief &amp; Archive</h3><p>브리프와 아카이브 관리</p><span class="arrow" aria-hidden="true">↗</span></a>
+          <a class="menu-card" href="indexcard.html"><span class="number">14</span><h3>Index Card Studio</h3><p>인덱스 카드 기록 도구</p><span class="arrow" aria-hidden="true">↗</span></a>
+        </div>
+      </section>
+    </main>
+
+    <footer><span>WEST150DAILY WORKSPACE</span><span>Static tools · GitHub Pages ready</span></footer>
+  </div>
+</body>
+</html>
